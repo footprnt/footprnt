@@ -8,7 +8,7 @@
 
 ## Overview
 ### Description
-[Description of your app]
+explor.ly is the next generation social app for social media savy yuppies who love to travel.
 
 ### App Evaluation
 [Evaluation of your app across the following attributes]
@@ -78,7 +78,7 @@
 
 
 
-# Travel App
+# explor.ly
 ## 1. User Stories (Required and Optional)
 
 **Required Must-have Stories**
@@ -161,5 +161,5 @@
 
 ### Wire frames / Rough Sketch
 
-[Drawing 1] (https://imgur.com/UuFjH1x)
+[Drawing 1](https://imgur.com/UuFjH1x)
 [Drawing 2](https://imgur.com/isaA7VR)
