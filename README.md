@@ -1,4 +1,4 @@
-# explor.ly
+# footprnt
 
 ## Table of Contents
 1. [Overview](#Overview)
@@ -8,7 +8,7 @@
 
 ## Overview
 ### Description
-explor.ly is the next generation social app for social media savy yuppies who love to travel.
+System.out.footprnt("footprnt is the next generation travel app!");
 
 ### App Evaluation
 [Evaluation of your app across the following attributes]
@@ -78,7 +78,7 @@ explor.ly is the next generation social app for social media savy yuppies who lo
 
 
 
-# explor.ly
+# footprnt
 ## 1. User Stories (Required and Optional)
 
 **Required Must-have Stories**
@@ -161,5 +161,3 @@ explor.ly is the next generation social app for social media savy yuppies who lo
 
 ### Wire frames / Rough Sketch
 
-[Drawing 1](https://imgur.com/UuFjH1x)
-[Drawing 2](https://imgur.com/isaA7VR)
