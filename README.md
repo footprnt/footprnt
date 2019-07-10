@@ -160,4 +160,4 @@ System.out.footprnt("footprnt is the next generation travel app!");
     * "Adventure Page"
 
 ### Wire frames / Rough Sketch
-
+<img src='specs.jpg' title='Specs' width='' />
