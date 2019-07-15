@@ -59,12 +59,9 @@ public class MapFragment extends Fragment implements
 
     // Display the alert that adds the marker
     private void showAlertDialogForPoint(final LatLng point) {
-        // inflate message_item.xml view
         View messageView = LayoutInflater.from(getActivity()).
                 inflate(R.layout.message_item, null);
-        // Create alert dialog builder
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-        // set message_item.xml to AlertDialog builder
         alertDialogBuilder.setView(messageView);
 
         // Create alert dialog
@@ -92,13 +89,11 @@ public class MapFragment extends Fragment implements
                     }
                 });
 
-        // Configure dialog button (Cancel)
         alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) { dialog.cancel(); }
                 });
 
-        // Display the dialog
         alertDialog.show();
     }
 
