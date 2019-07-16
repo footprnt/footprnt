@@ -14,7 +14,9 @@ public class Post extends ParseObject {
     public static final String KEY_IMAGE = "image";
     public static final String KEY_USER = "user";
     public static final String KEY_LOCATION = "location";
-    public static final String KEY_STATS = "stats";
+
+    // Default Ctor
+    public Post() {}
 
     public String getDescription() {
         return getString(KEY_DESCRIPTION);
