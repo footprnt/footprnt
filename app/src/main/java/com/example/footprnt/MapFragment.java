@@ -3,6 +3,8 @@ package com.example.footprnt;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -33,7 +35,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 public class MapFragment extends Fragment implements
         GoogleMap.OnMapLongClickListener, OnMapReadyCallback {
@@ -50,33 +53,9 @@ public class MapFragment extends Fragment implements
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private LocationRequest locationRequest;
     private static final long UPDATE_INTERVAL = 5000, FASTEST_INTERVAL = 5000; // = 5 seconds
-    // lists for permissions
-    private ArrayList<String> permissionsToRequest;
-    private ArrayList<String> permissionsRejected = new ArrayList<>();
-    private ArrayList<String> permissions = new ArrayList<>();
-    // integer for permissions results request
     private static final int ALL_PERMISSIONS_RESULT = 1011;
     LocationManager locationManager;
     LocationListener locationListener;
-
-    public void centreMapOnLocation(Location location, String title){
-        LatLng userLocation = new LatLng(location.getLatitude(),location.getLongitude());
-        map.addMarker(new MarkerOptions().position(userLocation).title(title));
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation,12));
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-            if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
-                Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                centreMapOnLocation(lastKnownLocation,"Your Location");
-            }
-        }
-    }
-
 
     @Nullable
     @Override
@@ -110,7 +89,7 @@ public class MapFragment extends Fragment implements
 
     @Override
     public void onMapLongClick(LatLng latLng) {
-        Toast.makeText(getActivity(), "Long Press", Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity(), getAddress(latLng), Toast.LENGTH_LONG).show();
         showAlertDialogForPoint(latLng);
     }
 
@@ -127,8 +106,7 @@ public class MapFragment extends Fragment implements
         ImageView sendPost = alertDialog.findViewById(R.id.sendPost);
         ImageView cancelPost = alertDialog.findViewById(R.id.cancelPost);
         TextView location = alertDialog.findViewById(R.id.location);
-
-        location.setText(point.toString());
+        location.setText(getAddress(point));
 
         sendPost.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -157,6 +135,28 @@ public class MapFragment extends Fragment implements
                 alertDialog.cancel();
             }
         });
+
+
+    }
+
+    public String getAddress(LatLng point){
+        try {
+            Geocoder geo = new Geocoder(getActivity(), Locale.getDefault());
+            List<Address> addresses = geo.getFromLocation(point.latitude, point.longitude, 1);
+            if (addresses.isEmpty()) {
+                return "Waiting for location...";
+            }
+            else {
+                if (addresses.size() > 0) {
+                     return (addresses.get(0).getFeatureName() + ", " + addresses.get(0).getLocality() +", " + addresses.get(0).getAdminArea() + ", " + addresses.get(0).getCountryName());
+                }
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace(); // getFromLocation() may sometimes fail
+            return null;
+        }
+        return null;
     }
 
     @Override
@@ -195,6 +195,24 @@ public class MapFragment extends Fragment implements
                 centreMapOnLocation(lastKnownLocation,"Your Location");
             } else {
                 ActivityCompat.requestPermissions(getActivity(),new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
+            }
+        }
+    }
+
+    public void centreMapOnLocation(Location location, String title){
+        LatLng userLocation = new LatLng(location.getLatitude(),location.getLongitude());
+        map.addMarker(new MarkerOptions().position(userLocation).title(title));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation,12));
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+            if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
+                Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                centreMapOnLocation(lastKnownLocation,"Your Location");
             }
         }
     }
