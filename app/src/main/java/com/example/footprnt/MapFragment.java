@@ -3,18 +3,26 @@ package com.example.footprnt;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,8 +31,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationRequest;
+import com.example.footprnt.model.Post;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -34,7 +41,14 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.parse.ParseException;
+import com.parse.ParseFile;
+import com.parse.ParseGeoPoint;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -43,19 +57,17 @@ public class MapFragment extends Fragment implements
 
     private SupportMapFragment mapFragment;
     private GoogleMap map;
-    private LocationRequest mLocationRequest;
-    Location mCurrentLocation;
-    private final static String KEY_LOCATION = "location";
-    private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
-    private Location location;
-    private TextView locationTv;
-    private GoogleApiClient googleApiClient;
-    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
-    private LocationRequest locationRequest;
-    private static final long UPDATE_INTERVAL = 5000, FASTEST_INTERVAL = 5000; // = 5 seconds
-    private static final int ALL_PERMISSIONS_RESULT = 1011;
     LocationManager locationManager;
     LocationListener locationListener;
+    public static final int GET_FROM_GALLERY = 3;
+    public final String APP_TAG = "footprnt";
+    public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
+    public String photoFileName = "photo.jpg";
+    ImageView image;
+    File photoFile;
+    PostAdapter postAdapter;
+    ArrayList<Post> posts;
+    RecyclerView rvPosts;
 
     @Nullable
     @Override
@@ -105,27 +117,31 @@ public class MapFragment extends Fragment implements
 
         ImageView sendPost = alertDialog.findViewById(R.id.sendPost);
         ImageView cancelPost = alertDialog.findViewById(R.id.cancelPost);
+        ImageView ivUpload = alertDialog.findViewById(R.id.ivUpload);
+        ImageView ivCamera = alertDialog.findViewById(R.id.ivCamera);
+        image = alertDialog.findViewById(R.id.image);
         TextView location = alertDialog.findViewById(R.id.location);
         location.setText(getAddress(point));
 
         sendPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Define color of marker icon
                 BitmapDescriptor defaultMarker =
-                        BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
-                // Extract content from alert dialog
+                        BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
                 String title = ((EditText) alertDialog.findViewById(R.id.etTitle)).
                         getText().toString();
                 String snippet = ((EditText) alertDialog.findViewById(R.id.etSnippet)).
                         getText().toString();
-                // Creates and adds marker to the map
                 Marker marker = map.addMarker(new MarkerOptions()
                         .position(point)
                         .title(title)
                         .snippet(snippet)
                         .icon(defaultMarker));
-                alertDialog.cancel();
+                File photoFile = getPhotoFileUri(photoFileName);
+                ParseFile parseFile = new ParseFile(photoFile);
+                ParseUser user = ParseUser.getCurrentUser();
+                createPost(snippet, parseFile, user, point);
+                alertDialog.dismiss();
             }
         });
 
@@ -136,7 +152,116 @@ public class MapFragment extends Fragment implements
             }
         });
 
+        ivUpload.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI), GET_FROM_GALLERY);
+            }
+        });
 
+        ivCamera.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                photoFile = getPhotoFileUri(photoFileName);
+
+                Uri fileProvider = FileProvider.getUriForFile(getActivity(), "com.codepath.fileprovider", photoFile);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
+
+                if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                    startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+                }
+            }
+        });
+    }
+
+    private void createPost(String description, ParseFile imageFile, ParseUser user, LatLng point){
+        //final ProgressBar pb = (ProgressBar) findViewById(R.id.pbLoading);
+        //pb.setVisibility(ProgressBar.VISIBLE);
+        final Post newPost = new Post();
+        newPost.setDescription(description);
+        newPost.setImage(imageFile);
+        newPost.setUser(user);
+        newPost.setLocation(new ParseGeoPoint(point.latitude, point.longitude));
+        newPost.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null){
+                    Log.d("MapFragment", "Create post success");
+                } else {
+                    e.printStackTrace();
+                }
+                //pb.setVisibility(ProgressBar.INVISIBLE);
+            }
+        });
+        posts.add(0, newPost);
+        postAdapter.notifyItemInserted(0);
+        rvPosts.scrollToPosition(0);
+    }
+
+    public File getPhotoFileUri(String fileName) {
+        File mediaStorageDir = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), APP_TAG);
+
+        if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()){
+            Log.d(APP_TAG, "failed to create directory");
+        }
+
+        File file = new File(mediaStorageDir.getPath() + File.separator + fileName);
+        return file;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, final Intent data) {
+        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+            if (resultCode == getActivity().RESULT_OK) {
+                Bitmap takenImage = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
+                image.setImageBitmap(takenImage);
+            } else {
+                Toast.makeText(getActivity(), "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
+            }
+        }
+//        if (requestCode == GET_FROM_GALLERY){
+//            if (resultCode == RESULT_OK) {
+//                final android.app.AlertDialog.Builder mBuilder = new android.app.AlertDialog.Builder(HomeActivity.this);
+//                final View mView = getLayoutInflater().inflate(R.layout.item_compose, null);
+//                mBuilder.setView(mView);
+//                final android.app.AlertDialog dialog = mBuilder.create();
+//                ImageView dismiss = mView.findViewById(R.id.dismiss);
+//                ImageView sendPost = mView.findViewById(R.id.sendPost);
+//                final EditText etCaption = mView.findViewById(R.id.etCaption);
+//                dismiss.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        dialog.dismiss();
+//                    }
+//                });
+//                Bitmap bitmap = null;
+//
+//                Uri selectedImage = data.getData();
+//                try{
+//                    bitmap = MediaStore.Images.Media.getBitmap(HomeActivity.this.getContentResolver(), selectedImage);
+//                } catch (Exception e) {
+//
+//                }
+//                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+//                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+//                byte[] image = stream.toByteArray();
+//                final ParseFile parseFile = new ParseFile("profpic.jpg", image);
+//                final Bitmap finalBitmap = bitmap;
+//                ImageView ivPreview = mView.findViewById(R.id.ivPost);
+//                Glide.with(HomeActivity.this).load(finalBitmap).into(ivPreview);
+//
+//                sendPost.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        String caption = etCaption.getText().toString();
+//                        createPost(caption, parseFile, ParseUser.getCurrentUser());
+//                        dialog.dismiss();
+//                    }
+//                });
+//                dialog.show();
+//            }
+//        }
     }
 
     public String getAddress(LatLng point){

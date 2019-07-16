@@ -2,6 +2,7 @@ package com.example.footprnt.model;
 
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -14,6 +15,7 @@ public class Post extends ParseObject implements Serializable {
     private static final String KEY_DESCRIPTION = "description";
     private static final String KEY_IMAGE = "image";
     private static final String KEY_USER = "user";
+    private static final String KEY_LOCATION = "location";
 
     public String getDescription(){
         return getString(KEY_DESCRIPTION);
@@ -37,6 +39,14 @@ public class Post extends ParseObject implements Serializable {
 
     public void setUser(ParseUser user){
         put(KEY_USER, user);
+    }
+
+    public ParseGeoPoint getLocation(){
+        return getParseGeoPoint(KEY_LOCATION);
+    }
+
+    public void setLocation(ParseGeoPoint point){
+        put(KEY_LOCATION, point);
     }
 
     public static class Query extends ParseQuery<Post> {
