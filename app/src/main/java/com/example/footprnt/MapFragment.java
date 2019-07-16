@@ -23,29 +23,32 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+// TODO: Javadoc
 public class MapFragment extends Fragment implements
         GoogleMap.OnMapLongClickListener, OnMapReadyCallback{
 
+    // TODO: mVariableName
     private SupportMapFragment mapFragment;
     private GoogleMap map;
     private LocationRequest mLocationRequest;
-    Location mCurrentLocation;
+    Location mCurrentLocation; // TODO: private
     private long UPDATE_INTERVAL = 60000;  /* 60 secs */
     private long FASTEST_INTERVAL = 5000; /* 5 secs */
     private final static String KEY_LOCATION = "location";
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 
-    //map.setOnMapLongClickListener(this);
+    //map.setOnMapLongClickListener(this); // TODO: no commented out code in master
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_map, container, false);
-        SupportMapFragment mapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        View v = inflater.inflate(R.layout.fragment_map, container, false); // TODO: "final"
+        SupportMapFragment mapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map); // TODO: "final"
         mapFrag.getMapAsync(this);
         return v;
     }
 
+    // TODO: this method does nothing, delete
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -57,13 +60,15 @@ public class MapFragment extends Fragment implements
         showAlertDialogForPoint(latLng);
     }
 
+    // TODO: convert to Java block comment (ie /** ... */)
     // Display the alert that adds the marker
     private void showAlertDialogForPoint(final LatLng point) {
+        // TODO: too verbbose comment, remove all in method
         // inflate message_item.xml view
-        View messageView = LayoutInflater.from(getActivity()).
+        View messageView = LayoutInflater.from(getActivity()). // TODO: "final"
                 inflate(R.layout.message_item, null);
         // Create alert dialog builder
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity()); // TODO: "final"
         // set message_item.xml to AlertDialog builder
         alertDialogBuilder.setView(messageView);
 
@@ -71,20 +76,20 @@ public class MapFragment extends Fragment implements
         final AlertDialog alertDialog = alertDialogBuilder.create();
 
         // Configure dialog button (OK)
-        alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "OK",
+        alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "OK", // TODO: "OK" and "Cancel" aren't localized, move to resources
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // Define color of marker icon
-                        BitmapDescriptor defaultMarker =
+                        BitmapDescriptor defaultMarker = // TODO: "final"
                                 BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
                         // Extract content from alert dialog
-                        String title = ((EditText) alertDialog.findViewById(R.id.etTitle)).
+                        String title = ((EditText) alertDialog.findViewById(R.id.etTitle)). // TODO: "final"
                                 getText().toString();
-                        String snippet = ((EditText) alertDialog.findViewById(R.id.etSnippet)).
+                        String snippet = ((EditText) alertDialog.findViewById(R.id.etSnippet)). // TODO: "final"
                                 getText().toString();
                         // Creates and adds marker to the map
-                        Marker marker = map.addMarker(new MarkerOptions()
+                        Marker marker = map.addMarker(new MarkerOptions() // TODO: "marker" isn't used anywhere, don't assign it to a variable
                                 .position(point)
                                 .title(title)
                                 .snippet(snippet)
