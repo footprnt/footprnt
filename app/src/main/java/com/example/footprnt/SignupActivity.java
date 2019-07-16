@@ -10,8 +10,10 @@ import android.widget.Toast;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 
+// TODO: Javadoc
 public class SignupActivity extends AppCompatActivity {
 
+    // TODO: mVariableName
     private EditText usernameInput;
     private EditText passwordInput;
     private EditText phoneInput;
@@ -40,7 +42,7 @@ public class SignupActivity extends AppCompatActivity {
                 user.signUpInBackground(new SignUpCallback() {
                     @Override
                     public void done(com.parse.ParseException e) {
-                        if (e == null){
+                        if (e == null){ // TODO: space between ")" and "{"
                             finish();
                         } else {
                             Toast.makeText(getApplicationContext(), "Failed to create account", Toast.LENGTH_SHORT).show();
