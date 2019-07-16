@@ -16,7 +16,6 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
@@ -75,6 +74,7 @@ public class MapFragment extends Fragment implements
     AlertDialog alertDialog=null;
     ParseFile parseFile;
     LatLng lastPoint;
+    boolean mJumpToCurrentLocation = false;
 
     @Nullable
     @Override
@@ -297,7 +297,11 @@ public class MapFragment extends Fragment implements
             locationListener = new LocationListener() {
                 @Override
                 public void onLocationChanged(Location location) {
-                    //centreMapOnLocation(location,"Your Location");
+                    if (mJumpToCurrentLocation) {
+                        mJumpToCurrentLocation = false;
+                        System.out.println("aaa");
+                        centreMapOnLocation(location, "Your Location");
+                    }
                 }
 
                 @Override
@@ -321,7 +325,7 @@ public class MapFragment extends Fragment implements
                 Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                 centreMapOnLocation(lastKnownLocation,"Your Location");
             } else {
-                ActivityCompat.requestPermissions(getActivity(),new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
             }
         }
     }
@@ -337,13 +341,8 @@ public class MapFragment extends Fragment implements
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
             if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
-                Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                centreMapOnLocation(lastKnownLocation,"Your Location");
+                mJumpToCurrentLocation = true;
             }
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
-            Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            centreMapOnLocation(lastKnownLocation,"Your Location");
         }
     }
 
