@@ -8,9 +8,11 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
-public class HomeActivity extends AppCompatActivity {
+// TODO: Add Javadoc
+public class HomeActivity extends AppCompatActivity { // TODO: Add newline between class and first line of code
     final FragmentManager fragmentManager = getSupportFragmentManager();
 
+    // TODO: All private class variables named like mVariableName
     final Fragment fragment1 = new MapFragment();
     final Fragment fragment2 = new DiscoverFragment();
     final Fragment fragment3 = new ProfileFragment();
@@ -19,11 +21,11 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        BottomNavigationView navView = findViewById(R.id.nav_view);
+        BottomNavigationView navView = findViewById(R.id.nav_view); // TODO: "final"
         navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                Fragment fragment;
+                Fragment fragment; // TODO: "final"
                 switch (menuItem.getItemId()) {
                     case R.id.navigation_home:
                         fragment = fragment1;
