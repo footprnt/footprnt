@@ -165,7 +165,7 @@ public class MapFragment extends Fragment implements
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 photoFile = getPhotoFileUri(photoFileName);
 
-                Uri fileProvider = FileProvider.getUriForFile(getActivity(), "com.codepath.fileprovider", photoFile);
+                Uri fileProvider = FileProvider.getUriForFile(getActivity(), "com.example.fileprovider", photoFile);
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
 
                 if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
@@ -215,6 +215,8 @@ public class MapFragment extends Fragment implements
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == getActivity().RESULT_OK) {
                 Bitmap takenImage = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
+                System.out.println(image);
+                System.out.println("h2");
                 image.setImageBitmap(takenImage);
             } else {
                 Toast.makeText(getActivity(), "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
