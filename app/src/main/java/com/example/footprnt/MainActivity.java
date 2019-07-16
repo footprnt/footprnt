@@ -12,8 +12,10 @@ import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 
+// TODO: Add Javadoc
 public class MainActivity extends AppCompatActivity {
 
+    // TODO: These are local private variables so naming format should be mVariableName
     private EditText usernameInput;
     private EditText passwordInput;
     private Button loginBtn;
@@ -30,7 +32,8 @@ public class MainActivity extends AppCompatActivity {
         signupBtn = findViewById(R.id.btn_signup);
 
         ParseUser currentUser = ParseUser.getCurrentUser();
-        if (currentUser != null){
+        if (currentUser != null){ // TODO: Space between ")" and "{"
+            // TODO: Inline the following line of code
             final Intent intent = new Intent(MainActivity.this, HomeActivity.class);
             startActivity(intent);
         }
@@ -38,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // TODO: Some of my comments will be nit-picking, but both the following lines of code can be inlined
                 final String username = usernameInput.getText().toString();
                 final String password = passwordInput.getText().toString();
 
@@ -48,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
         signupBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // TODO: Inline the following line of code
                 Intent intent = new Intent(MainActivity.this, SignupActivity.class);
                 startActivityForResult(intent, 20);
             }
@@ -59,11 +64,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void done(ParseUser user, ParseException e) {
                 if (e == null){
+                    // TODO: Remove log statements from master, there should be error logging but anything lower priority likely only local
                     Log.d("LoginActivity", "Login successful");
                     final Intent intent = new Intent(MainActivity.this, HomeActivity.class);
                     startActivity(intent);
                 }
                 else {
+                    // TODO: Remove log statements from master, there should be error logging but anything lower priority likely only local
                     Log.d("LoginActivity", "Login unsuccessful");
                 }
             }
