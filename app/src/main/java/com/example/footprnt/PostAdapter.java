@@ -11,18 +11,21 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.footprnt.Models.Post;
+import com.example.footprnt.Util.LocationHelper;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
-
+    private static final String TAG = "PostAdapter";
     // Instance fields:
-    ArrayList<Post> posts;  // list of posts
+    ArrayList<Post> posts;    // list of posts
     Context context;          // context for rendering
+    LocationHelper helper;
 
-    public PostAdapter(ArrayList<Post> movies) {
-        this.posts = movies;  // initialize movie list
+    public PostAdapter(ArrayList<Post> posts) {
+        this.posts = posts;
     }
 
 
@@ -37,21 +40,33 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         context = parent.getContext();  // get the context and create the inflater
         LayoutInflater inflater = LayoutInflater.from(context);
-        // Create view using the item_post layout
-        View postView = inflater.inflate(R.layout.item_post, parent, false);
+        // Create view using the item_post_one layout
+        View postView = inflater.inflate(R.layout.item_post_one, parent, false);
         return new ViewHolder(postView);  // return a new ViewHolder
     }
 
     // Binds an inflated view to a new view
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Post post = posts.get(position);        // get the movie data at the specified position
+        Post post = posts.get(position);
 
         // TODO: Set views here
-        holder.tvUser.setText(post.getUser().getUsername());  // populate the view with the movie data
+        holder.tvUser.setText(post.getUser().getUsername());
         holder.tvDescription.setText(post.getDescription());
-        String imgUrl = post.getImage().getUrl();
-        Glide.with(context).load(imgUrl).into(holder.ivPicture);
+
+        if(post.getImage()!=null) {
+            String imgUrl = post.getImage().getUrl();
+            Glide.with(context).load(imgUrl).into(holder.ivPicture);
+        }
+        if(post.getUser().getParseFile("profileImg")!=null) {
+            String userImgUrl = post.getUser().getParseFile("profileImg").getUrl();
+            Glide.with(context).load(userImgUrl).into(holder.ivUserPicture);
+        }
+
+        helper = new LocationHelper();
+        LatLng point = new LatLng(post.getLocation().getLatitude(), post.getLocation().getLongitude());
+        String tvCityState = helper.getAddress(context, point);
+        holder.tvLocation.setText(tvCityState);
 
         // Determine the current orientation
        // boolean isPortrait =  context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
@@ -79,8 +94,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         // Track view objects
         // Portrait mode
         ImageView ivPicture;
-        TextView tvUser;           // Movie title
-        TextView tvDescription;    // Movie description
+        TextView tvUser;           // Username
+        TextView tvDescription;    // Post Description
+        ImageView ivUserPicture;   // Users Picture
+        TextView tvLocation;      // Post Location
         // Landscape mode
         //ImageView ivBackdropImage;
 
@@ -91,6 +108,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             ivPicture = itemView.findViewById(R.id.ivPicture);
             tvUser = itemView.findViewById(R.id.tvUser);
             tvDescription = itemView.findViewById(R.id.tvDescription);
+            ivUserPicture = itemView.findViewById(R.id.ivUserPicture);
+            tvLocation = itemView.findViewById(R.id.tvLocation);
+
 
             // add this as the itemView's OnClickListener to edit
             //itemView.setOnClickListener(this);
@@ -120,4 +140,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 //            }
         }
     }
+
+
 }

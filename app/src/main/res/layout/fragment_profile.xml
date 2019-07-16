@@ -31,22 +31,24 @@
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipeContainer"
-        android:layout_width="389dp"
-        android:layout_height="249dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="40dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvPosts">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rvFeed"
-            android:layout_width="389dp"
-            android:layout_height="249dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
             android:layout_marginEnd="8dp"
@@ -60,11 +62,10 @@
 
     <TextView
         android:id="@+id/tvStats"
-        android:layout_width="83dp"
-        android:layout_height="33dp"
+        android:layout_width="66dp"
+        android:layout_height="24dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="12dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
@@ -76,35 +77,30 @@
         app:layout_constraintBottom_toTopOf="@+id/tvPosts"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/topNav"
-        app:layout_constraintVertical_bias="0.033" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/tvPosts"
-        android:layout_width="wrap_content"
-        android:layout_height="38dp"
+        android:layout_width="392dp"
+        android:layout_height="26dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="284dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
         android:text="@string/my_posts"
         android:textColor="#000000"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/swipeContainer"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.333"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/topNav"
-        app:layout_constraintVertical_bias="0.939" />
+        app:layout_constraintTop_toBottomOf="@+id/topNav" />
 
     <ListView
         android:id="@+id/lvStatKey"
-        android:layout_width="390dp"
-        android:layout_height="205dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
@@ -117,5 +113,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvStats"
         app:layout_constraintVertical_bias="0.033" />
+
+    <ImageView
+        android:id="@+id/ivProfilePictureMain"
+        android:layout_width="106dp"
+        android:layout_height="93dp"
+        tools:layout_editor_absoluteX="140dp"
+        tools:layout_editor_absoluteY="82dp"
+        tools:srcCompat="@tools:sample/avatars" />
 
 </android.support.constraint.ConstraintLayout>
