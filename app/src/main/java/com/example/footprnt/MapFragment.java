@@ -31,6 +31,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.footprnt.model.Post;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -47,6 +48,7 @@ import com.parse.ParseGeoPoint;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,11 +65,16 @@ public class MapFragment extends Fragment implements
     public final String APP_TAG = "footprnt";
     public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
     public String photoFileName = "photo.jpg";
-    ImageView image;
+    ImageView imageView;
     File photoFile;
     PostAdapter postAdapter;
     ArrayList<Post> posts;
     RecyclerView rvPosts;
+    ImageView sendPost;
+    ImageView cancelPost;
+    AlertDialog alertDialog=null;
+    ParseFile parseFile;
+    LatLng lastPoint;
 
     @Nullable
     @Override
@@ -75,6 +82,8 @@ public class MapFragment extends Fragment implements
         View v = inflater.inflate(R.layout.fragment_map, container, false);
         SupportMapFragment mapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFrag.getMapAsync(this);
+        posts = new ArrayList<>();
+        postAdapter = new PostAdapter(posts);
         return v;
     }
 
@@ -112,45 +121,18 @@ public class MapFragment extends Fragment implements
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
         alertDialogBuilder.setView(messageView);
 
-        final AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog = alertDialogBuilder.create();
         alertDialog.show();
 
-        ImageView sendPost = alertDialog.findViewById(R.id.sendPost);
-        ImageView cancelPost = alertDialog.findViewById(R.id.cancelPost);
+        sendPost = alertDialog.findViewById(R.id.sendPost);
+        cancelPost = alertDialog.findViewById(R.id.cancelPost);
         ImageView ivUpload = alertDialog.findViewById(R.id.ivUpload);
         ImageView ivCamera = alertDialog.findViewById(R.id.ivCamera);
-        image = alertDialog.findViewById(R.id.image);
+        imageView = alertDialog.findViewById(R.id.image);
+        imageView.setVisibility(View.GONE);
         TextView location = alertDialog.findViewById(R.id.location);
         location.setText(getAddress(point));
-
-        sendPost.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                BitmapDescriptor defaultMarker =
-                        BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
-                String title = ((EditText) alertDialog.findViewById(R.id.etTitle)).
-                        getText().toString();
-                String snippet = ((EditText) alertDialog.findViewById(R.id.etSnippet)).
-                        getText().toString();
-                Marker marker = map.addMarker(new MarkerOptions()
-                        .position(point)
-                        .title(title)
-                        .snippet(snippet)
-                        .icon(defaultMarker));
-                File photoFile = getPhotoFileUri(photoFileName);
-                ParseFile parseFile = new ParseFile(photoFile);
-                ParseUser user = ParseUser.getCurrentUser();
-                createPost(snippet, parseFile, user, point);
-                alertDialog.dismiss();
-            }
-        });
-
-        cancelPost.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                alertDialog.cancel();
-            }
-        });
+        lastPoint = point;
 
         ivUpload.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -173,15 +155,55 @@ public class MapFragment extends Fragment implements
                 }
             }
         });
+
+        sendPost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BitmapDescriptor defaultMarker =
+                        BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
+                final String title = ((EditText) alertDialog.findViewById(R.id.etTitle)).
+                        getText().toString();
+                final String snippet = ((EditText) alertDialog.findViewById(R.id.etSnippet)).
+                        getText().toString();
+                Marker marker = map.addMarker(new MarkerOptions()
+                        .position(lastPoint)
+                        .title(title)
+                        .snippet(snippet)
+                        .icon(defaultMarker));
+                final ParseUser user = ParseUser.getCurrentUser();
+                if (parseFile != null){
+                    parseFile.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            createPost(snippet, title, parseFile, user, lastPoint);
+                            alertDialog.dismiss();
+                        }
+                    });
+                } else {
+                    createPost(snippet, title, parseFile , user, lastPoint);
+                    alertDialog.dismiss();
+                }
+            }
+        });
+
+        cancelPost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.cancel();
+            }
+        });
     }
 
-    private void createPost(String description, ParseFile imageFile, ParseUser user, LatLng point){
-        //final ProgressBar pb = (ProgressBar) findViewById(R.id.pbLoading);
-        //pb.setVisibility(ProgressBar.VISIBLE);
+    private void createPost(String description, String title, ParseFile imageFile, ParseUser user, LatLng point){
         final Post newPost = new Post();
         newPost.setDescription(description);
-        newPost.setImage(imageFile);
+        if (imageFile == null){
+            newPost.remove("image");
+        } else {
+            newPost.setImage(imageFile);
+        }
         newPost.setUser(user);
+        newPost.setTitle(title);
         newPost.setLocation(new ParseGeoPoint(point.latitude, point.longitude));
         newPost.saveInBackground(new SaveCallback() {
             @Override
@@ -191,12 +213,10 @@ public class MapFragment extends Fragment implements
                 } else {
                     e.printStackTrace();
                 }
-                //pb.setVisibility(ProgressBar.INVISIBLE);
             }
         });
         posts.add(0, newPost);
         postAdapter.notifyItemInserted(0);
-        rvPosts.scrollToPosition(0);
     }
 
     public File getPhotoFileUri(String fileName) {
@@ -215,55 +235,35 @@ public class MapFragment extends Fragment implements
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == getActivity().RESULT_OK) {
                 Bitmap takenImage = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
-                System.out.println(image);
-                System.out.println("h2");
-                image.setImageBitmap(takenImage);
+                imageView.setVisibility(View.VISIBLE);
+                imageView.setImageBitmap(takenImage);
+                File photoFile = getPhotoFileUri(photoFileName);
+                parseFile = new ParseFile(photoFile);
             } else {
+                parseFile = null;
                 Toast.makeText(getActivity(), "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
             }
         }
-//        if (requestCode == GET_FROM_GALLERY){
-//            if (resultCode == RESULT_OK) {
-//                final android.app.AlertDialog.Builder mBuilder = new android.app.AlertDialog.Builder(HomeActivity.this);
-//                final View mView = getLayoutInflater().inflate(R.layout.item_compose, null);
-//                mBuilder.setView(mView);
-//                final android.app.AlertDialog dialog = mBuilder.create();
-//                ImageView dismiss = mView.findViewById(R.id.dismiss);
-//                ImageView sendPost = mView.findViewById(R.id.sendPost);
-//                final EditText etCaption = mView.findViewById(R.id.etCaption);
-//                dismiss.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        dialog.dismiss();
-//                    }
-//                });
-//                Bitmap bitmap = null;
-//
-//                Uri selectedImage = data.getData();
-//                try{
-//                    bitmap = MediaStore.Images.Media.getBitmap(HomeActivity.this.getContentResolver(), selectedImage);
-//                } catch (Exception e) {
-//
-//                }
-//                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-//                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-//                byte[] image = stream.toByteArray();
-//                final ParseFile parseFile = new ParseFile("profpic.jpg", image);
-//                final Bitmap finalBitmap = bitmap;
-//                ImageView ivPreview = mView.findViewById(R.id.ivPost);
-//                Glide.with(HomeActivity.this).load(finalBitmap).into(ivPreview);
-//
-//                sendPost.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        String caption = etCaption.getText().toString();
-//                        createPost(caption, parseFile, ParseUser.getCurrentUser());
-//                        dialog.dismiss();
-//                    }
-//                });
-//                dialog.show();
-//            }
-//        }
+        else{
+            if (resultCode == getActivity().RESULT_OK) {
+                Bitmap bitmap = null;
+                Uri selectedImage = data.getData();
+                try{
+                    bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), selectedImage);
+                } catch (Exception e) {
+                }
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                byte[] image = stream.toByteArray();
+                parseFile = new ParseFile("profpic.jpg", image);
+                final Bitmap finalBitmap = bitmap;
+                imageView.setVisibility(View.VISIBLE);
+                Glide.with(this).load(finalBitmap).into(imageView);
+            } else {
+                parseFile = null;
+            }
+        }
+
     }
 
     public String getAddress(LatLng point){
@@ -341,6 +341,9 @@ public class MapFragment extends Fragment implements
                 Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                 centreMapOnLocation(lastKnownLocation,"Your Location");
             }
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
+            Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            centreMapOnLocation(lastKnownLocation,"Your Location");
         }
     }
 

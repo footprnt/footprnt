@@ -16,6 +16,7 @@ public class Post extends ParseObject implements Serializable {
     private static final String KEY_IMAGE = "image";
     private static final String KEY_USER = "user";
     private static final String KEY_LOCATION = "location";
+    private static final String KEY_TITLE = "title";
 
     public String getDescription(){
         return getString(KEY_DESCRIPTION);
@@ -23,6 +24,14 @@ public class Post extends ParseObject implements Serializable {
 
     public void setDescription(String description){
         put(KEY_DESCRIPTION, description);
+    }
+
+    public String getTitle(){
+        return getString(KEY_TITLE);
+    }
+
+    public void setTitle(String description){
+        put(KEY_TITLE, description);
     }
 
     public ParseFile getImage(){
