@@ -30,6 +30,7 @@ import android.widget.Toast;
 import com.arsy.maps_library.MapRipple;
 import com.bumptech.glide.Glide;
 import com.example.footprnt.Manifest;
+import com.example.footprnt.Models.MarkerDetails;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.R;
 import com.example.footprnt.Util.LocationHelper;
@@ -42,6 +43,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.parse.FindCallback;
+import com.parse.ParseACL;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
@@ -50,6 +53,8 @@ import com.parse.SaveCallback;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickListener, GoogleMap.OnMapClickListener, OnMapReadyCallback {
 
@@ -60,6 +65,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     LocationHelper locationHelper;
     boolean mJumpToCurrentLocation = false;
     MapRipple mapRipple;
+    ArrayList<MarkerDetails> markers;
     public static final int GET_FROM_GALLERY = 3;
     public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
     public String photoFileName = "photo.jpg";
@@ -69,6 +75,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     ImageView cancelPost;
     AlertDialog alertDialog=null;
     ParseFile parseFile;
+    private ParseUser user;
 
     @Nullable
     @Override
@@ -77,6 +84,12 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         SupportMapFragment mapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFrag.getMapAsync(this);
         locationHelper = new LocationHelper();
+        user = ParseUser.getCurrentUser();
+        ParseACL acl = new ParseACL();
+        acl.setReadAccess(user,true);
+        acl.setWriteAccess(user,true);
+        user.setACL(acl);
+        markers = new ArrayList<>();
         return v;
     }
 
@@ -137,11 +150,46 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
             if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
                 Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                locationHelper.centreMapOnLocation(map, lastKnownLocation,"Your Location");
+                if (lastKnownLocation != null ) {
+                    locationHelper.centreMapOnLocation(map, lastKnownLocation, "Your Location");
+                }
             } else {
                 requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
             }
+            loadMarkers();
         }
+    }
+
+    public void loadMarkers(){
+        final MarkerDetails.Query postQuery = new MarkerDetails.Query();
+        postQuery.withUser().whereEqualTo("user", user);
+        postQuery.findInBackground(new FindCallback<MarkerDetails>() {
+            @Override
+            public void done(List<MarkerDetails> objects, ParseException e) {
+                if (e == null){
+                    for (int i = 0; i < objects.size(); i++){
+                        System.out.println(objects.get(i).getLocation());
+                        System.out.println(objects.get(i).getTitle());
+//                        createMarker(objects.get(i).getLocation().getLatitude(), objects.get(i).getLocation().getLatitude(), objects.get(i).getTitle(), objects.get(i).getDescription());
+                    }
+                } else {
+                    markers = new ArrayList<>();
+                    user.put("markers", new ArrayList<Marker>());
+                    user.saveInBackground();
+                }
+            }
+        });
+    }
+
+    protected Marker createMarker(double latitude, double longitude, String title, String snippet) {
+        BitmapDescriptor defaultMarker =
+                BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
+        return map.addMarker(new MarkerOptions()
+                .position(new LatLng(latitude, longitude))
+                .anchor(0.5f, 0.5f)
+                .title(title)
+                .snippet(snippet)
+                .icon(defaultMarker));
     }
 
     @Override
@@ -228,18 +276,19 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         sendPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                BitmapDescriptor defaultMarker =
-                        BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
                 final String title = ((EditText) alertDialog.findViewById(R.id.etTitle)).
                         getText().toString();
                 final String snippet = ((EditText) alertDialog.findViewById(R.id.etSnippet)).
                         getText().toString();
-                Marker marker = map.addMarker(new MarkerOptions()
-                        .position(lastPoint)
-                        .title(title)
-                        .snippet(snippet)
-                        .icon(defaultMarker));
-                final ParseUser user = ParseUser.getCurrentUser();
+                createMarker(lastPoint.latitude, lastPoint.longitude, title, snippet);
+                MarkerDetails mOptions = new MarkerDetails();
+                mOptions.setLocation(new ParseGeoPoint(lastPoint.latitude, lastPoint.longitude));
+                mOptions.setDescription(snippet);
+                mOptions.setTitle(title);
+                mOptions.setUser(user);
+                markers.add(mOptions);
+                user.put("markers", markers);
+                user.saveInBackground();
                 if (parseFile != null){
                     parseFile.saveInBackground(new SaveCallback() {
                         @Override
@@ -330,7 +379,5 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         }
 
     }
-
-
 
 }
