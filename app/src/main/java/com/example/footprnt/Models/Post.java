@@ -18,6 +18,7 @@ public class Post extends ParseObject implements Serializable {
     private static final String KEY_LOCATION = "location";
     private static final String KEY_TITLE = "title";
 
+
     public String getDescription(){
         return getString(KEY_DESCRIPTION);
     }
