@@ -1,4 +1,4 @@
-package com.example.footprnt;
+package com.example.footprnt.Map;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -6,8 +6,8 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-import com.example.footprnt.Map.PostAdapter;
 import com.example.footprnt.Models.Post;
+import com.example.footprnt.R;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 

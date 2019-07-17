@@ -58,9 +58,20 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         Log.d("tag", "onBindViewlHolder");
         Post post = posts.get(position);
 
+        String description = post.getDescription();
+        String title = post.getTitle();
+
         holder.tvUser.setText(post.getUser().getUsername());
-        holder.tvDescription.setText(post.getDescription());
-        holder.tvTitle.setText(post.getTitle());
+        if (description.length() > 0) {
+            holder.tvDescription.setText(description);
+        } else {
+            holder.tvDescription.setVisibility(View.GONE);
+        }
+        if (title != null && title.length() > 0) {
+            holder.tvTitle.setText(title);
+        } else {
+            holder.tvTitle.setVisibility(View.GONE);
+        }
 
         Date d = post.getCreatedAt();
         String dateText;
