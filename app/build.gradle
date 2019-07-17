@@ -44,4 +44,6 @@ dependencies {
     // Glide v4 uses this new annotation processor -- see https://bumptech.github.io/glide/doc/generatedapi.html
     implementation 'com.github.bumptech.glide:glide:4.8.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
+    implementation 'com.github.aarsy:GoogleMapsRippleEffect:6ae11a2379'
+
 }

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -19,7 +20,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -31,6 +31,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.arsy.maps_library.MapRipple;
 import com.bumptech.glide.Glide;
 import com.example.footprnt.Map.PostAdapter;
 import com.example.footprnt.Models.Post;
@@ -43,7 +44,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
@@ -78,7 +78,7 @@ public class MapFragment extends Fragment implements
     ParseFile parseFile;
     LatLng lastPoint;
     boolean mJumpToCurrentLocation = false;
-    private SwipeRefreshLayout swipeContainer; // handling swipe refresh
+    MapRipple mapRipple;
 
     @Nullable
     @Override
@@ -101,26 +101,6 @@ public class MapFragment extends Fragment implements
         });
     }
 
-    private void loadTopPosts(){
-        final Post.Query postQuery = new Post.Query();
-        postQuery.getTop().withUser();
-        postQuery.findInBackground(new FindCallback<Post>() {
-            @Override
-            public void done(List<Post> objects, ParseException e) {
-                if (e == null){
-                    Toast.makeText(getContext(), "num items: " + objects.size(), Toast.LENGTH_SHORT).show();
-                    for (int i = objects.size() - 1; i >= 0; i--){
-                        posts.add(objects.get(i));
-                        postAdapter.notifyItemInserted(posts.size() - 1);
-                    }
-                } else {
-                    Toast.makeText(getContext(), "else", Toast.LENGTH_SHORT).show();
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
     public void composePost() {
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
@@ -132,12 +112,28 @@ public class MapFragment extends Fragment implements
 
     @Override
     public void onMapLongClick(LatLng latLng) {
+        mapRipple = new MapRipple(map, latLng, getContext())
+                .withNumberOfRipples(3)
+                .withFillColor(Color.BLUE)
+                .withStrokeColor(Color.BLACK)
+                .withDistance(2000)      // 2000 metres radius
+                .withRippleDuration(6000)    //12000ms
+                .withTransparency(0.8f);
+        mapRipple.startRippleMapAnimation();      //in onMapReadyCallBack
         Toast.makeText(getActivity(), getAddress(latLng), Toast.LENGTH_LONG).show();
         showAlertDialogForPoint(latLng);
     }
 
     @Override
     public void onMapClick(LatLng latLng) {
+        mapRipple = new MapRipple(map, latLng, getContext())
+                .withNumberOfRipples(3)
+                .withFillColor(Color.BLUE)
+                .withStrokeColor(Color.BLACK)
+                .withDistance(2000)      // 2000 metres radius
+                .withRippleDuration(6000)    //12000ms
+                .withTransparency(0.9f);
+        mapRipple.startRippleMapAnimation();      //in onMapReadyCallBack
         Intent i = new Intent(getActivity(), FeedActivity.class);
         startActivity(i);
     }
@@ -244,8 +240,6 @@ public class MapFragment extends Fragment implements
                 }
             }
         });
-        posts.add(0, newPost);
-        postAdapter.notifyItemInserted(0);
     }
 
     public File getPhotoFileUri(String fileName) {
