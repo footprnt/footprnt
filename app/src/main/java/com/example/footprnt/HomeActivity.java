@@ -8,6 +8,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
+import com.example.footprnt.Profile.ProfileFragment;
+
 public class HomeActivity extends AppCompatActivity {
     final FragmentManager fragmentManager = getSupportFragmentManager();
 

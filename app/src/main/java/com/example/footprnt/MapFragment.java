@@ -32,6 +32,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.footprnt.Models.Post;
+import com.example.footprnt.Profile.PostAdapter;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
