@@ -162,18 +162,19 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
 
     public void loadMarkers(){
         final MarkerDetails.Query postQuery = new MarkerDetails.Query();
+        markers = new ArrayList<>();
         postQuery.withUser().whereEqualTo("user", user);
         postQuery.findInBackground(new FindCallback<MarkerDetails>() {
             @Override
             public void done(List<MarkerDetails> objects, ParseException e) {
                 if (e == null){
                     for (int i = 0; i < objects.size(); i++){
-                        System.out.println(objects.get(i).getLocation());
-                        System.out.println(objects.get(i).getTitle());
-//                        createMarker(objects.get(i).getLocation().getLatitude(), objects.get(i).getLocation().getLatitude(), objects.get(i).getTitle(), objects.get(i).getDescription());
+                        markers.add(objects.get(i));
+                    }
+                    for (MarkerDetails m: markers){
+                        createMarker(m.getLocation().getLatitude(), m.getLocation().getLongitude(), m.getTitle(), m.getDescription());
                     }
                 } else {
-                    markers = new ArrayList<>();
                     user.put("markers", new ArrayList<Marker>());
                     user.saveInBackground();
                 }
@@ -181,12 +182,11 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         });
     }
 
-    protected Marker createMarker(double latitude, double longitude, String title, String snippet) {
+    protected void createMarker(double latitude, double longitude, String title, String snippet) {
         BitmapDescriptor defaultMarker =
                 BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
-        return map.addMarker(new MarkerOptions()
+        map.addMarker(new MarkerOptions()
                 .position(new LatLng(latitude, longitude))
-                .anchor(0.5f, 0.5f)
                 .title(title)
                 .snippet(snippet)
                 .icon(defaultMarker));
@@ -198,6 +198,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         if (grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
             if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
                 mJumpToCurrentLocation = true;
+                System.out.println("permissions granted");
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
             }
         }
