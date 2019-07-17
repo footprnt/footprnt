@@ -51,12 +51,15 @@ import com.parse.SaveCallback;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 
-public class MapFragment extends Fragment implements
-        GoogleMap.OnMapLongClickListener, GoogleMap.OnMapClickListener, OnMapReadyCallback {
+public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickListener, GoogleMap.OnMapClickListener, OnMapReadyCallback {
 
     private GoogleMap map;
     LocationManager locationManager;
     LocationListener locationListener;
+    LatLng lastPoint;
+    LocationHelper locationHelper;
+    boolean mJumpToCurrentLocation = false;
+    MapRipple mapRipple;
     public static final int GET_FROM_GALLERY = 3;
     public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
     public String photoFileName = "photo.jpg";
@@ -66,10 +69,6 @@ public class MapFragment extends Fragment implements
     ImageView cancelPost;
     AlertDialog alertDialog=null;
     ParseFile parseFile;
-    LatLng lastPoint;
-    LocationHelper locationHelper;
-    boolean mJumpToCurrentLocation = false;
-    MapRipple mapRipple;
 
     @Nullable
     @Override
@@ -89,7 +88,7 @@ public class MapFragment extends Fragment implements
         newPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                composePost();
+                createPostCurrentLocation();
             }
         });
         findCurrentLoc.setOnClickListener(new View.OnClickListener() {
@@ -104,12 +103,55 @@ public class MapFragment extends Fragment implements
         });
     }
 
-    public void composePost() {
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
-            Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            LatLng currLocation = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
-            showAlertDialogForPoint(currLocation);
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        map = googleMap;
+        map.setOnMapLongClickListener(this);
+        map.setOnMapClickListener(this);
+        Intent intent = getActivity().getIntent();
+        if (intent.getIntExtra("Place Number",0) == 0 ){
+            // Zoom into users location
+            locationManager = (LocationManager)getActivity().getSystemService(Context.LOCATION_SERVICE);
+            locationListener = new LocationListener() {
+                @Override
+                public void onLocationChanged(Location location) {
+                    if (mJumpToCurrentLocation) {
+                        mJumpToCurrentLocation = false;
+                        locationHelper.centreMapOnLocation(map, location, "Your Location");
+                    }
+                }
+
+                @Override
+                public void onStatusChanged(String s, int i, Bundle bundle) {
+                }
+
+                @Override
+                public void onProviderEnabled(String s) {
+                }
+
+                @Override
+                public void onProviderDisabled(String s) {
+                }
+            };
+
+            if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
+                Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                locationHelper.centreMapOnLocation(map, lastKnownLocation,"Your Location");
+            } else {
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+            if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+                mJumpToCurrentLocation = true;
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
+            }
         }
     }
 
@@ -220,6 +262,15 @@ public class MapFragment extends Fragment implements
         });
     }
 
+    public void createPostCurrentLocation() {
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
+            Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            LatLng currLocation = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
+            showAlertDialogForPoint(currLocation);
+        }
+    }
+
     private void createPost(String description, String title, ParseFile imageFile, ParseUser user, LatLng point){
         final Post newPost = new Post();
         newPost.setDescription(description);
@@ -280,56 +331,6 @@ public class MapFragment extends Fragment implements
 
     }
 
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        map = googleMap;
-        map.setOnMapLongClickListener(this);
-        map.setOnMapClickListener(this);
-        Intent intent = getActivity().getIntent();
-        if (intent.getIntExtra("Place Number",0) == 0 ){
-            // Zoom into users location
-            locationManager = (LocationManager)getActivity().getSystemService(Context.LOCATION_SERVICE);
-            locationListener = new LocationListener() {
-                @Override
-                public void onLocationChanged(Location location) {
-                    if (mJumpToCurrentLocation) {
-                        mJumpToCurrentLocation = false;
-                        locationHelper.centreMapOnLocation(map, location, "Your Location");
-                    }
-                }
 
-                @Override
-                public void onStatusChanged(String s, int i, Bundle bundle) {
-                }
-
-                @Override
-                public void onProviderEnabled(String s) {
-                }
-
-                @Override
-                public void onProviderDisabled(String s) {
-                }
-            };
-
-            if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
-                Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                locationHelper.centreMapOnLocation(map, lastKnownLocation,"Your Location");
-            } else {
-                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
-            }
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-            if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-                mJumpToCurrentLocation = true;
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
-            }
-        }
-    }
 
 }
