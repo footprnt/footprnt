@@ -31,6 +31,7 @@ import com.parse.ParseException;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -45,9 +46,9 @@ public class ProfileFragment extends Fragment {
     ArrayAdapter<String> statAdapter;  // Adapter for stats
     ArrayList<String> stats;
     ListView lvStats;
-    ArrayList<String> cities;
-    ArrayList<String> countries;
-    ArrayList<String> continents;
+    HashMap<String, Integer> cities;
+    HashMap<String, Integer> countries;
+    HashMap<String, Integer> continents;
 
 
     // For post feed:
@@ -160,9 +161,11 @@ public class ProfileFragment extends Fragment {
                 if (e == null) {
                     for (int i = 0; i < objects.size(); i++) {
                         Post post = (Post) objects.get(i);
+                        // Only add current user's posts
                         if(post.getUser().getObjectId().equals(ParseUser.getCurrentUser().getObjectId())) {
                             posts.add(post);
                             postAdapter.notifyItemInserted(posts.size() - 1);
+                            
                         }
                     }
                     swipeContainer.setRefreshing(false);
