@@ -1,4 +1,4 @@
-package com.example.footprnt;
+package com.example.footprnt.Map;
 
 import android.content.Context;
 import android.content.Intent;
@@ -6,14 +6,11 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,7 +18,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,9 +29,11 @@ import android.widget.Toast;
 
 import com.arsy.maps_library.MapRipple;
 import com.bumptech.glide.Glide;
-import com.example.footprnt.Map.PostAdapter;
+import com.example.footprnt.Manifest;
 import com.example.footprnt.Models.Post;
-import com.google.android.gms.maps.CameraUpdateFactory;
+import com.example.footprnt.R;
+import com.example.footprnt.Util.LocationHelper;
+import com.example.footprnt.Util.PhotoHelper;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -52,31 +50,24 @@ import com.parse.SaveCallback;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 
 public class MapFragment extends Fragment implements
         GoogleMap.OnMapLongClickListener, GoogleMap.OnMapClickListener, OnMapReadyCallback {
 
-    private SupportMapFragment mapFragment;
     private GoogleMap map;
     LocationManager locationManager;
     LocationListener locationListener;
     public static final int GET_FROM_GALLERY = 3;
-    public final String APP_TAG = "footprnt";
     public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
     public String photoFileName = "photo.jpg";
     ImageView imageView;
     File photoFile;
-    PostAdapter postAdapter;
-    ArrayList<Post> posts;
-    RecyclerView rvPosts;
     ImageView sendPost;
     ImageView cancelPost;
     AlertDialog alertDialog=null;
     ParseFile parseFile;
     LatLng lastPoint;
+    LocationHelper locationHelper;
     boolean mJumpToCurrentLocation = false;
     MapRipple mapRipple;
 
@@ -86,6 +77,7 @@ public class MapFragment extends Fragment implements
         View v = inflater.inflate(R.layout.fragment_map, container, false);
         SupportMapFragment mapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFrag.getMapAsync(this);
+        locationHelper = new LocationHelper();
         return v;
     }
 
@@ -93,10 +85,21 @@ public class MapFragment extends Fragment implements
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ImageView newPost = getView().findViewById(R.id.newPost);
+        ImageView findCurrentLoc = getView().findViewById(R.id.findCurrentLoc);
         newPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 composePost();
+            }
+        });
+        findCurrentLoc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+                    Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                    locationHelper.centreMapOnLocation(map, lastKnownLocation, "Your location");
+                }
             }
         });
     }
@@ -120,7 +123,7 @@ public class MapFragment extends Fragment implements
                 .withRippleDuration(6000)    //12000ms
                 .withTransparency(0.8f);
         mapRipple.startRippleMapAnimation();      //in onMapReadyCallBack
-        Toast.makeText(getActivity(), getAddress(latLng), Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity(), locationHelper.getAddress(getContext(), latLng), Toast.LENGTH_LONG).show();
         showAlertDialogForPoint(latLng);
     }
 
@@ -138,8 +141,6 @@ public class MapFragment extends Fragment implements
         startActivity(i);
     }
 
-
-    // Display the alert that adds the marker
     private void showAlertDialogForPoint(final LatLng point) {
         View messageView = LayoutInflater.from(getActivity()).
                 inflate(R.layout.message_item, null);
@@ -156,7 +157,7 @@ public class MapFragment extends Fragment implements
         imageView = alertDialog.findViewById(R.id.image);
         imageView.setVisibility(View.GONE);
         TextView location = alertDialog.findViewById(R.id.location);
-        location.setText(getAddress(point));
+        location.setText(locationHelper.getAddress(getContext(),point));
         lastPoint = point;
 
         ivUpload.setOnClickListener(new View.OnClickListener(){
@@ -170,7 +171,8 @@ public class MapFragment extends Fragment implements
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                photoFile = getPhotoFileUri(photoFileName);
+                PhotoHelper photoHelper = new PhotoHelper();
+                photoFile = photoHelper.getPhotoFileUri(getActivity(), photoFileName);
 
                 Uri fileProvider = FileProvider.getUriForFile(getActivity(), "com.example.fileprovider", photoFile);
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
@@ -210,7 +212,6 @@ public class MapFragment extends Fragment implements
                 }
             }
         });
-
         cancelPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -242,17 +243,6 @@ public class MapFragment extends Fragment implements
         });
     }
 
-    public File getPhotoFileUri(String fileName) {
-        File mediaStorageDir = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), APP_TAG);
-
-        if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()){
-            Log.d(APP_TAG, "failed to create directory");
-        }
-
-        File file = new File(mediaStorageDir.getPath() + File.separator + fileName);
-        return file;
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, final Intent data) {
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
@@ -260,7 +250,8 @@ public class MapFragment extends Fragment implements
                 Bitmap takenImage = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
                 imageView.setVisibility(View.VISIBLE);
                 imageView.setImageBitmap(takenImage);
-                File photoFile = getPhotoFileUri(photoFileName);
+                PhotoHelper photoHelper = new PhotoHelper();
+                File photoFile = photoHelper.getPhotoFileUri(getContext(), photoFileName);
                 parseFile = new ParseFile(photoFile);
             } else {
                 parseFile = null;
@@ -289,26 +280,6 @@ public class MapFragment extends Fragment implements
 
     }
 
-    public String getAddress(LatLng point){
-        try {
-            Geocoder geo = new Geocoder(getActivity(), Locale.getDefault());
-            List<Address> addresses = geo.getFromLocation(point.latitude, point.longitude, 1);
-            if (addresses.isEmpty()) {
-                return "Waiting for location...";
-            }
-            else {
-                if (addresses.size() > 0) {
-                    return (addresses.get(0).getFeatureName() + ", " + addresses.get(0).getLocality() +", " + addresses.get(0).getAdminArea() + ", " + addresses.get(0).getCountryName());
-                }
-            }
-        }
-        catch (Exception e) {
-            e.printStackTrace(); // getFromLocation() may sometimes fail
-            return null;
-        }
-        return null;
-    }
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
@@ -323,41 +294,31 @@ public class MapFragment extends Fragment implements
                 public void onLocationChanged(Location location) {
                     if (mJumpToCurrentLocation) {
                         mJumpToCurrentLocation = false;
-                        System.out.println("aaa");
-                        centreMapOnLocation(location, "Your Location");
+                        locationHelper.centreMapOnLocation(map, location, "Your Location");
                     }
                 }
 
                 @Override
                 public void onStatusChanged(String s, int i, Bundle bundle) {
-
                 }
 
                 @Override
                 public void onProviderEnabled(String s) {
-
                 }
 
                 @Override
                 public void onProviderDisabled(String s) {
-
                 }
             };
 
             if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
                 Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                centreMapOnLocation(lastKnownLocation,"Your Location");
+                locationHelper.centreMapOnLocation(map, lastKnownLocation,"Your Location");
             } else {
                 requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
             }
         }
-    }
-
-    public void centreMapOnLocation(Location location, String title){
-        LatLng userLocation = new LatLng(location.getLatitude(),location.getLongitude());
-        map.addMarker(new MarkerOptions().position(userLocation).title(title));
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation,12));
     }
 
     @Override
