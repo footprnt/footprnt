@@ -45,6 +45,10 @@ public class ProfileFragment extends Fragment {
     ArrayAdapter<String> statAdapter;  // Adapter for stats
     ArrayList<String> stats;
     ListView lvStats;
+    ArrayList<String> cities;
+    ArrayList<String> countries;
+    ArrayList<String> continents;
+
 
     // For post feed:
     ArrayList<Post> posts;  // list of current user posts
@@ -156,8 +160,10 @@ public class ProfileFragment extends Fragment {
                 if (e == null) {
                     for (int i = 0; i < objects.size(); i++) {
                         Post post = (Post) objects.get(i);
-                        posts.add(post);
-                        postAdapter.notifyItemInserted(posts.size()-1);
+                        if(post.getUser().getObjectId().equals(ParseUser.getCurrentUser().getObjectId())) {
+                            posts.add(post);
+                            postAdapter.notifyItemInserted(posts.size() - 1);
+                        }
                     }
                     swipeContainer.setRefreshing(false);
                 } else {
@@ -166,6 +172,7 @@ public class ProfileFragment extends Fragment {
             }
         });
     }
+
 
     private void getStats(){
         final ParseUser user = ParseUser.getCurrentUser();
