@@ -2,6 +2,7 @@ package com.example.footprnt;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
@@ -13,15 +14,16 @@ import com.parse.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TestActivity extends Activity {
+public class FeedActivity extends Activity {
     ArrayList<Post> posts;
     PostAdapter postAdapter;
     RecyclerView rvPosts;
+    SwipeRefreshLayout swipeContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_test);
+        setContentView(R.layout.activity_feed);
         posts = new ArrayList<>();
         getPosts();
         postAdapter = new PostAdapter(posts);
@@ -29,6 +31,18 @@ public class TestActivity extends Activity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         rvPosts.setLayoutManager(layoutManager);
         rvPosts.setAdapter(postAdapter);
+        swipeContainer = findViewById(R.id.swipeContainer);
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                fetchTimelineAsync(0);
+            }
+        });
+        swipeContainer.setColorSchemeResources(R.color.refresh_progress_1,
+                R.color.refresh_progress_2,
+                R.color.refresh_progress_3,
+                R.color.refresh_progress_4,
+                R.color.refresh_progress_5);
     }
 
     // Get posts
@@ -48,11 +62,21 @@ public class TestActivity extends Activity {
                         posts.add(post);
                         postAdapter.notifyItemInserted(posts.size()-1);
                     }
-                    //swipeContainer.setRefreshing(false);
+                    swipeContainer.setRefreshing(false);
                 } else {
                     e.printStackTrace();
                 }
             }
         });
+    }
+
+
+    public void fetchTimelineAsync(int page) {
+        /*
+        Handles refreshing
+         */
+        postAdapter.clear();
+        getPosts();
+        swipeContainer.setRefreshing(false);
     }
 }

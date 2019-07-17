@@ -101,15 +101,6 @@ public class MapFragment extends Fragment implements
         });
     }
 
-    public void fetchTimelineAsync(int page) {
-        /*
-        Handles refreshing
-         */
-        postAdapter.clear();
-        loadTopPosts();
-        swipeContainer.setRefreshing(false);
-    }
-
     private void loadTopPosts(){
         final Post.Query postQuery = new Post.Query();
         postQuery.getTop().withUser();
@@ -147,21 +138,8 @@ public class MapFragment extends Fragment implements
 
     @Override
     public void onMapClick(LatLng latLng) {
-        Intent i = new Intent(getActivity(), TestActivity.class);
+        Intent i = new Intent(getActivity(), FeedActivity.class);
         startActivity(i);
-
-//        swipeContainer = alertDialog.findViewById(R.id.swipeContainer);
-//        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-//            @Override
-//            public void onRefresh() {
-//                fetchTimelineAsync(0);
-//            }
-//        });
-//        swipeContainer.setColorSchemeResources(R.color.refresh_progress_1,
-//                R.color.refresh_progress_2,
-//                R.color.refresh_progress_3,
-//                R.color.refresh_progress_4,
-//                R.color.refresh_progress_5);
     }
 
 
