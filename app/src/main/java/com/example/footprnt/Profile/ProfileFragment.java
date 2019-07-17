@@ -81,6 +81,12 @@ public class ProfileFragment extends Fragment {
         } else {
             Glide.with(getContext()).load(R.drawable.ic_user).into(ivProfileImage);
         }
+        ivProfileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO: let user upload new photo or take photo
+            }
+        });
 
         // For stat view
         lvStats = v.findViewById(R.id.lvStatKey);
