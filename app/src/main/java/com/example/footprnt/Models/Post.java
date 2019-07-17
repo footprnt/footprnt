@@ -72,8 +72,6 @@ public class Post extends ParseObject implements Serializable {
             include("user");
             return this;
         }
-
-
     }
 
     @Override
