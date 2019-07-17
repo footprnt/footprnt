@@ -30,7 +30,7 @@
         android:text="Username"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@+id/ivProfileImage"
+        app:layout_constraintStart_toEndOf="@+id/ivProfileImageMain"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -43,10 +43,10 @@
         android:text="Caption"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ivProfileImage" />
+        app:layout_constraintTop_toBottomOf="@+id/ivProfileImageMain" />
 
     <ImageView
-        android:id="@+id/ivProfileImage"
+        android:id="@+id/ivProfileImageMain"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginStart="8dp"
