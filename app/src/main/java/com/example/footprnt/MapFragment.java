@@ -19,6 +19,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -31,6 +32,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.footprnt.Map.PostAdapter;
 import com.example.footprnt.Models.Post;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -41,6 +43,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
@@ -54,7 +57,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class MapFragment extends Fragment implements
-        GoogleMap.OnMapLongClickListener, OnMapReadyCallback {
+        GoogleMap.OnMapLongClickListener, GoogleMap.OnMapClickListener, OnMapReadyCallback {
 
     private SupportMapFragment mapFragment;
     private GoogleMap map;
@@ -75,6 +78,7 @@ public class MapFragment extends Fragment implements
     ParseFile parseFile;
     LatLng lastPoint;
     boolean mJumpToCurrentLocation = false;
+    private SwipeRefreshLayout swipeContainer; // handling swipe refresh
 
     @Nullable
     @Override
@@ -82,8 +86,6 @@ public class MapFragment extends Fragment implements
         View v = inflater.inflate(R.layout.fragment_map, container, false);
         SupportMapFragment mapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFrag.getMapAsync(this);
-        posts = new ArrayList<>();
-        postAdapter = new PostAdapter(posts);
         return v;
     }
 
@@ -95,6 +97,35 @@ public class MapFragment extends Fragment implements
             @Override
             public void onClick(View v) {
                 composePost();
+            }
+        });
+    }
+
+    public void fetchTimelineAsync(int page) {
+        /*
+        Handles refreshing
+         */
+        postAdapter.clear();
+        loadTopPosts();
+        swipeContainer.setRefreshing(false);
+    }
+
+    private void loadTopPosts(){
+        final Post.Query postQuery = new Post.Query();
+        postQuery.getTop().withUser();
+        postQuery.findInBackground(new FindCallback<Post>() {
+            @Override
+            public void done(List<Post> objects, ParseException e) {
+                if (e == null){
+                    Toast.makeText(getContext(), "num items: " + objects.size(), Toast.LENGTH_SHORT).show();
+                    for (int i = objects.size() - 1; i >= 0; i--){
+                        posts.add(objects.get(i));
+                        postAdapter.notifyItemInserted(posts.size() - 1);
+                    }
+                } else {
+                    Toast.makeText(getContext(), "else", Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
+                }
             }
         });
     }
@@ -113,6 +144,26 @@ public class MapFragment extends Fragment implements
         Toast.makeText(getActivity(), getAddress(latLng), Toast.LENGTH_LONG).show();
         showAlertDialogForPoint(latLng);
     }
+
+    @Override
+    public void onMapClick(LatLng latLng) {
+        Intent i = new Intent(getActivity(), TestActivity.class);
+        startActivity(i);
+
+//        swipeContainer = alertDialog.findViewById(R.id.swipeContainer);
+//        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+//            @Override
+//            public void onRefresh() {
+//                fetchTimelineAsync(0);
+//            }
+//        });
+//        swipeContainer.setColorSchemeResources(R.color.refresh_progress_1,
+//                R.color.refresh_progress_2,
+//                R.color.refresh_progress_3,
+//                R.color.refresh_progress_4,
+//                R.color.refresh_progress_5);
+    }
+
 
     // Display the alert that adds the marker
     private void showAlertDialogForPoint(final LatLng point) {
@@ -290,6 +341,7 @@ public class MapFragment extends Fragment implements
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
         map.setOnMapLongClickListener(this);
+        map.setOnMapClickListener(this);
         Intent intent = getActivity().getIntent();
         if (intent.getIntExtra("Place Number",0) == 0 ){
             // Zoom into users location

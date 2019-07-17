@@ -3,4 +3,10 @@
     <color name="colorPrimary">#659DBD</color>
     <color name="colorPrimaryDark">#BC986A</color>
     <color name="colorAccent">#FBEEC1</color>
+    <color name="refresh_progress_1">#659DBD</color>
+    <color name="refresh_progress_2">#8d8741</color>
+    <color name="refresh_progress_3">#bc986a</color>
+    <color name="refresh_progress_4">#daad86</color>
+    <color name="refresh_progress_5">#fbeec1</color>
+
 </resources>
