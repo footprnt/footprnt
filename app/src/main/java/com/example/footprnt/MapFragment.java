@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -30,7 +31,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.arsy.maps_library.MapRipple;
 import com.bumptech.glide.Glide;
+import com.example.footprnt.Map.PostAdapter;
 import com.example.footprnt.Models.Post;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -54,7 +57,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class MapFragment extends Fragment implements
-        GoogleMap.OnMapLongClickListener, OnMapReadyCallback {
+        GoogleMap.OnMapLongClickListener, GoogleMap.OnMapClickListener, OnMapReadyCallback {
 
     private SupportMapFragment mapFragment;
     private GoogleMap map;
@@ -75,6 +78,7 @@ public class MapFragment extends Fragment implements
     ParseFile parseFile;
     LatLng lastPoint;
     boolean mJumpToCurrentLocation = false;
+    MapRipple mapRipple;
 
     @Nullable
     @Override
@@ -82,8 +86,6 @@ public class MapFragment extends Fragment implements
         View v = inflater.inflate(R.layout.fragment_map, container, false);
         SupportMapFragment mapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFrag.getMapAsync(this);
-        posts = new ArrayList<>();
-        postAdapter = new PostAdapter(posts);
         return v;
     }
 
@@ -110,9 +112,32 @@ public class MapFragment extends Fragment implements
 
     @Override
     public void onMapLongClick(LatLng latLng) {
+        mapRipple = new MapRipple(map, latLng, getContext())
+                .withNumberOfRipples(3)
+                .withFillColor(Color.BLUE)
+                .withStrokeColor(Color.BLACK)
+                .withDistance(2000)      // 2000 metres radius
+                .withRippleDuration(6000)    //12000ms
+                .withTransparency(0.8f);
+        mapRipple.startRippleMapAnimation();      //in onMapReadyCallBack
         Toast.makeText(getActivity(), getAddress(latLng), Toast.LENGTH_LONG).show();
         showAlertDialogForPoint(latLng);
     }
+
+    @Override
+    public void onMapClick(LatLng latLng) {
+        mapRipple = new MapRipple(map, latLng, getContext())
+                .withNumberOfRipples(3)
+                .withFillColor(Color.BLUE)
+                .withStrokeColor(Color.BLACK)
+                .withDistance(2000)      // 2000 metres radius
+                .withRippleDuration(6000)    //12000ms
+                .withTransparency(0.9f);
+        mapRipple.startRippleMapAnimation();      //in onMapReadyCallBack
+        Intent i = new Intent(getActivity(), FeedActivity.class);
+        startActivity(i);
+    }
+
 
     // Display the alert that adds the marker
     private void showAlertDialogForPoint(final LatLng point) {
@@ -215,8 +240,6 @@ public class MapFragment extends Fragment implements
                 }
             }
         });
-        posts.add(0, newPost);
-        postAdapter.notifyItemInserted(0);
     }
 
     public File getPhotoFileUri(String fileName) {
@@ -290,6 +313,7 @@ public class MapFragment extends Fragment implements
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
         map.setOnMapLongClickListener(this);
+        map.setOnMapClickListener(this);
         Intent intent = getActivity().getIntent();
         if (intent.getIntExtra("Place Number",0) == 0 ){
             // Zoom into users location
@@ -342,6 +366,7 @@ public class MapFragment extends Fragment implements
         if (grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
             if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
                 mJumpToCurrentLocation = true;
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
             }
         }
     }

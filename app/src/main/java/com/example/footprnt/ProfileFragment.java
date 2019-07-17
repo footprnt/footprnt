@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.footprnt.Map.PostAdapter;
 import com.example.footprnt.Models.Post;
 import com.parse.FindCallback;
 import com.parse.ParseException;
