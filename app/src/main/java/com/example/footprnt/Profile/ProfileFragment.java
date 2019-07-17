@@ -1,5 +1,7 @@
 package com.example.footprnt.Profile;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -17,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -36,6 +39,7 @@ public class ProfileFragment extends Fragment {
     public final static String TAG = "ProfileFragment";  // tag for logging from this activity
     // For user profile info view:
     CircleImageView ivProfileImage;
+    TextView tvEditProfileImage;
 
     // For stats view:
     ArrayAdapter<String> statAdapter;  // Adapter for stats
@@ -81,10 +85,28 @@ public class ProfileFragment extends Fragment {
         } else {
             Glide.with(getContext()).load(R.drawable.ic_user).into(ivProfileImage);
         }
-        ivProfileImage.setOnClickListener(new View.OnClickListener() {
+
+        tvEditProfileImage = v.findViewById(R.id.tvEditPhoto);
+        tvEditProfileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: let user upload new photo or take photo
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle("Upload or Take a Photo");
+                builder.setPositiveButton("Upload", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Upload image
+                    }
+                });
+                builder.setNegativeButton("Take a Photo", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Take Photo
+                    }
+                });
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         });
 
