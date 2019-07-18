@@ -4,11 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
         <android.support.v7.widget.Toolbar
             android:id="@+id/topNav"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@android:color/white"
+            android:background="@color/colorPrimary"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -59,7 +60,7 @@
             android:layout_marginBottom="124dp"
             android:background="#00020202"
             android:text="@string/stats"
-            android:textColor="#000000"
+            android:textColor="@color/grey"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/tvPosts"
@@ -70,14 +71,14 @@
         <TextView
             android:id="@+id/tvPosts"
             android:layout_width="392dp"
-            android:layout_height="26dp"
+            android:layout_height="24dp"
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
             android:layout_marginTop="308dp"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:text="@string/my_posts"
-            android:textColor="#000000"
+            android:textColor="@color/grey"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
@@ -130,7 +131,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/topNav"
             app:layout_constraintVertical_bias="0.083"
-            app:civ_border_width="2dp"
             tools:srcCompat="@tools:sample/avatars" />
 
         <TextView
@@ -142,8 +142,8 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
-            android:text="Edit Your Profile"
-            android:textColor="#03A9F4"
+            android:text="EDIT YOUR PROFILE"
+            android:textColor="@color/colorPrimary"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/tvStats"
             app:layout_constraintEnd_toEndOf="parent"
