@@ -1,10 +1,10 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/statusBarBlueg</item>
         <item name="colorAccent">@color/colorPrimary</item>
         <item name="android:fontFamily">@font/roboto_light</item>
     </style>
@@ -26,10 +26,12 @@
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+
     </style>
 
     <style name="AppTheme.CustomTheme">
         <item name="android:windowIsTranslucent">true</item>
+        <item name="android:background">@android:color/transparent</item>
         <item name="android:windowCloseOnTouchOutside">true</item>
     </style>
 
