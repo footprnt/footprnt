@@ -2,6 +2,7 @@ package com.example.footprnt;
 
 import android.app.Application;
 
+import com.example.footprnt.Models.MarkerDetails;
 import com.example.footprnt.Models.Post;
 import com.parse.Parse;
 import com.parse.ParseObject;
@@ -14,6 +15,7 @@ public class ParseApplication extends Application {
 
         // Register Classes:
         ParseObject.registerSubclass(Post.class);
+        ParseObject.registerSubclass(MarkerDetails.class);
 
         final Parse.Configuration configuration = new Parse.Configuration.Builder(this)
                 .applicationId("explor")

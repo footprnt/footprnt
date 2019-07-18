@@ -1,9 +1,11 @@
+/*
+ * Copyright 2019 Footprnt Inc.
+ */
 package com.example.footprnt.Profile;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -16,7 +18,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -25,6 +26,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.footprnt.MainActivity;
 import com.example.footprnt.Models.Post;
+import com.example.footprnt.Profile.Util.Util;
 import com.example.footprnt.R;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -36,33 +38,133 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static android.app.Activity.RESULT_OK;
+
+/**
+ * Fragment for profile page
+ * Created by Clarisa Leu 2019
+ */
 public class ProfileFragment extends Fragment {
     public final static String TAG = "ProfileFragment";  // tag for logging from this activity
+    final ParseUser user = ParseUser.getCurrentUser();
+
     // For user profile info view:
-    CircleImageView ivProfileImage;
-    TextView tvEditProfileImage;
+    CircleImageView mIvProfileImage;
+    TextView mTvEditProfile;
 
     // For stats view:
-    ArrayAdapter<String> statAdapter;  // Adapter for stats
-    ArrayList<String> stats;
-    ListView lvStats;
-    HashMap<String, Integer> cities;
-    HashMap<String, Integer> countries;
-    HashMap<String, Integer> continents;
-
+    StatListAdapter mStatAdapter;  // Adapter for stats
+    ListView mLvStats;
+    HashMap<String, Integer> mCities;
+    HashMap<String, Integer> mCountries;
+    HashMap<String, Integer> mContinents;
+    ArrayList<HashMap<String, Integer>> mStatsList;
 
     // For post feed:
-    ArrayList<Post> posts;  // list of current user posts
-    RecyclerView rvPosts;
-    PostAdapter postAdapter;
-    SwipeRefreshLayout swipeContainer;
+    ArrayList<Post> mPosts;  // list of current user posts
+    RecyclerView mRvPosts;
+    PostAdapter mPostAdapter;
+    SwipeRefreshLayout mSwipeContainer;
 
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            loadProfImage();
+        }
+    }
+
+    private void loadProfImage() {
+        if (user.getParseFile("profileImg") != null) {
+            String url = user.getParseFile("profileImg").getUrl();
+            System.out.println(url);
+            Glide.with(getContext()).load(url).into(mIvProfileImage);
+        } else {
+            Glide.with(getContext()).load(R.drawable.ic_user).into(mIvProfileImage);
+        }
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_profile, container, false);
+        setUpLogOutButton(v);
 
+        // Populate stat maps and get posts
+        mPosts = new ArrayList<>();
+        mCities = new HashMap<>();
+        mCountries = new HashMap<>();
+        mContinents = new HashMap<>();
+        mStatsList = new ArrayList<>();
+
+        // Call getPosts() first
+        mTvEditProfile = v.findViewById(R.id.tvEditProfile);
+        mTvEditProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent it = new Intent(v.getContext(), UserSettings.class);
+                startActivityForResult(it, 1);
+            }
+        });
+
+
+        // For profile image:
+        mIvProfileImage = v.findViewById(R.id.ivProfileImageMain);
+        loadProfImage();
+
+        getPosts(
+                new Handler(),
+                new CalculateStatsCallback() {
+                    @Override
+                    public void onDone(ArrayList<HashMap<String, Integer>> stats) {
+                        mStatsList.add(mCities);
+                        mStatsList.add(mCountries);
+                        mStatsList.add(mContinents);
+                        updateStats();
+                    }
+                });
+
+        // Refresh listener for post feed and update stats
+        mSwipeContainer = v.findViewById(R.id.swipeContainer);
+        mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getPosts(new Handler(), new CalculateStatsCallback() {
+                    @Override
+                    public void onDone(ArrayList<HashMap<String, Integer>> stats) {
+                        updateStats();
+                    }
+                });
+            }
+        });
+
+        // For post feed view:
+        mPostAdapter = new PostAdapter(mPosts);
+        mRvPosts = v.findViewById(R.id.rvFeed);
+        mRvPosts.setLayoutManager(new GridLayoutManager(v.getContext(), 3));
+        mRvPosts.setAdapter(mPostAdapter);
+
+        // For stat view
+        mLvStats = v.findViewById(R.id.lvStatKey);
+        mStatAdapter = new StatListAdapter(mStatsList, v.getContext());
+        mLvStats.setAdapter(mStatAdapter);
+
+        return v;
+    }
+
+    interface CalculateStatsCallback {
+        void onDone(ArrayList<HashMap<String, Integer>> mStatsList);
+    }
+
+// TODO: Make interface for stats
+//    interface CustomStatInterface {
+//        String getName();
+//
+//        String calculateStat(String data);
+//    }
+
+
+    private void setUpLogOutButton(final View v) {
         // Log out button
         final ImageView settings = v.findViewById(R.id.settings);
         settings.setOnClickListener(new View.OnClickListener() {
@@ -70,7 +172,6 @@ public class ProfileFragment extends Fragment {
             public void onClick(View v) {
                 PopupMenu popup = new PopupMenu(getActivity(), settings);
                 popup.getMenuInflater().inflate(R.menu.popup_menu, popup.getMenu());
-
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     public boolean onMenuItemClick(MenuItem item) {
                         ParseUser.logOut();
@@ -79,80 +180,18 @@ public class ProfileFragment extends Fragment {
                         return true;
                     }
                 });
-                popup.show();  //showing popup menu
+                popup.show();
             }
         });
-
-        // For profile image:
-        ivProfileImage = v.findViewById(R.id.ivProfileImageMain);
-        if(ParseUser.getCurrentUser().getParseFile("profileImg")!=null) {
-            Glide.with(getContext()).load(ParseUser.getCurrentUser().getParseFile("profileImg").getUrl()).into(ivProfileImage);
-        } else {
-            Glide.with(getContext()).load(R.drawable.ic_user).into(ivProfileImage);
-        }
-
-        tvEditProfileImage = v.findViewById(R.id.tvEditPhoto);
-        tvEditProfileImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                builder.setTitle("Upload or Take a Photo");
-                builder.setPositiveButton("Upload", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Upload image
-                    }
-                });
-                builder.setNegativeButton("Take a Photo", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Take Photo
-                    }
-                });
-
-                AlertDialog dialog = builder.create();
-                dialog.show();
-            }
-        });
-
-        // For stat view
-        lvStats = v.findViewById(R.id.lvStatKey);
-        stats = new ArrayList<>();
-        getStats();
-        statAdapter = new ArrayAdapter<String>(v.getContext(), android.R.layout.simple_list_item_1, stats);
-        lvStats.setAdapter(statAdapter);
-
-        // For post feed view:
-        posts = new ArrayList<>();
-        getPosts();
-        postAdapter = new PostAdapter(posts);
-        rvPosts = v.findViewById(R.id.rvFeed);
-        rvPosts.setLayoutManager(new GridLayoutManager(v.getContext(),3));
-        rvPosts.setNestedScrollingEnabled(false);
-        rvPosts.setHasFixedSize(true);
-        rvPosts.setAdapter(postAdapter);
-
-
-        // Refresh listener for post feed
-        swipeContainer = v.findViewById(R.id.swipeContainer);
-        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                getPosts();
-            }
-        });
-
-
-
-        return v;
     }
 
     // Get posts
-    private void getPosts(){
+    private void getPosts(final Handler handler, final CalculateStatsCallback callback) {
         final Post.Query postsQuery = new Post.Query();
         postsQuery
                 .getTop()
-                .withUser();
+                .withUser()
+                .whereEqualTo("user", ParseUser.getCurrentUser());
         postsQuery.addDescendingOrder("createdAt");
 
         postsQuery.findInBackground(new FindCallback<Post>() {
@@ -160,43 +199,64 @@ public class ProfileFragment extends Fragment {
             public void done(List<Post> objects, ParseException e) {
                 if (e == null) {
                     for (int i = 0; i < objects.size(); i++) {
-                        Post post = (Post) objects.get(i);
+                        final Post post = objects.get(i);
                         // Only add current user's posts
-                        if(post.getUser().getObjectId().equals(ParseUser.getCurrentUser().getObjectId())) {
-                            posts.add(post);
-                            postAdapter.notifyItemInserted(posts.size() - 1);
-                            
+                        mPosts.add(post);
+                        mPostAdapter.notifyItemInserted(mPosts.size() - 1);
+                        // Get post stats and update user stats
+                        Util helper = new Util();
+                        ArrayList<String> postStats = helper.getAddress(getContext(), post.getLocation());
+                        // Fill HashMaps
+                        // Cities
+                        // TODO: check stats with post and update dictionary
+
+                        if (!mCities.containsKey(postStats.get(0))) {
+                            // User first visit
+                            mCities.put(postStats.get(0), 1);
+                        } else {
+                            // User already visited, increment count
+                            mCities.put(postStats.get(0), mCities.get(postStats.get(0)) + 1);
+                        }
+                        // Countries
+                        if (!mCountries.containsKey(postStats.get(1))) {
+                            mCountries.put(postStats.get(1), 1);
+                        } else {
+                            mCountries.put(postStats.get(1), mCountries.get(postStats.get(1)) + 1);
+                        }
+                        // Continents
+                        if (!mContinents.containsKey(postStats.get(2))) {
+                            mContinents.put(postStats.get(2), 1);
+                        } else {
+                            mContinents.put(postStats.get(2), mContinents.get(postStats.get(2)) + 1);
                         }
                     }
-                    swipeContainer.setRefreshing(false);
+
+                    mSwipeContainer.setRefreshing(false);
                 } else {
                     logError("Error querying posts", e, true);
                 }
+
+                handler.post(
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                callback.onDone(mStatsList);
+                            }
+                        });
             }
         });
     }
 
-
-    private void getStats(){
-        final ParseUser user = ParseUser.getCurrentUser();
-        ArrayList<ArrayList<String>> list = (ArrayList<ArrayList<String>>) user.get("stats");
-        if(list!=null){
-            for (ArrayList<String> stat : list) {
-                String statKey=null;
-                String statNum;
-                for(int i = 0 ; i < stat.size(); i++){
-                    if (i%2==0) {
-                        // Get key
-                        statKey = stat.get(i);
-                    } else {
-                        // Get value
-                        statNum = stat.get(i);
-                        stats.add(statKey + "  " + statNum);
-                    }
-
-                }
-            }
+    private void updateStats() {
+        ArrayList<ArrayList<String>> res = new ArrayList<>();
+        for (int i = 0; i < mStatsList.size(); i++) {  // Loop through number of stats we're tracking
+            HashMap<String, Integer> innerList = mStatsList.get(i);
+            ArrayList<String> toAdd = new ArrayList<>();
+            toAdd.add(String.format("%s", innerList.size()));
+            res.add(toAdd);
         }
+        user.put("stats", res);
+        user.saveInBackground();
     }
 
 
@@ -208,9 +268,9 @@ public class ProfileFragment extends Fragment {
     }
 
     // Helper method to handle errors, log them, and alert user
-    private void logError(String message, Throwable error, boolean alertUser){
+    private void logError(String message, Throwable error, boolean alertUser) {
         Log.e(TAG, message, error);
-        if(alertUser){
+        if (alertUser) {
             Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
         }
     }

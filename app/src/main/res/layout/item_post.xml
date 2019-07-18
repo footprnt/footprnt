@@ -10,43 +10,46 @@
     android:paddingBottom="5dp">
 
     <ImageView
-        android:id="@+id/ivPost"
-        android:layout_width="395dp"
-        android:layout_height="400dp"
+        android:id="@+id/ivPicture"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/postCaption"
+        app:layout_constraintTop_toBottomOf="@+id/tvDescription"
         app:srcCompat="@android:color/black" />
 
     <TextView
-        android:id="@+id/userPosted"
+        android:id="@+id/tvUser"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
+        android:fontFamily="@font/roboto_medium"
         android:text="Username"
         android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@+id/ivProfileImageMain"
+        app:layout_constraintStart_toEndOf="@+id/ivUserPicture"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/postCaption"
+        android:id="@+id/tvDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
+        android:fontFamily="@font/roboto_light"
         android:text="Caption"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ivProfileImageMain" />
+        app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
 
     <ImageView
-        android:id="@+id/ivProfileImageMain"
+        android:id="@+id/ivUserPicture"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginStart="8dp"
@@ -63,8 +66,33 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
+        android:fontFamily="@font/roboto_light"
         android:text="TextView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ivPost" />
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/roboto"
+        android:text="TextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ivPicture" />
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:fontFamily="@font/roboto_medium"
+        android:text="TextView"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ivUserPicture" />
 
 </android.support.constraint.ConstraintLayout>

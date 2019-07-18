@@ -1,3 +1,6 @@
+/*
+ * Copyright 2019 Footprnt Inc.
+ */
 package com.example.footprnt.Profile;
 
 import android.content.Context;
@@ -14,39 +17,39 @@ import com.example.footprnt.R;
 
 import java.util.ArrayList;
 
-
+/**
+ * Displays posts to profile page
+ * Created by Clarisa Leu 2019
+ */
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
-    private static final String TAG = "PostAdapter";
-    // Instance fields:
-    ArrayList<Post> posts;    // list of posts
-    Context context;          // context for rendering
+    public static final String TAG = "PostAdapter";
+    ArrayList<Post> mPosts;    // list of posts
+    Context mContext;          // context for rendering
 
     public PostAdapter(ArrayList<Post> posts) {
-        this.posts = posts;
+        this.mPosts = posts;
     }
-
 
     @Override
     public int getItemCount() {
-        return posts.size();
+        return mPosts.size();
     }
 
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        context = parent.getContext();
-        LayoutInflater inflater = LayoutInflater.from(context);
+        mContext = parent.getContext();
+        LayoutInflater inflater = LayoutInflater.from(mContext);
         View postView = inflater.inflate(R.layout.item_post_grid, parent, false);
         return new ViewHolder(postView);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Post post = posts.get(position);
-        // TODO: Set views here
-        if(post.getImage()!=null) {
-            Glide.with(context).load(post.getImage().getUrl()).centerCrop().placeholder(R.drawable.ic_add_photo).error(R.drawable.ic_add_photo).into(holder.ivPicture);
+        Post post = mPosts.get(position);
+        if (post.getImage() != null) {
+            Glide.with(mContext).load(post.getImage().getUrl()).centerCrop().placeholder(R.drawable.ic_add_photo).error(R.drawable.ic_add_photo).into(holder.ivPicture);
         } else {
-            Glide.with(context).load(R.drawable.ic_add_photo).placeholder(R.drawable.ic_add_photo).error(R.drawable.ic_add_photo).into(holder.ivPicture);
+            Glide.with(mContext).load(R.drawable.ic_add_photo).placeholder(R.drawable.ic_add_photo).error(R.drawable.ic_add_photo).into(holder.ivPicture);
         }
     }
 
