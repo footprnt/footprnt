@@ -1,3 +1,6 @@
+/*
+ * Copyright 2019 Footprnt Inc.
+ */
 package com.example.footprnt.Profile;
 
 import android.content.Intent;
@@ -19,10 +22,11 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.bumptech.glide.Glide;
 import com.example.footprnt.MainActivity;
 import com.example.footprnt.Models.Post;
-import com.example.footprnt.Profile.Util.LocationUtil;
+import com.example.footprnt.Profile.Util.Util;
 import com.example.footprnt.R;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -34,26 +38,51 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static android.app.Activity.RESULT_OK;
+
+/**
+ * Fragment for profile page
+ * Created by Clarisa Leu 2019
+ */
 public class ProfileFragment extends Fragment {
     public final static String TAG = "ProfileFragment";  // tag for logging from this activity
+    final ParseUser user = ParseUser.getCurrentUser();
+
     // For user profile info view:
-    CircleImageView ivProfileImage;
-    TextView tvEditProfile;
+    CircleImageView mIvProfileImage;
+    TextView mTvEditProfile;
 
     // For stats view:
-    StatListAdapter statAdapter;  // Adapter for stats
-    ListView lvStats;
-    HashMap<String, Integer> cities;
-    HashMap<String, Integer> countries;
-    HashMap<String, Integer> continents;
-    ArrayList<HashMap<String, Integer>> statsList;
+    StatListAdapter mStatAdapter;  // Adapter for stats
+    ListView mLvStats;
+    HashMap<String, Integer> mCities;
+    HashMap<String, Integer> mCountries;
+    HashMap<String, Integer> mContinents;
+    ArrayList<HashMap<String, Integer>> mStatsList;
 
     // For post feed:
-    ArrayList<Post> posts;  // list of current user posts
-    RecyclerView rvPosts;
-    PostAdapter postAdapter;
-    SwipeRefreshLayout swipeContainer;
+    ArrayList<Post> mPosts;  // list of current user posts
+    RecyclerView mRvPosts;
+    PostAdapter mPostAdapter;
+    SwipeRefreshLayout mSwipeContainer;
 
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            loadProfImage();
+        }
+    }
+
+    private void loadProfImage() {
+        if (user.getParseFile("profileImg") != null) {
+            String url = user.getParseFile("profileImg").getUrl();
+            System.out.println(url);
+            Glide.with(getContext()).load(url).into(mIvProfileImage);
+        } else {
+            Glide.with(getContext()).load(R.drawable.ic_user).into(mIvProfileImage);
+        }
+    }
 
     @Nullable
     @Override
@@ -61,48 +90,43 @@ public class ProfileFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_profile, container, false);
         setUpLogOutButton(v);
 
-        // For profile image:
-        ivProfileImage = v.findViewById(R.id.ivProfileImageMain);
-        if (ParseUser.getCurrentUser().getParseFile("profileImg") != null) {
-            Glide.with(getContext()).load(ParseUser.getCurrentUser().getParseFile("profileImg").getUrl()).into(ivProfileImage);
-        } else {
-            Glide.with(getContext()).load(R.drawable.ic_user).into(ivProfileImage);
-        }
+        // Populate stat maps and get posts
+        mPosts = new ArrayList<>();
+        mCities = new HashMap<>();
+        mCountries = new HashMap<>();
+        mContinents = new HashMap<>();
+        mStatsList = new ArrayList<>();
 
-        tvEditProfile = v.findViewById(R.id.tvEditProfile);
-        tvEditProfile.setOnClickListener(new View.OnClickListener() {
+        // Call getPosts() first
+        mTvEditProfile = v.findViewById(R.id.tvEditProfile);
+        mTvEditProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent it = new Intent(v.getContext(), UserSettings.class);
-                startActivity(it);
+                startActivityForResult(it, 1);
             }
         });
 
 
-        // Populate stat maps and get posts
-        posts = new ArrayList<>();
-        cities = new HashMap<>();
-        countries = new HashMap<>();
-        continents = new HashMap<>();
-        statsList = new ArrayList<>();
+        // For profile image:
+        mIvProfileImage = v.findViewById(R.id.ivProfileImageMain);
+        loadProfImage();
 
-
-        // Call getPosts() first
         getPosts(
                 new Handler(),
                 new CalculateStatsCallback() {
                     @Override
                     public void onDone(ArrayList<HashMap<String, Integer>> stats) {
-                        statsList.add(cities);
-                        statsList.add(countries);
-                        statsList.add(continents);
+                        mStatsList.add(mCities);
+                        mStatsList.add(mCountries);
+                        mStatsList.add(mContinents);
                         updateStats();
                     }
                 });
 
         // Refresh listener for post feed and update stats
-        swipeContainer = v.findViewById(R.id.swipeContainer);
-        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        mSwipeContainer = v.findViewById(R.id.swipeContainer);
+        mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 getPosts(new Handler(), new CalculateStatsCallback() {
@@ -115,24 +139,24 @@ public class ProfileFragment extends Fragment {
         });
 
         // For post feed view:
-        postAdapter = new PostAdapter(posts);
-        rvPosts = v.findViewById(R.id.rvFeed);
-        rvPosts.setLayoutManager(new GridLayoutManager(v.getContext(), 3));
-        rvPosts.setAdapter(postAdapter);
+        mPostAdapter = new PostAdapter(mPosts);
+        mRvPosts = v.findViewById(R.id.rvFeed);
+        mRvPosts.setLayoutManager(new GridLayoutManager(v.getContext(), 3));
+        mRvPosts.setAdapter(mPostAdapter);
 
         // For stat view
-        lvStats = v.findViewById(R.id.lvStatKey);
-        statAdapter = new StatListAdapter(statsList, v.getContext());
-        lvStats.setAdapter(statAdapter);
+        mLvStats = v.findViewById(R.id.lvStatKey);
+        mStatAdapter = new StatListAdapter(mStatsList, v.getContext());
+        mLvStats.setAdapter(mStatAdapter);
 
         return v;
     }
 
     interface CalculateStatsCallback {
-        void onDone(ArrayList<HashMap<String, Integer>> statsList);
+        void onDone(ArrayList<HashMap<String, Integer>> mStatsList);
     }
 
-//
+// TODO: Make interface for stats
 //    interface CustomStatInterface {
 //        String getName();
 //
@@ -140,7 +164,7 @@ public class ProfileFragment extends Fragment {
 //    }
 
 
-    private void setUpLogOutButton(final View v){
+    private void setUpLogOutButton(final View v) {
         // Log out button
         final ImageView settings = v.findViewById(R.id.settings);
         settings.setOnClickListener(new View.OnClickListener() {
@@ -148,7 +172,6 @@ public class ProfileFragment extends Fragment {
             public void onClick(View v) {
                 PopupMenu popup = new PopupMenu(getActivity(), settings);
                 popup.getMenuInflater().inflate(R.menu.popup_menu, popup.getMenu());
-
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     public boolean onMenuItemClick(MenuItem item) {
                         ParseUser.logOut();
@@ -167,7 +190,8 @@ public class ProfileFragment extends Fragment {
         final Post.Query postsQuery = new Post.Query();
         postsQuery
                 .getTop()
-                .withUser();
+                .withUser()
+                .whereEqualTo("user", ParseUser.getCurrentUser());
         postsQuery.addDescendingOrder("createdAt");
 
         postsQuery.findInBackground(new FindCallback<Post>() {
@@ -177,36 +201,37 @@ public class ProfileFragment extends Fragment {
                     for (int i = 0; i < objects.size(); i++) {
                         final Post post = objects.get(i);
                         // Only add current user's posts
-                        if (post.getUser().getObjectId().equals(ParseUser.getCurrentUser().getObjectId())) {
-                            posts.add(post);
-                            postAdapter.notifyItemInserted(posts.size() - 1);
-                            // Get post stats and update user stats
-                            LocationUtil helper = new LocationUtil();
-                            ArrayList<String> postStats = helper.getAddress(getContext(), post.getLocation());
-                            // Fill HashMaps
-                            // Cities
-                            if (!cities.containsKey(postStats.get(0))) {
-                                // User first visit
-                                cities.put(postStats.get(0), 1);
-                            } else {
-                                // User already visited, increment count
-                                cities.put(postStats.get(0), cities.get(postStats.get(0)) + 1);
-                            }
-                            // Countries
-                            if (!countries.containsKey(postStats.get(1))) {
-                                countries.put(postStats.get(1), 1);
-                            } else {
-                                countries.put(postStats.get(1), countries.get(postStats.get(1)) + 1);
-                            }
-                            // Continents
-                            if (!continents.containsKey(postStats.get(2))) {
-                                continents.put(postStats.get(2), 1);
-                            } else {
-                                continents.put(postStats.get(2), continents.get(postStats.get(2)) + 1);
-                            }
+                        mPosts.add(post);
+                        mPostAdapter.notifyItemInserted(mPosts.size() - 1);
+                        // Get post stats and update user stats
+                        Util helper = new Util();
+                        ArrayList<String> postStats = helper.getAddress(getContext(), post.getLocation());
+                        // Fill HashMaps
+                        // Cities
+                        // TODO: check stats with post and update dictionary
+
+                        if (!mCities.containsKey(postStats.get(0))) {
+                            // User first visit
+                            mCities.put(postStats.get(0), 1);
+                        } else {
+                            // User already visited, increment count
+                            mCities.put(postStats.get(0), mCities.get(postStats.get(0)) + 1);
+                        }
+                        // Countries
+                        if (!mCountries.containsKey(postStats.get(1))) {
+                            mCountries.put(postStats.get(1), 1);
+                        } else {
+                            mCountries.put(postStats.get(1), mCountries.get(postStats.get(1)) + 1);
+                        }
+                        // Continents
+                        if (!mContinents.containsKey(postStats.get(2))) {
+                            mContinents.put(postStats.get(2), 1);
+                        } else {
+                            mContinents.put(postStats.get(2), mContinents.get(postStats.get(2)) + 1);
                         }
                     }
-                    swipeContainer.setRefreshing(false);
+
+                    mSwipeContainer.setRefreshing(false);
                 } else {
                     logError("Error querying posts", e, true);
                 }
@@ -215,7 +240,7 @@ public class ProfileFragment extends Fragment {
                         new Runnable() {
                             @Override
                             public void run() {
-                                callback.onDone(statsList);
+                                callback.onDone(mStatsList);
                             }
                         });
             }
@@ -224,13 +249,12 @@ public class ProfileFragment extends Fragment {
 
     private void updateStats() {
         ArrayList<ArrayList<String>> res = new ArrayList<>();
-        for (int i = 0; i < statsList.size(); i++) {  // Loop through number of stats we're tracking
-            HashMap<String, Integer> innerList = statsList.get(i);
+        for (int i = 0; i < mStatsList.size(); i++) {  // Loop through number of stats we're tracking
+            HashMap<String, Integer> innerList = mStatsList.get(i);
             ArrayList<String> toAdd = new ArrayList<>();
             toAdd.add(String.format("%s", innerList.size()));
             res.add(toAdd);
         }
-        final ParseUser user = ParseUser.getCurrentUser();
         user.put("stats", res);
         user.saveInBackground();
     }

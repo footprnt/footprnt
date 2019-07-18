@@ -1,3 +1,6 @@
+/*
+ * Copyright 2019 Footprnt Inc.
+ */
 package com.example.footprnt.Profile;
 
 import android.app.AlertDialog;
@@ -19,8 +22,10 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.footprnt.R;
 import com.example.footprnt.Util.PhotoHelper;
+import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -28,18 +33,22 @@ import java.io.File;
 import static com.example.footprnt.Map.MapFragment.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE;
 import static com.example.footprnt.Map.MapFragment.GET_FROM_GALLERY;
 
+/**
+ * Activity to allow users to change their profile information
+ * Created by Clarisa Leu 2019
+ */
 public class UserSettings extends AppCompatActivity {
-    ImageView ivProfileImage;
-    TextView tvEditPhoto;
-    ImageView ivBackArrow;
-    ImageView ivSave;
-    EditText etPassword;
-    EditText etUsername;
-    EditText etNumber;
-    EditText etEmail;
+    ImageView mIvProfileImage;
+    TextView mTvEditPhoto;
+    ImageView mIvBackArrow;
+    ImageView mIvSave;
+    EditText mEtPassword;
+    EditText mEtUsername;
+    EditText mEtNumber;
+    EditText mEtEmail;
     public String photoFileName = "photo.jpg";
-    File photoFile;
-    ParseFile parseFile;
+    File mPhotoFile;
+    ParseFile mParseFile;
     final ParseUser user = ParseUser.getCurrentUser();
 
     @Override
@@ -48,20 +57,18 @@ public class UserSettings extends AppCompatActivity {
         setContentView(R.layout.activity_user_settings);
 
         // Set Views
-        ivProfileImage = findViewById(R.id.ivProfileImageMain);
-        tvEditPhoto = findViewById(R.id.tvEditPhoto);
-        ivBackArrow = findViewById(R.id.ivBack);
-        etPassword = findViewById(R.id.etPassword);
-        etUsername = findViewById(R.id.etUsername);
-        etNumber = findViewById(R.id.etNumber);
-        etEmail = findViewById(R.id.etEmail);
-        ivSave = findViewById(R.id.ivSave);
-
+        mIvProfileImage = findViewById(R.id.ivProfileImageMain);
+        mTvEditPhoto = findViewById(R.id.tvEditPhoto);
+        mIvBackArrow = findViewById(R.id.ivBack);
+        mEtPassword = findViewById(R.id.etPassword);
+        mEtUsername = findViewById(R.id.etUsername);
+        mEtNumber = findViewById(R.id.etNumber);
+        mEtEmail = findViewById(R.id.etEmail);
+        mIvSave = findViewById(R.id.ivSave);
         updateCurrentViews();
 
-
         // Set on click listener for photo
-        tvEditPhoto.setOnClickListener(new View.OnClickListener() {
+        mTvEditPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(UserSettings.this);
@@ -79,107 +86,95 @@ public class UserSettings extends AppCompatActivity {
                         // Take Photo
                         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                         PhotoHelper photoHelper = new PhotoHelper();
-                        photoFile = photoHelper.getPhotoFileUri(UserSettings.this, photoFileName);
-
-                        Uri fileProvider = FileProvider.getUriForFile(UserSettings.this, "com.example.fileprovider", photoFile);
+                        mPhotoFile = photoHelper.getPhotoFileUri(UserSettings.this, photoFileName);
+                        Uri fileProvider = FileProvider.getUriForFile(UserSettings.this, "com.example.fileprovider", mPhotoFile);
                         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
-
                         if (intent.resolveActivity(UserSettings.this.getPackageManager()) != null) {
                             startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
                         }
                     }
                 });
-
                 AlertDialog dialog = builder.create();
                 dialog.show();
             }
         });
 
-
         // Go back to profile activity if user clicks back
-        ivBackArrow.setOnClickListener(new View.OnClickListener() {
+        mIvBackArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
 
-
-
-        ivSave.setOnClickListener(new View.OnClickListener() {
+        mIvSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                if (parseFile == null){
-                    user.remove("profileImg");
-                } else {
-                    user.put("profileImg",parseFile);
+                if (mParseFile != null) {
+                    user.put("profileImg", mParseFile);
                 }
-                user.setEmail(etEmail.getText().toString());
-                user.setUsername(etUsername.getText().toString());
-                user.put("phone", etNumber.getText().toString());
-                user.put("email", etEmail.getText().toString());
-                user.saveInBackground();
-                updateCurrentViews();
-                finish();
+
+                user.setEmail(mEtEmail.getText().toString());
+                user.setUsername(mEtUsername.getText().toString());
+                user.put("phone", mEtNumber.getText().toString());
+                user.put("email", mEtEmail.getText().toString());
+                setResult(RESULT_OK, new Intent());
+                user.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        updateCurrentViews();
+                        finish();
+                    }
+                });
             }
         });
-
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, final Intent data) {
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == this.RESULT_OK) {
-                Bitmap takenImage = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
-                ivProfileImage.setImageBitmap(takenImage);
+                Bitmap takenImage = BitmapFactory.decodeFile(mPhotoFile.getAbsolutePath());
+                mIvProfileImage.setImageBitmap(takenImage);
                 PhotoHelper photoHelper = new PhotoHelper();
                 File photoFile = photoHelper.getPhotoFileUri(this, photoFileName);
-                parseFile = new ParseFile(photoFile);
+                mParseFile = new ParseFile(photoFile);
             } else {
-                parseFile = null;
+                mParseFile = null;
                 Toast.makeText(this, "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
             }
-        }
-        else{
+        } else {
             if (resultCode == this.RESULT_OK) {
                 Bitmap bitmap = null;
                 Uri selectedImage = data.getData();
-                try{
+                try {
                     bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
                 } catch (Exception e) {
                 }
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                 byte[] image = stream.toByteArray();
-                parseFile = new ParseFile("profpic.jpg", image);
+                mParseFile = new ParseFile("profpic.jpg", image);
                 final Bitmap finalBitmap = bitmap;
-                Glide.with(this).load(finalBitmap).into(ivProfileImage);
+                Glide.with(this).load(finalBitmap).into(mIvProfileImage);
             } else {
-                parseFile = null;
+                mParseFile = null;
             }
         }
-
     }
 
-
-    public void updateCurrentViews(){
-        // Populate
+    public void updateCurrentViews() {
         // For profile image:
-        ivProfileImage = findViewById(R.id.ivProfileImageMain);
+        mIvProfileImage = findViewById(R.id.ivProfileImageMain);
         if (user.getParseFile("profileImg") != null) {
-            Glide.with(this).load(user.getParseFile("profileImg").getUrl()).into(ivProfileImage);
+            Glide.with(this).load(user.getParseFile("profileImg").getUrl()).into(mIvProfileImage);
         } else {
-            Glide.with(this).load(R.drawable.ic_user).into(ivProfileImage);
+            Glide.with(this).load(R.drawable.ic_user).into(mIvProfileImage);
         }
 
         // EditText:
-        //etPassword.setText(user.get("password").toString());
-        etUsername.setText(user.getUsername());
-        etNumber.setText(String.format("%s",user.get("phone")));
-        etEmail.setText(String.format("%s",user.get("email")));
+        mEtUsername.setText(user.getUsername());
+        mEtNumber.setText(String.format("%s", user.get("phone")));
+        mEtEmail.setText(String.format("%s", user.get("email")));
     }
-
-
-
 }

@@ -1,3 +1,6 @@
+/*
+ * Copyright 2019 Footprnt Inc.
+ */
 package com.example.footprnt.Profile.Util;
 
 import android.content.Context;
@@ -12,7 +15,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class LocationUtil {
+
+/**
+ * Utility class of useful functions used by Profile Fragment
+ * Created by Clarisa Leu 2019
+ */
+public class Util {
+
     // Returns ArrayList<String> of the [City, Country, and Continent] of point
     public static ArrayList<String> getAddress(Context context, ParseGeoPoint point) {
         try {
