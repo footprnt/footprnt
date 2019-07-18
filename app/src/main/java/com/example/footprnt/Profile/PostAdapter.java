@@ -3,12 +3,14 @@
  */
 package com.example.footprnt.Profile;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -51,6 +53,17 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         } else {
             Glide.with(mContext).load(R.drawable.ic_add_photo).placeholder(R.drawable.ic_add_photo).error(R.drawable.ic_add_photo).into(holder.ivPicture);
         }
+
+        holder.ivPicture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Dialog settingsDialog = new Dialog(mContext);
+                settingsDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+                LayoutInflater inflater = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                settingsDialog.setContentView(inflater.inflate(R.layout.item_post_grid, null));
+                settingsDialog.show();
+            }
+        });
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
