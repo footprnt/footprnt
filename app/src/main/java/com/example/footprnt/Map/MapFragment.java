@@ -30,6 +30,7 @@ import android.widget.Toast;
 import com.arsy.maps_library.MapRipple;
 import com.bumptech.glide.Glide;
 import com.example.footprnt.Manifest;
+import com.example.footprnt.Models.MarkerDetails;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.R;
 import com.example.footprnt.Util.LocationHelper;
@@ -42,6 +43,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.parse.FindCallback;
+import com.parse.ParseACL;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
@@ -50,13 +53,19 @@ import com.parse.SaveCallback;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
-public class MapFragment extends Fragment implements
-        GoogleMap.OnMapLongClickListener, GoogleMap.OnMapClickListener, OnMapReadyCallback {
+public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickListener, GoogleMap.OnMapClickListener, OnMapReadyCallback {
 
     private GoogleMap map;
     LocationManager locationManager;
     LocationListener locationListener;
+    LatLng lastPoint;
+    LocationHelper locationHelper;
+    boolean mJumpToCurrentLocation = false;
+    MapRipple mapRipple;
+    ArrayList<MarkerDetails> markers;
     public static final int GET_FROM_GALLERY = 3;
     public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
     public String photoFileName = "photo.jpg";
@@ -66,10 +75,7 @@ public class MapFragment extends Fragment implements
     ImageView cancelPost;
     AlertDialog alertDialog=null;
     ParseFile parseFile;
-    LatLng lastPoint;
-    LocationHelper locationHelper;
-    boolean mJumpToCurrentLocation = false;
-    MapRipple mapRipple;
+    private ParseUser user;
 
     @Nullable
     @Override
@@ -78,6 +84,12 @@ public class MapFragment extends Fragment implements
         SupportMapFragment mapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFrag.getMapAsync(this);
         locationHelper = new LocationHelper();
+        user = ParseUser.getCurrentUser();
+        ParseACL acl = new ParseACL();
+        acl.setReadAccess(user,true);
+        acl.setWriteAccess(user,true);
+        user.setACL(acl);
+        markers = new ArrayList<>();
         return v;
     }
 
@@ -89,7 +101,7 @@ public class MapFragment extends Fragment implements
         newPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                composePost();
+                createPostCurrentLocation();
             }
         });
         findCurrentLoc.setOnClickListener(new View.OnClickListener() {
@@ -104,12 +116,91 @@ public class MapFragment extends Fragment implements
         });
     }
 
-    public void composePost() {
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
-            Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            LatLng currLocation = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
-            showAlertDialogForPoint(currLocation);
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        map = googleMap;
+        map.setOnMapLongClickListener(this);
+        map.setOnMapClickListener(this);
+        Intent intent = getActivity().getIntent();
+        if (intent.getIntExtra("Place Number",0) == 0 ){
+            // Zoom into users location
+            locationManager = (LocationManager)getActivity().getSystemService(Context.LOCATION_SERVICE);
+            locationListener = new LocationListener() {
+                @Override
+                public void onLocationChanged(Location location) {
+                    if (mJumpToCurrentLocation) {
+                        mJumpToCurrentLocation = false;
+                        locationHelper.centreMapOnLocation(map, location, "Your Location");
+                    }
+                }
+
+                @Override
+                public void onStatusChanged(String s, int i, Bundle bundle) {
+                }
+
+                @Override
+                public void onProviderEnabled(String s) {
+                }
+
+                @Override
+                public void onProviderDisabled(String s) {
+                }
+            };
+
+            if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
+                Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                if (lastKnownLocation != null ) {
+                    locationHelper.centreMapOnLocation(map, lastKnownLocation, "Your Location");
+                }
+            } else {
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
+            }
+            loadMarkers();
+        }
+    }
+
+    public void loadMarkers(){
+        final MarkerDetails.Query postQuery = new MarkerDetails.Query();
+        markers = new ArrayList<>();
+        postQuery.withUser().whereEqualTo("user", user);
+        postQuery.findInBackground(new FindCallback<MarkerDetails>() {
+            @Override
+            public void done(List<MarkerDetails> objects, ParseException e) {
+                if (e == null){
+                    for (int i = 0; i < objects.size(); i++){
+                        markers.add(objects.get(i));
+                    }
+                    for (MarkerDetails m: markers){
+                        createMarker(m.getLocation().getLatitude(), m.getLocation().getLongitude(), m.getTitle(), m.getDescription());
+                    }
+                } else {
+                    user.put("markers", new ArrayList<Marker>());
+                    user.saveInBackground();
+                }
+            }
+        });
+    }
+
+    protected void createMarker(double latitude, double longitude, String title, String snippet) {
+        BitmapDescriptor defaultMarker =
+                BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
+        map.addMarker(new MarkerOptions()
+                .position(new LatLng(latitude, longitude))
+                .title(title)
+                .snippet(snippet)
+                .icon(defaultMarker));
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+            if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+                mJumpToCurrentLocation = true;
+                System.out.println("permissions granted");
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
+            }
         }
     }
 
@@ -186,18 +277,19 @@ public class MapFragment extends Fragment implements
         sendPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                BitmapDescriptor defaultMarker =
-                        BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
                 final String title = ((EditText) alertDialog.findViewById(R.id.etTitle)).
                         getText().toString();
                 final String snippet = ((EditText) alertDialog.findViewById(R.id.etSnippet)).
                         getText().toString();
-                Marker marker = map.addMarker(new MarkerOptions()
-                        .position(lastPoint)
-                        .title(title)
-                        .snippet(snippet)
-                        .icon(defaultMarker));
-                final ParseUser user = ParseUser.getCurrentUser();
+                createMarker(lastPoint.latitude, lastPoint.longitude, title, snippet);
+                MarkerDetails mOptions = new MarkerDetails();
+                mOptions.setLocation(new ParseGeoPoint(lastPoint.latitude, lastPoint.longitude));
+                mOptions.setDescription(snippet);
+                mOptions.setTitle(title);
+                mOptions.setUser(user);
+                markers.add(mOptions);
+                user.put("markers", markers);
+                user.saveInBackground();
                 if (parseFile != null){
                     parseFile.saveInBackground(new SaveCallback() {
                         @Override
@@ -218,6 +310,15 @@ public class MapFragment extends Fragment implements
                 alertDialog.cancel();
             }
         });
+    }
+
+    public void createPostCurrentLocation() {
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
+            Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            LatLng currLocation = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
+            showAlertDialogForPoint(currLocation);
+        }
     }
 
     private void createPost(String description, String title, ParseFile imageFile, ParseUser user, LatLng point){
@@ -278,58 +379,6 @@ public class MapFragment extends Fragment implements
             }
         }
 
-    }
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        map = googleMap;
-        map.setOnMapLongClickListener(this);
-        map.setOnMapClickListener(this);
-        Intent intent = getActivity().getIntent();
-        if (intent.getIntExtra("Place Number",0) == 0 ){
-            // Zoom into users location
-            locationManager = (LocationManager)getActivity().getSystemService(Context.LOCATION_SERVICE);
-            locationListener = new LocationListener() {
-                @Override
-                public void onLocationChanged(Location location) {
-                    if (mJumpToCurrentLocation) {
-                        mJumpToCurrentLocation = false;
-                        locationHelper.centreMapOnLocation(map, location, "Your Location");
-                    }
-                }
-
-                @Override
-                public void onStatusChanged(String s, int i, Bundle bundle) {
-                }
-
-                @Override
-                public void onProviderEnabled(String s) {
-                }
-
-                @Override
-                public void onProviderDisabled(String s) {
-                }
-            };
-
-            if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
-                Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                locationHelper.centreMapOnLocation(map, lastKnownLocation,"Your Location");
-            } else {
-                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
-            }
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-            if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-                mJumpToCurrentLocation = true;
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
-            }
-        }
     }
 
 }
