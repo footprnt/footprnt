@@ -14,7 +14,8 @@
         android:layout_marginEnd="32dp"
         android:layout_marginRight="32dp"
         android:layout_marginBottom="48dp"
-        android:src="@android:drawable/ic_menu_send"
+        android:src="@drawable/ic_new_post"
+        android:tint="#FFFFFF"
         app:backgroundTint="#659DBD"
         app:layout_constraintBottom_toBottomOf="@+id/map"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -27,7 +28,8 @@
         android:layout_marginEnd="32dp"
         android:layout_marginRight="32dp"
         android:layout_marginBottom="24dp"
-        android:src="@android:drawable/ic_menu_mylocation"
+        android:src="@drawable/ic_my_location"
+        android:tint="#659DBD"
         app:backgroundTint="#FFFFFFFF"
         app:layout_constraintBottom_toTopOf="@+id/newPost"
         app:layout_constraintEnd_toEndOf="parent" />
