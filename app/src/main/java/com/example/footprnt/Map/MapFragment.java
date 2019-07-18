@@ -3,6 +3,7 @@ package com.example.footprnt.Map;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -41,10 +42,10 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.FindCallback;
-import com.parse.ParseACL;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
@@ -85,10 +86,10 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         mapFrag.getMapAsync(this);
         locationHelper = new LocationHelper();
         user = ParseUser.getCurrentUser();
-        ParseACL acl = new ParseACL();
-        acl.setReadAccess(user,true);
-        acl.setWriteAccess(user,true);
-        user.setACL(acl);
+//        ParseACL acl = new ParseACL();
+//        acl.setReadAccess(user,true);
+//        acl.setWriteAccess(user,true);
+//        user.setACL(acl); TODO
         markers = new ArrayList<>();
         return v;
     }
@@ -121,6 +122,19 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         map = googleMap;
         map.setOnMapLongClickListener(this);
         map.setOnMapClickListener(this);
+        try {
+            // Customise the styling of the base map using a JSON object defined
+            // in a raw resource file.
+            boolean success = map.setMapStyle(
+                    MapStyleOptions.loadRawResourceStyle(
+                            getContext(), R.raw.style_json_aubergine));
+
+            if (!success) {
+                Log.e("map", "Style parsing failed.");
+            }
+        } catch (Resources.NotFoundException e) {
+            Log.e("map", "Can't find style. Error: ", e);
+        }
         Intent intent = getActivity().getIntent();
         if (intent.getIntExtra("Place Number",0) == 0 ){
             // Zoom into users location
