@@ -60,6 +60,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         String description = post.getDescription();
         String title = post.getTitle();
 
+        System.out.println(post.getObjectId());
+        System.out.println(post.getUser());
+
         holder.tvUser.setText(post.getUser().getUsername());
         if (description.length() > 0) {
             holder.tvDescription.setText(description);
