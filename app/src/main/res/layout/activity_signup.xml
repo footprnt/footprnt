@@ -73,7 +73,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:background="#409A7F"
+        android:background="#8d8741"
         android:text="Signup"
         android:textColor="#FFFFFF"
         app:layout_constraintEnd_toEndOf="parent"
