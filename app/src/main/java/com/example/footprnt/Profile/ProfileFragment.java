@@ -69,6 +69,7 @@ public class ProfileFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        mPostAdapter.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             loadProfImage();
         }
@@ -264,7 +265,6 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
     }
 
     // Helper method to handle errors, log them, and alert user

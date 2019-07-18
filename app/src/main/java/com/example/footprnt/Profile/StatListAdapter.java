@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * Displays stats to list view in ProfileFramgnet
+ * Displays stats to list view in ProfileFragment
  * Created by Clarisa Leu 2019
  */
 public class StatListAdapter extends BaseAdapter {
