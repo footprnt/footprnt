@@ -3,6 +3,7 @@
  */
 package com.example.footprnt.Profile;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,6 +19,8 @@ import com.example.footprnt.Models.Post;
 import com.example.footprnt.R;
 
 import java.util.ArrayList;
+
+import static android.app.Activity.RESULT_OK;
 
 /**
  * Displays posts to profile page
@@ -63,9 +66,21 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable(Post.class.getSimpleName(), post);
                 it.putExtras(bundle);
-                mContext.startActivity(it);
+                ((Activity) mContext).startActivityForResult(it, 1);
             }
         });
+    }
+
+    public  void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            removeAt(0);
+        }
+    }
+
+    public void removeAt(int position) {
+        mPosts.remove(position);
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position, mPosts.size());
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -76,4 +91,5 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             ivPicture = itemView.findViewById(R.id.ivPicture);
         }
     }
+
 }

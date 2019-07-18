@@ -7,6 +7,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -15,6 +17,11 @@ import com.bumptech.glide.Glide;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.Profile.Util.Util;
 import com.example.footprnt.R;
+import com.parse.GetCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.SaveCallback;
 
 import java.util.ArrayList;
 
@@ -28,6 +35,7 @@ public class EditPost extends Activity {
     EditText mEtDescription;
     EditText mEtTitle;
     EditText mEtLocation;
+    Button mBtnDelete;
     Util util= new Util();
 
     @Override
@@ -45,6 +53,7 @@ public class EditPost extends Activity {
         mEtDescription = findViewById(R.id.etDescription);
         mEtTitle = findViewById(R.id.etTitle);
         mEtLocation = findViewById(R.id.etLocation);
+        mBtnDelete = findViewById(R.id.btnDelete);
 
         String date = util.getRelativeTimeAgo(post.getCreatedAt().toString());
         mTvDate.setText(date);
@@ -66,6 +75,34 @@ public class EditPost extends Activity {
         int width = displayMetrics.widthPixels;
         int height = displayMetrics.heightPixels;
         getWindow().setLayout((int) (width*.8), (int)(height*.7));
+
+
+
+        // Delete post
+        mBtnDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ParseQuery<ParseObject> query = ParseQuery.getQuery("Post");
+                query.whereEqualTo("objectId", post.getObjectId());
+                query.getInBackground(post.getObjectId(), new GetCallback<ParseObject>() {
+                    public void done(final ParseObject object, ParseException e) {
+                        if (e == null) {
+                            post.getUser().saveInBackground(new SaveCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    object.deleteInBackground();
+                                    finish();
+                                }
+                            });
+                        } else {
+                            // something went wrong
+                        }
+                    }
+                });
+
+            }
+        });
+
     }
 
 }

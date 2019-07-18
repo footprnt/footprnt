@@ -20,5 +20,6 @@
     <string name="title">Title</string>
     <string name="location">Location</string>
     <string name="date">Date</string>
+    <string name="delete">Delete</string>
     <string name="title_activity_edit_post">EditPost</string>
 </resources>

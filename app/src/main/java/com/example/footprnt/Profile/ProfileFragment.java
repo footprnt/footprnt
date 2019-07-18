@@ -69,6 +69,7 @@ public class ProfileFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        mPostAdapter.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             loadProfImage();
         }
