@@ -26,7 +26,7 @@ import java.util.Locale;
 
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
-    private static final String TAG = "PostAdapter";
+    private static final String TAG = "PostAdapterOld";
     // Instance fields:
     ArrayList<Post> posts;    // list of posts
     Context context;          // context for rendering

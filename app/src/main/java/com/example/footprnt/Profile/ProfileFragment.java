@@ -26,6 +26,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.footprnt.MainActivity;
 import com.example.footprnt.Models.Post;
+import com.example.footprnt.Profile.Adapters.PostAdapter;
 import com.example.footprnt.Profile.Util.Util;
 import com.example.footprnt.R;
 import com.parse.FindCallback;
@@ -125,23 +126,23 @@ public class ProfileFragment extends Fragment {
                     }
                 });
 
-        // Refresh listener for post feed and update stats
-        mSwipeContainer = v.findViewById(R.id.swipeContainer);
-        mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                getPosts(new Handler(), new CalculateStatsCallback() {
-                    @Override
-                    public void onDone(ArrayList<HashMap<String, Integer>> stats) {
-                        updateStats();
-                    }
-                });
-            }
-        });
+//        // Refresh listener for post feed and update stats
+//        mSwipeContainer = v.findViewById(R.id.swipeContainer);
+//        mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+//            @Override
+//            public void onRefresh() {
+//                getPosts(new Handler(), new CalculateStatsCallback() {
+//                    @Override
+//                    public void onDone(ArrayList<HashMap<String, Integer>> stats) {
+//                        updateStats();
+//                    }
+//                });
+//            }
+//        });
 
         // For post feed view:
-        mPostAdapter = new PostAdapter(mPosts);
-        mRvPosts = v.findViewById(R.id.rvFeed);
+        mPostAdapter = new PostAdapter(getActivity(),(List<Post>)mPosts);
+        mRvPosts = v.findViewById(R.id.rvPosts);
         mRvPosts.setLayoutManager(new GridLayoutManager(v.getContext(), 3));
         mRvPosts.setAdapter(mPostAdapter);
 
@@ -232,7 +233,7 @@ public class ProfileFragment extends Fragment {
                         }
                     }
 
-                    mSwipeContainer.setRefreshing(false);
+              //      mSwipeContainer.setRefreshing(false);
                 } else {
                     logError("Error querying posts", e, true);
                 }

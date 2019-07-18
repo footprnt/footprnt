@@ -1,7 +1,7 @@
 /*
  * Copyright 2019 Footprnt Inc.
  */
-package com.example.footprnt.Profile;
+package com.example.footprnt.Profile.Adapters;
 
 import android.app.Activity;
 import android.content.Context;
@@ -16,6 +16,7 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.example.footprnt.Models.Post;
+import com.example.footprnt.Profile.EditPost;
 import com.example.footprnt.R;
 
 import java.util.ArrayList;
@@ -26,13 +27,13 @@ import static android.app.Activity.RESULT_OK;
  * Displays posts to profile page
  * Created by Clarisa Leu 2019
  */
-public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
-    public static final String TAG = "PostAdapter";
+public class PostAdapterOld extends RecyclerView.Adapter<PostAdapterOld.ViewHolder> {
+    public static final String TAG = "PostAdapterOld";
     ArrayList<Post> mPosts;    // list of posts
     Context mContext;          // context for rendering
 
 
-    public PostAdapter(ArrayList<Post> posts) {
+    public PostAdapterOld(ArrayList<Post> posts) {
         this.mPosts = posts;
     }
 
