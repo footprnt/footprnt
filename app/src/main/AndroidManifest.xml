@@ -25,7 +25,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".Profile.UserSettings"></activity>
+        <activity
+            android:name=".Profile.EditPost"
+            android:label="@string/title_activity_edit_post"
+            android:theme="@style/AppTheme.CustomTheme" />
+        <activity android:name=".Profile.UserSettings" />
         <activity
             android:name=".Map.FeedActivity"
             android:theme="@style/Theme.UserDialog" />

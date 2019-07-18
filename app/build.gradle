@@ -50,5 +50,5 @@ dependencies {
     // For circle view imageviews
     implementation 'de.hdodenhof:circleimageview:3.0.0'
     // For yelp API
-    compile 'io.github.ranga543:yelp-fusion-client:0.1.4'
+    implementation 'io.github.ranga543:yelp-fusion-client:0.1.4'
 }
