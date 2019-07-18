@@ -2,6 +2,7 @@
 <resources>
     <color name="colorPrimary">#659DBD</color>
     <color name="white">#FFFFFF</color>
+    <color name = "grey">#636161</color>
     <color name="colorPrimaryDark">#BC986A</color>
     <color name="colorAccent">#FBEEC1</color>
     <color name="refresh_progress_1">#659DBD</color>
