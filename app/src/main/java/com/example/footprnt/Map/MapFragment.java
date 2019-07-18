@@ -222,10 +222,10 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     public void onMapLongClick(LatLng latLng) {
         mapRipple = new MapRipple(map, latLng, getContext())
                 .withNumberOfRipples(3)
-                .withFillColor(Color.BLUE)
+                .withFillColor(Color.CYAN)
                 .withStrokeColor(Color.BLACK)
                 .withDistance(2000)      // 2000 metres radius
-                .withRippleDuration(6000)    //12000ms
+                .withRippleDuration(4000)    //12000ms
                 .withTransparency(0.8f);
         mapRipple.startRippleMapAnimation();      //in onMapReadyCallBack
         Toast.makeText(getActivity(), locationHelper.getAddress(getContext(), latLng), Toast.LENGTH_LONG).show();
@@ -236,11 +236,11 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     public void onMapClick(LatLng latLng) {
         mapRipple = new MapRipple(map, latLng, getContext())
                 .withNumberOfRipples(3)
-                .withFillColor(Color.BLUE)
+                .withFillColor(Color.CYAN)
                 .withStrokeColor(Color.BLACK)
                 .withDistance(2000)      // 2000 metres radius
-                .withRippleDuration(6000)    //12000ms
-                .withTransparency(0.9f);
+                .withRippleDuration(4000)    //12000ms
+                .withTransparency(0.8f);
         mapRipple.startRippleMapAnimation();      //in onMapReadyCallBack
         Intent i = new Intent(getActivity(), FeedActivity.class);
         startActivity(i);
