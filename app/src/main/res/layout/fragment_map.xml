@@ -56,15 +56,15 @@
 
     <ImageView
         android:id="@+id/imageView4"
-        android:layout_width="161dp"
-        android:layout_height="45dp"
+        android:layout_width="139dp"
+        android:layout_height="35dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginBottom="4dp"
         app:layout_constraintBottom_toTopOf="@+id/map"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0"
-        app:srcCompat="@drawable/logo4" />
+        app:layout_constraintVertical_bias="0.76"
+        app:srcCompat="@drawable/logo1" />
 
 </android.support.constraint.ConstraintLayout>
