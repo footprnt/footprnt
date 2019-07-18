@@ -46,6 +46,7 @@ import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.FindCallback;
+import com.parse.ParseACL;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
@@ -86,10 +87,10 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         mapFrag.getMapAsync(this);
         locationHelper = new LocationHelper();
         user = ParseUser.getCurrentUser();
-//        ParseACL acl = new ParseACL();
-//        acl.setReadAccess(user,true);
-//        acl.setWriteAccess(user,true);
-//        user.setACL(acl); TODO
+        ParseACL acl = new ParseACL();
+        acl.setPublicReadAccess(true);
+        acl.setPublicWriteAccess(true);
+        user.setACL(acl);
         markers = new ArrayList<>();
         return v;
     }
