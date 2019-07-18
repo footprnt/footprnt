@@ -127,7 +127,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
             // in a raw resource file.
             boolean success = map.setMapStyle(
                     MapStyleOptions.loadRawResourceStyle(
-                            getContext(), R.raw.style_json));
+                            getContext(), R.raw.style_json_aubergine));
 
             if (!success) {
                 Log.e("map", "Style parsing failed.");
