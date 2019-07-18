@@ -52,7 +52,6 @@ public class FeedActivity extends Activity {
                 .getTop()
                 .withUser();
         postsQuery.addDescendingOrder("createdAt");
-
         postsQuery.findInBackground(new FindCallback<Post>() {
             @Override
             public void done(List<Post> objects, ParseException e) {
