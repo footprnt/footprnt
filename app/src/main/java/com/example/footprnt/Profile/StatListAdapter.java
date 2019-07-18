@@ -1,7 +1,9 @@
+/*
+ * Copyright 2019 Footprnt Inc.
+ */
 package com.example.footprnt.Profile;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,29 +15,32 @@ import com.example.footprnt.R;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Displays stats to list view in ProfileFramgnet
+ * Created by Clarisa Leu 2019
+ */
 public class StatListAdapter extends BaseAdapter {
-    private static final String TAG = "StatListAdapter";
-    // Instance fields:
-    ArrayList<HashMap<String,Integer>> stats;    // list of stats
-    Context context;          // context for rendering
-    private static LayoutInflater inflater = null;
+    public static final String TAG = "StatListAdapter";
+    ArrayList<HashMap<String, Integer>> mStats;    // list of stats
+    Context mContext;          // Context for rendering
+    private static LayoutInflater sInflater = null;
 
 
-    public StatListAdapter(ArrayList<HashMap<String, Integer>> stats, Context context) {
-        this.stats = stats;
-        this.context = context;
-        inflater = (LayoutInflater) context
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    public StatListAdapter(ArrayList<HashMap<String, Integer>> mStats, Context mContext) {
+        this.mStats = mStats;
+        this.mContext = mContext;
+        sInflater = (LayoutInflater) mContext
+                .getSystemService(mContext.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
     public int getCount() {
-        return stats.size();
+        return mStats.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return stats.get(position);
+        return mStats.get(position);
     }
 
     @Override
@@ -45,14 +50,13 @@ public class StatListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View vi = convertView;
-        if (vi == null)
-            vi = inflater.inflate(R.layout.row, null);
-        TextView count = (TextView) vi.findViewById(R.id.tvCount);
-        TextView title = (TextView) vi.findViewById(R.id.tvTitle);
-        count.setText(stats.get(position).get("cities"));
+        View v = convertView;
+        if (v == null)
+            v = sInflater.inflate(R.layout.row, null);
+        TextView count = v.findViewById(R.id.tvCount);
+        TextView title = v.findViewById(R.id.tvTitle);
+        count.setText(mStats.get(position).get("cities"));
         title.setText("cities");
-        Log.e("StatAdapter","Running Adapter", new Throwable());
-        return vi;
+        return v;
     }
 }
