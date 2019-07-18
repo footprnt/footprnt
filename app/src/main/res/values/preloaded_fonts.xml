@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="preloaded_fonts" translatable="false">
+        <item>@font/droid_serif</item>
+        <item>@font/montserrat</item>
+        <item>@font/montserrat_bold</item>
+        <item>@font/open_sans_light</item>
+        <item>@font/roboto</item>
+        <item>@font/roboto_light</item>
+        <item>@font/roboto_medium</item>
+        <item>@font/roboto_thin</item>
+    </array>
+</resources>
