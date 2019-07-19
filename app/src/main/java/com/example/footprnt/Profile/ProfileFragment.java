@@ -40,6 +40,9 @@ import java.util.List;
 public class ProfileFragment extends Fragment{
     public final static String TAG = "ProfileFragment";  // tag for logging from this activity
     final ParseUser user = ParseUser.getCurrentUser();
+    public final int totalNumCities =4416;
+    public final int totalNumCountries = 195;
+    public final int totalNumContinents = 7;
 
     // For stats view:
     HashMap<String, Integer> mCities;
@@ -61,7 +64,8 @@ public class ProfileFragment extends Fragment{
         mObjects = new ArrayList<>();
         mCities = new HashMap<>();
         mCountries = new HashMap<>();
-        mContinents = new HashMap<>();;
+        mContinents = new HashMap<>();
+
 
         getPosts(
                 new Handler(),
@@ -86,6 +90,7 @@ public class ProfileFragment extends Fragment{
     interface CalculateStatsCallback {
         void onDone(ArrayList<HashMap<String, Integer>> mStatsList);
     }
+
 
     private void setUpLogOutButton(final View v) {
         // Log out button

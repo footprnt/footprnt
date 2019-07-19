@@ -18,6 +18,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.example.footprnt.Models.Post;
+import com.example.footprnt.Profile.Adapters.ViewHolders.PostViewHolder;
+import com.example.footprnt.Profile.Adapters.ViewHolders.UserInfoViewHolder;
 import com.example.footprnt.Profile.EditPost;
 import com.example.footprnt.Profile.UserSettings;
 import com.example.footprnt.Profile.Util.Util;
@@ -27,11 +29,10 @@ import com.parse.ParseUser;
 import java.util.ArrayList;
 
 /**
- * Complex adapter for the multiple views within the user profile page
+ * Custom adapter for the multiple views within the user profile page
  * Created By: Clarisa Leu-Rodriguez
  */
 public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private static final int RESULT_OK = 0;
     Context mContext;
     private ArrayList<Object> items;
     Util util = new Util();
@@ -148,7 +149,11 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private void configureUserInfoViewHolder(UserInfoViewHolder vh2, final int position) {
         ParseUser user = (ParseUser) items.get(position);
         if (user != null) {
-            vh2.setmIvProfileImage(user.getParseFile("profileImg").getUrl(), mContext);
+            if(user.getParseFile("profileImg")!=null) {
+                vh2.setmIvProfileImage(user.getParseFile("profileImg").getUrl(), mContext);
+            } else {
+                Glide.with(mContext).load(R.drawable.ic_user).into(vh2.getmIvProfileImage());
+            }
             vh2.getmTvEditProfile().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

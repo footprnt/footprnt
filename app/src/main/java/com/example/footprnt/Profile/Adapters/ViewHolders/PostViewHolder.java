@@ -1,4 +1,4 @@
-package com.example.footprnt.Profile.Adapters;
+package com.example.footprnt.Profile.Adapters.ViewHolders;
 
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
@@ -20,39 +20,23 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         return rootView;
     }
 
-    public void setRootView(View rootView) {
-        this.rootView = rootView;
-    }
-
     public ImageView getIvProfile() {
         return ivProfile;
-    }
-
-    public void setIvProfile(ImageView ivProfile) {
-        this.ivProfile = ivProfile;
     }
 
     public TextView getTvName() {
         return tvName;
     }
 
-    public void setTvName(TextView tvName) {
-        this.tvName = tvName;
-    }
-
     public View getvPalette() {
         return vPalette;
-    }
-
-    public void setvPalette(View vPalette) {
-        this.vPalette = vPalette;
     }
 
     public PostViewHolder(View v) {
         super(v);
         rootView = itemView;
-        ivProfile = (ImageView) itemView.findViewById(R.id.ivProfile);
-        tvName = (TextView) itemView.findViewById(R.id.tvName);
+        ivProfile = itemView.findViewById(R.id.ivProfile);
+        tvName = itemView.findViewById(R.id.tvName);
         vPalette = itemView.findViewById(R.id.vPalette);
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
