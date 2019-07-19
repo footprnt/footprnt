@@ -9,8 +9,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -19,13 +18,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.example.footprnt.MainActivity;
 import com.example.footprnt.Models.Post;
-import com.example.footprnt.Profile.Adapters.PostAdapter;
+import com.example.footprnt.Profile.Adapters.MultiViewAdapter;
 import com.example.footprnt.Profile.Util.Util;
 import com.example.footprnt.R;
 import com.parse.FindCallback;
@@ -36,10 +33,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import de.hdodenhof.circleimageview.CircleImageView;
-
-import static android.app.Activity.RESULT_OK;
-
 /**
  * Fragment for profile page
  * Created by Clarisa Leu 2019
@@ -48,40 +41,15 @@ public class ProfileFragment extends Fragment {
     public final static String TAG = "ProfileFragment";  // tag for logging from this activity
     final ParseUser user = ParseUser.getCurrentUser();
 
-    // For user profile info view:
-    CircleImageView mIvProfileImage;
-    TextView mTvEditProfile;
-
     // For stats view:
     HashMap<String, Integer> mCities;
     HashMap<String, Integer> mCountries;
     HashMap<String, Integer> mContinents;
-    ArrayList<HashMap<String, Integer>> mStatsList;
 
     // For post feed:
-    ArrayList<Post> mPosts;  // list of current user posts
-    RecyclerView mRvPosts;
-    PostAdapter mPostAdapter;
-    SwipeRefreshLayout mSwipeContainer;
-
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        mPostAdapter.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            loadProfImage();
-        }
-    }
-
-    private void loadProfImage() {
-        if (user.getParseFile("profileImg") != null) {
-            String url = user.getParseFile("profileImg").getUrl();
-            System.out.println(url);
-            Glide.with(getContext()).load(url).into(mIvProfileImage);
-        } else {
-            Glide.with(getContext()).load(R.drawable.ic_user).into(mIvProfileImage);
-        }
-    }
+    ArrayList<Object> mObjects;
+    RecyclerView mLayout;
+    MultiViewAdapter mMultiAdapter;
 
     @Nullable
     @Override
@@ -90,59 +58,26 @@ public class ProfileFragment extends Fragment {
         setUpLogOutButton(v);
 
         // Populate stat maps and get posts
-        mPosts = new ArrayList<>();
+        mObjects = new ArrayList<>();
         mCities = new HashMap<>();
         mCountries = new HashMap<>();
-        mContinents = new HashMap<>();
-        mStatsList = new ArrayList<>();
-
-        // Call getPosts() first
-        mTvEditProfile = v.findViewById(R.id.tvEditProfile);
-        mTvEditProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent it = new Intent(v.getContext(), UserSettings.class);
-                startActivityForResult(it, 1);
-            }
-        });
-
-
-        // For profile image:
-        mIvProfileImage = v.findViewById(R.id.ivProfileImageMain);
-        loadProfImage();
+        mContinents = new HashMap<>();;
 
         getPosts(
                 new Handler(),
                 new CalculateStatsCallback() {
                     @Override
                     public void onDone(ArrayList<HashMap<String, Integer>> stats) {
-                        mStatsList.add(mCities);
-                        mStatsList.add(mCountries);
-                        mStatsList.add(mContinents);
-                        updateStats();
                     }
                 });
 
-//        // Refresh listener for post feed and update stats
-//        mSwipeContainer = v.findViewById(R.id.swipeContainer);
-//        mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-//            @Override
-//            public void onRefresh() {
-//                getPosts(new Handler(), new CalculateStatsCallback() {
-//                    @Override
-//                    public void onDone(ArrayList<HashMap<String, Integer>> stats) {
-//                        updateStats();
-//                    }
-//                });
-//            }
-//        });
+        mObjects.add(user);
 
         // For post feed view:
-        mPostAdapter = new PostAdapter(getActivity(),(List<Post>)mPosts);
-        mRvPosts = v.findViewById(R.id.rvPosts);
-        mRvPosts.setLayoutManager(new GridLayoutManager(v.getContext(), 3));
-        mRvPosts.setAdapter(mPostAdapter);
-
+        mMultiAdapter = new MultiViewAdapter(getActivity(),mObjects);
+        mLayout = v.findViewById(R.id.rvPosts);
+        mLayout.setLayoutManager(new LinearLayoutManager(getContext()));
+        mLayout.setAdapter(mMultiAdapter);
 
         return v;
     }
@@ -150,14 +85,6 @@ public class ProfileFragment extends Fragment {
     interface CalculateStatsCallback {
         void onDone(ArrayList<HashMap<String, Integer>> mStatsList);
     }
-
-// TODO: Make interface for stats
-//    interface CustomStatInterface {
-//        String getName();
-//
-//        String calculateStat(String data);
-//    }
-
 
     private void setUpLogOutButton(final View v) {
         // Log out button
@@ -196,15 +123,14 @@ public class ProfileFragment extends Fragment {
                     for (int i = 0; i < objects.size(); i++) {
                         final Post post = objects.get(i);
                         // Only add current user's posts
-                        mPosts.add(post);
-                        mPostAdapter.notifyItemInserted(mPosts.size() - 1);
+                        mObjects.add(post);
+                        mMultiAdapter.notifyItemInserted(mObjects.size() - 1);
                         // Get post stats and update user stats
                         Util helper = new Util();
                         ArrayList<String> postStats = helper.getAddress(getContext(), post.getLocation());
                         // Fill HashMaps
                         // Cities
                         // TODO: check stats with post and update dictionary
-
                         if (!mCities.containsKey(postStats.get(0))) {
                             // User first visit
                             mCities.put(postStats.get(0), 1);
@@ -235,25 +161,11 @@ public class ProfileFragment extends Fragment {
                         new Runnable() {
                             @Override
                             public void run() {
-                                callback.onDone(mStatsList);
                             }
                         });
             }
         });
     }
-
-    private void updateStats() {
-        ArrayList<ArrayList<String>> res = new ArrayList<>();
-        for (int i = 0; i < mStatsList.size(); i++) {  // Loop through number of stats we're tracking
-            HashMap<String, Integer> innerList = mStatsList.get(i);
-            ArrayList<String> toAdd = new ArrayList<>();
-            toAdd.add(String.format("%s", innerList.size()));
-            res.add(toAdd);
-        }
-        user.put("stats", res);
-        user.saveInBackground();
-    }
-
 
     // TODO: implement on click for item to allow user to edit post
     @Override

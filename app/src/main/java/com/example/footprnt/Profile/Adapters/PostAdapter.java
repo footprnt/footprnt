@@ -55,8 +55,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.VH> {
         ArrayList<String> location = util.getAddress(mContext, post.getLocation());
         holder.tvName.setText(location.get(0)+", "+location.get(1));
         holder.vPalette.setBackgroundColor(Color.WHITE);
-
-
         SimpleTarget<Bitmap> target = new SimpleTarget<Bitmap>() {
             @Override
             public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
@@ -67,7 +65,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.VH> {
         };
 
         holder.ivProfile.setTag(target);
-        // TODO: get post image as bitmap
         Glide.with(mContext).asBitmap().load(post.getImage().getUrl()).centerCrop().into(target);
     }
 
