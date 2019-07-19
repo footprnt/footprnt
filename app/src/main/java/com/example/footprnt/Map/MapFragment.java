@@ -349,7 +349,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 } else {
                     createPost(snippet, title, parseFile , user, lastPoint);
                 }
-                Toast.makeText(getContext(), "Posted!", Toast.LENGTH_SHORT);
+                Toast.makeText(getActivity(), "Posted!", Toast.LENGTH_SHORT);
                 alertDialog.dismiss();
             }
         });
@@ -386,9 +386,19 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         try {
             addresses = gcd.getFromLocation(point.latitude, point.longitude, 1);
             if (addresses.size() > 0) {
-                newPost.setCity(addresses.get(0).getLocality());
-                newPost.setCountry(addresses.get(0).getCountryName());
-                newPost.setContinent(continents.getString(addresses.get(0).getCountryCode()));
+                String city = addresses.get(0).getLocality();
+                String country = addresses.get(0).getCountryName();
+                String country_code = addresses.get(0).getCountryCode();
+                if (city != null){
+                    newPost.setCity(city);
+                }
+                if (country != null){
+                    newPost.setCountry(country);
+                }
+                if (country_code != null && continents.has(country_code)){
+                    String continent = continents.getString(country_code);
+                    newPost.setContinent(continent);
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
