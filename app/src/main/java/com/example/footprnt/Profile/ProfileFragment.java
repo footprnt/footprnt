@@ -19,7 +19,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,8 +53,6 @@ public class ProfileFragment extends Fragment {
     TextView mTvEditProfile;
 
     // For stats view:
-    StatListAdapter mStatAdapter;  // Adapter for stats
-    ListView mLvStats;
     HashMap<String, Integer> mCities;
     HashMap<String, Integer> mCountries;
     HashMap<String, Integer> mContinents;
@@ -146,10 +143,6 @@ public class ProfileFragment extends Fragment {
         mRvPosts.setLayoutManager(new GridLayoutManager(v.getContext(), 3));
         mRvPosts.setAdapter(mPostAdapter);
 
-        // For stat view
-        mLvStats = v.findViewById(R.id.lvStatKey);
-        mStatAdapter = new StatListAdapter(mStatsList, v.getContext());
-        mLvStats.setAdapter(mStatAdapter);
 
         return v;
     }
