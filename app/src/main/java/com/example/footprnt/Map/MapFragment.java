@@ -23,6 +23,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +31,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Scroller;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -280,6 +282,11 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         alertDialog = alertDialogBuilder.create();
         alertDialog.show();
 
+        EditText etDescription = alertDialog.findViewById(R.id.etSnippet);
+        etDescription.setScroller(new Scroller(getContext()));
+        etDescription.setMaxLines(3);
+        etDescription.setVerticalScrollBarEnabled(true);
+        etDescription.setMovementMethod(new ScrollingMovementMethod());
         sendPost = alertDialog.findViewById(R.id.sendPost);
         cancelPost = alertDialog.findViewById(R.id.cancelPost);
         ImageView ivUpload = alertDialog.findViewById(R.id.ivUpload);
@@ -336,13 +343,14 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                         @Override
                         public void done(ParseException e) {
                             createPost(snippet, title, parseFile, user, lastPoint);
-                            alertDialog.dismiss();
+
                         }
                     });
                 } else {
                     createPost(snippet, title, parseFile , user, lastPoint);
-                    alertDialog.dismiss();
                 }
+                Toast.makeText(getActivity(), "Posted!", Toast.LENGTH_SHORT);
+                alertDialog.dismiss();
             }
         });
         cancelPost.setOnClickListener(new View.OnClickListener() {
@@ -378,9 +386,19 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         try {
             addresses = gcd.getFromLocation(point.latitude, point.longitude, 1);
             if (addresses.size() > 0) {
-                newPost.setCity(addresses.get(0).getLocality());
-                newPost.setCountry(addresses.get(0).getCountryName());
-                newPost.setContinent(continents.getString(addresses.get(0).getCountryCode()));
+                String city = addresses.get(0).getLocality();
+                String country = addresses.get(0).getCountryName();
+                String country_code = addresses.get(0).getCountryCode();
+                if (city != null){
+                    newPost.setCity(city);
+                }
+                if (country != null){
+                    newPost.setCountry(country);
+                }
+                if (country_code != null && continents.has(country_code)){
+                    String continent = continents.getString(country_code);
+                    newPost.setContinent(continent);
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();

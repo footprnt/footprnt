@@ -25,7 +25,10 @@ public class LocationHelper {
             }
             else {
                 if (addresses.size() > 0) {
-                    return (addresses.get(0).getFeatureName() + ", " + addresses.get(0).getLocality() +", " + addresses.get(0).getAdminArea() + ", " + addresses.get(0).getCountryName());
+                    String address = (addresses.get(0).getFeatureName() + ", " + addresses.get(0).getLocality() +", " + addresses.get(0).getAdminArea() + ", " + addresses.get(0).getCountryName());
+                    address = address.replaceAll(" null,", "");
+                    address = address.replaceAll(", null", "");
+                    return address;
                 }
             }
         }

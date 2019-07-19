@@ -25,6 +25,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <activity android:name=".Map.PostDetailActivity"></activity>
         <activity
             android:name=".Profile.EditPost"
             android:label="@string/title_activity_edit_post"
@@ -32,7 +33,7 @@
         <activity android:name=".Profile.UserSettings" />
         <activity
             android:name=".Map.FeedActivity"
-            android:theme="@style/Theme.UserDialog" />
+            android:theme="@style/MyTheme" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"

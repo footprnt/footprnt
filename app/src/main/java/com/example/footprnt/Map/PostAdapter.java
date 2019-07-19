@@ -1,7 +1,12 @@
 package com.example.footprnt.Map;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Typeface;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -34,6 +39,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     ArrayList<Post> posts;    // list of posts
     Context context;          // context for rendering
     LocationHelper helper;
+    Typeface montserrat;
 
     public PostAdapter(ArrayList<Post> posts) {
         this.posts = posts;
@@ -51,6 +57,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         Log.d("tag", "onCreateViewHolder");
         context = parent.getContext();  // get the context and create the inflater
         LayoutInflater inflater = LayoutInflater.from(context);
+        montserrat = ResourcesCompat.getFont(context, R.font.montserrat_bold);
         View postView = inflater.inflate(R.layout.item_post, parent, false);
         return new ViewHolder(postView);  // return a new ViewHolder
     }
@@ -63,9 +70,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         String description = post.getDescription();
         String title = post.getTitle();
 
-        System.out.println(post.getObjectId());
-        System.out.println(post.getUser());
+        holder.iv5.setImageResource(R.drawable.ic_map);
 
+        holder.tvTitle.setTypeface(montserrat);
         holder.tvUser.setText(post.getUser().getUsername());
         if (description.length() > 0) {
             holder.tvDescription.setText(description);
@@ -107,7 +114,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
         String tagname = "";
         JSONArray arr = post.getTags();
-        if (arr != null){
+        if (arr != null && arr.length() >0 ){
             for (int i = 0; i < arr.length(); i++){
                 try {
                     tagname += "#" + arr.getString(i) + " ";
@@ -115,8 +122,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                     e.printStackTrace();
                 }
             }
+            holder.tvTags.setText(tagname);
+        } else {
+            holder.tvTags.setVisibility(View.GONE);
         }
-        holder.tvTags.setText(tagname);
+
     }
 
     public static String getRelativeTimeAgo(String rawJsonDate) {
@@ -151,6 +161,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         TextView tvLocation;      // Post Location
         TextView tvTimePosted;
         TextView tvTags;
+        ImageView iv5;
 
 
         public ViewHolder(@NonNull View itemView) {
@@ -163,31 +174,31 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             tvTimePosted = itemView.findViewById(R.id.timePosted);
             tvTitle = itemView.findViewById(R.id.tvTitle);
             tvTags = itemView.findViewById(R.id.tvTags);
+            iv5 = itemView.findViewById(R.id.imageView5);
 
-            //itemView.setOnClickListener(this);
+            itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-//            // gets item position
-//            int position = getAdapterPosition();
-//            // make sure the position is valid, i.e. actually exists in the view
-//            if (position != RecyclerView.NO_POSITION) {
-//                // get the movie at the position, this won't work if the class is static
-//                Movie movie = movies.get(position);
-//                // create intent for the new activity
-//                Intent intent = new Intent(context, MovieDetailsActivity.class);
-//                // serialize the movie using parceler, use its short name as a key
-//                intent.putExtra(Movie.class.getSimpleName(), Parcels.wrap(movie));
-//
-//                // Pass backdrop image
-//                String imageUrl = config.getImageUrl(config.getBackdropSize(), movie.getBackdropPath());
-//                intent.putExtra("video_id", imageUrl);
-//                intent.putExtra("name_movie", movie.getTitle());
-//
-//                // show the activity
-//                context.startActivity(intent);
-//            }
+            int position = getAdapterPosition();
+            System.out.println(position);
+            if (position != RecyclerView.NO_POSITION) {
+                Post post = posts.get(position);
+                Intent intent = new Intent(context, PostDetailActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable(Post.class.getSimpleName(), post);
+                intent.putExtras(bundle);
+                Date d = post.getCreatedAt();
+                String dateText;
+                if (d==null){
+                    dateText = "0s";
+                } else {
+                    dateText = getRelativeTimeAgo(d.toString());
+                }
+                intent.putExtra("time", dateText);
+                ((Activity) context).startActivityForResult(intent, 20);
+            }
         }
 
 
