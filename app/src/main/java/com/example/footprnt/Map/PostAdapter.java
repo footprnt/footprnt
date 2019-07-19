@@ -18,6 +18,9 @@ import com.example.footprnt.R;
 import com.example.footprnt.Util.LocationHelper;
 import com.google.android.gms.maps.model.LatLng;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -101,6 +104,19 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         LatLng point = new LatLng(post.getLocation().getLatitude(), post.getLocation().getLongitude());
         String tvCityState = helper.getAddress(context, point);
         holder.tvLocation.setText(tvCityState);
+
+        String tagname = "";
+        JSONArray arr = post.getTags();
+        if (arr != null){
+            for (int i = 0; i < arr.length(); i++){
+                try {
+                    tagname += "#" + arr.getString(i) + " ";
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        holder.tvTags.setText(tagname);
     }
 
     public static String getRelativeTimeAgo(String rawJsonDate) {
@@ -134,6 +150,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         ImageView ivUserPicture;   // Users Picture
         TextView tvLocation;      // Post Location
         TextView tvTimePosted;
+        TextView tvTags;
 
 
         public ViewHolder(@NonNull View itemView) {
@@ -145,6 +162,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             tvLocation = itemView.findViewById(R.id.tvLocation);
             tvTimePosted = itemView.findViewById(R.id.timePosted);
             tvTitle = itemView.findViewById(R.id.tvTitle);
+            tvTags = itemView.findViewById(R.id.tvTags);
 
             //itemView.setOnClickListener(this);
         }
