@@ -14,7 +14,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.R;
-import com.parse.ParseImageView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,7 +31,7 @@ public class YelpService extends AppCompatActivity {
     Post post;
 
     @BindView(R.id.ivProfile)
-    ParseImageView ivProfile;
+    ImageView ivProfile;
     @BindView(R.id.cbRestaurant)
     CheckBox cbRestaurant;
     @BindView(R.id.cbLegal)
@@ -112,8 +111,8 @@ public class YelpService extends AppCompatActivity {
             tvTitle.setText(post.getTitle());
         }
         if (post.getImage() != null) {
-            ivProfile.setParseFile(post.getImage());
-            ivProfile.loadInBackground();
+            // Load profile image
+            Glide.with(this).load( post.getImage().getUrl()).into(ivProfile);
         }
     }
 }
