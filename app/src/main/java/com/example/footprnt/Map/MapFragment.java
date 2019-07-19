@@ -3,6 +3,7 @@ package com.example.footprnt.Map;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -41,6 +42,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.FindCallback;
@@ -86,8 +88,8 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         locationHelper = new LocationHelper();
         user = ParseUser.getCurrentUser();
         ParseACL acl = new ParseACL();
-        acl.setReadAccess(user,true);
-        acl.setWriteAccess(user,true);
+        acl.setPublicReadAccess(true);
+        acl.setPublicWriteAccess(true);
         user.setACL(acl);
         markers = new ArrayList<>();
         return v;
@@ -121,6 +123,19 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         map = googleMap;
         map.setOnMapLongClickListener(this);
         map.setOnMapClickListener(this);
+        try {
+            // Customise the styling of the base map using a JSON object defined
+            // in a raw resource file.
+            boolean success = map.setMapStyle(
+                    MapStyleOptions.loadRawResourceStyle(
+                            getContext(), R.raw.style_json_aubergine));
+
+            if (!success) {
+                Log.e("map", "Style parsing failed.");
+            }
+        } catch (Resources.NotFoundException e) {
+            Log.e("map", "Can't find style. Error: ", e);
+        }
         Intent intent = getActivity().getIntent();
         if (intent.getIntExtra("Place Number",0) == 0 ){
             // Zoom into users location
@@ -208,10 +223,10 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     public void onMapLongClick(LatLng latLng) {
         mapRipple = new MapRipple(map, latLng, getContext())
                 .withNumberOfRipples(3)
-                .withFillColor(Color.BLUE)
+                .withFillColor(Color.CYAN)
                 .withStrokeColor(Color.BLACK)
                 .withDistance(2000)      // 2000 metres radius
-                .withRippleDuration(6000)    //12000ms
+                .withRippleDuration(4000)    //12000ms
                 .withTransparency(0.8f);
         mapRipple.startRippleMapAnimation();      //in onMapReadyCallBack
         Toast.makeText(getActivity(), locationHelper.getAddress(getContext(), latLng), Toast.LENGTH_LONG).show();
@@ -222,11 +237,11 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     public void onMapClick(LatLng latLng) {
         mapRipple = new MapRipple(map, latLng, getContext())
                 .withNumberOfRipples(3)
-                .withFillColor(Color.BLUE)
+                .withFillColor(Color.CYAN)
                 .withStrokeColor(Color.BLACK)
                 .withDistance(2000)      // 2000 metres radius
-                .withRippleDuration(6000)    //12000ms
-                .withTransparency(0.9f);
+                .withRippleDuration(4000)    //12000ms
+                .withTransparency(0.8f);
         mapRipple.startRippleMapAnimation();      //in onMapReadyCallBack
         Intent i = new Intent(getActivity(), FeedActivity.class);
         startActivity(i);

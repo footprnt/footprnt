@@ -7,6 +7,8 @@ import android.location.Location;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -37,7 +39,9 @@ public class LocationHelper {
 
     public void centreMapOnLocation(GoogleMap map, Location location, String title){
         LatLng userLocation = new LatLng(location.getLatitude(),location.getLongitude());
-        map.addMarker(new MarkerOptions().position(userLocation).title(title));
+        BitmapDescriptor defaultMarker =
+                BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
+        map.addMarker(new MarkerOptions().position(userLocation).title(title).icon(defaultMarker));
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation,12));
     }
 

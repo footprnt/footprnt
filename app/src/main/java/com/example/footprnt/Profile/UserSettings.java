@@ -42,7 +42,6 @@ public class UserSettings extends AppCompatActivity {
     TextView mTvEditPhoto;
     ImageView mIvBackArrow;
     ImageView mIvSave;
-    EditText mEtPassword;
     EditText mEtUsername;
     EditText mEtNumber;
     EditText mEtEmail;
@@ -60,7 +59,6 @@ public class UserSettings extends AppCompatActivity {
         mIvProfileImage = findViewById(R.id.ivProfileImageMain);
         mTvEditPhoto = findViewById(R.id.tvEditPhoto);
         mIvBackArrow = findViewById(R.id.ivBack);
-        mEtPassword = findViewById(R.id.etPassword);
         mEtUsername = findViewById(R.id.etUsername);
         mEtNumber = findViewById(R.id.etNumber);
         mEtEmail = findViewById(R.id.etEmail);
