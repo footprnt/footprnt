@@ -115,8 +115,8 @@
 
     <ImageView
         android:id="@+id/image"
-        android:layout_width="250dp"
-        android:layout_height="250dp"
+        android:layout_width="230dp"
+        android:layout_height="230dp"
         android:layout_marginTop="8dp"
         android:scaleType="centerCrop"
         app:layout_constraintEnd_toEndOf="parent"
@@ -149,7 +149,7 @@
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline2">
+        app:layout_constraintTop_toBottomOf="@+id/ivCamera">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -225,12 +225,5 @@
             android:layout_gravity="bottom|center"
             android:orientation="horizontal" />
     </LinearLayout>
-
-    <android.support.constraint.Guideline
-        android:id="@+id/guideline2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_begin="212dp" />
 
 </android.support.constraint.ConstraintLayout>

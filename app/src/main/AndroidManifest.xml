@@ -33,7 +33,7 @@
         <activity android:name=".Profile.UserSettings" />
         <activity
             android:name=".Map.FeedActivity"
-            android:theme="@style/Theme.UserDialog" />
+            android:theme="@style/MyTheme" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
