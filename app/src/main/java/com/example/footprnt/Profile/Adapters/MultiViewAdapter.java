@@ -19,6 +19,7 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.Profile.Adapters.ViewHolders.PostViewHolder;
+import com.example.footprnt.Profile.Adapters.ViewHolders.StatViewHolder;
 import com.example.footprnt.Profile.Adapters.ViewHolders.UserInfoViewHolder;
 import com.example.footprnt.Profile.EditPost;
 import com.example.footprnt.Profile.UserSettings;
@@ -40,23 +41,15 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     Context mContext;
     ArrayList<Object> items;
 
-    // For stats view:
-    HashMap<String, Integer> mCities;  // Contains the cities and number of times visited by user
-    HashMap<String, Integer> mCountries;  // Contains the countries and number of times visited by user
-    HashMap<String, Integer> mContinents;  // Contains the continents and number of times visited by user
+    // Identifier for objects in items
+    private final int USER_INFO = 0, POST = 1, STAT = 2;
     public final int totalNumCities = 4416;
     public final int totalNumCountries = 195;
     public final int totalNumContinents = 7;
 
-    // Identifier for objects in items
-    private final int USER_INFO = 0, POST = 1;
-
     public MultiViewAdapter(Context context, ArrayList<Object> items) {
         this.items = items;
         this.mContext = context;
-        mCities = new HashMap<>();
-        mCountries = new HashMap<>();
-        mContinents = new HashMap<>();
     }
 
     @Override
@@ -71,6 +64,8 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             return POST;
         } else if (items.get(position) instanceof ParseUser) {
             return USER_INFO;
+        } else if(items.get(position) instanceof HashMap){
+            return STAT;
         }
         return -1;
     }
@@ -96,7 +91,9 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 View v2 = inflater.inflate(R.layout.item_user_information, viewGroup, false);
                 viewHolder = new UserInfoViewHolder(v2);
                 break;
-            default:
+            case STAT:
+                View v3 = inflater.inflate(R.layout.item_user_stats, viewGroup, false);
+                viewHolder = new StatViewHolder(v3);
         }
         return viewHolder;
     }
@@ -120,39 +117,32 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 UserInfoViewHolder vh2 = (UserInfoViewHolder) viewHolder;
                 configureUserInfoViewHolder(vh2, position);
                 break;
+            case STAT:
+                StatViewHolder vh3 = (StatViewHolder) viewHolder;
+                configureStatViewHolder(vh3, position);
+                break;
+        }
+    }
+
+    private void configureStatViewHolder(final StatViewHolder vh3, final int position){
+        final HashMap<String, Integer> cities = (HashMap<String, Integer>) items.get(position);
+        if(cities!= null){
+                        // For pie chart
+            // Cities:
+            List<PieEntry> pieEntries = new ArrayList<>();
+            pieEntries.add(new PieEntry(cities.size(), "Visited Cities"));
+            pieEntries.add(new PieEntry(totalNumCities-cities.size(), "Unvisited Cities"));
+            PieDataSet pieDataSet = new PieDataSet(pieEntries, "City Stats");
+            pieDataSet.setColors(R.color.colorPrimary, R.color.colorPrimaryDark);
+            PieData pieData = new PieData(pieDataSet);
+            vh3.getmPieChart().setData(pieData);
+            vh3.getmPieChart().animateY(1000);
+            vh3.getmPieChart().invalidate();
         }
     }
 
     private void configurePostViewHolder(final PostViewHolder vh1, final int position) {
         final Post post = (Post) items.get(position);
-        // Get post stats and update user stats
-        String city = post.getCity();
-        String country = post.getCountry();
-        String continent = post.getContinent();
-
-        // Fill HashMaps - Cities
-        if (!mCities.containsKey(city)) {
-            // User first visit
-            mCities.put(city, 1);
-        } else {
-            // User already visited, increment count
-            mCities.put(city, mCities.get(city) + 1);
-        }
-
-        // Countries
-        if (!mCountries.containsKey(country)) {
-            mCountries.put(country, 1);
-        } else {
-            mCountries.put(country, mCountries.get(country) + 1);
-        }
-        // Continents
-        if (!mContinents.containsKey(continent)) {
-            mContinents.put(continent, 1);
-        } else {
-            mContinents.put(continent, mContinents.get(continent) + 1);
-        }
-
-
         if (post != null) {
             vh1.getRootView().setTag(post);
             String cityName = post.getCity();
@@ -212,17 +202,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 }
             });
 
-            // For pie chart
-            // Cities:
-            List<PieEntry> pieEntries = new ArrayList<>();
-            pieEntries.add(new PieEntry(mCities.size(), "Visited Cities"));
-            pieEntries.add(new PieEntry(totalNumCities-mCities.size(), "Unvisited Cities"));
-            PieDataSet pieDataSet = new PieDataSet(pieEntries, "City Stats");
-            pieDataSet.setColors(R.color.colorPrimary, R.color.colorPrimaryDark);
-            PieData pieData = new PieData(pieDataSet);
-            vh2.getmPieChart().setData(pieData);
-            vh2.getmPieChart().animateY(1000);
-            vh2.getmPieChart().invalidate();
+
         }
     }
 

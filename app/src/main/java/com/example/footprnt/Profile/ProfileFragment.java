@@ -28,6 +28,7 @@ import com.parse.ParseException;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -43,6 +44,14 @@ public class ProfileFragment extends Fragment {
     RecyclerView mLayout;
     MultiViewAdapter mMultiAdapter;
 
+
+    // For stats view:
+    HashMap<String, Integer> mCities;  // Contains the cities and number of times visited by user
+    HashMap<String, Integer> mCountries;  // Contains the countries and number of times visited by user
+    HashMap<String, Integer> mContinents;  // Contains the continents and number of times visited by user
+
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -51,16 +60,20 @@ public class ProfileFragment extends Fragment {
 
         // Populate stat maps and get posts
         mObjects = new ArrayList<>();
+        mCities = new HashMap<>();
+        mCountries = new HashMap<>();
+        mContinents = new HashMap<>();
 
         // Get posts
         getPosts();
-        mObjects.add(user);
 
         // For post feed view:
         mMultiAdapter = new MultiViewAdapter(getActivity(), mObjects);
+
         mLayout = v.findViewById(R.id.rvPosts);
         mLayout.setLayoutManager(new LinearLayoutManager(getContext()));
         mLayout.setAdapter(mMultiAdapter);
+
         return v;
     }
 
@@ -105,10 +118,42 @@ public class ProfileFragment extends Fragment {
                         // Only add current user's posts
                         mObjects.add(post);
                         mMultiAdapter.notifyItemInserted(mObjects.size() - 1);
+                        // Get post stats and update user stats
+                        String city = post.getCity();
+                        String country = post.getCountry();
+                        String continent = post.getContinent();
+
+                        // Fill HashMaps - Cities
+                        if (!mCities.containsKey(city)) {
+                            // User first visit
+                            mCities.put(city, 1);
+                        } else {
+                            // User already visited, increment count
+                            mCities.put(city, mCities.get(city) + 1);
+                        }
+
+                        // Countries
+                        if (!mCountries.containsKey(country)) {
+                            mCountries.put(country, 1);
+                        } else {
+                            mCountries.put(country, mCountries.get(country) + 1);
+                        }
+                        // Continents
+                        if (!mContinents.containsKey(continent)) {
+                            mContinents.put(continent, 1);
+                        } else {
+                            mContinents.put(continent, mContinents.get(continent) + 1);
+                        }
                     }
                 } else {
                     logError("Error querying posts", e, true);
                 }
+
+                // TODO: hashmaps filled
+                mObjects.add(user);
+                mMultiAdapter.notifyItemInserted(mObjects.size()-1);
+                mObjects.add(mCities);
+                mMultiAdapter.notifyItemInserted(mObjects.size()-1);
             }
         });
     }
