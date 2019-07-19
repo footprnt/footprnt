@@ -16,36 +16,39 @@
     <android.support.constraint.ConstraintLayout
         android:id="@+id/edit_name"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_gravity="center"
+        android:layout_margin="8dp"
         android:orientation="vertical"
-        android:paddingBottom="5dp">
+        android:padding="8dp"
+        android:paddingLeft="8dp"
+        android:paddingTop="8dp"
+        android:paddingRight="8dp"
+        android:paddingBottom="8dp">
 
         <ImageView
             android:id="@+id/ivPicture"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginBottom="8dp"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginRight="4dp"
             android:scaleType="centerCrop"
-            card_view:layout_constraintBottom_toBottomOf="parent"
+            card_view:layout_constraintBottom_toBottomOf="@+id/tvDescription"
             card_view:layout_constraintEnd_toEndOf="parent"
-            card_view:layout_constraintTop_toBottomOf="@+id/tvTags"
+            card_view:layout_constraintTop_toTopOf="@+id/tvTitle"
             card_view:srcCompat="@android:color/black" />
 
         <TextView
             android:id="@+id/tvUser"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp"
-            android:fontFamily="@font/roboto_light"
+            android:layout_marginStart="4dp"
+            android:layout_marginLeft="4dp"
+            android:fontFamily="@font/roboto"
             android:text="Username"
             android:textSize="12sp"
             card_view:layout_constraintStart_toEndOf="@+id/ivUserPicture"
-            card_view:layout_constraintTop_toBottomOf="@+id/tvDescription" />
+            card_view:layout_constraintTop_toTopOf="@+id/ivUserPicture" />
 
         <TextView
             android:id="@+id/tvDescription"
@@ -56,8 +59,10 @@
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:fontFamily="@font/roboto_light"
+            android:maxLines="2"
+            android:ellipsize="end"
             android:text="Caption"
-            android:textSize="14sp"
+            android:textSize="18sp"
             card_view:layout_constraintEnd_toStartOf="@+id/ivPicture"
             card_view:layout_constraintStart_toStartOf="parent"
             card_view:layout_constraintTop_toBottomOf="@+id/tvTitle" />
@@ -79,31 +84,30 @@
             android:id="@+id/timePosted"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:fontFamily="@font/roboto_thin"
-            android:text="TextView"
-            android:textSize="8sp"
-            card_view:layout_constraintStart_toEndOf="@+id/ivUserPicture"
-            card_view:layout_constraintTop_toBottomOf="@+id/tvUser" />
+            android:layout_marginStart="4dp"
+            android:layout_marginLeft="4dp"
+            android:fontFamily="@font/roboto"
+            android:text="time posted"
+            android:textSize="10sp"
+            card_view:layout_constraintBottom_toBottomOf="@+id/tvUser"
+            card_view:layout_constraintStart_toEndOf="@+id/textView3"
+            card_view:layout_constraintTop_toTopOf="@+id/tvUser" />
 
         <TextView
             android:id="@+id/tvLocation"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="8dp"
             android:fontFamily="@font/roboto_medium"
-            android:text="TextView"
+            android:text="@string/location"
             android:textSize="12sp"
             card_view:layout_constraintBottom_toBottomOf="parent"
-            card_view:layout_constraintEnd_toStartOf="@+id/ivPicture"
-            card_view:layout_constraintStart_toStartOf="parent"
-            card_view:layout_constraintTop_toBottomOf="@+id/timePosted" />
+            card_view:layout_constraintEnd_toEndOf="parent"
+            card_view:layout_constraintStart_toEndOf="@+id/imageView5"
+            card_view:layout_constraintTop_toBottomOf="@+id/ivUserPicture" />
 
         <TextView
             android:id="@+id/tvTitle"
@@ -111,12 +115,12 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
-            android:layout_marginTop="4dp"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
-            android:fontFamily="@font/roboto_medium"
-            android:text="TextView"
-            android:textSize="18sp"
+            android:fontFamily="@font/montserrat_bold"
+            android:text="Title"
+            android:textColor="@android:color/black"
+            android:textSize="24sp"
             card_view:layout_constraintEnd_toStartOf="@+id/ivPicture"
             card_view:layout_constraintHorizontal_bias="0.0"
             card_view:layout_constraintStart_toStartOf="parent"
@@ -129,10 +133,33 @@
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
-            android:text="Textview"
-            android:textSize="10sp"
+            android:text="tags"
+            android:textColor="@android:color/black"
+            android:textSize="12sp"
             card_view:layout_constraintStart_toStartOf="parent"
             card_view:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/imageView5"
+            android:layout_width="19dp"
+            android:layout_height="17dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            card_view:layout_constraintStart_toStartOf="parent"
+            card_view:layout_constraintTop_toBottomOf="@+id/ivUserPicture"
+            card_view:srcCompat="@drawable/ic_map" />
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginLeft="4dp"
+            android:text="•"
+            card_view:layout_constraintBottom_toBottomOf="@+id/tvUser"
+            card_view:layout_constraintStart_toEndOf="@+id/tvUser"
+            card_view:layout_constraintTop_toTopOf="@+id/tvUser" />
 
 
     </android.support.constraint.ConstraintLayout></android.support.v7.widget.CardView>
