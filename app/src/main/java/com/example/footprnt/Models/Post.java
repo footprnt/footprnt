@@ -7,7 +7,10 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import org.json.JSONArray;
+
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 
 @ParseClassName("Post")
@@ -17,7 +20,10 @@ public class Post extends ParseObject implements Serializable {
     private static final String KEY_USER = "user";
     private static final String KEY_LOCATION = "location";
     private static final String KEY_TITLE = "title";
-
+    private static final String KEY_COUNTRY = "country";
+    private static final String KEY_CITY = "city";
+    private static final String KEY_CONTINENT = "continent";
+    private static final String KEY_TAGS = "tags";
 
     public String getDescription(){
         return getString(KEY_DESCRIPTION);
@@ -57,6 +63,38 @@ public class Post extends ParseObject implements Serializable {
 
     public void setLocation(ParseGeoPoint point){
         put(KEY_LOCATION, point);
+    }
+
+    public String getCountry(){
+        return getString(KEY_COUNTRY);
+    }
+
+    public void setCountry(String country){
+        put(KEY_COUNTRY, country);
+    }
+
+    public String getContinent(){
+        return getString(KEY_CONTINENT);
+    }
+
+    public void setContinent(String continent){
+        put(KEY_CONTINENT, continent);
+    }
+
+    public String getCity(){
+        return getString(KEY_CITY);
+    }
+
+    public void setCity(String city){
+        put(KEY_CITY, city);
+    }
+
+    public JSONArray getTags(){
+        return getJSONArray(KEY_TAGS);
+    }
+
+    public void setTags(ArrayList<String> tags){
+        put(KEY_TAGS, tags);
     }
 
     public static class Query extends ParseQuery<Post> {

@@ -26,7 +26,7 @@ import retrofit2.Call;
 public class DiscoverFragment extends Fragment {
     PostAdapter mPostAdapter;
 
-    
+
     RecyclerView mRvPosts;
     YelpFusionApi yelpFusionApi;
     YelpFusionApiFactory yelpFusionApiFactory;

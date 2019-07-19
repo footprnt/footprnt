@@ -7,14 +7,18 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
@@ -23,6 +27,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -53,10 +58,16 @@ import com.parse.ParseGeoPoint;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickListener, GoogleMap.OnMapClickListener, OnMapReadyCallback {
 
@@ -77,7 +88,10 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     ImageView cancelPost;
     AlertDialog alertDialog=null;
     ParseFile parseFile;
+    JSONObject continents;
     private ParseUser user;
+    ArrayList<String> tags;
+    boolean CULTURE=false; boolean FASHION = false; boolean TRAVEL=false; boolean FOOD = false; boolean NATURE = false; boolean LANGUAGE = false;
 
     @Nullable
     @Override
@@ -92,6 +106,19 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         acl.setPublicWriteAccess(true);
         user.setACL(acl);
         markers = new ArrayList<>();
+        try{
+            InputStream is = getActivity().getAssets().open("continents.json");;
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            String json = new String(buffer, "UTF-8");
+            continents = new JSONObject(json);
+        } catch (IOException e){
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         return v;
     }
 
@@ -124,8 +151,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         map.setOnMapLongClickListener(this);
         map.setOnMapClickListener(this);
         try {
-            // Customise the styling of the base map using a JSON object defined
-            // in a raw resource file.
             boolean success = map.setMapStyle(
                     MapStyleOptions.loadRawResourceStyle(
                             getContext(), R.raw.style_json_aubergine));
@@ -138,7 +163,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         }
         Intent intent = getActivity().getIntent();
         if (intent.getIntExtra("Place Number",0) == 0 ){
-            // Zoom into users location
             locationManager = (LocationManager)getActivity().getSystemService(Context.LOCATION_SERVICE);
             locationListener = new LocationListener() {
                 @Override
@@ -265,6 +289,8 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         TextView location = alertDialog.findViewById(R.id.location);
         location.setText(locationHelper.getAddress(getContext(),point));
         lastPoint = point;
+        tags = new ArrayList<>();
+        handleTags();
 
         ivUpload.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -347,6 +373,22 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         newPost.setUser(user);
         newPost.setTitle(title);
         newPost.setLocation(new ParseGeoPoint(point.latitude, point.longitude));
+        Geocoder gcd = new Geocoder(getContext(), Locale.getDefault());
+        List<Address> addresses = null;
+        try {
+            addresses = gcd.getFromLocation(point.latitude, point.longitude, 1);
+            if (addresses.size() > 0) {
+                newPost.setCity(addresses.get(0).getLocality());
+                newPost.setCountry(addresses.get(0).getCountryName());
+                newPost.setContinent(continents.getString(addresses.get(0).getCountryCode()));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        newPost.setTags(tags);
+
         newPost.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
@@ -393,7 +435,73 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 parseFile = null;
             }
         }
+    }
 
+    public void handleTags(){
+        final Button culture = alertDialog.findViewById(R.id.culture);
+        final Button food = alertDialog.findViewById(R.id.food);
+        final Button fashion = alertDialog.findViewById(R.id.fashion);
+        final Button travel = alertDialog.findViewById(R.id.travel);
+        final Button nature = alertDialog.findViewById(R.id.nature);
+        final Button language = alertDialog.findViewById(R.id.language);
+        final Button defbtn=new Button(getContext());
+//        final Drawable d = defbtn.getBackground().getConstantState().newDrawable();
+
+        culture.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public void onClick(View v) {
+                culture.getBackground().setTint(Color.parseColor("#659dbd"));
+                culture.setTextColor(Color.WHITE);
+                tags.add("culture");
+            }
+        });
+
+        food.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public void onClick(View v) {
+                food.getBackground().setTint(Color.parseColor("#659dbd"));
+                food.setTextColor(Color.WHITE);
+                tags.add("food");
+            }
+        });
+        fashion.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public void onClick(View v) {
+                fashion.getBackground().setTint(Color.parseColor("#659dbd"));
+                fashion.setTextColor(Color.WHITE);
+                tags.add("fashion");
+            }
+        });
+        travel.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public void onClick(View v) {
+                travel.getBackground().setTint(Color.parseColor("#659dbd"));
+                travel.setTextColor(Color.WHITE);
+                tags.add("travel");
+            }
+        });
+        nature.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public void onClick(View v) {
+                nature.getBackground().setTint(Color.parseColor("#659dbd"));
+                nature.setTextColor(Color.WHITE);
+                tags.add("nature");
+            }
+        });
+        language.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public void onClick(View v) {
+                language.getBackground().setTint(Color.parseColor("#659dbd"));
+                language.setTextColor(Color.WHITE);
+                tags.add("language");
+            }
+        });
     }
 
 }
