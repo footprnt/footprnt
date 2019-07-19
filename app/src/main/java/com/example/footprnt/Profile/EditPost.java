@@ -15,15 +15,13 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.footprnt.Models.Post;
-import com.example.footprnt.Profile.Util.Util;
 import com.example.footprnt.R;
+import com.example.footprnt.Util.DateHelper;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.SaveCallback;
-
-import java.util.ArrayList;
 
 /**
  * Edit post pop up window for ProfileFragment. Allows user to edit clicked on post from RV.
@@ -36,12 +34,12 @@ public class EditPost extends Activity {
     EditText mEtTitle;
     EditText mEtLocation;
     Button mBtnDelete;
-    Util util= new Util();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_edit_post);
+        DateHelper dateHelper = new DateHelper();
 
         // Get post from serializable extras
         Intent intent = this.getIntent();
@@ -55,14 +53,16 @@ public class EditPost extends Activity {
         mEtLocation = findViewById(R.id.etLocation);
         mBtnDelete = findViewById(R.id.btnDelete);
 
-        String date = util.getRelativeTimeAgo(post.getCreatedAt().toString());
+        String date = dateHelper.getRelativeTimeAgo(post.getCreatedAt().toString());
         mTvDate.setText(date);
         mEtTitle.setText(post.getTitle());
         mEtDescription.setText(post.getDescription());
-        ArrayList<String> location = util.getAddress(this, post.getLocation());
-        mEtLocation.setText(location.get(0)+", "+location.get(1));
-        //TODO: Add save/delete button
+        String city = post.getCity();
+        String country = post.getCountry();
+        String continent = post.getContinent();
+        mEtLocation.setText(city+", "+country+", "+continent);
 
+        //TODO: Add save/delete button
         if (post.getImage() != null) {
             Glide.with(this).load(post.getImage().getUrl()).into(mIvPicture);
         } else {
@@ -77,8 +77,8 @@ public class EditPost extends Activity {
         getWindow().setLayout((int) (width*.8), (int)(height*.7));
 
 
-
         // Delete post
+        // TODO: fix so it updates UI
         mBtnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -94,8 +94,6 @@ public class EditPost extends Activity {
                                     finish();
                                 }
                             });
-                        } else {
-                            // something went wrong
                         }
                     }
                 });

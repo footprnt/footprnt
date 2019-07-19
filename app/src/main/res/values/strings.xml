@@ -10,7 +10,7 @@
     <string name="menu_settings">Settings</string>
     <!-- TODO: Hide API Key -->
     <string name="google_maps_api_key">AIzaSyB6giE2uccJvP3W3Lt0Nz9Jau5l14vGHhM</string>
-    <string name="stats">STATS</string>
+    <string name="my_stats">MY STATS</string>
     <string name="my_posts">MY POSTS</string>
     <string name="description">Description</string>
     <string name="username">Username</string>

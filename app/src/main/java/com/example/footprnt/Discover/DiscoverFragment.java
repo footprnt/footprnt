@@ -60,7 +60,6 @@ public class DiscoverFragment extends Fragment {
         // For post feed view:
         resteraunts = new ArrayList<>();
         mPostAdapter = new PostAdapter(resteraunts);
-        mRvPosts = view.findViewById(R.id.rvFeed);
         mRvPosts.setLayoutManager(new LinearLayoutManager(view.getContext()));
         mRvPosts.setAdapter(mPostAdapter);
 
