@@ -1,6 +1,9 @@
 package com.example.footprnt.Map;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
@@ -164,30 +167,21 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             tvTitle = itemView.findViewById(R.id.tvTitle);
             tvTags = itemView.findViewById(R.id.tvTags);
 
-            //itemView.setOnClickListener(this);
+            itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-//            // gets item position
-//            int position = getAdapterPosition();
-//            // make sure the position is valid, i.e. actually exists in the view
-//            if (position != RecyclerView.NO_POSITION) {
-//                // get the movie at the position, this won't work if the class is static
-//                Movie movie = movies.get(position);
-//                // create intent for the new activity
-//                Intent intent = new Intent(context, MovieDetailsActivity.class);
-//                // serialize the movie using parceler, use its short name as a key
-//                intent.putExtra(Movie.class.getSimpleName(), Parcels.wrap(movie));
-//
-//                // Pass backdrop image
-//                String imageUrl = config.getImageUrl(config.getBackdropSize(), movie.getBackdropPath());
-//                intent.putExtra("video_id", imageUrl);
-//                intent.putExtra("name_movie", movie.getTitle());
-//
-//                // show the activity
-//                context.startActivity(intent);
-//            }
+            int position = getAdapterPosition();
+            System.out.println(position);
+            if (position != RecyclerView.NO_POSITION) {
+                Post post = posts.get(position);
+                Intent intent = new Intent(context, PostDetailActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable(Post.class.getSimpleName(), post);
+                intent.putExtras(bundle);
+                ((Activity) context).startActivityForResult(intent, 20);
+            }
         }
 
 
