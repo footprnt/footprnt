@@ -8,15 +8,15 @@
 
     <TextView
         android:id="@+id/item_user_info"
-        android:layout_width="66dp"
-        android:layout_height="24dp"
+        android:layout_width="108dp"
+        android:layout_height="25dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="428dp"
         android:background="#00020202"
-        android:text="@string/stats"
+        android:text="@string/my_stats"
         android:textColor="@color/grey"
         android:textSize="18sp"
         android:textStyle="bold"
@@ -75,7 +75,7 @@
 
     <TextView
         android:id="@+id/tvMyPosts"
-        android:layout_width="72dp"
+        android:layout_width="119dp"
         android:layout_height="24dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
@@ -84,7 +84,8 @@
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
         android:text="MY POSTS"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/grey"
+        android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
