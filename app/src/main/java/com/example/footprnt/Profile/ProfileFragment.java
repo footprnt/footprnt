@@ -41,6 +41,7 @@ public class ProfileFragment extends Fragment {
 
     // For post feed:
     ArrayList<Object> mObjects;
+    ArrayList<Post> mPosts;
     RecyclerView mLayout;
     MultiViewAdapter mMultiAdapter;
 
@@ -63,9 +64,11 @@ public class ProfileFragment extends Fragment {
         mCities = new HashMap<>();
         mCountries = new HashMap<>();
         mContinents = new HashMap<>();
+        mPosts = new ArrayList<>();
 
         // Get posts
         getPosts();
+        mObjects.add(user);
 
         // For post feed view:
         mMultiAdapter = new MultiViewAdapter(getActivity(), mObjects);
@@ -116,8 +119,7 @@ public class ProfileFragment extends Fragment {
                     for (int i = 0; i < objects.size(); i++) {
                         final Post post = objects.get(i);
                         // Only add current user's posts
-                        mObjects.add(post);
-                        mMultiAdapter.notifyItemInserted(mObjects.size() - 1);
+                        mPosts.add(post);
                         // Get post stats and update user stats
                         String city = post.getCity();
                         String country = post.getCountry();
@@ -150,10 +152,10 @@ public class ProfileFragment extends Fragment {
                 }
 
                 // TODO: hashmaps filled
-                mObjects.add(user);
-                mMultiAdapter.notifyItemInserted(mObjects.size()-1);
                 mObjects.add(mCities);
-                mMultiAdapter.notifyItemInserted(mObjects.size()-1);
+                mMultiAdapter.notifyDataSetChanged();
+                mObjects.addAll(mPosts);
+                mMultiAdapter.notifyDataSetChanged();
             }
         });
     }
