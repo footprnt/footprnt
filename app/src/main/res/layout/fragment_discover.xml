@@ -15,7 +15,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
-<<<<<<< HEAD
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/ivProfileImageMain"
         android:layout_width="60dp"
@@ -142,34 +141,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/recyclerView4" />
-=======
-    <ImageView
-        android:id="@+id/imageView4"
-        android:layout_width="139dp"
-        android:layout_height="35dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginBottom="4dp"
-        app:layout_constraintBottom_toBottomOf="@+id/topNav"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.764"
-        app:srcCompat="@drawable/logo4" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rvPosts"
-        android:layout_width="match_parent"
-        android:layout_height="659dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/topNav" />
 
     <FrameLayout
         android:layout_width="0dp"
@@ -187,7 +159,6 @@
             android:background="@drawable/toolbar_dropshadow" />
 
     </FrameLayout>
->>>>>>> 1a35cb9868d2f081b459673dca5165362e4e213c
 
 
 </android.support.constraint.ConstraintLayout>

@@ -25,6 +25,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <activity android:name=".Discover.YelpService"></activity>
         <activity
             android:name=".Profile.EditPost"
             android:label="@string/title_activity_edit_post"

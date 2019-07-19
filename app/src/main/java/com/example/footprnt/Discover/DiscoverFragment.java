@@ -25,6 +25,8 @@ import retrofit2.Call;
 
 public class DiscoverFragment extends Fragment {
     PostAdapter mPostAdapter;
+
+    
     RecyclerView mRvPosts;
     YelpFusionApi yelpFusionApi;
     YelpFusionApiFactory yelpFusionApiFactory;
@@ -40,21 +42,7 @@ public class DiscoverFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        String API_KEY = "cXle3bHvt-l2jAbYGJC0Eii7fCTIqLGVOAIQUhZgjw3c0HKPaW3uEJSkU2pSOX8x3170E1zuJJQn298CKdqlqYFZAiu_eA_qRWGAdhsWbI9bBkxnZwa9pGJ-iAswXXYx";
-        String CLIENT_ID = "Ao9IvqqNvqXJSj7j8b9mcg";
 
-        yelpFusionApiFactory = new YelpFusionApiFactory();
-        try {
-            yelpFusionApi = yelpFusionApiFactory.createAPI(API_KEY);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            businessSearchTest();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
 
         // For post feed view:
