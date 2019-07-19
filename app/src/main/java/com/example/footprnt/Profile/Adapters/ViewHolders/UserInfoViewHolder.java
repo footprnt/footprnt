@@ -11,6 +11,7 @@ import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,9 @@ public class UserInfoViewHolder extends RecyclerView.ViewHolder {
     CircleImageView mIvProfileImage;
     TextView mTvEditProfile;
     PieChart mPieChart;
+    public final int totalNumCities =4416;
+    public final int totalNumCountries = 195;
+    public final int totalNumContinents = 7;
 
 
 
@@ -49,9 +53,12 @@ public class UserInfoViewHolder extends RecyclerView.ViewHolder {
     private void setUpPieChart(){
         List<PieEntry> pieEntries = new ArrayList<>();
         pieEntries.add(new PieEntry(432, "Cities"));
+        pieEntries.add(new PieEntry(totalNumCities-432, "Unvisited Cities"));
         PieDataSet pieDataSet = new PieDataSet(pieEntries, "Number of Cities Visited");
+        pieDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
         PieData pieData = new PieData(pieDataSet);
         mPieChart.setData(pieData);
+        mPieChart.animateY(1000);
         mPieChart.invalidate();
     }
 }

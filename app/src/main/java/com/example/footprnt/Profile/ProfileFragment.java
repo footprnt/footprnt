@@ -40,9 +40,7 @@ import java.util.List;
 public class ProfileFragment extends Fragment{
     public final static String TAG = "ProfileFragment";  // tag for logging from this activity
     final ParseUser user = ParseUser.getCurrentUser();
-    public final int totalNumCities =4416;
-    public final int totalNumCountries = 195;
-    public final int totalNumContinents = 7;
+
 
     // For stats view:
     HashMap<String, Integer> mCities;
