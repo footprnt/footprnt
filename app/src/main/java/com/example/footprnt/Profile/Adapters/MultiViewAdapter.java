@@ -1,10 +1,13 @@
 package com.example.footprnt.Profile.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,6 +18,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.example.footprnt.Models.Post;
+import com.example.footprnt.Profile.EditPost;
+import com.example.footprnt.Profile.UserSettings;
 import com.example.footprnt.Profile.Util.Util;
 import com.example.footprnt.R;
 import com.parse.ParseUser;
@@ -26,6 +31,7 @@ import java.util.ArrayList;
  * Created By: Clarisa Leu-Rodriguez
  */
 public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private static final int RESULT_OK = 0;
     Context mContext;
     private ArrayList<Object> items;
     Util util = new Util();
@@ -104,34 +110,53 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
     }
 
-    private void configurePostViewHolder(final PostViewHolder vh1, int position) {
+    private void configurePostViewHolder(final PostViewHolder vh1, final int position) {
         final Post post = (Post) items.get(position);
         if (post != null) {
             vh1.getRootView().setTag(post);
             ArrayList<String> location = util.getAddress(mContext, post.getLocation());
             // Set location
             vh1.getTvName().setText(location.get(0)+", "+location.get(1));
-            vh1.getvPalette().setBackgroundColor(Color.WHITE);
+            vh1.getTvName().setTextColor(Color.WHITE);
+            vh1.getvPalette().setBackgroundColor(ContextCompat.getColor(mContext, R.color.colorPrimary));
 
             SimpleTarget<Bitmap> target = new SimpleTarget<Bitmap>() {
                 @Override
                 public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                     vh1.getIvProfile().setImageBitmap(resource);
                     Palette p = Palette.from(resource).generate();
-                    vh1.getvPalette().setBackgroundColor(p.getVibrantColor(Color.WHITE));
+                    vh1.getvPalette().setBackgroundColor(ContextCompat.getColor(mContext, R.color.colorPrimary));
                 }
             };
             vh1.getIvProfile().setTag(target);
             Glide.with(mContext).asBitmap().load(post.getImage().getUrl()).centerCrop().into(target);
+            vh1.getIvProfile().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent it = new Intent(mContext, EditPost.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable(Post.class.getSimpleName(), post);
+                    it.putExtras(bundle);
+                    mContext.startActivity(it);
+                }
+            });
         }
+
     }
 
 
-    private void configureUserInfoViewHolder(UserInfoViewHolder vh2, int position) {
+    private void configureUserInfoViewHolder(UserInfoViewHolder vh2, final int position) {
         ParseUser user = (ParseUser) items.get(position);
         if (user != null) {
-            // TODO: fix to be real prof image an
             vh2.setmIvProfileImage(user.getParseFile("profileImg").getUrl(), mContext);
+            vh2.getmTvEditProfile().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent it = new Intent(mContext, UserSettings.class);
+                    mContext.startActivity(it);
+                }
+            });
         }
     }
+
 }

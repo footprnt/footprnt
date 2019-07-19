@@ -37,5 +37,7 @@ public class UserInfoViewHolder extends RecyclerView.ViewHolder {
         mIvProfileImage = (CircleImageView) itemView.findViewById(R.id.ivProfileImageMain);
         mTvEditProfile = (TextView) itemView.findViewById(R.id.tvEditProfile);
         // TODO: set on click listener for edit profile
+        // Call getPosts() first
+        mTvEditProfile = v.findViewById(R.id.tvEditProfile);
     }
 }

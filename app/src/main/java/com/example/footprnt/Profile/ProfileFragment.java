@@ -37,7 +37,7 @@ import java.util.List;
  * Fragment for profile page
  * Created by Clarisa Leu 2019
  */
-public class ProfileFragment extends Fragment {
+public class ProfileFragment extends Fragment{
     public final static String TAG = "ProfileFragment";  // tag for logging from this activity
     final ParseUser user = ParseUser.getCurrentUser();
 
@@ -78,6 +78,7 @@ public class ProfileFragment extends Fragment {
         mLayout = v.findViewById(R.id.rvPosts);
         mLayout.setLayoutManager(new LinearLayoutManager(getContext()));
         mLayout.setAdapter(mMultiAdapter);
+
 
         return v;
     }
@@ -180,4 +181,5 @@ public class ProfileFragment extends Fragment {
             Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
         }
     }
+
 }
