@@ -7,6 +7,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -28,7 +29,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Scroller;
@@ -93,7 +93,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     JSONObject continents;
     private ParseUser user;
     ArrayList<String> tags;
-    boolean CULTURE=false; boolean FASHION = false; boolean TRAVEL=false; boolean FOOD = false; boolean NATURE = false; boolean LANGUAGE = false;
+    boolean CULTURE=false; boolean FASHION = false; boolean TRAVEL=false; boolean FOOD = false; boolean NATURE = false;
 
     @Nullable
     @Override
@@ -297,6 +297,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         location.setText(locationHelper.getAddress(getContext(),point));
         lastPoint = point;
         tags = new ArrayList<>();
+        CULTURE=false; FASHION = false; TRAVEL=false; FOOD = false; NATURE = false;
         handleTags();
 
         ivUpload.setOnClickListener(new View.OnClickListener(){
@@ -349,13 +350,13 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 } else {
                     createPost(snippet, title, parseFile , user, lastPoint);
                 }
-                Toast.makeText(getActivity(), "Posted!", Toast.LENGTH_SHORT);
                 alertDialog.dismiss();
             }
         });
         cancelPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mapRipple.stopRippleMapAnimation();
                 alertDialog.cancel();
             }
         });
@@ -411,7 +412,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
             @Override
             public void done(ParseException e) {
                 if (e == null){
-                    Log.d("MapFragment", "Create post success");
+                    Toast.makeText(getActivity(), "Posted!", Toast.LENGTH_SHORT);
                 } else {
                     e.printStackTrace();
                 }
@@ -456,22 +457,27 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     }
 
     public void handleTags(){
-        final Button culture = alertDialog.findViewById(R.id.culture);
-        final Button food = alertDialog.findViewById(R.id.food);
-        final Button fashion = alertDialog.findViewById(R.id.fashion);
-        final Button travel = alertDialog.findViewById(R.id.travel);
-        final Button nature = alertDialog.findViewById(R.id.nature);
-        final Button language = alertDialog.findViewById(R.id.language);
-        final Button defbtn=new Button(getContext());
-//        final Drawable d = defbtn.getBackground().getConstantState().newDrawable();
+        final TextView culture = alertDialog.findViewById(R.id.culture);
+        final TextView food = alertDialog.findViewById(R.id.food);
+        final TextView fashion = alertDialog.findViewById(R.id.fashion);
+        final TextView travel = alertDialog.findViewById(R.id.travel);
+        final TextView nature = alertDialog.findViewById(R.id.nature);
+
 
         culture.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) {
-                culture.getBackground().setTint(Color.parseColor("#659dbd"));
-                culture.setTextColor(Color.WHITE);
-                tags.add("culture");
+                if (CULTURE == false){
+                    culture.setTypeface(null, Typeface.BOLD);
+                    tags.add("culture");
+                    CULTURE = true;
+                } else {
+                    culture.setTypeface(null, Typeface.NORMAL);
+                    tags.remove("culture");
+                    CULTURE = false;
+                }
+
             }
         });
 
@@ -479,47 +485,70 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) {
-                food.getBackground().setTint(Color.parseColor("#659dbd"));
-                food.setTextColor(Color.WHITE);
-                tags.add("food");
+                if (FOOD == false){
+                    food.setTypeface(null, Typeface.BOLD);
+                    tags.add("food");
+                    FOOD = true;
+                } else {
+                    food.setTypeface(null, Typeface.NORMAL);
+                    tags.remove("food");
+                    FOOD = false;
+                }
+
             }
         });
+
         fashion.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) {
-                fashion.getBackground().setTint(Color.parseColor("#659dbd"));
-                fashion.setTextColor(Color.WHITE);
-                tags.add("fashion");
+                if (FASHION == false){
+                    fashion.setTypeface(null, Typeface.BOLD);
+                    tags.add("fashion");
+                    FASHION = true;
+                } else {
+                    fashion.setTypeface(null, Typeface.NORMAL);
+                    tags.remove("fashion");
+                    FASHION = false;
+                }
+
             }
         });
+
         travel.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) {
-                travel.getBackground().setTint(Color.parseColor("#659dbd"));
-                travel.setTextColor(Color.WHITE);
-                tags.add("travel");
+                if (TRAVEL == false){
+                    travel.setTypeface(null, Typeface.BOLD);
+                    tags.add("travel");
+                    TRAVEL = true;
+                } else {
+                    travel.setTypeface(null, Typeface.NORMAL);
+                    tags.remove("travel");
+                    TRAVEL = false;
+                }
+
             }
         });
+
         nature.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) {
-                nature.getBackground().setTint(Color.parseColor("#659dbd"));
-                nature.setTextColor(Color.WHITE);
-                tags.add("nature");
+                if (NATURE == false){
+                    nature.setTypeface(null, Typeface.BOLD);
+                    tags.add("nature");
+                    NATURE = true;
+                } else {
+                    nature.setTypeface(null, Typeface.NORMAL);
+                    tags.remove("nature");
+                    NATURE = false;
+                }
+
             }
         });
-        language.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-            @Override
-            public void onClick(View v) {
-                language.getBackground().setTint(Color.parseColor("#659dbd"));
-                language.setTextColor(Color.WHITE);
-                tags.add("language");
-            }
-        });
+
     }
 
 }
