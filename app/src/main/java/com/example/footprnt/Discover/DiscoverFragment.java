@@ -1,80 +1,136 @@
 package com.example.footprnt.Discover;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
+import com.example.footprnt.Models.YelpQuery;
 import com.example.footprnt.R;
-import com.yelp.fusion.client.connection.YelpFusionApi;
-import com.yelp.fusion.client.connection.YelpFusionApiFactory;
-import com.yelp.fusion.client.models.SearchResponse;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
-import retrofit2.Call;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class DiscoverFragment extends Fragment {
-    PostAdapter mPostAdapter;
-    RecyclerView mRvPosts;
-    YelpFusionApi yelpFusionApi;
-    YelpFusionApiFactory yelpFusionApiFactory;
-    ArrayList<String> resteraunts;
+    // TODO: set up model for yelp business or query
+    YelpQuery yelpQuery;
 
+//    @BindView(R.id.ivProfile)
+//    ImageView ivProfile;
+//    @BindView(R.id.cbRestaurant)
+//    CheckBox cbRestaurant;
+//    @BindView(R.id.cbLegal)
+//    CheckBox cbLegal;
+//    @BindView(R.id.tvTitle)
+//    TextView tvTitle;
+//    @BindView(R.id.tvPlace)
+//    TextView tvPlace;
+//    @BindView(R.id.tvPerson)
+//    TextView tvPerson;
+//    @BindView(R.id.tvFood)
+//    TextView tvFood;
+   // @BindView(R.id.tvYelp)
+    TextView tvYelp;
+//    @BindView(R.id.btnLink)
+//    Button btnLink;
+//    ImageView ivImage;
 
-    @Nullable
+    // The onCreateView method is called when Fragment should create its View object hierarchy,
+    // either dynamically or via XML layout inflation.
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_discover, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
+        // Defines the xml file for the fragment
+        return inflater.inflate(R.layout.activity_yelp_service, parent, false);
     }
 
+    // This event is triggered soon after onCreateView().
+    // Any view setup should occur here.  E.g., view lookups and attaching view listeners.
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        String API_KEY = "cXle3bHvt-l2jAbYGJC0Eii7fCTIqLGVOAIQUhZgjw3c0HKPaW3uEJSkU2pSOX8x3170E1zuJJQn298CKdqlqYFZAiu_eA_qRWGAdhsWbI9bBkxnZwa9pGJ-iAswXXYx";
-        String CLIENT_ID = "Ao9IvqqNvqXJSj7j8b9mcg";
-
-        yelpFusionApiFactory = new YelpFusionApiFactory();
-        try {
-            yelpFusionApi = yelpFusionApiFactory.createAPI(API_KEY);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            businessSearchTest();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        String secretKey = getString(R.string.yelp_api_key);
+        //ButterKnife.bind(getContext(), view);
+        tvYelp = view.findViewById(R.id.tvYelp);
+        final OkHttpClient client = new OkHttpClient();
 
 
-        // For post feed view:
-        resteraunts = new ArrayList<>();
-        mPostAdapter = new PostAdapter(resteraunts);
-        mRvPosts.setLayoutManager(new LinearLayoutManager(view.getContext()));
-        mRvPosts.setAdapter(mPostAdapter);
+
+        // TODO: replace with users actual current location in query
+        double lat = 37.421998333333335;
+        double longitude = -122.08400000000002;
+        final Request request = new Request.Builder()
+                .url("https://api.yelp.com/v3/businesses/search?latitude=" + lat + "&longitude=" + longitude + "")
+                //.url("https://api.yelp.com/v3/businesses/north-india-restaurant-san-francisco")
+                .addHeader("Authorization", "Bearer " + secretKey)
+                .build();
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Response response = client.newCall(request).execute();
+                    JSONObject data = new JSONObject(response.body().string().trim());
+                    JSONArray business = data.getJSONArray("businesses");
+                    final JSONObject jsonObject = business.getJSONObject(0);
+
+                    // TODO: pull data you want to display
+                    //JSONArray myResponse = (JSONArray)jsonObject.get("id");
+                    final String imageURL = jsonObject.getString("image_url");
+                    final String url = jsonObject.getString("url");
+
+                    String businessName = jsonObject.getString("name");
+                   // tvYelp.setText(jsonObject.getString("name"));
+
+//
+                    (getActivity()).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                // TODO: set data in views on UI thread
+                                tvYelp.setText(jsonObject.getString("name"));
+
+//                                tvYelp.setText(jsonObject.getString("name"));
+//                                Glide.with(getContext())
+//                                        .load(imageURL)
+//                                        .override(100, 100)
+//                                        .into(ivImage);
+//                                btnLink.setOnClickListener(new View.OnClickListener() {
+//                                    @Override
+//                                    public void onClick(View v) {
+//                                        Intent i = new Intent(Intent.ACTION_VIEW);
+//                                        i.setData(Uri.parse(url));
+//                                        startActivity(i);
+//                                        ((Activity) getContext()).finish();
 
 
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                } catch (IOException | JSONException e) {
+                    Log.e("YelpServiceActivity", "Didn't respond");
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        thread.start();
+        // TODO: set image of business and title of business
+//        if (post.getTitle() != null) {
+//            tvTitle.setText(post.getTitle());
+//        }
+//        if (post.getImage() != null) {
+//            // Load profile image
+//            Glide.with(this).load(post.getImage().getUrl()).into(ivProfile);
+//        }
     }
-
-
-    public void businessSearchTest() throws IOException {
-        Map<String, String> parms = new HashMap<>();
-        parms.put("term", "indian food");
-        parms.put("latitude", "40.581140");
-        parms.put("longitude", "-111.914184");
-        Call<SearchResponse> call = yelpFusionApi.getBusinessSearch(parms);
-        SearchResponse response = call.execute().body();
-        Log.d("TAG", response.toString());
-    }
-
 }
