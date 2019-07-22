@@ -27,7 +27,7 @@ public class FeedActivity extends Activity {
 
     private ArrayList<Post> mPosts;
     private PostAdapter mPostAdapter;
-    private RecyclerView rvPosts;
+    private RecyclerView mPostsView;
     private SwipeRefreshLayout mSwipeContainer;
     private double mLat;
     private double mLong;
@@ -41,10 +41,10 @@ public class FeedActivity extends Activity {
         mPosts = new ArrayList<>();
         getPosts(Constants.POST_RADIUS);
         mPostAdapter = new PostAdapter(mPosts);
-        rvPosts = findViewById(R.id.rvPosts);
+        mPostsView = findViewById(R.id.rvPosts);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        rvPosts.setLayoutManager(layoutManager);
-        rvPosts.setAdapter(mPostAdapter);
+        mPostsView.setLayoutManager(layoutManager);
+        mPostsView.setAdapter(mPostAdapter);
         mSwipeContainer = findViewById(R.id.swipeContainer);
         mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
