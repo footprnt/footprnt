@@ -74,7 +74,7 @@ public class FeedActivity extends Activity {
             }
         });
     }
-    
+
     public void fetchTimelineAsync(int page) {
         /*
         Handles refreshing

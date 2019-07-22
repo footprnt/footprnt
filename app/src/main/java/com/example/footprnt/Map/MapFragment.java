@@ -253,7 +253,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 .withStrokeColor(Color.BLACK)
                 .withDistance(2000)      // 2000 metres radius
                 .withRippleDuration(4000)    //12000ms
-                .withTransparency(0.8f);
+                .withTransparency(0.6f);
         mapRipple.startRippleMapAnimation();      //in onMapReadyCallBack
         Toast.makeText(getActivity(), locationHelper.getAddress(getContext(), latLng), Toast.LENGTH_LONG).show();
         showAlertDialogForPoint(latLng);
@@ -265,9 +265,9 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 .withNumberOfRipples(3)
                 .withFillColor(Color.CYAN)
                 .withStrokeColor(Color.BLACK)
-                .withDistance(2000)      // 2000 metres radius
-                .withRippleDuration(4000)    //12000ms
-                .withTransparency(0.8f);
+                .withDistance(8046.72)      // 2000 metres radius
+                .withRippleDuration(12000)    //12000ms
+                .withTransparency(0.6f);
         mapRipple.startRippleMapAnimation();      //in onMapReadyCallBack
         Intent i = new Intent(getActivity(), FeedActivity.class);
         i.putExtra("latitude", latLng.latitude);
