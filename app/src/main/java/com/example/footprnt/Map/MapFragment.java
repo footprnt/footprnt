@@ -110,7 +110,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         mapFrag.getMapAsync(this);
         locationHelper = new LocationHelper();
         user = ParseUser.getCurrentUser();
-        ParseACL acl = new ParseACL();
+        ParseACL acl = new ParseACL();          // set permissions
         acl.setPublicReadAccess(true);
         acl.setPublicWriteAccess(true);
         user.setACL(acl);
@@ -163,7 +163,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
             boolean success = map.setMapStyle(
                     MapStyleOptions.loadRawResourceStyle(
                             getContext(), R.raw.style_json_aubergine));
-
             if (!success) {
                 Log.e("map", "Style parsing failed.");
             }
@@ -231,8 +230,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     }
 
     protected void createMarker(double latitude, double longitude, String title, String snippet) {
-        BitmapDescriptor defaultMarker =
-                BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
+        BitmapDescriptor defaultMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
         map.addMarker(new MarkerOptions()
                 .position(new LatLng(latitude, longitude))
                 .title(title)
@@ -243,10 +241,9 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
             if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
                 mJumpToCurrentLocation = true;
-                System.out.println("permissions granted");
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
             }
         }
@@ -283,14 +280,11 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     }
 
     private void showAlertDialogForPoint(final LatLng point) {
-        View messageView = LayoutInflater.from(getActivity()).
-                inflate(R.layout.message_item, null);
+        View messageView = LayoutInflater.from(getActivity()).inflate(R.layout.message_item, null);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
         alertDialogBuilder.setView(messageView);
-
         alertDialog = alertDialogBuilder.create();
         alertDialog.show();
-
         EditText etDescription = alertDialog.findViewById(R.id.etSnippet);
         etDescription.setScroller(new Scroller(getContext()));
         etDescription.setMaxLines(3);
@@ -312,14 +306,12 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         FOOD = false;
         NATURE = false;
         handleTags();
-
         ivUpload.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI), Constants.GET_FROM_GALLERY);
             }
         });
-
         ivCamera.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -335,14 +327,11 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 }
             }
         });
-
         sendPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String title = ((EditText) alertDialog.findViewById(R.id.etTitle)).
-                        getText().toString();
-                final String snippet = ((EditText) alertDialog.findViewById(R.id.etSnippet)).
-                        getText().toString();
+                final String title = ((EditText) alertDialog.findViewById(R.id.etTitle)).getText().toString();
+                final String snippet = ((EditText) alertDialog.findViewById(R.id.etSnippet)).getText().toString();
                 createMarker(lastPoint.latitude, lastPoint.longitude, title, snippet);
                 MarkerDetails mOptions = new MarkerDetails();
                 mOptions.setLocation(new ParseGeoPoint(lastPoint.latitude, lastPoint.longitude));
@@ -368,7 +357,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         cancelPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mapRipple.stopRippleMapAnimation();
                 alertDialog.cancel();
             }
         });
@@ -419,7 +407,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
             e.printStackTrace();
         }
         newPost.setTags(tags);
-
         newPost.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
@@ -474,7 +461,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         final TextView fashion = alertDialog.findViewById(R.id.fashion);
         final TextView travel = alertDialog.findViewById(R.id.travel);
         final TextView nature = alertDialog.findViewById(R.id.nature);
-
         culture.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
@@ -490,7 +476,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 }
             }
         });
-
         food.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
@@ -506,7 +491,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 }
             }
         });
-
         fashion.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
@@ -522,7 +506,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 }
             }
         });
-
         travel.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
@@ -538,7 +521,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 }
             }
         });
-
         nature.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
