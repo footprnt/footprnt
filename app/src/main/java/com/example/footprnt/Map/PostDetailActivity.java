@@ -17,9 +17,6 @@ public class PostDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_post_detail);
         Bundle bundle = getIntent().getExtras();
         final Post post= (Post)bundle.getSerializable(Post.class.getSimpleName());
-        String description = post.getDescription();
-        String title = post.getTitle();
-        String time = getIntent().getExtras().getString("time");
         ImageView mIvBackArrow = findViewById(R.id.ivBack2);
         mIvBackArrow.setOnClickListener(new View.OnClickListener() {
             @Override

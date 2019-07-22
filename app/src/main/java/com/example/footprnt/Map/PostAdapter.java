@@ -91,7 +91,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable(Post.class.getSimpleName(), post);
                 intent.putExtras(bundle);
-                intent.putExtra("time", Util.getPostDateText(post));
                 ((Activity) context).startActivityForResult(intent, 20);
             }
         }
