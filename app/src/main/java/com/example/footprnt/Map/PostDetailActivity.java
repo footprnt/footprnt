@@ -9,6 +9,13 @@ import com.example.footprnt.Map.Util.Util;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.R;
 
+/**
+ * Displays extended details of a post
+ *
+ * @author Jocelyn Shen
+ * @version 1.0
+ * @since 2019-07-22
+ */
 public class PostDetailActivity extends AppCompatActivity {
 
     @Override

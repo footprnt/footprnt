@@ -72,6 +72,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Handles all map activities
+ *
+ * @author Jocelyn Shen
+ * @version 1.0
+ * @since 2019-07-22
+ */
 public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickListener, GoogleMap.OnMapClickListener, OnMapReadyCallback {
 
     // Map variables
@@ -102,6 +109,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
 
     @Nullable
     @Override
+
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_map, container, false);
         SupportMapFragment mapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
@@ -205,6 +213,9 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         }
     }
 
+    /**
+     * Loads map markers for all of current user's posts
+     */
     public void loadMarkers() {
         final MarkerDetails.Query postQuery = new MarkerDetails.Query();
         mMarkers = new ArrayList<>();
@@ -227,6 +238,13 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         });
     }
 
+    /**
+     * Create a Google Map marker at specified point with title and text
+     * @param latitude latitude of point where placing marker
+     * @param longitude longitude of point where placing marker
+     * @param title title of post
+     * @param snippet description of post
+     */
     protected void createMarker(double latitude, double longitude, String title, String snippet) {
         BitmapDescriptor defaultMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
         mMap.addMarker(new MarkerOptions()
@@ -277,6 +295,10 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         startActivity(i);
     }
 
+    /**
+     * Shows create post dialog box at the point selected
+     * @param point point where post is being created
+     */
     private void showAlertDialogForPoint(final LatLng point) {
         View messageView = LayoutInflater.from(getActivity()).inflate(R.layout.message_item, null);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
@@ -358,6 +380,9 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         });
     }
 
+    /**
+     * Creates a post at the user's current location
+     */
     public void createPostCurrentLocation() {
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,mLocationListener);
@@ -367,6 +392,14 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         }
     }
 
+    /**
+     * Creates and uploads post to Parse server
+     * @param description content of post
+     * @param title title of post
+     * @param imageFile image uploaded
+     * @param user user who created the post
+     * @param point geopoint where post was created
+     */
     private void createPost(String description, String title, ParseFile imageFile, ParseUser user, LatLng point) {
         final Post newPost = new Post();
         newPost.setDescription(description);
@@ -451,6 +484,9 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         }
     }
 
+    /**
+     * Handles toggling of tags when in create view dialog
+     */
     public void handleTags() {
         final TextView culture = mAlertDialog.findViewById(R.id.culture);
         final TextView food = mAlertDialog.findViewById(R.id.food);

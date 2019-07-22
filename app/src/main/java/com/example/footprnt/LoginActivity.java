@@ -11,6 +11,13 @@ import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 
+/**
+ * Handles all login activity
+ *
+ * @author Jocelyn Shen
+ * @version 1.0
+ * @since 2019-07-22
+ */
 public class LoginActivity extends AppCompatActivity {
 
     private EditText mUsernameInput;
@@ -52,6 +59,11 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Attempt Parse login
+     * @param username username of user attempting login
+     * @param password password of user attempting login
+     */
     private void login(String username, String password) {
         ParseUser.logInInBackground(username, password, new LogInCallback() {
             @Override

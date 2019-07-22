@@ -12,7 +12,15 @@ import com.example.footprnt.Discover.DiscoverFragment;
 import com.example.footprnt.Map.MapFragment;
 import com.example.footprnt.Profile.ProfileFragment;
 
+/**
+ * Handles displaying three main fragments and navigation bar
+ *
+ * @author Jocelyn Shen
+ * @version 1.0
+ * @since 2019-07-22
+ */
 public class HomeActivity extends AppCompatActivity {
+
     final FragmentManager fragmentManager = getSupportFragmentManager();
     final Fragment mFragment1 = new MapFragment();
     final Fragment mFragment2 = new DiscoverFragment();

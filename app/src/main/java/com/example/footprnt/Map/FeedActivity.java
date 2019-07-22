@@ -6,6 +6,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import com.example.footprnt.Map.Util.Constants;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.R;
 import com.parse.FindCallback;
@@ -15,48 +16,58 @@ import com.parse.ParseGeoPoint;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Handles all post feed activities
+ *
+ * @author Jocelyn Shen
+ * @version 1.0
+ * @since 2019-07-22
+ */
 public class FeedActivity extends Activity {
 
-    ArrayList<Post> posts;
-    PostAdapter postAdapter;
-    RecyclerView rvPosts;
-    SwipeRefreshLayout swipeContainer;
-    double lat;
-    double lon;
+    private ArrayList<Post> mPosts;
+    private PostAdapter mPostAdapter;
+    private RecyclerView rvPosts;
+    private SwipeRefreshLayout mSwipeContainer;
+    private double mLat;
+    private double mLong;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed);
-        lat = getIntent().getExtras().getDouble("latitude");
-        lon = getIntent().getExtras().getDouble("longitude");
-        posts = new ArrayList<>();
-        getPosts();
-        postAdapter = new PostAdapter(posts);
+        mLat = getIntent().getExtras().getDouble("latitude");
+        mLong = getIntent().getExtras().getDouble("longitude");
+        mPosts = new ArrayList<>();
+        getPosts(Constants.POST_RADIUS);
+        mPostAdapter = new PostAdapter(mPosts);
         rvPosts = findViewById(R.id.rvPosts);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         rvPosts.setLayoutManager(layoutManager);
-        rvPosts.setAdapter(postAdapter);
-        swipeContainer = findViewById(R.id.swipeContainer);
-        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        rvPosts.setAdapter(mPostAdapter);
+        mSwipeContainer = findViewById(R.id.swipeContainer);
+        mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                fetchTimelineAsync(0);
+                fetchTimelineAsync();
             }
         });
-        swipeContainer.setColorSchemeResources(R.color.refresh_progress_1,
+        mSwipeContainer.setColorSchemeResources(R.color.refresh_progress_1,
                 R.color.refresh_progress_2,
                 R.color.refresh_progress_3,
                 R.color.refresh_progress_4,
                 R.color.refresh_progress_5);
     }
 
-    private void getPosts() {
+    /**
+     * Queries posts within certain mile radius
+     */
+    private void getPosts(int distance) {
         final Post.Query postsQuery = new Post.Query();
         postsQuery
                 .getTop()
                 .withUser()
-                .withinPoint(new ParseGeoPoint(lat, lon));
+                .withinPoint(new ParseGeoPoint(mLat, mLong), distance);
         postsQuery.addDescendingOrder("createdAt");
         postsQuery.findInBackground(new FindCallback<Post>() {
             @Override
@@ -64,10 +75,10 @@ public class FeedActivity extends Activity {
                 if (e == null) {
                     for (int i = 0; i < objects.size(); i++) {
                         Post post = (Post) objects.get(i);
-                        posts.add(post);
-                        postAdapter.notifyItemInserted(posts.size()-1);
+                        mPosts.add(post);
+                        mPostAdapter.notifyItemInserted(mPosts.size()-1);
                     }
-                    swipeContainer.setRefreshing(false);
+                    mSwipeContainer.setRefreshing(false);
                 } else {
                     e.printStackTrace();
                 }
@@ -75,9 +86,12 @@ public class FeedActivity extends Activity {
         });
     }
 
-    public void fetchTimelineAsync(int page) {
-        postAdapter.clear();
-        getPosts();
-        swipeContainer.setRefreshing(false);
+    /**
+     * Handles swipe refresh
+     */
+    public void fetchTimelineAsync() {
+        mPostAdapter.clear();
+        getPosts(Constants.POST_RADIUS);
+        mSwipeContainer.setRefreshing(false);
     }
 }
