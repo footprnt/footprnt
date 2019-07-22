@@ -43,6 +43,7 @@ import com.example.footprnt.Models.Post;
 import com.example.footprnt.R;
 import com.example.footprnt.Util.LocationHelper;
 import com.example.footprnt.Util.PhotoHelper;
+import com.example.footprnt.Map.Util.Constants;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -73,27 +74,33 @@ import java.util.Locale;
 
 public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickListener, GoogleMap.OnMapClickListener, OnMapReadyCallback {
 
+    // Map variables
     private GoogleMap map;
     LocationManager locationManager;
     LocationListener locationListener;
     LatLng lastPoint;
     LocationHelper locationHelper;
     boolean mJumpToCurrentLocation = false;
+    JSONObject continents;
+
+    // Display variables
     MapRipple mapRipple;
     ArrayList<MarkerDetails> markers;
-    public static final int GET_FROM_GALLERY = 3;
-    public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
-    public String photoFileName = "photo.jpg";
     ImageView imageView;
     File photoFile;
     ImageView sendPost;
     ImageView cancelPost;
     AlertDialog alertDialog=null;
     ParseFile parseFile;
-    JSONObject continents;
     private ParseUser user;
+
+    // Tag variables
     ArrayList<String> tags;
-    boolean CULTURE=false; boolean FASHION = false; boolean TRAVEL=false; boolean FOOD = false; boolean NATURE = false;
+    private boolean CULTURE = false;
+    private boolean FASHION = false;
+    private boolean TRAVEL = false;
+    private boolean FOOD = false;
+    private boolean NATURE = false;
 
     @Nullable
     @Override
@@ -253,9 +260,9 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 .withStrokeColor(Color.BLACK)
                 .withDistance(2000)      // 2000 metres radius
                 .withRippleDuration(4000)    //12000ms
-                .withTransparency(0.8f);
+                .withTransparency(0.6f);
         mapRipple.startRippleMapAnimation();      //in onMapReadyCallBack
-        Toast.makeText(getActivity(), locationHelper.getAddress(getContext(), latLng), Toast.LENGTH_LONG).show();
+        Toast.makeText(getContext(), locationHelper.getAddress(getContext(), latLng), Toast.LENGTH_LONG).show();
         showAlertDialogForPoint(latLng);
     }
 
@@ -265,11 +272,13 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 .withNumberOfRipples(3)
                 .withFillColor(Color.CYAN)
                 .withStrokeColor(Color.BLACK)
-                .withDistance(2000)      // 2000 metres radius
-                .withRippleDuration(4000)    //12000ms
-                .withTransparency(0.8f);
+                .withDistance(8046.72)      // 2000 metres radius
+                .withRippleDuration(12000)    //12000ms
+                .withTransparency(0.6f);
         mapRipple.startRippleMapAnimation();      //in onMapReadyCallBack
         Intent i = new Intent(getActivity(), FeedActivity.class);
+        i.putExtra("latitude", latLng.latitude);
+        i.putExtra("longitude", latLng.longitude);
         startActivity(i);
     }
 
@@ -297,13 +306,17 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         location.setText(locationHelper.getAddress(getContext(),point));
         lastPoint = point;
         tags = new ArrayList<>();
-        CULTURE=false; FASHION = false; TRAVEL=false; FOOD = false; NATURE = false;
+        CULTURE = false;
+        FASHION = false;
+        TRAVEL = false;
+        FOOD = false;
+        NATURE = false;
         handleTags();
 
         ivUpload.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI), GET_FROM_GALLERY);
+                startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI), Constants.GET_FROM_GALLERY);
             }
         });
 
@@ -312,13 +325,13 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
             public void onClick(View v) {
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 PhotoHelper photoHelper = new PhotoHelper();
-                photoFile = photoHelper.getPhotoFileUri(getActivity(), photoFileName);
+                photoFile = photoHelper.getPhotoFileUri(getActivity(), Constants.photoFileName);
 
                 Uri fileProvider = FileProvider.getUriForFile(getActivity(), "com.example.fileprovider", photoFile);
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
 
                 if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
-                    startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+                    startActivityForResult(intent, Constants.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
                 }
             }
         });
@@ -344,7 +357,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                         @Override
                         public void done(ParseException e) {
                             createPost(snippet, title, parseFile, user, lastPoint);
-
                         }
                     });
                 } else {
@@ -412,7 +424,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
             @Override
             public void done(ParseException e) {
                 if (e == null){
-                    Toast.makeText(getActivity(), "Posted!", Toast.LENGTH_SHORT);
+                    Toast.makeText(getContext(), R.string.post_message, Toast.LENGTH_SHORT);
                 } else {
                     e.printStackTrace();
                 }
@@ -422,17 +434,17 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, final Intent data) {
-        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+        if (requestCode == Constants.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == getActivity().RESULT_OK) {
                 Bitmap takenImage = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
                 imageView.setVisibility(View.VISIBLE);
                 imageView.setImageBitmap(takenImage);
                 PhotoHelper photoHelper = new PhotoHelper();
-                File photoFile = photoHelper.getPhotoFileUri(getContext(), photoFileName);
+                File photoFile = photoHelper.getPhotoFileUri(getContext(), Constants.photoFileName);
                 parseFile = new ParseFile(photoFile);
             } else {
                 parseFile = null;
-                Toast.makeText(getActivity(), "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
             }
         }
         else{
@@ -463,21 +475,19 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         final TextView travel = alertDialog.findViewById(R.id.travel);
         final TextView nature = alertDialog.findViewById(R.id.nature);
 
-
         culture.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) {
-                if (CULTURE == false){
+                if (!CULTURE){
                     culture.setTypeface(null, Typeface.BOLD);
-                    tags.add("culture");
+                    tags.add(Constants.culture);
                     CULTURE = true;
                 } else {
                     culture.setTypeface(null, Typeface.NORMAL);
-                    tags.remove("culture");
+                    tags.remove(Constants.culture);
                     CULTURE = false;
                 }
-
             }
         });
 
@@ -485,16 +495,15 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) {
-                if (FOOD == false){
+                if (!FOOD){
                     food.setTypeface(null, Typeface.BOLD);
-                    tags.add("food");
+                    tags.add(Constants.food);
                     FOOD = true;
                 } else {
                     food.setTypeface(null, Typeface.NORMAL);
-                    tags.remove("food");
+                    tags.remove(Constants.food);
                     FOOD = false;
                 }
-
             }
         });
 
@@ -502,16 +511,15 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) {
-                if (FASHION == false){
+                if (!FASHION){
                     fashion.setTypeface(null, Typeface.BOLD);
-                    tags.add("fashion");
+                    tags.add(Constants.fashion);
                     FASHION = true;
                 } else {
                     fashion.setTypeface(null, Typeface.NORMAL);
-                    tags.remove("fashion");
+                    tags.remove(Constants.fashion);
                     FASHION = false;
                 }
-
             }
         });
 
@@ -519,16 +527,15 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) {
-                if (TRAVEL == false){
+                if (!TRAVEL){
                     travel.setTypeface(null, Typeface.BOLD);
-                    tags.add("travel");
+                    tags.add(Constants.travel);
                     TRAVEL = true;
                 } else {
                     travel.setTypeface(null, Typeface.NORMAL);
-                    tags.remove("travel");
+                    tags.remove(Constants.travel);
                     TRAVEL = false;
                 }
-
             }
         });
 
@@ -536,19 +543,16 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) {
-                if (NATURE == false){
+                if (!NATURE){
                     nature.setTypeface(null, Typeface.BOLD);
-                    tags.add("nature");
+                    tags.add(Constants.nature);
                     NATURE = true;
                 } else {
                     nature.setTypeface(null, Typeface.NORMAL);
-                    tags.remove("nature");
+                    tags.remove(Constants.nature);
                     NATURE = false;
                 }
-
             }
         });
-
     }
-
 }

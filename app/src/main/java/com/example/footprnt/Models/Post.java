@@ -111,6 +111,11 @@ public class Post extends ParseObject implements Serializable {
             include("user");
             return this;
         }
+
+        public Query withinPoint(ParseGeoPoint pg){
+            whereWithinMiles("location", pg, 5);
+            return this;
+        }
     }
 
     @Override
