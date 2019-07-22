@@ -58,6 +58,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
         public ImageView ivPicture;
         public TextView tvUser;           // Username
         public TextView tvTitle;          // Title of post

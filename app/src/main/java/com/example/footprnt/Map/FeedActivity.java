@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FeedActivity extends Activity {
+
     ArrayList<Post> posts;
     PostAdapter postAdapter;
     RecyclerView rvPosts;
@@ -50,7 +51,6 @@ public class FeedActivity extends Activity {
                 R.color.refresh_progress_5);
     }
 
-    // Get posts
     private void getPosts() {
         final Post.Query postsQuery = new Post.Query();
         postsQuery
