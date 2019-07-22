@@ -7,6 +7,13 @@ import com.example.footprnt.Models.Post;
 import com.parse.Parse;
 import com.parse.ParseObject;
 
+/**
+ * Handles parse server application
+ *
+ * @author Jocelyn Shen
+ * @version 1.0
+ * @since 2019-07-22
+ */
 public class ParseApplication extends Application {
 
     @Override

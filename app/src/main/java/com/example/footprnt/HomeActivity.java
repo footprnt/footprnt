@@ -12,32 +12,39 @@ import com.example.footprnt.Discover.DiscoverFragment;
 import com.example.footprnt.Map.MapFragment;
 import com.example.footprnt.Profile.ProfileFragment;
 
+/**
+ * Handles displaying three main fragments and navigation bar
+ *
+ * @author Jocelyn Shen
+ * @version 1.0
+ * @since 2019-07-22
+ */
 public class HomeActivity extends AppCompatActivity {
-    final FragmentManager fragmentManager = getSupportFragmentManager();
 
-    final Fragment fragment1 = new MapFragment();
-    final Fragment fragment2 = new DiscoverFragment();
-    final Fragment fragment3 = new ProfileFragment();
+    final FragmentManager fragmentManager = getSupportFragmentManager();
+    final Fragment mFragment1 = new MapFragment();
+    final Fragment mFragment2 = new DiscoverFragment();
+    final Fragment mFragment3 = new ProfileFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        BottomNavigationView navView = findViewById(R.id.nav_view);
+        final BottomNavigationView navView = findViewById(R.id.nav_view);
         navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                Fragment fragment;
+                final Fragment fragment;
                 switch (menuItem.getItemId()) {
                     case R.id.navigation_home:
-                        fragment = fragment1;
+                        fragment = mFragment1;
                         break;
                     case R.id.navigation_dashboard:
-                        fragment = fragment2;
+                        fragment = mFragment2;
                         break;
                     case R.id.navigation_notifications:
                     default:
-                        fragment = fragment3;
+                        fragment = mFragment3;
                         break;
                 }
                 fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();

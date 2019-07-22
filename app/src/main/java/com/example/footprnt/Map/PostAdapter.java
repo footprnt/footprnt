@@ -20,6 +20,13 @@ import com.example.footprnt.R;
 
 import java.util.ArrayList;
 
+/**
+ * Adapts posts to feed recycler view
+ *
+ * @author Jocelyn Shen
+ * @version 1.0
+ * @since 2019-07-22
+ */
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     static ArrayList<Post> posts;    // list of posts
     static Context context;          // context for rendering
@@ -58,6 +65,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
         public ImageView ivPicture;
         public TextView tvUser;           // Username
         public TextView tvTitle;          // Title of post

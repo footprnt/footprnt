@@ -64,7 +64,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             return POST;
         } else if (items.get(position) instanceof ParseUser) {
             return USER_INFO;
-        } else if(items.get(position) instanceof HashMap){
+        } else if(items.get(position) instanceof HashMap) {
             return STAT;
         }
         return -1;
@@ -124,9 +124,9 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
     }
 
-    private void configureStatViewHolder(final StatViewHolder vh3, final int position){
+    private void configureStatViewHolder(final StatViewHolder vh3, final int position) {
         final HashMap<String, Integer> cities = (HashMap<String, Integer>) items.get(position);
-        if(cities!= null){
+        if(cities!= null) {
                         // For pie chart
             // Cities:
             List<PieEntry> pieEntries = new ArrayList<>();
@@ -206,7 +206,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
     }
 
-//    private void setUpPieChart(){
+//    private void setUpPieChart() {
 //        List<PieEntry> pieEntries = new ArrayList<>();
 //        pieEntries.add(new PieEntry(432, "Cities"));
 //        pieEntries.add(new PieEntry(totalNumCities-432, "Unvisited Cities"));
