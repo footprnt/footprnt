@@ -270,6 +270,8 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 .withTransparency(0.8f);
         mapRipple.startRippleMapAnimation();      //in onMapReadyCallBack
         Intent i = new Intent(getActivity(), FeedActivity.class);
+        i.putExtra("latitude", latLng.latitude);
+        i.putExtra("longitude", latLng.longitude);
         startActivity(i);
     }
 

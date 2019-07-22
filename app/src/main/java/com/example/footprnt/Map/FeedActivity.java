@@ -10,6 +10,7 @@ import com.example.footprnt.Models.Post;
 import com.example.footprnt.R;
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseGeoPoint;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,11 +20,15 @@ public class FeedActivity extends Activity {
     PostAdapter postAdapter;
     RecyclerView rvPosts;
     SwipeRefreshLayout swipeContainer;
+    double lat;
+    double lon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed);
+        lat = getIntent().getExtras().getDouble("latitude");
+        lon = getIntent().getExtras().getDouble("longitude");
         posts = new ArrayList<>();
         getPosts();
         postAdapter = new PostAdapter(posts);
@@ -50,7 +55,8 @@ public class FeedActivity extends Activity {
         final Post.Query postsQuery = new Post.Query();
         postsQuery
                 .getTop()
-                .withUser();
+                .withUser()
+                .withinPoint(new ParseGeoPoint(lat, lon));
         postsQuery.addDescendingOrder("createdAt");
         postsQuery.findInBackground(new FindCallback<Post>() {
             @Override
@@ -68,8 +74,7 @@ public class FeedActivity extends Activity {
             }
         });
     }
-
-
+    
     public void fetchTimelineAsync(int page) {
         /*
         Handles refreshing
