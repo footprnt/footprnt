@@ -72,30 +72,35 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Handles all map activities
+ *
+ * @author Jocelyn Shen
+ * @version 1.0
+ * @since 2019-07-22
+ */
 public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickListener, GoogleMap.OnMapClickListener, OnMapReadyCallback {
 
     // Map variables
-    private GoogleMap map;
-    LocationManager locationManager;
-    LocationListener locationListener;
-    LatLng lastPoint;
-    LocationHelper locationHelper;
-    boolean mJumpToCurrentLocation = false;
-    JSONObject continents;
+    private GoogleMap mMap;
+    private LocationManager mLocationManager;
+    private LocationListener mLocationListener;
+    private LatLng mLastPoint;
+    private LocationHelper mLocationHelper;
+    private boolean mJumpToCurrentLocation = false;
+    private JSONObject mContinents;
 
     // Display variables
-    MapRipple mapRipple;
-    ArrayList<MarkerDetails> markers;
-    ImageView imageView;
-    File photoFile;
-    ImageView sendPost;
-    ImageView cancelPost;
-    AlertDialog alertDialog=null;
-    ParseFile parseFile;
-    private ParseUser user;
+    private MapRipple mMapRipple;
+    private ArrayList<MarkerDetails> mMarkers;
+    private ImageView mImage;
+    private File mPhotoFile;
+    private AlertDialog mAlertDialog=null;
+    private ParseFile mParseFile;
+    private ParseUser mUser;
 
     // Tag variables
-    ArrayList<String> tags;
+    private ArrayList<String> mTags;
     private boolean CULTURE = false;
     private boolean FASHION = false;
     private boolean TRAVEL = false;
@@ -104,17 +109,18 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
 
     @Nullable
     @Override
+
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_map, container, false);
         SupportMapFragment mapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFrag.getMapAsync(this);
-        locationHelper = new LocationHelper();
-        user = ParseUser.getCurrentUser();
-        ParseACL acl = new ParseACL();
+        mLocationHelper = new LocationHelper();
+        mUser = ParseUser.getCurrentUser();
+        ParseACL acl = new ParseACL();          // set permissions
         acl.setPublicReadAccess(true);
         acl.setPublicWriteAccess(true);
-        user.setACL(acl);
-        markers = new ArrayList<>();
+        mUser.setACL(acl);
+        mMarkers = new ArrayList<>();
         try{
             InputStream is = getActivity().getAssets().open("continents.json");;
             int size = is.available();
@@ -122,8 +128,8 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
             is.read(buffer);
             is.close();
             String json = new String(buffer, "UTF-8");
-            continents = new JSONObject(json);
-        } catch (IOException e){
+            mContinents = new JSONObject(json);
+        } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {
             e.printStackTrace();
@@ -146,9 +152,9 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
             @Override
             public void onClick(View v) {
                 if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-                    Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                    locationHelper.centreMapOnLocation(map, lastKnownLocation, "Your location");
+                    mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mLocationListener);
+                    Location lastKnownLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                    mLocationHelper.centreMapOnLocation(mMap, lastKnownLocation, "Your location");
                 }
             }
         });
@@ -156,14 +162,13 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        map = googleMap;
-        map.setOnMapLongClickListener(this);
-        map.setOnMapClickListener(this);
+        mMap = googleMap;
+        mMap.setOnMapLongClickListener(this);
+        mMap.setOnMapClickListener(this);
         try {
-            boolean success = map.setMapStyle(
+            boolean success = mMap.setMapStyle(
                     MapStyleOptions.loadRawResourceStyle(
                             getContext(), R.raw.style_json_aubergine));
-
             if (!success) {
                 Log.e("map", "Style parsing failed.");
             }
@@ -171,14 +176,14 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
             Log.e("map", "Can't find style. Error: ", e);
         }
         Intent intent = getActivity().getIntent();
-        if (intent.getIntExtra("Place Number",0) == 0 ){
-            locationManager = (LocationManager)getActivity().getSystemService(Context.LOCATION_SERVICE);
-            locationListener = new LocationListener() {
+        if (intent.getIntExtra("Place Number",0) == 0 ) {
+            mLocationManager = (LocationManager)getActivity().getSystemService(Context.LOCATION_SERVICE);
+            mLocationListener = new LocationListener() {
                 @Override
                 public void onLocationChanged(Location location) {
                     if (mJumpToCurrentLocation) {
                         mJumpToCurrentLocation = false;
-                        locationHelper.centreMapOnLocation(map, location, "Your Location");
+                        mLocationHelper.centreMapOnLocation(mMap, location, "Your Location");
                     }
                 }
 
@@ -195,11 +200,11 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 }
             };
 
-            if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
-                Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,mLocationListener);
+                Location lastKnownLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                 if (lastKnownLocation != null ) {
-                    locationHelper.centreMapOnLocation(map, lastKnownLocation, "Your Location");
+                    mLocationHelper.centreMapOnLocation(mMap, lastKnownLocation, "Your Location");
                 }
             } else {
                 requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
@@ -208,32 +213,41 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         }
     }
 
-    public void loadMarkers(){
+    /**
+     * Loads map markers for all of current user's posts
+     */
+    public void loadMarkers() {
         final MarkerDetails.Query postQuery = new MarkerDetails.Query();
-        markers = new ArrayList<>();
-        postQuery.withUser().whereEqualTo("user", user);
+        mMarkers = new ArrayList<>();
+        postQuery.withUser().whereEqualTo("user", mUser);
         postQuery.findInBackground(new FindCallback<MarkerDetails>() {
             @Override
             public void done(List<MarkerDetails> objects, ParseException e) {
-                if (e == null){
-                    for (int i = 0; i < objects.size(); i++){
-                        markers.add(objects.get(i));
+                if (e == null) {
+                    for (int i = 0; i < objects.size(); i++) {
+                        mMarkers.add(objects.get(i));
                     }
-                    for (MarkerDetails m: markers){
+                    for (MarkerDetails m: mMarkers) {
                         createMarker(m.getLocation().getLatitude(), m.getLocation().getLongitude(), m.getTitle(), m.getDescription());
                     }
                 } else {
-                    user.put("markers", new ArrayList<Marker>());
-                    user.saveInBackground();
+                    mUser.put("markers", new ArrayList<Marker>());
+                    mUser.saveInBackground();
                 }
             }
         });
     }
 
+    /**
+     * Create a Google Map marker at specified point with title and text
+     * @param latitude latitude of point where placing marker
+     * @param longitude longitude of point where placing marker
+     * @param title title of post
+     * @param snippet description of post
+     */
     protected void createMarker(double latitude, double longitude, String title, String snippet) {
-        BitmapDescriptor defaultMarker =
-                BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
-        map.addMarker(new MarkerOptions()
+        BitmapDescriptor defaultMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
+        mMap.addMarker(new MarkerOptions()
                 .position(new LatLng(latitude, longitude))
                 .title(title)
                 .snippet(snippet)
@@ -243,150 +257,153 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-            if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 mJumpToCurrentLocation = true;
-                System.out.println("permissions granted");
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
+                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,mLocationListener);
             }
         }
     }
 
     @Override
     public void onMapLongClick(LatLng latLng) {
-        mapRipple = new MapRipple(map, latLng, getContext())
+        mMapRipple = new MapRipple(mMap, latLng, getContext())
                 .withNumberOfRipples(3)
                 .withFillColor(Color.CYAN)
                 .withStrokeColor(Color.BLACK)
                 .withDistance(2000)      // 2000 metres radius
                 .withRippleDuration(4000)    //12000ms
                 .withTransparency(0.6f);
-        mapRipple.startRippleMapAnimation();      //in onMapReadyCallBack
-        Toast.makeText(getContext(), locationHelper.getAddress(getContext(), latLng), Toast.LENGTH_LONG).show();
+        mMapRipple.startRippleMapAnimation();      //in onMapReadyCallBack
+        Toast.makeText(getContext(), mLocationHelper.getAddress(getContext(), latLng), Toast.LENGTH_LONG).show();
         showAlertDialogForPoint(latLng);
     }
 
     @Override
     public void onMapClick(LatLng latLng) {
-        mapRipple = new MapRipple(map, latLng, getContext())
+        mMapRipple = new MapRipple(mMap, latLng, getContext())
                 .withNumberOfRipples(3)
                 .withFillColor(Color.CYAN)
                 .withStrokeColor(Color.BLACK)
                 .withDistance(8046.72)      // 2000 metres radius
                 .withRippleDuration(12000)    //12000ms
                 .withTransparency(0.6f);
-        mapRipple.startRippleMapAnimation();      //in onMapReadyCallBack
+        mMapRipple.startRippleMapAnimation();      //in onMapReadyCallBack
         Intent i = new Intent(getActivity(), FeedActivity.class);
         i.putExtra("latitude", latLng.latitude);
         i.putExtra("longitude", latLng.longitude);
         startActivity(i);
     }
 
+    /**
+     * Shows create post dialog box at the point selected
+     * @param point point where post is being created
+     */
     private void showAlertDialogForPoint(final LatLng point) {
-        View messageView = LayoutInflater.from(getActivity()).
-                inflate(R.layout.message_item, null);
+        View messageView = LayoutInflater.from(getActivity()).inflate(R.layout.message_item, null);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
         alertDialogBuilder.setView(messageView);
-
-        alertDialog = alertDialogBuilder.create();
-        alertDialog.show();
-
-        EditText etDescription = alertDialog.findViewById(R.id.etSnippet);
+        mAlertDialog = alertDialogBuilder.create();
+        mAlertDialog.show();
+        EditText etDescription = mAlertDialog.findViewById(R.id.etSnippet);
         etDescription.setScroller(new Scroller(getContext()));
         etDescription.setMaxLines(3);
         etDescription.setVerticalScrollBarEnabled(true);
         etDescription.setMovementMethod(new ScrollingMovementMethod());
-        sendPost = alertDialog.findViewById(R.id.sendPost);
-        cancelPost = alertDialog.findViewById(R.id.cancelPost);
-        ImageView ivUpload = alertDialog.findViewById(R.id.ivUpload);
-        ImageView ivCamera = alertDialog.findViewById(R.id.ivCamera);
-        imageView = alertDialog.findViewById(R.id.image);
-        imageView.setVisibility(View.GONE);
-        TextView location = alertDialog.findViewById(R.id.location);
-        location.setText(locationHelper.getAddress(getContext(),point));
-        lastPoint = point;
-        tags = new ArrayList<>();
+        ImageView sendPost = mAlertDialog.findViewById(R.id.sendPost);
+        ImageView cancelPost = mAlertDialog.findViewById(R.id.cancelPost);
+        ImageView ivUpload = mAlertDialog.findViewById(R.id.ivUpload);
+        ImageView ivCamera = mAlertDialog.findViewById(R.id.ivCamera);
+        mImage = mAlertDialog.findViewById(R.id.image);
+        mImage.setVisibility(View.GONE);
+        TextView location = mAlertDialog.findViewById(R.id.location);
+        location.setText(mLocationHelper.getAddress(getContext(),point));
+        mLastPoint = point;
+        mTags = new ArrayList<>();
         CULTURE = false;
         FASHION = false;
         TRAVEL = false;
         FOOD = false;
         NATURE = false;
         handleTags();
-
-        ivUpload.setOnClickListener(new View.OnClickListener(){
+        ivUpload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI), Constants.GET_FROM_GALLERY);
             }
         });
-
-        ivCamera.setOnClickListener(new View.OnClickListener(){
+        ivCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 PhotoHelper photoHelper = new PhotoHelper();
-                photoFile = photoHelper.getPhotoFileUri(getActivity(), Constants.photoFileName);
-
-                Uri fileProvider = FileProvider.getUriForFile(getActivity(), "com.example.fileprovider", photoFile);
+                mPhotoFile = photoHelper.getPhotoFileUri(getActivity(), Constants.photoFileName);
+                Uri fileProvider = FileProvider.getUriForFile(getActivity(), "com.example.fileprovider", mPhotoFile);
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
-
                 if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
                     startActivityForResult(intent, Constants.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
                 }
             }
         });
-
         sendPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String title = ((EditText) alertDialog.findViewById(R.id.etTitle)).
-                        getText().toString();
-                final String snippet = ((EditText) alertDialog.findViewById(R.id.etSnippet)).
-                        getText().toString();
-                createMarker(lastPoint.latitude, lastPoint.longitude, title, snippet);
+                final String title = ((EditText) mAlertDialog.findViewById(R.id.etTitle)).getText().toString();
+                final String snippet = ((EditText) mAlertDialog.findViewById(R.id.etSnippet)).getText().toString();
+                createMarker(mLastPoint.latitude, mLastPoint.longitude, title, snippet);
                 MarkerDetails mOptions = new MarkerDetails();
-                mOptions.setLocation(new ParseGeoPoint(lastPoint.latitude, lastPoint.longitude));
+                mOptions.setLocation(new ParseGeoPoint(mLastPoint.latitude, mLastPoint.longitude));
                 mOptions.setDescription(snippet);
                 mOptions.setTitle(title);
-                mOptions.setUser(user);
-                markers.add(mOptions);
-                user.put("markers", markers);
-                user.saveInBackground();
-                if (parseFile != null){
-                    parseFile.saveInBackground(new SaveCallback() {
+                mOptions.setUser(mUser);
+                mMarkers.add(mOptions);
+                mUser.put("markers", mMarkers);
+                mUser.saveInBackground();
+                if (mParseFile != null) {
+                    mParseFile.saveInBackground(new SaveCallback() {
                         @Override
                         public void done(ParseException e) {
-                            createPost(snippet, title, parseFile, user, lastPoint);
+                            createPost(snippet, title, mParseFile, mUser, mLastPoint);
                         }
                     });
                 } else {
-                    createPost(snippet, title, parseFile , user, lastPoint);
+                    createPost(snippet, title, mParseFile , mUser, mLastPoint);
                 }
-                alertDialog.dismiss();
+                mAlertDialog.dismiss();
             }
         });
         cancelPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mapRipple.stopRippleMapAnimation();
-                alertDialog.cancel();
+                mAlertDialog.cancel();
             }
         });
     }
 
+    /**
+     * Creates a post at the user's current location
+     */
     public void createPostCurrentLocation() {
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
-            Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,mLocationListener);
+            Location lastKnownLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             LatLng currLocation = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
             showAlertDialogForPoint(currLocation);
         }
     }
 
-    private void createPost(String description, String title, ParseFile imageFile, ParseUser user, LatLng point){
+    /**
+     * Creates and uploads post to Parse server
+     * @param description content of post
+     * @param title title of post
+     * @param imageFile image uploaded
+     * @param user user who created the post
+     * @param point geopoint where post was created
+     */
+    private void createPost(String description, String title, ParseFile imageFile, ParseUser user, LatLng point) {
         final Post newPost = new Post();
         newPost.setDescription(description);
-        if (imageFile == null){
+        if (imageFile == null) {
             newPost.remove("image");
         } else {
             newPost.setImage(imageFile);
@@ -402,14 +419,14 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 String city = addresses.get(0).getLocality();
                 String country = addresses.get(0).getCountryName();
                 String country_code = addresses.get(0).getCountryCode();
-                if (city != null){
+                if (city != null) {
                     newPost.setCity(city);
                 }
-                if (country != null){
+                if (country != null) {
                     newPost.setCountry(country);
                 }
-                if (country_code != null && continents.has(country_code)){
-                    String continent = continents.getString(country_code);
+                if (country_code != null && mContinents.has(country_code)) {
+                    String continent = mContinents.getString(country_code);
                     newPost.setContinent(continent);
                 }
             }
@@ -418,12 +435,11 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        newPost.setTags(tags);
-
+        newPost.setTags(mTags);
         newPost.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
-                if (e == null){
+                if (e == null) {
                     Toast.makeText(getContext(), R.string.post_message, Toast.LENGTH_SHORT);
                 } else {
                     e.printStackTrace();
@@ -436,15 +452,15 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     public void onActivityResult(int requestCode, int resultCode, final Intent data) {
         if (requestCode == Constants.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == getActivity().RESULT_OK) {
-                Bitmap takenImage = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
-                imageView.setVisibility(View.VISIBLE);
-                imageView.setImageBitmap(takenImage);
+                Bitmap takenImage = BitmapFactory.decodeFile(mPhotoFile.getAbsolutePath());
+                mImage.setVisibility(View.VISIBLE);
+                mImage.setImageBitmap(takenImage);
                 PhotoHelper photoHelper = new PhotoHelper();
                 File photoFile = photoHelper.getPhotoFileUri(getContext(), Constants.photoFileName);
-                parseFile = new ParseFile(photoFile);
+                mParseFile = new ParseFile(photoFile);
             } else {
-                parseFile = null;
-                Toast.makeText(getContext(), "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
+                mParseFile = null;
+                Toast.makeText(getContext(), R.string.camera_message, Toast.LENGTH_SHORT).show();
             }
         }
         else{
@@ -458,98 +474,96 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                 byte[] image = stream.toByteArray();
-                parseFile = new ParseFile("profpic.jpg", image);
+                mParseFile = new ParseFile("profpic.jpg", image);
                 final Bitmap finalBitmap = bitmap;
-                imageView.setVisibility(View.VISIBLE);
-                Glide.with(this).load(finalBitmap).into(imageView);
+                mImage.setVisibility(View.VISIBLE);
+                Glide.with(this).load(finalBitmap).into(mImage);
             } else {
-                parseFile = null;
+                mParseFile = null;
             }
         }
     }
 
-    public void handleTags(){
-        final TextView culture = alertDialog.findViewById(R.id.culture);
-        final TextView food = alertDialog.findViewById(R.id.food);
-        final TextView fashion = alertDialog.findViewById(R.id.fashion);
-        final TextView travel = alertDialog.findViewById(R.id.travel);
-        final TextView nature = alertDialog.findViewById(R.id.nature);
-
+    /**
+     * Handles toggling of tags when in create view dialog
+     */
+    public void handleTags() {
+        final TextView culture = mAlertDialog.findViewById(R.id.culture);
+        final TextView food = mAlertDialog.findViewById(R.id.food);
+        final TextView fashion = mAlertDialog.findViewById(R.id.fashion);
+        final TextView travel = mAlertDialog.findViewById(R.id.travel);
+        final TextView nature = mAlertDialog.findViewById(R.id.nature);
         culture.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) {
-                if (!CULTURE){
+                if (!CULTURE) {
                     culture.setTypeface(null, Typeface.BOLD);
-                    tags.add(Constants.culture);
+                    mTags.add(Constants.culture);
                     CULTURE = true;
                 } else {
                     culture.setTypeface(null, Typeface.NORMAL);
-                    tags.remove(Constants.culture);
+                    mTags.remove(Constants.culture);
                     CULTURE = false;
                 }
             }
         });
-
         food.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) {
-                if (!FOOD){
+                if (!FOOD) {
                     food.setTypeface(null, Typeface.BOLD);
-                    tags.add(Constants.food);
+                    mTags.add(Constants.food);
                     FOOD = true;
                 } else {
                     food.setTypeface(null, Typeface.NORMAL);
-                    tags.remove(Constants.food);
+                    mTags.remove(Constants.food);
                     FOOD = false;
                 }
             }
         });
-
         fashion.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) {
-                if (!FASHION){
+                if (!FASHION) {
                     fashion.setTypeface(null, Typeface.BOLD);
-                    tags.add(Constants.fashion);
+                    mTags.add(Constants.fashion);
                     FASHION = true;
                 } else {
                     fashion.setTypeface(null, Typeface.NORMAL);
-                    tags.remove(Constants.fashion);
+                    mTags.remove(Constants.fashion);
                     FASHION = false;
                 }
             }
         });
-
         travel.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) {
-                if (!TRAVEL){
+                if (!TRAVEL) {
                     travel.setTypeface(null, Typeface.BOLD);
-                    tags.add(Constants.travel);
+                    mTags.add(Constants.travel);
                     TRAVEL = true;
                 } else {
                     travel.setTypeface(null, Typeface.NORMAL);
-                    tags.remove(Constants.travel);
+                    mTags.remove(Constants.travel);
                     TRAVEL = false;
                 }
             }
         });
-
         nature.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) {
-                if (!NATURE){
+                if (!NATURE) {
                     nature.setTypeface(null, Typeface.BOLD);
-                    tags.add(Constants.nature);
+                    mTags.add(Constants.nature);
                     NATURE = true;
                 } else {
                     nature.setTypeface(null, Typeface.NORMAL);
-                    tags.remove(Constants.nature);
+                    mTags.remove(Constants.nature);
                     NATURE = false;
                 }
             }

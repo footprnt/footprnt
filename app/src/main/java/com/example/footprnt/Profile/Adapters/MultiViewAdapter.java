@@ -226,5 +226,4 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             });
         }
     }
-
 }
