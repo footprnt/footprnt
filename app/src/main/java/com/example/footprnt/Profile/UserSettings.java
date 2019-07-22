@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.footprnt.Map.Util.Constants;
 import com.example.footprnt.R;
 import com.example.footprnt.Util.PhotoHelper;
 import com.parse.ParseException;
@@ -29,9 +30,6 @@ import com.parse.SaveCallback;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-
-import static com.example.footprnt.Map.MapFragment.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE;
-import static com.example.footprnt.Map.MapFragment.GET_FROM_GALLERY;
 
 /**
  * Activity to allow users to change their profile information
@@ -75,7 +73,7 @@ public class UserSettings extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // Upload image
-                        startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI), GET_FROM_GALLERY);
+                        startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI), Constants.GET_FROM_GALLERY);
                     }
                 });
                 builder.setNegativeButton("Take a Photo", new DialogInterface.OnClickListener() {
@@ -88,7 +86,7 @@ public class UserSettings extends AppCompatActivity {
                         Uri fileProvider = FileProvider.getUriForFile(UserSettings.this, "com.example.fileprovider", mPhotoFile);
                         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
                         if (intent.resolveActivity(UserSettings.this.getPackageManager()) != null) {
-                            startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+                            startActivityForResult(intent, Constants.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
                         }
                     }
                 });
@@ -130,7 +128,7 @@ public class UserSettings extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, final Intent data) {
-        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+        if (requestCode == Constants.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == this.RESULT_OK) {
                 Bitmap takenImage = BitmapFactory.decodeFile(mPhotoFile.getAbsolutePath());
                 mIvProfileImage.setImageBitmap(takenImage);

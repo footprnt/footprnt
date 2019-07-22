@@ -199,34 +199,6 @@
                 android:fontFamily="@font/roboto"
                 android:paddingRight="8dp"
                 android:text="#nature" />
-
-
-            <!--<Button
-                android:id="@+id/culture"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="#culture"
-                android:textColor="#659DBD"
-                android:textSize="10sp"
-                android:textStyle="bold" />
-
-            <Button
-                android:id="@+id/food"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="#food"
-                android:textColor="#659DBD"
-                android:textSize="10sp"
-                android:textStyle="bold" />
-
-            <Button
-                android:id="@+id/travel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="#travel"
-                android:textColor="#659DBD"
-                android:textSize="10sp"
-                android:textStyle="bold" />-->
         </LinearLayout>
 
         <LinearLayout
@@ -234,40 +206,10 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center"
             android:orientation="horizontal">
-
-
-
-
-            <!--<Button
-                android:id="@+id/fashion"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="#fashion"
-                android:textColor="#659DBD"
-                android:textSize="10sp"
-                android:textStyle="bold" />
-
-            <Button
-                android:id="@+id/language"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="#language"
-                android:textColor="#659DBD"
-                android:textSize="10sp"
-                android:textStyle="bold" />
-
-            <Button
-                android:id="@+id/nature"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="#nature"
-                android:textColor="#659DBD"
-                android:textSize="10sp"
-                android:textStyle="bold" />-->
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center"
             android:orientation="horizontal" />
