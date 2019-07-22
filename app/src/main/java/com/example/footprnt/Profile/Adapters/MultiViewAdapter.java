@@ -1,5 +1,6 @@
 package com.example.footprnt.Profile.Adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -24,6 +25,7 @@ import com.example.footprnt.Profile.Adapters.ViewHolders.UserInfoViewHolder;
 import com.example.footprnt.Profile.EditPost;
 import com.example.footprnt.Profile.UserSettings;
 import com.example.footprnt.R;
+import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
@@ -41,11 +43,14 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     Context mContext;
     ArrayList<Object> items;
 
-    // Identifier for objects in items
+    // Identifier for objects in items and which view to load:
     private final int USER_INFO = 0, POST = 1, STAT = 2;
+
+    // The total number of cities, countries, and continents in the world:
     public final int totalNumCities = 4416;
     public final int totalNumCountries = 195;
     public final int totalNumContinents = 7;
+
 
     public MultiViewAdapter(Context context, ArrayList<Object> items) {
         this.items = items;
@@ -64,7 +69,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             return POST;
         } else if (items.get(position) instanceof ParseUser) {
             return USER_INFO;
-        } else if(items.get(position) instanceof HashMap){
+        } else if(items.get(position) instanceof ArrayList){
             return STAT;
         }
         return -1;
@@ -125,21 +130,37 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     private void configureStatViewHolder(final StatViewHolder vh3, final int position){
-        final HashMap<String, Integer> cities = (HashMap<String, Integer>) items.get(position);
-        if(cities!= null){
-                        // For pie chart
-            // Cities:
-            List<PieEntry> pieEntries = new ArrayList<>();
-            pieEntries.add(new PieEntry(cities.size(), "Visited Cities"));
-            pieEntries.add(new PieEntry(totalNumCities-cities.size(), "Unvisited Cities"));
-            PieDataSet pieDataSet = new PieDataSet(pieEntries, "City Stats");
-            pieDataSet.setColors(R.color.colorPrimary, R.color.colorPrimaryDark);
-            PieData pieData = new PieData(pieDataSet);
-            vh3.getmPieChart().setData(pieData);
-            vh3.getmPieChart().animateY(1000);
-            vh3.getmPieChart().invalidate();
+        final ArrayList<HashMap<String, Integer>> stats = (ArrayList<HashMap<String, Integer>>) items.get(position);
+        final HashMap<String, Integer> cities = stats.get(0);
+        final HashMap<String, Integer> countries = stats.get(1);
+        final HashMap<String, Integer> continents = stats.get(2);
+
+        if(cities!= null) {
+            setUpPieChart(vh3.getmPieChartCity(), cities.size(), totalNumCities, "Visited Cities");
         }
+
+        if(countries!= null) {
+            setUpPieChart(vh3.getmPieChartCountry(), countries.size(), totalNumCountries, "Visited Countries");
+        }
+
+        if(continents!= null) {
+            setUpPieChart(vh3.getmPieChartContinent(), continents.size(), totalNumContinents, "Visited Continents");
+        }
+
     }
+
+    private void setUpPieChart(PieChart pieChart, int visited, int total, String title){
+        List<PieEntry> pieEntries = new ArrayList<>();
+        pieEntries.add(new PieEntry(visited, title));
+        pieEntries.add(new PieEntry(total-visited));
+        PieDataSet pieDataSet = new PieDataSet(pieEntries, "User Stats");
+        pieDataSet.setColors(R.color.colorPrimary, R.color.colorPrimaryDark);
+        PieData pieData = new PieData(pieDataSet);
+        pieChart.setData(pieData);
+        pieChart.animateY(1000);
+        pieChart.invalidate();
+    }
+
 
     private void configurePostViewHolder(final PostViewHolder vh1, final int position) {
         final Post post = (Post) items.get(position);
@@ -177,11 +198,13 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     Bundle bundle = new Bundle();
                     bundle.putSerializable(Post.class.getSimpleName(), post);
                     it.putExtras(bundle);
+                    // Start activity for result to reconfigure user view after return
                     mContext.startActivity(it);
                 }
             });
         }
     }
+
 
     private void configureUserInfoViewHolder(UserInfoViewHolder vh2, final int position) {
         ParseUser user = (ParseUser) items.get(position);
@@ -198,23 +221,10 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 @Override
                 public void onClick(View v) {
                     Intent it = new Intent(mContext, UserSettings.class);
-                    mContext.startActivity(it);
+                    ((Activity) mContext).startActivityForResult(it, 2121);
                 }
             });
-
-
         }
     }
 
-//    private void setUpPieChart(){
-//        List<PieEntry> pieEntries = new ArrayList<>();
-//        pieEntries.add(new PieEntry(432, "Cities"));
-//        pieEntries.add(new PieEntry(totalNumCities-432, "Unvisited Cities"));
-//        PieDataSet pieDataSet = new PieDataSet(pieEntries, "Number of Cities Visited");
-//        pieDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
-//        PieData pieData = new PieData(pieDataSet);
-//        mPieChart.setData(pieData);
-//        mPieChart.animateY(1000);
-//        mPieChart.invalidate();
-//    }
 }

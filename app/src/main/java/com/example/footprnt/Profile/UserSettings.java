@@ -44,14 +44,29 @@ public class UserSettings extends AppCompatActivity {
     EditText mEtNumber;
     EditText mEtEmail;
     public String photoFileName = "photo.jpg";
+    public static final int REQUEST_CODE = 101;
+    private OnIntentReceived mIntentListener;
     File mPhotoFile;
     ParseFile mParseFile;
     final ParseUser user = ParseUser.getCurrentUser();
+
+    public interface OnIntentReceived {
+        void onIntent(Intent i, int resultCode);
+    }
+//
+//    @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        if (requestCode == REQUEST_CODE) {
+//            if (mIntentListener != null) {
+//                mIntentListener.onIntent(data, resultCode);
+//            }
+//        }
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_settings);
+      //  mIntentListener = getCallingActivity()
 
         // Set Views
         mIvProfileImage = findViewById(R.id.ivProfileImageMain);
@@ -114,11 +129,12 @@ public class UserSettings extends AppCompatActivity {
                 user.setUsername(mEtUsername.getText().toString());
                 user.put("phone", mEtNumber.getText().toString());
                 user.put("email", mEtEmail.getText().toString());
-                setResult(RESULT_OK, new Intent());
                 user.saveInBackground(new SaveCallback() {
                     @Override
                     public void done(ParseException e) {
                         updateCurrentViews();
+                        Intent data = new Intent();
+                        setResult(2121,data);
                         finish();
                     }
                 });
@@ -158,7 +174,7 @@ public class UserSettings extends AppCompatActivity {
             }
         }
     }
-
+    
     public void updateCurrentViews() {
         // For profile image:
         mIvProfileImage = findViewById(R.id.ivProfileImageMain);

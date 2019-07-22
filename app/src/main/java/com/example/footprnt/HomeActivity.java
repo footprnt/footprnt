@@ -1,5 +1,6 @@
 package com.example.footprnt;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -18,6 +19,14 @@ public class HomeActivity extends AppCompatActivity {
     final Fragment fragment1 = new MapFragment();
     final Fragment fragment2 = new DiscoverFragment();
     final Fragment fragment3 = new ProfileFragment();
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == 2121){
+            fragment3.onActivityResult(requestCode, resultCode, data);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

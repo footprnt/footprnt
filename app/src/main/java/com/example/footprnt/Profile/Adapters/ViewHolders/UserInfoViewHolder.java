@@ -36,7 +36,6 @@ public class UserInfoViewHolder extends RecyclerView.ViewHolder {
         super(v);
         mIvProfileImage = v.findViewById(R.id.ivProfileImageMain);
         mTvEditProfile = v.findViewById(R.id.tvEditProfile);
-        mTvEditProfile = v.findViewById(R.id.tvEditProfile);
-        mPieChart = v.findViewById(R.id.pieChart);
+        mPieChart = v.findViewById(R.id.pieChartCity);
     }
 }

@@ -35,7 +35,7 @@ import java.util.List;
  * Fragment for profile page
  * Created by Clarisa Leu 2019
  */
-public class ProfileFragment extends Fragment {
+public class ProfileFragment extends Fragment{
     public final static String TAG = "ProfileFragment";  // tag for logging from this activity
     final ParseUser user = ParseUser.getCurrentUser();
 
@@ -44,14 +44,13 @@ public class ProfileFragment extends Fragment {
     ArrayList<Post> mPosts;
     RecyclerView mLayout;
     MultiViewAdapter mMultiAdapter;
-
+    private boolean allowRefresh = false;
 
     // For stats view:
     HashMap<String, Integer> mCities;  // Contains the cities and number of times visited by user
     HashMap<String, Integer> mCountries;  // Contains the countries and number of times visited by user
     HashMap<String, Integer> mContinents;  // Contains the continents and number of times visited by user
-
-
+    ArrayList<HashMap<String, Integer>> mStats;  // Stats to be passed to adapter
 
     @Nullable
     @Override
@@ -65,14 +64,14 @@ public class ProfileFragment extends Fragment {
         mCountries = new HashMap<>();
         mContinents = new HashMap<>();
         mPosts = new ArrayList<>();
+        mStats = new ArrayList<>();
 
         // Get posts
         getPosts();
         mObjects.add(user);
 
         // For post feed view:
-        mMultiAdapter = new MultiViewAdapter(getActivity(), mObjects);
-
+        mMultiAdapter = new MultiViewAdapter(getContext(), mObjects);
         mLayout = v.findViewById(R.id.rvPosts);
         mLayout.setLayoutManager(new LinearLayoutManager(getContext()));
         mLayout.setAdapter(mMultiAdapter);
@@ -80,6 +79,14 @@ public class ProfileFragment extends Fragment {
         return v;
     }
 
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == 2121){
+            mMultiAdapter.notifyItemChanged(0);
+        }
+    }
 
 
     private void setUpLogOutButton(final View v) {
@@ -151,8 +158,11 @@ public class ProfileFragment extends Fragment {
                     logError("Error querying posts", e, true);
                 }
 
-                // TODO: hashmaps filled
-                mObjects.add(mCities);
+                mStats.add(mCities);
+                mStats.add(mCountries);
+                mStats.add(mContinents);
+
+                mObjects.add(mStats);
                 mMultiAdapter.notifyDataSetChanged();
                 mObjects.addAll(mPosts);
                 mMultiAdapter.notifyDataSetChanged();
@@ -167,5 +177,6 @@ public class ProfileFragment extends Fragment {
             Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
         }
     }
+
 
 }
