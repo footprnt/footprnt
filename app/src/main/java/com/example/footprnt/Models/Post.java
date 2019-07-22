@@ -25,94 +25,94 @@ public class Post extends ParseObject implements Serializable {
     private static final String KEY_CONTINENT = "continent";
     private static final String KEY_TAGS = "tags";
 
-    public String getDescription(){
+    public String getDescription() {
         return getString(KEY_DESCRIPTION);
     }
 
-    public void setDescription(String description){
+    public void setDescription(String description) {
         put(KEY_DESCRIPTION, description);
     }
 
-    public String getTitle(){
+    public String getTitle() {
         return getString(KEY_TITLE);
     }
 
-    public void setTitle(String description){
+    public void setTitle(String description) {
         put(KEY_TITLE, description);
     }
 
-    public ParseFile getImage(){
+    public ParseFile getImage() {
         return getParseFile(KEY_IMAGE);
     }
 
-    public void setImage(ParseFile image){
+    public void setImage(ParseFile image) {
         put(KEY_IMAGE, image);
     }
 
-    public ParseUser getUser(){
+    public ParseUser getUser() {
         return getParseUser(KEY_USER);
     }
 
-    public void setUser(ParseUser user){
+    public void setUser(ParseUser user) {
         put(KEY_USER, user);
     }
 
-    public ParseGeoPoint getLocation(){
+    public ParseGeoPoint getLocation() {
         return getParseGeoPoint(KEY_LOCATION);
     }
 
-    public void setLocation(ParseGeoPoint point){
+    public void setLocation(ParseGeoPoint point) {
         put(KEY_LOCATION, point);
     }
 
-    public String getCountry(){
+    public String getCountry() {
         return getString(KEY_COUNTRY);
     }
 
-    public void setCountry(String country){
+    public void setCountry(String country) {
         put(KEY_COUNTRY, country);
     }
 
-    public String getContinent(){
+    public String getContinent() {
         return getString(KEY_CONTINENT);
     }
 
-    public void setContinent(String continent){
+    public void setContinent(String continent) {
         put(KEY_CONTINENT, continent);
     }
 
-    public String getCity(){
+    public String getCity() {
         return getString(KEY_CITY);
     }
 
-    public void setCity(String city){
+    public void setCity(String city) {
         put(KEY_CITY, city);
     }
 
-    public JSONArray getTags(){
+    public JSONArray getTags() {
         return getJSONArray(KEY_TAGS);
     }
 
-    public void setTags(ArrayList<String> tags){
+    public void setTags(ArrayList<String> tags) {
         put(KEY_TAGS, tags);
     }
 
     public static class Query extends ParseQuery<Post> {
-        public Query(){
+        public Query() {
             super(Post.class);
         }
 
-        public Query getTop(){
+        public Query getTop() {
             setLimit(20);
             return this;
         }
 
-        public Query withUser(){
+        public Query withUser() {
             include("user");
             return this;
         }
 
-        public Query withinPoint(ParseGeoPoint pg){
+        public Query withinPoint(ParseGeoPoint pg) {
             whereWithinMiles("location", pg, 5);
             return this;
         }

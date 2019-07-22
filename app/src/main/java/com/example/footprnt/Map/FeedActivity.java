@@ -51,7 +51,7 @@ public class FeedActivity extends Activity {
     }
 
     // Get posts
-    private void getPosts(){
+    private void getPosts() {
         final Post.Query postsQuery = new Post.Query();
         postsQuery
                 .getTop()

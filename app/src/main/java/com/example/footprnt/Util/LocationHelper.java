@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class LocationHelper {
-    public String getAddress(Context context, LatLng point){
+    public String getAddress(Context context, LatLng point) {
         try {
             Geocoder geo = new Geocoder(context, Locale.getDefault());
             List<Address> addresses = geo.getFromLocation(point.latitude, point.longitude, 1);
@@ -40,7 +40,7 @@ public class LocationHelper {
     }
 
 
-    public void centreMapOnLocation(GoogleMap map, Location location, String title){
+    public void centreMapOnLocation(GoogleMap map, Location location, String title) {
         LatLng userLocation = new LatLng(location.getLatitude(),location.getLongitude());
         BitmapDescriptor defaultMarker =
                 BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);

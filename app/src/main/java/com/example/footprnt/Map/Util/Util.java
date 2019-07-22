@@ -39,10 +39,10 @@ public class Util {
         return relativeDate;
     }
 
-    public static String getPostDateText(Post post){
+    public static String getPostDateText(Post post) {
         Date d = post.getCreatedAt();
         String dateText;
-        if (d==null){
+        if (d==null) {
             dateText = "0s";
         } else {
             dateText = getRelativeTimeAgo(d.toString());
@@ -50,11 +50,11 @@ public class Util {
         return dateText;
     }
 
-    public static String getPostTags(Post post){
+    public static String getPostTags(Post post) {
         String tagname = "";
         JSONArray arr = post.getTags();
-        if (arr != null && arr.length() >0 ){
-            for (int i = 0; i < arr.length(); i++){
+        if (arr != null && arr.length() >0 ) {
+            for (int i = 0; i < arr.length(); i++) {
                 try {
                     tagname += "#" + arr.getString(i) + " ";
                 } catch (JSONException e) {
@@ -67,7 +67,7 @@ public class Util {
         }
     }
 
-    public static void setPostText(Post post, PostAdapter.ViewHolder holder, Context context){
+    public static void setPostText(Post post, PostAdapter.ViewHolder holder, Context context) {
         // set description
         String description = post.getDescription();
         if (description.length() > 0) {
@@ -94,14 +94,14 @@ public class Util {
         holder.tvLocation.setText(tvCityState);
         // set tags
         String tags = Util.getPostTags(post);
-        if(tags != null){
+        if(tags != null) {
             holder.tvTags.setText(tags);
         } else {
             holder.tvTags.setVisibility(View.GONE);
         }
     }
 
-    public static void setPostImages(Post post, PostAdapter.ViewHolder holder, Context context){
+    public static void setPostImages(Post post, PostAdapter.ViewHolder holder, Context context) {
         // set images
         if(post.getImage()!=null) {
             String imgUrl = post.getImage().getUrl();

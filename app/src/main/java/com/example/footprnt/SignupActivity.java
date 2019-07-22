@@ -40,7 +40,7 @@ public class SignupActivity extends AppCompatActivity {
                 user.signUpInBackground(new SignUpCallback() {
                     @Override
                     public void done(com.parse.ParseException e) {
-                        if (e == null){
+                        if (e == null) {
                             finish();
                         } else {
                             Toast.makeText(getApplicationContext(), "Failed to create account", Toast.LENGTH_SHORT).show();
