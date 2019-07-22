@@ -19,7 +19,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.example.footprnt.MainActivity;
+import com.example.footprnt.LoginActivity;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.Profile.Adapters.MultiViewAdapter;
 import com.example.footprnt.R;
@@ -93,7 +93,7 @@ public class ProfileFragment extends Fragment {
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     public boolean onMenuItemClick(MenuItem item) {
                         ParseUser.logOut();
-                        Intent intent = new Intent(getActivity(), MainActivity.class);
+                        Intent intent = new Intent(getActivity(), LoginActivity.class);
                         startActivity(intent);
                         return true;
                     }
