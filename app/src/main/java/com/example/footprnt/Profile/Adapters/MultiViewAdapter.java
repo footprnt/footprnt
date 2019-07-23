@@ -206,8 +206,8 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private void configureUserInfoViewHolder(UserInfoViewHolder vh2, final int position) {
         ParseUser user = (ParseUser) items.get(position);
         if (user != null) {
-            if (user.getParseFile("profileImg") != null) {
-                vh2.setIvProfileImage(user.getParseFile("profileImg").getUrl(), mContext);
+            if (user.getParseFile(com.example.footprnt.Util.Constants.profileImage) != null) {
+                vh2.setIvProfileImage(user.getParseFile(com.example.footprnt.Util.Constants.profileImage).getUrl(), mContext);
             } else {
                 // User does not have an image, load preset image
                 // TODO: change this to be more pretty (i.e. the tint of the image)
@@ -218,7 +218,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 @Override
                 public void onClick(View v) {
                     Intent it = new Intent(mContext, UserSettings.class);
-                    ((Activity) mContext).startActivityForResult(it, 2121);
+                    ((Activity) mContext).startActivityForResult(it, com.example.footprnt.Util.Constants.RELOAD_USERPROFILE_FRAGMENT_REQUEST_CODE);
                 }
             });
         }

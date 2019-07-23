@@ -26,6 +26,7 @@ import com.example.footprnt.LoginActivity;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.Profile.Adapters.MultiViewAdapter;
 import com.example.footprnt.R;
+import com.example.footprnt.Util.Constants;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
@@ -38,7 +39,7 @@ import java.util.List;
  * Fragment for profile page
  * Created by Clarisa Leu 2019
  */
-public class ProfileFragment extends Fragment{
+public class ProfileFragment extends Fragment {
     public final static String TAG = "ProfileFragment";  // tag for logging from this activity
     final ParseUser user = ParseUser.getCurrentUser();
 
@@ -47,7 +48,6 @@ public class ProfileFragment extends Fragment{
     ArrayList<Post> mPosts;
     RecyclerView mLayout;
     MultiViewAdapter mMultiAdapter;
-    private boolean allowRefresh = false;
 
     // For stats view:
     HashMap<String, Integer> mCities;  // Contains the cities and number of times visited by user
@@ -86,7 +86,7 @@ public class ProfileFragment extends Fragment{
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == 2121){
+        if (resultCode == Constants.RELOAD_USERPROFILE_FRAGMENT_REQUEST_CODE) {
             mMultiAdapter.notifyItemChanged(0);
         }
     }
@@ -119,8 +119,8 @@ public class ProfileFragment extends Fragment{
         postsQuery
                 .getTop()
                 .withUser()
-                .whereEqualTo("user", ParseUser.getCurrentUser());
-        postsQuery.addDescendingOrder("createdAt");
+                .whereEqualTo(Constants.user, ParseUser.getCurrentUser());
+        postsQuery.addDescendingOrder(Constants.createdAt);
 
         postsQuery.findInBackground(new FindCallback<Post>() {
             @Override

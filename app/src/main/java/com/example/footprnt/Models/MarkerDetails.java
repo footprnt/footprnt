@@ -63,7 +63,7 @@ public class MarkerDetails extends ParseObject implements Serializable {
         }
 
         public Query withUser() {
-            include("user");
+            include(KEY_USER);
             return this;
         }
     }
