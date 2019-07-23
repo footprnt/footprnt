@@ -1,3 +1,9 @@
+/*
+ * SignUpActivity.java
+ * v1.0
+ * July 2019
+ * Copyright ©2019 Footprnt Inc.
+ */
 package com.example.footprnt;
 
 import android.os.Bundle;

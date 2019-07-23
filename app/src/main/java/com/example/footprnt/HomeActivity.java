@@ -1,5 +1,12 @@
+/*
+ * HomeActivity.java
+ * v1.0
+ * July 2019
+ * Copyright ©2019 Footprnt Inc.
+ */
 package com.example.footprnt;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -15,7 +22,7 @@ import com.example.footprnt.Profile.ProfileFragment;
 /**
  * Handles displaying three main fragments and navigation bar
  *
- * @author Jocelyn Shen
+ * @author Jocelyn Shen, Clarisa Leu
  * @version 1.0
  * @since 2019-07-22
  */
@@ -25,6 +32,15 @@ public class HomeActivity extends AppCompatActivity {
     final Fragment mFragment1 = new MapFragment();
     final Fragment mFragment2 = new DiscoverFragment();
     final Fragment mFragment3 = new ProfileFragment();
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // Result codes in 2000's range are for ProfileFragment()
+        if(resultCode == 2121){
+            mFragment3.onActivityResult(requestCode, resultCode, data);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

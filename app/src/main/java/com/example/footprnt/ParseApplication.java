@@ -1,3 +1,9 @@
+/*
+ * ParseApplication.java
+ * v1.0
+ * July 2019
+ * Copyright ©2019 Footprnt Inc.
+ */
 package com.example.footprnt;
 
 import android.app.Application;
@@ -10,7 +16,7 @@ import com.parse.ParseObject;
 /**
  * Handles parse server application
  *
- * @author Jocelyn Shen
+ * @author Jocelyn Shen, Clarisa Leu
  * @version 1.0
  * @since 2019-07-22
  */
