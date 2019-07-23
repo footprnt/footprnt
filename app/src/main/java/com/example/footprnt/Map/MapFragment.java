@@ -82,7 +82,7 @@ import java.util.Locale;
 /**
  * Handles all map activities
  *
- * @author Jocelyn Shen
+ * @author Jocelyn Shen, Clarisa Leu
  * @version 1.0
  * @since 2019-07-22
  */
@@ -105,6 +105,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     private AlertDialog mAlertDialog = null;
     private ParseFile mParseFile;
     private ParseUser mUser;
+    private int mMapStyle;
 
     // Tag variables
     private ArrayList<String> mTags;
@@ -114,7 +115,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     private boolean FOOD = false;
     private boolean NATURE = false;
 
-    int mapStyle;
 
     @Nullable
     @Override
@@ -122,7 +122,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_map, container, false);
 
-        configureMapStyle(v);
+        configureMapStyleMenu(v);
 
         SupportMapFragment mapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFrag.getMapAsync(this);
@@ -150,7 +150,12 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         return v;
     }
 
-    private void configureMapStyle(View v){
+    /**
+     * Helper function to set up the pop up menu which configures the style for map
+     *
+     * @param v current view
+     */
+    private void configureMapStyleMenu(View v) {
         final ImageView settings = v.findViewById(R.id.ivSettings);
         settings.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -159,24 +164,27 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 popup.getMenuInflater().inflate(R.menu.popup_menu_map, popup.getMenu());
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     public boolean onMenuItemClick(MenuItem item) {
-                        switch (item.getItemId()){
-                            case R.id.edit_style_darkmode:
-                                mapStyle = R.raw.style_json_darkmode;
+                        switch (item.getItemId()) {
+                            case R.id.edit_style_dark_mode:
                                 mMap.setMapStyle(
                                         MapStyleOptions.loadRawResourceStyle(
-                                                getContext(), mapStyle));
+                                                getContext(), R.raw.style_json_darkmode));
                                 return true;
                             case R.id.edit_style_silver:
-                                mapStyle = R.raw.style_json_silver;
                                 mMap.setMapStyle(
                                         MapStyleOptions.loadRawResourceStyle(
-                                                getContext(), mapStyle));
+                                                getContext(), R.raw.style_json_silver));
                                 return true;
-                            default:
-                                mapStyle = R.raw.style_json_basic;
+                            case R.id.edit_style_aubergine:
                                 mMap.setMapStyle(
                                         MapStyleOptions.loadRawResourceStyle(
-                                                getContext(), mapStyle));
+                                                getContext(), R.raw.style_json_aubergine));
+                                return true;
+                            case R.id.edit_style_basic:
+                                mMap.setMapStyle(
+                                        MapStyleOptions.loadRawResourceStyle(
+                                                getContext(), R.raw.style_json_basic));
+                                return true;
                         }
                         return false;
                     }
@@ -217,7 +225,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         try {
             boolean success = mMap.setMapStyle(
                     MapStyleOptions.loadRawResourceStyle(
-                            getContext(), mapStyle));
+                            getContext(), mMapStyle));
             if (!success) {
                 Log.e("map", "Style parsing failed.");
             }
