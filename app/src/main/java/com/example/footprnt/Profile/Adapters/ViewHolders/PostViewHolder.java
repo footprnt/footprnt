@@ -71,7 +71,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
     public PostViewHolder(final View v) {
         super(v);
         mRootView = itemView;
-        mIvImage = itemView.findViewById(R.id.ivProfile);
+        mIvImage = itemView.findViewById(R.id.ivImage);
         mTvTitle = itemView.findViewById(R.id.tvTitle);
         mVPalette = itemView.findViewById(R.id.vPalette);
 

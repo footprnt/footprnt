@@ -28,7 +28,6 @@ import okhttp3.Response;
 
 public class DiscoverFragment extends Fragment {
     // TODO: set up model for yelp business or query
-    YelpQuery yelpQuery;
 
 //    @BindView(R.id.ivProfile)
 //    ImageView ivProfile;
