@@ -137,7 +137,6 @@ public class Util {
      * @param context current context of post
      */
     public static void setPostImages(Post post, PostAdapter.ViewHolder holder, Context context) {
-        // set images
         if(post.getImage()!=null) {
             String imgUrl = post.getImage().getUrl();
             Glide.with(context).load(imgUrl).into(holder.ivPicture);
