@@ -115,6 +115,9 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     private boolean FOOD = false;
     private boolean NATURE = false;
 
+    ImageView settings;
+    PopupMenu popup;
+
 
     @Nullable
     @Override
@@ -122,12 +125,16 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_map, container, false);
 
-        configureMapStyleMenu(v);
+        settings = v.findViewById(R.id.ivSettings);
+        popup = new PopupMenu(getActivity(), settings);
+        popup.getMenuInflater().inflate(R.menu.popup_menu_map, popup.getMenu());
 
+        configureMapStyleMenu();
         SupportMapFragment mapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFrag.getMapAsync(this);
         mHelper = new Util();
         mUser = ParseUser.getCurrentUser();
+        mMapStyle = mUser.getInt("map_style");
         ParseACL acl = new ParseACL();          // set permissions
         acl.setPublicReadAccess(true);
         acl.setPublicWriteAccess(true);
@@ -152,38 +159,66 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
 
     /**
      * Helper function to set up the pop up menu which configures the style for map
-     *
-     * @param v current view
      */
-    private void configureMapStyleMenu(View v) {
-        final ImageView settings = v.findViewById(R.id.ivSettings);
+    private void configureMapStyleMenu() {
         settings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PopupMenu popup = new PopupMenu(getActivity(), settings);
-                popup.getMenuInflater().inflate(R.menu.popup_menu_map, popup.getMenu());
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     public boolean onMenuItemClick(MenuItem item) {
+                        item.setActionView(new View(getContext()));
+                        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
+                        item.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+                            @Override
+                            public boolean onMenuItemActionExpand(MenuItem item) {
+                                return false;
+                            }
+
+                            @Override
+                            public boolean onMenuItemActionCollapse(MenuItem item) {
+                                return false;
+                            }
+                        });
                         switch (item.getItemId()) {
                             case R.id.edit_style_dark_mode:
+                                item.setChecked(true);
                                 mMap.setMapStyle(
                                         MapStyleOptions.loadRawResourceStyle(
                                                 getContext(), R.raw.style_json_darkmode));
+                                mUser.put("map_style", Constants.style_darkmode);
+                                mUser.saveInBackground();
                                 return true;
                             case R.id.edit_style_silver:
+                                item.setChecked(true);
                                 mMap.setMapStyle(
                                         MapStyleOptions.loadRawResourceStyle(
                                                 getContext(), R.raw.style_json_silver));
+                                mUser.put("map_style", Constants.style_silver);
+                                mUser.saveInBackground();
                                 return true;
                             case R.id.edit_style_aubergine:
+                                item.setChecked(true);
                                 mMap.setMapStyle(
                                         MapStyleOptions.loadRawResourceStyle(
                                                 getContext(), R.raw.style_json_aubergine));
+                                mUser.put("map_style", Constants.style_aubergine);
+                                mUser.saveInBackground();
+                                return true;
+                            case R.id.edit_style_retro:
+                                item.setChecked(true);
+                                mMap.setMapStyle(
+                                        MapStyleOptions.loadRawResourceStyle(
+                                                getContext(), R.raw.style_json_retro));
+                                mUser.put("map_style", Constants.style_retro);
+                                mUser.saveInBackground();
                                 return true;
                             case R.id.edit_style_basic:
+                                item.setChecked(true);
                                 mMap.setMapStyle(
                                         MapStyleOptions.loadRawResourceStyle(
                                                 getContext(), R.raw.style_json_basic));
+                                mUser.put("map_style", Constants.style_basic);
+                                mUser.saveInBackground();
                                 return true;
                         }
                         return false;

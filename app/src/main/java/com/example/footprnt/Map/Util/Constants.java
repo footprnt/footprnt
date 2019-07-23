@@ -6,6 +6,8 @@
  */
 package com.example.footprnt.Map.Util;
 
+import com.example.footprnt.R;
+
 /**
  * Contains all constants for map fragment
  *
@@ -21,4 +23,12 @@ public class Constants {
     public static String travel = "travel";
     public static String nature = "nature";
     public static int POST_RADIUS = 5;
+
+    // Map Styles:
+    public static int style_aubergine = R.raw.style_json_aubergine;
+    public static int style_darkmode = R.raw.style_json_darkmode;
+    public static int style_silver = R.raw.style_json_silver;
+    public static int style_retro = R.raw.style_json_retro;
+    public static int style_basic = R.raw.style_json_basic;
+
 }
