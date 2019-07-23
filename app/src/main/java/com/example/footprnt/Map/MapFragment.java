@@ -30,9 +30,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.PopupMenu;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -44,10 +46,10 @@ import android.widget.Toast;
 import com.arsy.maps_library.MapRipple;
 import com.bumptech.glide.Glide;
 import com.example.footprnt.Manifest;
+import com.example.footprnt.Map.Util.Constants;
 import com.example.footprnt.Models.MarkerDetails;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.R;
-import com.example.footprnt.Map.Util.Constants;
 import com.example.footprnt.Util.Util;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -112,11 +114,16 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     private boolean FOOD = false;
     private boolean NATURE = false;
 
+    int mapStyle;
+
     @Nullable
     @Override
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_map, container, false);
+
+        configureMapStyle(v);
+
         SupportMapFragment mapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFrag.getMapAsync(this);
         mHelper = new Util();
@@ -141,6 +148,42 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
             e.printStackTrace();
         }
         return v;
+    }
+
+    private void configureMapStyle(View v){
+        final ImageView settings = v.findViewById(R.id.ivSettings);
+        settings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PopupMenu popup = new PopupMenu(getActivity(), settings);
+                popup.getMenuInflater().inflate(R.menu.popup_menu_map, popup.getMenu());
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()){
+                            case R.id.edit_style_darkmode:
+                                mapStyle = R.raw.style_json_darkmode;
+                                mMap.setMapStyle(
+                                        MapStyleOptions.loadRawResourceStyle(
+                                                getContext(), mapStyle));
+                                return true;
+                            case R.id.edit_style_silver:
+                                mapStyle = R.raw.style_json_silver;
+                                mMap.setMapStyle(
+                                        MapStyleOptions.loadRawResourceStyle(
+                                                getContext(), mapStyle));
+                                return true;
+                            default:
+                                mapStyle = R.raw.style_json_basic;
+                                mMap.setMapStyle(
+                                        MapStyleOptions.loadRawResourceStyle(
+                                                getContext(), mapStyle));
+                        }
+                        return false;
+                    }
+                });
+                popup.show();
+            }
+        });
     }
 
     @Override
@@ -174,7 +217,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         try {
             boolean success = mMap.setMapStyle(
                     MapStyleOptions.loadRawResourceStyle(
-                            getContext(), R.raw.style_json_aubergine));
+                            getContext(), mapStyle));
             if (!success) {
                 Log.e("map", "Style parsing failed.");
             }
