@@ -1,3 +1,9 @@
+/*
+ * DiscoverFragment.java
+ * v1.0
+ * July 2019
+ * Copyright ©2019 Footprnt Inc.
+ */
 package com.example.footprnt.Discover;
 
 import android.os.Bundle;
@@ -8,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.footprnt.Models.YelpQuery;
 import com.example.footprnt.R;
 
 import org.json.JSONArray;

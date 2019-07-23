@@ -1,3 +1,9 @@
+/*
+ * LocationHelper.java
+ * v1.0
+ * July 2019
+ * Copyright ©2019 Footprnt Inc.
+ */
 package com.example.footprnt.Util;
 
 import android.content.Context;
@@ -22,17 +28,15 @@ public class LocationHelper {
             List<Address> addresses = geo.getFromLocation(point.latitude, point.longitude, 1);
             if (addresses.isEmpty()) {
                 return "Waiting for location...";
-            }
-            else {
+            } else {
                 if (addresses.size() > 0) {
-                    String address = (addresses.get(0).getFeatureName() + ", " + addresses.get(0).getLocality() +", " + addresses.get(0).getAdminArea() + ", " + addresses.get(0).getCountryName());
+                    String address = (addresses.get(0).getFeatureName() + ", " + addresses.get(0).getLocality() + ", " + addresses.get(0).getAdminArea() + ", " + addresses.get(0).getCountryName());
                     address = address.replaceAll(" null,", "");
                     address = address.replaceAll(", null", "");
                     return address;
                 }
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace(); // getFromLocation() may sometimes fail
             return null;
         }
@@ -41,11 +45,11 @@ public class LocationHelper {
 
 
     public void centreMapOnLocation(GoogleMap map, Location location, String title) {
-        LatLng userLocation = new LatLng(location.getLatitude(),location.getLongitude());
+        LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());
         BitmapDescriptor defaultMarker =
                 BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
         map.addMarker(new MarkerOptions().position(userLocation).title(title).icon(defaultMarker));
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation,12));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 12));
     }
 
 }

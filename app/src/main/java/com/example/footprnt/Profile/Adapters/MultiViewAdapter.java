@@ -1,3 +1,9 @@
+/*
+ * MultiViewAdapter.java
+ * v1.0
+ * July 2019
+ * Copyright ©2019 Footprnt Inc.
+ */
 package com.example.footprnt.Profile.Adapters;
 
 import android.app.Activity;
@@ -24,6 +30,7 @@ import com.example.footprnt.Profile.Adapters.ViewHolders.StatViewHolder;
 import com.example.footprnt.Profile.Adapters.ViewHolders.UserInfoViewHolder;
 import com.example.footprnt.Profile.EditPost;
 import com.example.footprnt.Profile.UserSettings;
+import com.example.footprnt.Profile.Util.Constants;
 import com.example.footprnt.R;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
@@ -36,8 +43,9 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Custom adapter for the multiple views within the user profile page
- * Created By: Clarisa Leu-Rodriguez
+ * Custom adapter to handle the multiple views on the profile page fragment
+ *
+ * @author Clarisa Leu-Rodriguez
  */
 public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     Context mContext;
@@ -46,30 +54,41 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     // Identifier for objects in items and which view to load:
     private final int USER_INFO = 0, POST = 1, STAT = 2;
 
-    // The total number of cities, countries, and continents in the world:
-    public final int totalNumCities = 4416;
-    public final int totalNumCountries = 195;
-    public final int totalNumContinents = 7;
 
-
+    /**
+     * Constructor for MultiViewAdapter
+     *
+     * @param context reference for view
+     * @param items   the list of homogeneous items in the adapter
+     */
     public MultiViewAdapter(Context context, ArrayList<Object> items) {
         this.items = items;
         this.mContext = context;
     }
 
+    /**
+     * Getter for number of items in adapter
+     *
+     * @return size of items
+     */
     @Override
     public int getItemCount() {
         return items.size();
     }
 
-    //Returns the view type of the item at position for the purposes of view recycling.
+    /**
+     * Getter for the item view type of the item at position for the purpose of view recycling
+     *
+     * @param position position item is at
+     * @return integer corresponding to the type of view type at position, -1 if no such item view
+     */
     @Override
     public int getItemViewType(int position) {
         if (items.get(position) instanceof Post) {
             return POST;
         } else if (items.get(position) instanceof ParseUser) {
             return USER_INFO;
-        } else if(items.get(position) instanceof ArrayList){
+        } else if (items.get(position) instanceof ArrayList) {
             return STAT;
         }
         return -1;
@@ -77,7 +96,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
 
     /**
-     * This method creates different RecyclerView.ViewHolder objects based on the item view type.
+     * Creates different RecyclerView.ViewHolder objects based on the item view type.
      *
      * @param viewGroup ViewGroup container for the item
      * @param viewType  type of view to be inflated
@@ -104,7 +123,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     /**
-     * This method internally calls onBindViewHolder(ViewHolder, int) to update the
+     * Internally calls onBindViewHolder(ViewHolder, int) to update the
      * RecyclerView.ViewHolder contents with the item at the given position
      * and also sets up some private fields to be used by RecyclerView.
      *
@@ -129,39 +148,12 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
     }
 
-    private void configureStatViewHolder(final StatViewHolder vh3, final int position){
-        final ArrayList<HashMap<String, Integer>> stats = (ArrayList<HashMap<String, Integer>>) items.get(position);
-        final HashMap<String, Integer> cities = stats.get(0);
-        final HashMap<String, Integer> countries = stats.get(1);
-        final HashMap<String, Integer> continents = stats.get(2);
-
-        if(cities!= null) {
-            setUpPieChart(vh3.getPieChartCity(), cities.size(), totalNumCities, "Visited Cities");
-        }
-
-        if(countries!= null) {
-            setUpPieChart(vh3.getPieChartCountry(), countries.size(), totalNumCountries, "Visited Countries");
-        }
-
-        if(continents!= null) {
-            setUpPieChart(vh3.getPieChartContinent(), continents.size(), totalNumContinents, "Visited Continents");
-        }
-
-    }
-
-    private void setUpPieChart(PieChart pieChart, int visited, int total, String title){
-        List<PieEntry> pieEntries = new ArrayList<>();
-        pieEntries.add(new PieEntry(visited, title));
-        pieEntries.add(new PieEntry(total-visited));
-        PieDataSet pieDataSet = new PieDataSet(pieEntries, "User Stats");
-        pieDataSet.setColors(R.color.colorPrimary, R.color.colorPrimaryDark);
-        PieData pieData = new PieData(pieDataSet);
-        pieChart.setData(pieData);
-        pieChart.animateY(1000);
-        pieChart.invalidate();
-    }
-
-
+    /**
+     * Method to configure the post view holder
+     *
+     * @param vh1      view holder to configure
+     * @param position position in adapter the POST item is
+     */
     private void configurePostViewHolder(final PostViewHolder vh1, final int position) {
         final Post post = (Post) items.get(position);
         if (post != null) {
@@ -169,7 +161,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             String cityName = post.getCity();
             String countryName = post.getCountry();
             String continentName = post.getContinent();
-            vh1.getTvTitle().setText(cityName + ", " + countryName + ", " + continentName);
+            vh1.getTvTitle().setText(String.format("%s, %s, %s", cityName, countryName, continentName));
             vh1.getTvTitle().setTextColor(Color.WHITE);
             vh1.getTvPalette().setBackgroundColor(ContextCompat.getColor(mContext, R.color.grey));
 
@@ -177,14 +169,14 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 @Override
                 public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                     vh1.getIvImage().setImageBitmap(resource);
-                    Palette p = Palette.from(resource).generate();
+                    Palette.from(resource).generate();
                     vh1.getTvPalette().setBackgroundColor(ContextCompat.getColor(mContext, R.color.grey));
                 }
             };
 
             vh1.getIvImage().setTag(target);
             // TODO: Maybe don't crop image as it looks very small
-            if(post.getImage()!=null) {
+            if (post.getImage() != null) {
                 Glide.with(mContext).asBitmap().load(post.getImage().getUrl()).centerCrop().into(target);
             } else {
                 // TODO: fix default image loaded where no image present to be prettier
@@ -205,7 +197,12 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
     }
 
-
+    /**
+     * Method to configure the user information view holder
+     *
+     * @param vh2      view holder to configure
+     * @param position in adapter the USER_INFO item is
+     */
     private void configureUserInfoViewHolder(UserInfoViewHolder vh2, final int position) {
         ParseUser user = (ParseUser) items.get(position);
         if (user != null) {
@@ -225,5 +222,51 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 }
             });
         }
+    }
+
+    /**
+     * Method to configure the user statistics view holder
+     *
+     * @param vh3      view holder to configure
+     * @param position position in adapter the STATS item is
+     */
+    private void configureStatViewHolder(final StatViewHolder vh3, final int position) {
+        final ArrayList<HashMap<String, Integer>> stats = (ArrayList<HashMap<String, Integer>>) items.get(position);
+        final HashMap<String, Integer> cities = stats.get(0);
+        final HashMap<String, Integer> countries = stats.get(1);
+        final HashMap<String, Integer> continents = stats.get(2);
+
+        if (cities != null) {
+            setUpPieChart(vh3.getPieChartCity(), cities.size(), Constants.totalNumCities, "Visited Cities");
+        }
+
+        if (countries != null) {
+            setUpPieChart(vh3.getPieChartCountry(), countries.size(), Constants.totalNumContinents, "Visited Countries");
+        }
+
+        if (continents != null) {
+            setUpPieChart(vh3.getPieChartContinent(), continents.size(), Constants.totalNumCountries, "Visited Continents");
+        }
+
+    }
+
+    /**
+     * Helper method to set up the user statistic pie chart
+     *
+     * @param pieChart the chart to configure
+     * @param visited  number of places user has visited
+     * @param total    total for pie chart (i.e. total number of places been)
+     * @param title    the title of the pie chart
+     */
+    private void setUpPieChart(PieChart pieChart, int visited, int total, String title) {
+        List<PieEntry> pieEntries = new ArrayList<>();
+        pieEntries.add(new PieEntry(visited, title));
+        pieEntries.add(new PieEntry(total - visited));
+        PieDataSet pieDataSet = new PieDataSet(pieEntries, "User Stats");
+        pieDataSet.setColors(R.color.colorPrimary, R.color.colorPrimaryDark);
+        PieData pieData = new PieData(pieDataSet);
+        pieChart.setData(pieData);
+        pieChart.animateY(1000);
+        pieChart.invalidate();
     }
 }
