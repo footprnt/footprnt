@@ -303,7 +303,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         etDescription.setMaxLines(3);
         etDescription.setVerticalScrollBarEnabled(true);
         etDescription.setMovementMethod(new ScrollingMovementMethod());
-        ImageView sendPost = mAlertDialog.findViewById(R.id.sendPost);
+        ImageView sendPost = mAlertDialog.findViewById(R.id.dropdown);
         ImageView cancelPost = mAlertDialog.findViewById(R.id.cancelPost);
         ImageView ivUpload = mAlertDialog.findViewById(R.id.ivUpload);
         ImageView ivCamera = mAlertDialog.findViewById(R.id.ivCamera);
@@ -569,7 +569,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
             @Override
             public void onClick(View v) {
                 PopupMenu popup = new PopupMenu(getActivity(), mToggleButton);
-                popup.getMenuInflater().inflate(R.menu.popup_tags, popup.getMenu());
+                popup.getMenuInflater().inflate(R.menu.popup_toggle, popup.getMenu());
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     public boolean onMenuItemClick(MenuItem item) {
                         System.out.println(item.getTitle());
