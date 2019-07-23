@@ -47,9 +47,8 @@ import com.example.footprnt.Manifest;
 import com.example.footprnt.Models.MarkerDetails;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.R;
-import com.example.footprnt.Util.LocationHelper;
-import com.example.footprnt.Util.PhotoHelper;
 import com.example.footprnt.Map.Util.Constants;
+import com.example.footprnt.Util.Util;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -92,7 +91,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     private LocationManager mLocationManager;
     private LocationListener mLocationListener;
     private LatLng mLastPoint;
-    private LocationHelper mLocationHelper;
+    private Util mHelper;
     private boolean mJumpToCurrentLocation = false;
     private JSONObject mContinents;
 
@@ -101,7 +100,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     private ArrayList<MarkerDetails> mMarkers;
     private ImageView mImage;
     private File mPhotoFile;
-    private AlertDialog mAlertDialog=null;
+    private AlertDialog mAlertDialog = null;
     private ParseFile mParseFile;
     private ParseUser mUser;
 
@@ -120,15 +119,16 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         View v = inflater.inflate(R.layout.fragment_map, container, false);
         SupportMapFragment mapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFrag.getMapAsync(this);
-        mLocationHelper = new LocationHelper();
+        mHelper = new Util();
         mUser = ParseUser.getCurrentUser();
         ParseACL acl = new ParseACL();          // set permissions
         acl.setPublicReadAccess(true);
         acl.setPublicWriteAccess(true);
         mUser.setACL(acl);
         mMarkers = new ArrayList<>();
-        try{
-            InputStream is = getActivity().getAssets().open("continents.json");;
+        try {
+            InputStream is = getActivity().getAssets().open("continents.json");
+            ;
             int size = is.available();
             byte[] buffer = new byte[size];
             is.read(buffer);
@@ -160,7 +160,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                     mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mLocationListener);
                     Location lastKnownLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                    mLocationHelper.centreMapOnLocation(mMap, lastKnownLocation, "Your location");
+                    mHelper.centreMapOnLocation(mMap, lastKnownLocation, "Your location");
                 }
             }
         });
@@ -182,14 +182,14 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
             Log.e("map", "Can't find style. Error: ", e);
         }
         Intent intent = getActivity().getIntent();
-        if (intent.getIntExtra("Place Number",0) == 0 ) {
-            mLocationManager = (LocationManager)getActivity().getSystemService(Context.LOCATION_SERVICE);
+        if (intent.getIntExtra("Place Number", 0) == 0) {
+            mLocationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
             mLocationListener = new LocationListener() {
                 @Override
                 public void onLocationChanged(Location location) {
                     if (mJumpToCurrentLocation) {
                         mJumpToCurrentLocation = false;
-                        mLocationHelper.centreMapOnLocation(mMap, location, "Your Location");
+                        mHelper.centreMapOnLocation(mMap, location, "Your Location");
                     }
                 }
 
@@ -207,13 +207,13 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
             };
 
             if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,mLocationListener);
+                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mLocationListener);
                 Location lastKnownLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                if (lastKnownLocation != null ) {
-                    mLocationHelper.centreMapOnLocation(mMap, lastKnownLocation, "Your Location");
+                if (lastKnownLocation != null) {
+                    mHelper.centreMapOnLocation(mMap, lastKnownLocation, "Your Location");
                 }
             } else {
-                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             }
             loadMarkers();
         }
@@ -225,7 +225,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     public void loadMarkers() {
         final MarkerDetails.Query postQuery = new MarkerDetails.Query();
         mMarkers = new ArrayList<>();
-        postQuery.withUser().whereEqualTo("user", mUser);
+        postQuery.withUser().whereEqualTo(com.example.footprnt.Util.Constants.user, mUser);
         postQuery.findInBackground(new FindCallback<MarkerDetails>() {
             @Override
             public void done(List<MarkerDetails> objects, ParseException e) {
@@ -233,7 +233,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                     for (int i = 0; i < objects.size(); i++) {
                         mMarkers.add(objects.get(i));
                     }
-                    for (MarkerDetails m: mMarkers) {
+                    for (MarkerDetails m : mMarkers) {
                         createMarker(m.getLocation().getLatitude(), m.getLocation().getLongitude(), m.getTitle(), m.getDescription());
                     }
                 } else {
@@ -246,10 +246,11 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
 
     /**
      * Create a Google Map marker at specified point with title and text
-     * @param latitude latitude of point where placing marker
+     *
+     * @param latitude  latitude of point where placing marker
      * @param longitude longitude of point where placing marker
-     * @param title title of post
-     * @param snippet description of post
+     * @param title     title of post
+     * @param snippet   description of post
      */
     protected void createMarker(double latitude, double longitude, String title, String snippet) {
         BitmapDescriptor defaultMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
@@ -266,7 +267,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 mJumpToCurrentLocation = true;
-                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,mLocationListener);
+                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mLocationListener);
             }
         }
     }
@@ -281,7 +282,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 .withRippleDuration(4000)    //12000ms
                 .withTransparency(0.6f);
         mMapRipple.startRippleMapAnimation();      //in onMapReadyCallBack
-        Toast.makeText(getContext(), mLocationHelper.getAddress(getContext(), latLng), Toast.LENGTH_LONG).show();
+        Toast.makeText(getContext(), mHelper.getAddress(getContext(), latLng), Toast.LENGTH_LONG).show();
         showAlertDialogForPoint(latLng);
     }
 
@@ -303,6 +304,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
 
     /**
      * Shows create post dialog box at the point selected
+     *
      * @param point point where post is being created
      */
     private void showAlertDialogForPoint(final LatLng point) {
@@ -323,7 +325,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         mImage = mAlertDialog.findViewById(R.id.image);
         mImage.setVisibility(View.GONE);
         TextView location = mAlertDialog.findViewById(R.id.location);
-        location.setText(mLocationHelper.getAddress(getContext(),point));
+        location.setText(mHelper.getAddress(getContext(), point));
         mLastPoint = point;
         mTags = new ArrayList<>();
         CULTURE = false;
@@ -335,19 +337,18 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         ivUpload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI), Constants.GET_FROM_GALLERY);
+                startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI), com.example.footprnt.Util.Constants.GET_FROM_GALLERY);
             }
         });
         ivCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                PhotoHelper photoHelper = new PhotoHelper();
-                mPhotoFile = photoHelper.getPhotoFileUri(getActivity(), Constants.photoFileName);
-                Uri fileProvider = FileProvider.getUriForFile(getActivity(), "com.example.fileprovider", mPhotoFile);
+                mPhotoFile = mHelper.getPhotoFileUri(getActivity(), com.example.footprnt.Util.Constants.photoFileName);
+                Uri fileProvider = FileProvider.getUriForFile(getActivity(), com.example.footprnt.Util.Constants.fileProvider, mPhotoFile);
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
                 if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
-                    startActivityForResult(intent, Constants.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+                    startActivityForResult(intent, com.example.footprnt.Util.Constants.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
                 }
             }
         });
@@ -373,7 +374,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                         }
                     });
                 } else {
-                    createPost(snippet, title, mParseFile , mUser, mLastPoint);
+                    createPost(snippet, title, mParseFile, mUser, mLastPoint);
                 }
                 mAlertDialog.dismiss();
             }
@@ -391,7 +392,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
      */
     public void createPostCurrentLocation() {
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,mLocationListener);
+            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mLocationListener);
             Location lastKnownLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             LatLng currLocation = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
             showAlertDialogForPoint(currLocation);
@@ -400,17 +401,18 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
 
     /**
      * Creates and uploads post to Parse server
+     *
      * @param description content of post
-     * @param title title of post
-     * @param imageFile image uploaded
-     * @param user user who created the post
-     * @param point geopoint where post was created
+     * @param title       title of post
+     * @param imageFile   image uploaded
+     * @param user        user who created the post
+     * @param point       geopoint where post was created
      */
     private void createPost(String description, String title, ParseFile imageFile, ParseUser user, LatLng point) {
         final Post newPost = new Post();
         newPost.setDescription(description);
         if (imageFile == null) {
-            newPost.remove("image");
+            newPost.remove(com.example.footprnt.Util.Constants.image);
         } else {
             newPost.setImage(imageFile);
         }
@@ -456,31 +458,29 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, final Intent data) {
-        if (requestCode == Constants.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+        if (requestCode == com.example.footprnt.Util.Constants.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == getActivity().RESULT_OK) {
                 Bitmap takenImage = BitmapFactory.decodeFile(mPhotoFile.getAbsolutePath());
                 mImage.setVisibility(View.VISIBLE);
                 mImage.setImageBitmap(takenImage);
-                PhotoHelper photoHelper = new PhotoHelper();
-                File photoFile = photoHelper.getPhotoFileUri(getContext(), Constants.photoFileName);
+                File photoFile = mHelper.getPhotoFileUri(getContext(), com.example.footprnt.Util.Constants.photoFileName);
                 mParseFile = new ParseFile(photoFile);
             } else {
                 mParseFile = null;
                 Toast.makeText(getContext(), R.string.camera_message, Toast.LENGTH_SHORT).show();
             }
-        }
-        else{
+        } else {
             if (resultCode == getActivity().RESULT_OK) {
                 Bitmap bitmap = null;
                 Uri selectedImage = data.getData();
-                try{
+                try {
                     bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), selectedImage);
                 } catch (Exception e) {
                 }
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, com.example.footprnt.Util.Constants.captureImageQuality, stream);
                 byte[] image = stream.toByteArray();
-                mParseFile = new ParseFile("profpic.jpg", image);
+                mParseFile = new ParseFile(com.example.footprnt.Util.Constants.imagePath, image);
                 final Bitmap finalBitmap = bitmap;
                 mImage.setVisibility(View.VISIBLE);
                 Glide.with(this).load(finalBitmap).into(mImage);

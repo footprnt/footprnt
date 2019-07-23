@@ -29,7 +29,7 @@ public class PostDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_detail);
         Bundle bundle = getIntent().getExtras();
-        final Post post= (Post)bundle.getSerializable(Post.class.getSimpleName());
+        final Post post = (Post) bundle.getSerializable(Post.class.getSimpleName());
         ImageView mIvBackArrow = findViewById(R.id.ivBack2);
         mIvBackArrow.setOnClickListener(new View.OnClickListener() {
             @Override

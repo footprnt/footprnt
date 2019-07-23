@@ -74,7 +74,7 @@ public class FeedActivity extends Activity {
                 .getTop()
                 .withUser()
                 .withinPoint(new ParseGeoPoint(mLat, mLong), distance);
-        postsQuery.addDescendingOrder("createdAt");
+        postsQuery.addDescendingOrder(com.example.footprnt.Util.Constants.createdAt);
         postsQuery.findInBackground(new FindCallback<Post>() {
             @Override
             public void done(List<Post> objects, ParseException e) {
@@ -82,7 +82,7 @@ public class FeedActivity extends Activity {
                     for (int i = 0; i < objects.size(); i++) {
                         Post post = (Post) objects.get(i);
                         mPosts.add(post);
-                        mPostAdapter.notifyItemInserted(mPosts.size()-1);
+                        mPostAdapter.notifyItemInserted(mPosts.size() - 1);
                     }
                     mSwipeContainer.setRefreshing(false);
                 } else {

@@ -223,12 +223,12 @@ public class Post extends ParseObject implements Serializable {
         }
 
         public Query withUser() {
-            include("user");
+            include(KEY_USER);
             return this;
         }
 
         public Query withinPoint(ParseGeoPoint pg, int distance) {
-            whereWithinMiles("location", pg, distance);
+            whereWithinMiles(KEY_LOCATION, pg, distance);
             return this;
         }
     }

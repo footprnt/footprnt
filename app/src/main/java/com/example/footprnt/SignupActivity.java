@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.footprnt.Util.Constants;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 
@@ -49,7 +50,7 @@ public class SignupActivity extends AppCompatActivity {
                 user.setUsername(mUsernameInput.getText().toString());
                 user.setPassword(mPasswordInput.getText().toString());
                 user.setEmail(mEmailInput.getText().toString());
-                user.put("phone", mPhoneInput.getText().toString());
+                user.put(Constants.phone, mPhoneInput.getText().toString());
                 user.signUpInBackground(new SignUpCallback() {
                     @Override
                     public void done(com.parse.ParseException e) {

@@ -10,6 +10,7 @@ import android.app.Application;
 
 import com.example.footprnt.Models.MarkerDetails;
 import com.example.footprnt.Models.Post;
+import com.example.footprnt.Util.Constants;
 import com.parse.Parse;
 import com.parse.ParseObject;
 
@@ -21,7 +22,6 @@ import com.parse.ParseObject;
  * @since 2019-07-22
  */
 public class ParseApplication extends Application {
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -31,9 +31,9 @@ public class ParseApplication extends Application {
         ParseObject.registerSubclass(MarkerDetails.class);
 
         final Parse.Configuration configuration = new Parse.Configuration.Builder(this)
-                .applicationId("explor")
-                .clientKey("System.out.footprnt")
-                .server("http://footprnt.herokuapp.com/parse")
+                .applicationId(Constants.applicationId)
+                .clientKey(Constants.clientKey)
+                .server(Constants.server)
                 .build();
 
         Parse.initialize(configuration);

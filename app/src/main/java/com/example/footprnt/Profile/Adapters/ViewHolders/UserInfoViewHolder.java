@@ -13,7 +13,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.footprnt.R;
-import com.github.mikephil.charting.charts.PieChart;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -25,7 +24,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class UserInfoViewHolder extends RecyclerView.ViewHolder {
     CircleImageView mIvProfileImage;
     TextView mTvEditProfile;
-    PieChart mPieChart;
 
     /**
      * Setter for the profile image on profile page

@@ -8,6 +8,7 @@ package com.example.footprnt.Profile.Util;
 
 /**
  * Constants used in ProfileFragment
+ *
  * @author Clarisa Leu-Rodriguez
  */
 public class Constants {
@@ -15,5 +16,4 @@ public class Constants {
     public static final int totalNumCities = 4416;
     public static final int totalNumCountries = 195;
     public static final int totalNumContinents = 7;
-
 }

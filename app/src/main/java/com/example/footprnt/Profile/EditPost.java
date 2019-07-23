@@ -19,7 +19,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.R;
-import com.example.footprnt.Util.DateHelper;
+import com.example.footprnt.Util.Util;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -44,7 +44,7 @@ public class EditPost extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_edit_post);
-        DateHelper dateHelper = new DateHelper();
+        Util util = new Util();
 
         // Get post from serializable extras
         Intent intent = this.getIntent();
@@ -58,7 +58,7 @@ public class EditPost extends AppCompatActivity {
         mEtLocation = findViewById(R.id.etLocation);
         mBtnDelete = findViewById(R.id.btnDelete);
 
-        String date = dateHelper.getRelativeTimeAgo(post.getCreatedAt().toString());
+        String date = util.getRelativeTimeAgo(post.getCreatedAt().toString());
         mTvDate.setText(date);
         mEtTitle.setText(post.getTitle());
         mEtDescription.setText(post.getDescription());

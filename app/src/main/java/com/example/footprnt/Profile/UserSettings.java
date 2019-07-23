@@ -23,9 +23,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.example.footprnt.Map.Util.Constants;
 import com.example.footprnt.R;
-import com.example.footprnt.Util.PhotoHelper;
+import com.example.footprnt.Util.Constants;
+import com.example.footprnt.Util.Util;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
@@ -36,9 +36,15 @@ import java.io.File;
 
 /**
  * Activity to allow users to change their profile information
- * Created by Clarisa Leu 2019
+ *
+ * @author Clarisa Leu-Rodriguez
  */
 public class UserSettings extends AppCompatActivity {
+    Util util;
+    File mPhotoFile;
+    ParseFile mParseFile;
+    final ParseUser user = ParseUser.getCurrentUser();
+
     ImageView mIvProfileImage;
     TextView mTvEditPhoto;
     ImageView mIvBackArrow;
@@ -46,25 +52,13 @@ public class UserSettings extends AppCompatActivity {
     EditText mEtUsername;
     EditText mEtNumber;
     EditText mEtEmail;
-    public String photoFileName = "photo.jpg";
-    public static final int REQUEST_CODE = 101;
-    File mPhotoFile;
-    ParseFile mParseFile;
-    final ParseUser user = ParseUser.getCurrentUser();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_settings);
-
-        // Set Views
-        mIvProfileImage = findViewById(R.id.ivProfileImageMain);
-        mTvEditPhoto = findViewById(R.id.tvEditPhoto);
-        mIvBackArrow = findViewById(R.id.ivBack);
-        mEtUsername = findViewById(R.id.etUsername);
-        mEtNumber = findViewById(R.id.etNumber);
-        mEtEmail = findViewById(R.id.etEmail);
-        mIvSave = findViewById(R.id.ivSave);
+        util = new Util();
+        setViews();
         updateCurrentViews();
 
         // Set on click listener for photo
@@ -85,9 +79,8 @@ public class UserSettings extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         // Take Photo
                         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        PhotoHelper photoHelper = new PhotoHelper();
-                        mPhotoFile = photoHelper.getPhotoFileUri(UserSettings.this, photoFileName);
-                        Uri fileProvider = FileProvider.getUriForFile(UserSettings.this, "com.example.fileprovider", mPhotoFile);
+                        mPhotoFile = util.getPhotoFileUri(UserSettings.this, Constants.photoFileName);
+                        Uri fileProvider = FileProvider.getUriForFile(UserSettings.this, Constants.fileProvider, mPhotoFile);
                         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
                         if (intent.resolveActivity(UserSettings.this.getPackageManager()) != null) {
                             startActivityForResult(intent, Constants.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
@@ -100,6 +93,7 @@ public class UserSettings extends AppCompatActivity {
         });
 
         // Go back to profile activity if user clicks back
+        // TODO: fix
         mIvBackArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -111,19 +105,19 @@ public class UserSettings extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (mParseFile != null) {
-                    user.put("profileImg", mParseFile);
+                    user.put(Constants.profileImage, mParseFile);
                 }
 
                 user.setEmail(mEtEmail.getText().toString());
                 user.setUsername(mEtUsername.getText().toString());
-                user.put("phone", mEtNumber.getText().toString());
-                user.put("email", mEtEmail.getText().toString());
+                user.put(Constants.phone, mEtNumber.getText().toString());
+                user.put(Constants.email, mEtEmail.getText().toString());
                 user.saveInBackground(new SaveCallback() {
                     @Override
                     public void done(ParseException e) {
                         updateCurrentViews();
                         Intent data = new Intent();
-                        setResult(2121,data);
+                        setResult(Constants.RELOAD_USERPROFILE_FRAGMENT_REQUEST_CODE, data);
                         finish();
                     }
                 });
@@ -133,12 +127,11 @@ public class UserSettings extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, final Intent data) {
-        if (requestCode == Constants.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+        if (requestCode == com.example.footprnt.Util.Constants.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == this.RESULT_OK) {
                 Bitmap takenImage = BitmapFactory.decodeFile(mPhotoFile.getAbsolutePath());
                 mIvProfileImage.setImageBitmap(takenImage);
-                PhotoHelper photoHelper = new PhotoHelper();
-                File photoFile = photoHelper.getPhotoFileUri(this, photoFileName);
+                File photoFile = util.getPhotoFileUri(this, Constants.photoFileName);
                 mParseFile = new ParseFile(photoFile);
             } else {
                 mParseFile = null;
@@ -153,9 +146,9 @@ public class UserSettings extends AppCompatActivity {
                 } catch (Exception e) {
                 }
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, Constants.captureImageQuality, stream);
                 byte[] image = stream.toByteArray();
-                mParseFile = new ParseFile("profpic.jpg", image);
+                mParseFile = new ParseFile(Constants.profileImagePath, image);
                 final Bitmap finalBitmap = bitmap;
                 Glide.with(this).load(finalBitmap).into(mIvProfileImage);
             } else {
@@ -163,19 +156,32 @@ public class UserSettings extends AppCompatActivity {
             }
         }
     }
-    
+
+    /**
+     * Helper method to update the views with the corresponding user information
+     */
     public void updateCurrentViews() {
-        // For profile image:
         mIvProfileImage = findViewById(R.id.ivProfileImageMain);
-        if (user.getParseFile("profileImg") != null) {
-            Glide.with(this).load(user.getParseFile("profileImg").getUrl()).into(mIvProfileImage);
+        if (user.getParseFile(Constants.profileImage) != null) {
+            Glide.with(this).load(user.getParseFile(Constants.profileImage).getUrl()).into(mIvProfileImage);
         } else {
             Glide.with(this).load(R.drawable.ic_user).into(mIvProfileImage);
         }
-
-        // EditText:
         mEtUsername.setText(user.getUsername());
-        mEtNumber.setText(String.format("%s", user.get("phone")));
-        mEtEmail.setText(String.format("%s", user.get("email")));
+        mEtNumber.setText(String.format("%s", user.get(Constants.phone)));
+        mEtEmail.setText(String.format("%s", user.get(Constants.email)));
+    }
+
+    /**
+     * Helper method to set the view meta data for the UserSettings Activity
+     */
+    public void setViews() {
+        mIvProfileImage = findViewById(R.id.ivProfileImageMain);
+        mTvEditPhoto = findViewById(R.id.tvEditPhoto);
+        mIvBackArrow = findViewById(R.id.ivBack);
+        mEtUsername = findViewById(R.id.etUsername);
+        mEtNumber = findViewById(R.id.etNumber);
+        mEtEmail = findViewById(R.id.etEmail);
+        mIvSave = findViewById(R.id.ivSave);
     }
 }
