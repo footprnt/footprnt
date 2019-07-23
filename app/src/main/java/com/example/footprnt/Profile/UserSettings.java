@@ -45,28 +45,14 @@ public class UserSettings extends AppCompatActivity {
     EditText mEtEmail;
     public String photoFileName = "photo.jpg";
     public static final int REQUEST_CODE = 101;
-    private OnIntentReceived mIntentListener;
     File mPhotoFile;
     ParseFile mParseFile;
     final ParseUser user = ParseUser.getCurrentUser();
-
-    public interface OnIntentReceived {
-        void onIntent(Intent i, int resultCode);
-    }
-//
-//    @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        if (requestCode == REQUEST_CODE) {
-//            if (mIntentListener != null) {
-//                mIntentListener.onIntent(data, resultCode);
-//            }
-//        }
-//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_settings);
-      //  mIntentListener = getCallingActivity()
 
         // Set Views
         mIvProfileImage = findViewById(R.id.ivProfileImageMain);

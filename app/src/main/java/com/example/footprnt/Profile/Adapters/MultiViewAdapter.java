@@ -136,15 +136,15 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         final HashMap<String, Integer> continents = stats.get(2);
 
         if(cities!= null) {
-            setUpPieChart(vh3.getmPieChartCity(), cities.size(), totalNumCities, "Visited Cities");
+            setUpPieChart(vh3.getPieChartCity(), cities.size(), totalNumCities, "Visited Cities");
         }
 
         if(countries!= null) {
-            setUpPieChart(vh3.getmPieChartCountry(), countries.size(), totalNumCountries, "Visited Countries");
+            setUpPieChart(vh3.getPieChartCountry(), countries.size(), totalNumCountries, "Visited Countries");
         }
 
         if(continents!= null) {
-            setUpPieChart(vh3.getmPieChartContinent(), continents.size(), totalNumContinents, "Visited Continents");
+            setUpPieChart(vh3.getPieChartContinent(), continents.size(), totalNumContinents, "Visited Continents");
         }
 
     }
@@ -169,20 +169,20 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             String cityName = post.getCity();
             String countryName = post.getCountry();
             String continentName = post.getContinent();
-            vh1.getTvName().setText(cityName + ", " + countryName + ", " + continentName);
-            vh1.getTvName().setTextColor(Color.WHITE);
-            vh1.getvPalette().setBackgroundColor(ContextCompat.getColor(mContext, R.color.grey));
+            vh1.getTvTitle().setText(cityName + ", " + countryName + ", " + continentName);
+            vh1.getTvTitle().setTextColor(Color.WHITE);
+            vh1.getTvPalette().setBackgroundColor(ContextCompat.getColor(mContext, R.color.grey));
 
             SimpleTarget<Bitmap> target = new SimpleTarget<Bitmap>() {
                 @Override
                 public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                    vh1.getIvProfile().setImageBitmap(resource);
+                    vh1.getIvImage().setImageBitmap(resource);
                     Palette p = Palette.from(resource).generate();
-                    vh1.getvPalette().setBackgroundColor(ContextCompat.getColor(mContext, R.color.grey));
+                    vh1.getTvPalette().setBackgroundColor(ContextCompat.getColor(mContext, R.color.grey));
                 }
             };
 
-            vh1.getIvProfile().setTag(target);
+            vh1.getIvImage().setTag(target);
             // TODO: Maybe don't crop image as it looks very small
             if(post.getImage()!=null) {
                 Glide.with(mContext).asBitmap().load(post.getImage().getUrl()).centerCrop().into(target);
@@ -191,7 +191,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 Glide.with(mContext).asBitmap().load(R.drawable.ic_add_photo).centerCrop().into(target);
             }
             // TODO: fix this to start dialog vs. activity (see parent = AlertDialog)
-            vh1.getIvProfile().setOnClickListener(new View.OnClickListener() {
+            vh1.getIvImage().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent it = new Intent(mContext, EditPost.class);
@@ -210,14 +210,14 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         ParseUser user = (ParseUser) items.get(position);
         if (user != null) {
             if (user.getParseFile("profileImg") != null) {
-                vh2.setmIvProfileImage(user.getParseFile("profileImg").getUrl(), mContext);
+                vh2.setIvProfileImage(user.getParseFile("profileImg").getUrl(), mContext);
             } else {
                 // User does not have an image, load preset image
                 // TODO: change this to be more pretty (i.e. the tint of the image)
-                Glide.with(mContext).load(R.drawable.ic_user).into(vh2.getmIvProfileImage());
+                Glide.with(mContext).load(R.drawable.ic_user).into(vh2.getIvProfileImage());
             }
             // TODO: Fix edit profile so it updates previous screen (this)
-            vh2.getmTvEditProfile().setOnClickListener(new View.OnClickListener() {
+            vh2.getTvEditProfile().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent it = new Intent(mContext, UserSettings.class);

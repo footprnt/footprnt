@@ -16,7 +16,7 @@ import com.example.footprnt.Profile.ProfileFragment;
 /**
  * Handles displaying three main fragments and navigation bar
  *
- * @author Jocelyn Shen
+ * @author Jocelyn Shen, Clarisa Leu
  * @version 1.0
  * @since 2019-07-22
  */
@@ -30,6 +30,7 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        // Result codes in 2000's range are for ProfileFragment()
         if(resultCode == 2121){
             mFragment3.onActivityResult(requestCode, resultCode, data);
         }
