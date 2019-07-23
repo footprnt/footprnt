@@ -1,6 +1,7 @@
 package com.example.footprnt.Models;
 
 import com.parse.ParseClassName;
+import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -15,11 +16,7 @@ public class MarkerDetails extends ParseObject implements Serializable {
     private static final String KEY_USER = "user";
     private static final String KEY_LOCATION = "location";
     private static final String KEY_TITLE = "title";
-    private static final String KEY_POST = "post";
-
-//    public ParseObject getPost() { return getParseObject(KEY_POST); }
-//
-//    public void setPost(Post post) { put(KEY_POST, post); }
+    private static final String KEY_IMAGE = "image";
 
     public String getDescription() {
         return getString(KEY_DESCRIPTION);
@@ -53,6 +50,10 @@ public class MarkerDetails extends ParseObject implements Serializable {
         put(KEY_USER, user);
     }
 
+    public ParseFile getImage() {return getParseFile(KEY_IMAGE);}
+
+    public void setImage(ParseFile image) { put(KEY_IMAGE, image);}
+
     public static class Query extends ParseQuery<MarkerDetails> {
         public Query() {
             super(MarkerDetails.class);
@@ -62,10 +63,5 @@ public class MarkerDetails extends ParseObject implements Serializable {
             include("user");
             return this;
         }
-
-//        public Query withTag(String tag){
-//            whereContains("tags", tag);
-//            return this;
-//        }
     }
 }

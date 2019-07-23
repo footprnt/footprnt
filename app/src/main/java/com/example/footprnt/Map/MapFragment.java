@@ -156,6 +156,17 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                if (marker.isInfoWindowShown()) {
+                    marker.hideInfoWindow();
+                } else {
+                    marker.showInfoWindow();
+                }
+                return true;
+            }
+        });
         mMap.setOnMapLongClickListener(this);
         mMap.setOnMapClickListener(this);
         try {
@@ -349,6 +360,11 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 mOptions.setDescription(snippet);
                 mOptions.setTitle(title);
                 mOptions.setUser(mUser);
+                if (mParseFile != null){
+                    mOptions.setImage(mParseFile);
+                } else {
+                    mOptions.remove(Post.KEY_IMAGE);
+                }
                 mMarkers.add(mOptions);
                 mUser.put("markers", mMarkers);
                 mUser.saveInBackground();
