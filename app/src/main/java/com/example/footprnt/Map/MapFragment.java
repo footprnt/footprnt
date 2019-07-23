@@ -24,9 +24,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.PopupMenu;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -38,12 +40,13 @@ import android.widget.Toast;
 import com.arsy.maps_library.MapRipple;
 import com.bumptech.glide.Glide;
 import com.example.footprnt.Manifest;
+import com.example.footprnt.Map.Util.Constants;
+import com.example.footprnt.Map.Util.Util;
 import com.example.footprnt.Models.MarkerDetails;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.R;
 import com.example.footprnt.Util.LocationHelper;
 import com.example.footprnt.Util.PhotoHelper;
-import com.example.footprnt.Map.Util.Constants;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -67,7 +70,6 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -101,6 +103,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
 
     // Tag variables
     private ArrayList<String> mTags;
+    private ImageView mToggleButton;
     private boolean CULTURE = false;
     private boolean FASHION = false;
     private boolean TRAVEL = false;
@@ -120,19 +123,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         acl.setPublicWriteAccess(true);
         mUser.setACL(acl);
         mMarkers = new ArrayList<>();
-        try{
-            InputStream is = getActivity().getAssets().open("continents.json");;
-            int size = is.available();
-            byte[] buffer = new byte[size];
-            is.read(buffer);
-            is.close();
-            String json = new String(buffer, "UTF-8");
-            mContinents = new JSONObject(json);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        mContinents = Util.getContinents(getActivity());
         return v;
     }
 
@@ -141,6 +132,9 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         super.onViewCreated(view, savedInstanceState);
         ImageView newPost = getView().findViewById(R.id.newPost);
         ImageView findCurrentLoc = getView().findViewById(R.id.findCurrentLoc);
+        mToggleButton = getView().findViewById(R.id.toggleMarkers);
+        mToggleButton.setAlpha(0.65f);
+        handleTagFiltering();
         newPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -350,7 +344,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 final String title = ((EditText) mAlertDialog.findViewById(R.id.etTitle)).getText().toString();
                 final String snippet = ((EditText) mAlertDialog.findViewById(R.id.etSnippet)).getText().toString();
                 createMarker(mLastPoint.latitude, mLastPoint.longitude, title, snippet);
-                MarkerDetails mOptions = new MarkerDetails();
+                final MarkerDetails mOptions = new MarkerDetails();
                 mOptions.setLocation(new ParseGeoPoint(mLastPoint.latitude, mLastPoint.longitude));
                 mOptions.setDescription(snippet);
                 mOptions.setTitle(title);
@@ -362,11 +356,11 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                     mParseFile.saveInBackground(new SaveCallback() {
                         @Override
                         public void done(ParseException e) {
-                            createPost(snippet, title, mParseFile, mUser, mLastPoint);
+                            Post p = createPost(snippet, title, mParseFile, mUser, mLastPoint);
                         }
                     });
                 } else {
-                    createPost(snippet, title, mParseFile , mUser, mLastPoint);
+                    Post p = createPost(snippet, title, mParseFile , mUser, mLastPoint);
                 }
                 mAlertDialog.dismiss();
             }
@@ -399,7 +393,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
      * @param user user who created the post
      * @param point geopoint where post was created
      */
-    private void createPost(String description, String title, ParseFile imageFile, ParseUser user, LatLng point) {
+    private Post createPost(String description, String title, ParseFile imageFile, ParseUser user, LatLng point) {
         final Post newPost = new Post();
         newPost.setDescription(description);
         if (imageFile == null) {
@@ -445,6 +439,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 }
             }
         });
+        return newPost;
     }
 
     @Override
@@ -565,6 +560,42 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                     mTags.remove(Constants.nature);
                     NATURE = false;
                 }
+            }
+        });
+    }
+
+    public void handleTagFiltering() {
+        mToggleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PopupMenu popup = new PopupMenu(getActivity(), mToggleButton);
+                popup.getMenuInflater().inflate(R.menu.popup_tags, popup.getMenu());
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    public boolean onMenuItemClick(MenuItem item) {
+                        System.out.println(item.getTitle());
+                        if (item.getItemId() == R.id.allposts) {
+                            final MarkerDetails.Query postQuery = new MarkerDetails.Query();
+                            postQuery.withUser();
+                            postQuery.findInBackground(new FindCallback<MarkerDetails>() {
+                                @Override
+                                public void done(List<MarkerDetails> objects, ParseException e) {
+                                    if (e == null) {
+                                        for (int i = 0; i < objects.size(); i++) {
+                                            MarkerDetails m = objects.get(i);
+                                            createMarker(m.getLocation().getLatitude(), m.getLocation().getLongitude(), m.getTitle(), m.getDescription());
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                        if (item.getItemId() == R.id.yourposts) {
+                            mMap.clear();
+                            loadMarkers();
+                        }
+                        return true;
+                    }
+                });
+                popup.show();
             }
         });
     }

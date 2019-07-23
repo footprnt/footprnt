@@ -32,6 +32,8 @@ public class FeedActivity extends Activity {
     private double mLat;
     private double mLong;
 
+    private boolean CULTURE = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

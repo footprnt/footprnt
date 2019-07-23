@@ -28,39 +28,39 @@ import java.util.ArrayList;
  * @since 2019-07-22
  */
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
-    static ArrayList<Post> posts;    // list of posts
-    static Context context;          // context for rendering
+    static ArrayList<Post> mPosts;    // list of posts
+    static Context mContext;          // context for rendering
     Typeface montserrat;
 
     public PostAdapter(ArrayList<Post> posts) {
-        this.posts = posts;
+        this.mPosts = posts;
     }
 
     @Override
     public int getItemCount() {
-        return posts.size();
+        return mPosts.size();
     }
 
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        context = parent.getContext();  // get the context and create the inflater
-        LayoutInflater inflater = LayoutInflater.from(context);
-        montserrat = ResourcesCompat.getFont(context, R.font.montserrat_bold);
+        mContext = parent.getContext();  // get the context and create the inflater
+        LayoutInflater inflater = LayoutInflater.from(mContext);
+        montserrat = ResourcesCompat.getFont(mContext, R.font.montserrat_bold);
         View postView = inflater.inflate(R.layout.item_post, parent, false);
         return new ViewHolder(postView);  // return a new ViewHolder
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        final Post post = posts.get(position);
-        Util.setPostText(post, holder, context);
-        Util.setPostImages(post, holder, context);
+        final Post post = mPosts.get(position);
+        Util.setPostText(post, holder, mContext);
+        Util.setPostImages(post, holder, mContext);
         holder.tvTitle.setTypeface(montserrat); // type specific to feed
         holder.iv5.setImageResource(R.drawable.ic_map); // image specific to feed
     }
 
     public void clear() {
-        posts.clear();
+        mPosts.clear();
         notifyDataSetChanged();
     }
 
@@ -94,12 +94,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         public void onClick(View v) {
             int position = getAdapterPosition();
             if (position != RecyclerView.NO_POSITION) {
-                Post post = posts.get(position);
-                Intent intent = new Intent(context, PostDetailActivity.class);
+                Post post = mPosts.get(position);
+                Intent intent = new Intent(mContext, PostDetailActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putSerializable(Post.class.getSimpleName(), post);
                 intent.putExtras(bundle);
-                ((Activity) context).startActivityForResult(intent, 20);
+                ((Activity) mContext).startActivityForResult(intent, 20);
             }
         }
     }

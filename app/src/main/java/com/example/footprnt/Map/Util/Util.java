@@ -1,5 +1,6 @@
 package com.example.footprnt.Map.Util;
 
+import android.app.Activity;
 import android.content.Context;
 import android.text.format.DateUtils;
 import android.view.View;
@@ -13,7 +14,10 @@ import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -146,6 +150,24 @@ public class Util {
         } else {
             Glide.with(context).load("http://via.placeholder.com/300.png").apply(RequestOptions.circleCropTransform()).into(holder.ivUserPicture);
         }
+    }
+
+    public static JSONObject getContinents(Activity activity){
+        JSONObject mContinents = new JSONObject();
+        try{
+            InputStream is = activity.getAssets().open("continents.json");;
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            String json = new String(buffer, "UTF-8");
+            mContinents = new JSONObject(json);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return mContinents;
     }
 
 }

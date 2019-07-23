@@ -116,6 +116,11 @@ public class Post extends ParseObject implements Serializable {
             whereWithinMiles("location", pg, distance);
             return this;
         }
+
+        public Query withTag(String tag, ArrayList<String> tags){
+            whereContainedIn(tag, tags);
+            return this;
+        }
     }
 
     @Override

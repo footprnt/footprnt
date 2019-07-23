@@ -15,6 +15,11 @@ public class MarkerDetails extends ParseObject implements Serializable {
     private static final String KEY_USER = "user";
     private static final String KEY_LOCATION = "location";
     private static final String KEY_TITLE = "title";
+    private static final String KEY_POST = "post";
+
+//    public ParseObject getPost() { return getParseObject(KEY_POST); }
+//
+//    public void setPost(Post post) { put(KEY_POST, post); }
 
     public String getDescription() {
         return getString(KEY_DESCRIPTION);
@@ -57,5 +62,10 @@ public class MarkerDetails extends ParseObject implements Serializable {
             include("user");
             return this;
         }
+
+//        public Query withTag(String tag){
+//            whereContains("tags", tag);
+//            return this;
+//        }
     }
 }
