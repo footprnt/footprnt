@@ -74,7 +74,7 @@
         app:srcCompat="@android:drawable/ic_menu_camera" />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/sendPost"
+        android:id="@+id/dropdown"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"

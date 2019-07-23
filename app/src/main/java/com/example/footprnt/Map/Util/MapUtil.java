@@ -1,11 +1,12 @@
 /*
- * Util.java
+ * MapUtil.java
  * v1.0
  * July 2019
  * Copyright ©2019 Footprnt Inc.
  */
 package com.example.footprnt.Map.Util;
 
+import android.app.Activity;
 import android.content.Context;
 import android.text.format.DateUtils;
 import android.view.View;
@@ -18,7 +19,10 @@ import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -31,7 +35,7 @@ import java.util.Locale;
  * @version 1.0
  * @since 2019-07-22
  */
-public class Util {
+public class MapUtil {
 
     /**
      * Calculates relative time
@@ -119,7 +123,7 @@ public class Util {
         // set user
         holder.tvUser.setText(post.getUser().getUsername());
         // set date
-        String dateText = Util.getPostDateText(post);
+        String dateText = MapUtil.getPostDateText(post);
         holder.tvTimePosted.setText(dateText);
         // set location
         com.example.footprnt.Util.Util helper = new com.example.footprnt.Util.Util();
@@ -127,7 +131,7 @@ public class Util {
         String tvCityState = helper.getAddress(context, point);
         holder.tvLocation.setText(tvCityState);
         // set tags
-        String tags = Util.getPostTags(post);
+        String tags = MapUtil.getPostTags(post);
         if (tags != null) {
             holder.tvTags.setText(tags);
         } else {
@@ -143,8 +147,7 @@ public class Util {
      * @param context current context of post
      */
     public static void setPostImages(Post post, PostAdapter.ViewHolder holder, Context context) {
-        // set images
-        if (post.getImage() != null) {
+        if(post.getImage()!=null) {
             String imgUrl = post.getImage().getUrl();
             Glide.with(context).load(imgUrl).into(holder.ivPicture);
         } else {
@@ -156,6 +159,24 @@ public class Util {
         } else {
             Glide.with(context).load("http://via.placeholder.com/300.png").apply(RequestOptions.circleCropTransform()).into(holder.ivUserPicture);
         }
+    }
+
+    public static JSONObject getContinents(Activity activity){
+        JSONObject mContinents = new JSONObject();
+        try{
+            InputStream is = activity.getAssets().open("continents.json");;
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            String json = new String(buffer, "UTF-8");
+            mContinents = new JSONObject(json);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return mContinents;
     }
 
 }

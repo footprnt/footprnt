@@ -26,16 +26,15 @@ import java.util.Date;
  */
 @ParseClassName("Post")
 public class Post extends ParseObject implements Serializable {
-
-    private static final String KEY_DESCRIPTION = "description";
-    private static final String KEY_IMAGE = "image";
-    private static final String KEY_USER = "user";
-    private static final String KEY_LOCATION = "location";
-    private static final String KEY_TITLE = "title";
-    private static final String KEY_COUNTRY = "country";
-    private static final String KEY_CITY = "city";
-    private static final String KEY_CONTINENT = "continent";
-    private static final String KEY_TAGS = "tags";
+    public static final String KEY_DESCRIPTION = "description";
+    public static final String KEY_IMAGE = "image";
+    public static final String KEY_USER = "user";
+    public static final String KEY_LOCATION = "location";
+    public static final String KEY_TITLE = "title";
+    public static final String KEY_COUNTRY = "country";
+    public static final String KEY_CITY = "city";
+    public static final String KEY_CONTINENT = "continent";
+    public static final String KEY_TAGS = "tags";
 
     /**
      * Getter for the description of post
@@ -229,6 +228,11 @@ public class Post extends ParseObject implements Serializable {
 
         public Query withinPoint(ParseGeoPoint pg, int distance) {
             whereWithinMiles(KEY_LOCATION, pg, distance);
+            return this;
+        }
+
+        public Query withTag(String tag, ArrayList<String> tags){
+            whereContainedIn(tag, tags);
             return this;
         }
     }
