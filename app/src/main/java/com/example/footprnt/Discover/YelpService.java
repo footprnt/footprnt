@@ -1,3 +1,9 @@
+/*
+ * YelpService.java
+ * v1.0
+ * July 2019
+ * Copyright ©2019 Footprnt Inc.
+ */
 package com.example.footprnt.Discover;
 
 import android.content.Intent;
@@ -112,7 +118,7 @@ public class YelpService extends AppCompatActivity {
         }
         if (post.getImage() != null) {
             // Load profile image
-            Glide.with(this).load( post.getImage().getUrl()).into(ivProfile);
+            Glide.with(this).load(post.getImage().getUrl()).into(ivProfile);
         }
     }
 }

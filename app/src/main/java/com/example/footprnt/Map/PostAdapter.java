@@ -1,3 +1,9 @@
+/*
+ * PostAdapter.java
+ * v1.0
+ * July 2019
+ * Copyright ©2019 Footprnt Inc.
+ */
 package com.example.footprnt.Map;
 
 import android.app.Activity;
@@ -14,7 +20,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.footprnt.Map.Util.Util;
+import com.example.footprnt.Map.Util.MapUtil;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.R;
 
@@ -53,8 +59,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         final Post post = mPosts.get(position);
-        Util.setPostText(post, holder, mContext);
-        Util.setPostImages(post, holder, mContext);
+        MapUtil.setPostText(post, holder, mContext);
+        MapUtil.setPostImages(post, holder, mContext);
         holder.tvTitle.setTypeface(montserrat); // type specific to feed
         holder.iv5.setImageResource(R.drawable.ic_map); // image specific to feed
     }

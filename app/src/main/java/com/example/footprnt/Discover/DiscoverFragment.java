@@ -1,3 +1,9 @@
+/*
+ * DiscoverFragment.java
+ * v1.0
+ * July 2019
+ * Copyright ©2019 Footprnt Inc.
+ */
 package com.example.footprnt.Discover;
 
 import android.os.Bundle;
@@ -8,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.footprnt.Models.YelpQuery;
 import com.example.footprnt.R;
 
 import org.json.JSONArray;
@@ -23,9 +28,8 @@ import okhttp3.Response;
 
 public class DiscoverFragment extends Fragment {
     // TODO: set up model for yelp business or query
-    YelpQuery yelpQuery;
 
-//    @BindView(R.id.ivProfile)
+    //    @BindView(R.id.ivProfile)
 //    ImageView ivProfile;
 //    @BindView(R.id.cbRestaurant)
 //    CheckBox cbRestaurant;
@@ -39,7 +43,7 @@ public class DiscoverFragment extends Fragment {
 //    TextView tvPerson;
 //    @BindView(R.id.tvFood)
 //    TextView tvFood;
-   // @BindView(R.id.tvYelp)
+    // @BindView(R.id.tvYelp)
     TextView tvYelp;
 //    @BindView(R.id.btnLink)
 //    Button btnLink;
@@ -61,7 +65,6 @@ public class DiscoverFragment extends Fragment {
         //ButterKnife.bind(getContext(), view);
         tvYelp = view.findViewById(R.id.tvYelp);
         final OkHttpClient client = new OkHttpClient();
-
 
 
         // TODO: replace with users actual current location in query
@@ -87,7 +90,7 @@ public class DiscoverFragment extends Fragment {
                     final String url = jsonObject.getString("url");
 
                     String businessName = jsonObject.getString("name");
-                   // tvYelp.setText(jsonObject.getString("name"));
+                    // tvYelp.setText(jsonObject.getString("name"));
 
 //
                     (getActivity()).runOnUiThread(new Runnable() {

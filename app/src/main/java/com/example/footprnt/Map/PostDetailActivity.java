@@ -1,3 +1,9 @@
+/*
+ * PostDetailActivity.java
+ * v1.0
+ * July 2019
+ * Copyright ©2019 Footprnt Inc.
+ */
 package com.example.footprnt.Map;
 
 import android.os.Bundle;
@@ -5,7 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.example.footprnt.Map.Util.Util;
+import com.example.footprnt.Map.Util.MapUtil;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.R;
 
@@ -23,7 +29,7 @@ public class PostDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_detail);
         Bundle bundle = getIntent().getExtras();
-        final Post post= (Post)bundle.getSerializable(Post.class.getSimpleName());
+        final Post post = (Post) bundle.getSerializable(Post.class.getSimpleName());
         ImageView mIvBackArrow = findViewById(R.id.ivBack2);
         mIvBackArrow.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -32,7 +38,7 @@ public class PostDetailActivity extends AppCompatActivity {
             }
         });
         PostAdapter.ViewHolder vh = new PostAdapter.ViewHolder(findViewById(R.id.constraintlayout));
-        Util.setPostText(post, vh, this);
-        Util.setPostImages(post, vh, this);
+        MapUtil.setPostText(post, vh, this);
+        MapUtil.setPostImages(post, vh, this);
     }
 }

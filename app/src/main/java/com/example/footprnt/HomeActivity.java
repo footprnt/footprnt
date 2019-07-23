@@ -1,5 +1,12 @@
+/*
+ * HomeActivity.java
+ * v1.0
+ * July 2019
+ * Copyright ©2019 Footprnt Inc.
+ */
 package com.example.footprnt;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -11,20 +18,31 @@ import android.view.MenuItem;
 import com.example.footprnt.Discover.DiscoverFragment;
 import com.example.footprnt.Map.MapFragment;
 import com.example.footprnt.Profile.ProfileFragment;
+import com.example.footprnt.Util.Constants;
 
 /**
  * Handles displaying three main fragments and navigation bar
  *
- * @author Jocelyn Shen
+ * @author Jocelyn Shen, Clarisa Leu
  * @version 1.0
  * @since 2019-07-22
  */
 public class HomeActivity extends AppCompatActivity {
 
-    final FragmentManager fragmentManager = getSupportFragmentManager();
+    final FragmentManager mFragmentManager = getSupportFragmentManager();
     final Fragment mFragment1 = new MapFragment();
     final Fragment mFragment2 = new DiscoverFragment();
     final Fragment mFragment3 = new ProfileFragment();
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // Reload the user image on the profile fragment
+        if(resultCode == Constants.RELOAD_USERPROFILE_FRAGMENT_REQUEST_CODE){
+            mFragment3.onActivityResult(requestCode, resultCode, data);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +65,7 @@ public class HomeActivity extends AppCompatActivity {
                         fragment = mFragment3;
                         break;
                 }
-                fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
+                mFragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
                 return true;
             }
         });

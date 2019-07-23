@@ -1,3 +1,9 @@
+/*
+ * FeedActivity.java
+ * v1.0
+ * July 2019
+ * Copyright ©2019 Footprnt Inc.
+ */
 package com.example.footprnt.Map;
 
 import android.app.Activity;
@@ -9,7 +15,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.example.footprnt.Map.Util.Constants;
+import com.example.footprnt.Map.Util.MapConstants;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.R;
 import com.parse.FindCallback;
@@ -47,7 +53,7 @@ public class FeedActivity extends Activity {
         postsQuery
                 .getTop()
                 .withUser()
-                .withinPoint(new ParseGeoPoint(mLat, mLong), Constants.POST_RADIUS);
+                .withinPoint(new ParseGeoPoint(mLat, mLong), MapConstants.POST_RADIUS);
         mPostAdapter = new PostAdapter(mPosts);
         mPostsView = findViewById(R.id.rvPosts);
         getPosts(postsQuery);
@@ -72,7 +78,7 @@ public class FeedActivity extends Activity {
                     for (int i = 0; i < objects.size(); i++) {
                         Post post = (Post) objects.get(i);
                         mPosts.add(post);
-                        mPostAdapter.notifyItemInserted(mPosts.size()-1);
+                        mPostAdapter.notifyItemInserted(mPosts.size() - 1);
                     }
                     mSwipeContainer.setRefreshing(false);
                 } else {
@@ -109,7 +115,7 @@ public class FeedActivity extends Activity {
         postsQuery
                 .getTop()
                 .withUser()
-                .withinPoint(new ParseGeoPoint(mLat, mLong), Constants.POST_RADIUS);
+                .withinPoint(new ParseGeoPoint(mLat, mLong), MapConstants.POST_RADIUS);
         getPosts(postsQuery);
         mSwipeContainer.setRefreshing(false);
     }
@@ -126,34 +132,34 @@ public class FeedActivity extends Activity {
                         postsQuery
                                 .getTop()
                                 .withUser()
-                                .withinPoint(new ParseGeoPoint(mLat, mLong), Constants.POST_RADIUS);
+                                .withinPoint(new ParseGeoPoint(mLat, mLong), MapConstants.POST_RADIUS);
                         if (item.getItemId() == R.id.culture){
                             List<String> tags_to_check = new ArrayList();
-                            tags_to_check.add(Constants.culture);
+                            tags_to_check.add(MapConstants.culture);
                             postsQuery.whereContainsAll(Post.KEY_TAGS, tags_to_check);
                             getPosts(postsQuery);
                         }
                         if (item.getItemId() == R.id.food){
                             List<String> tags_to_check = new ArrayList();
-                            tags_to_check.add(Constants.food);
+                            tags_to_check.add(MapConstants.food);
                             postsQuery.whereContainsAll(Post.KEY_TAGS, tags_to_check);
                             getPosts(postsQuery);
                         }
                         if (item.getItemId() == R.id.travel){
                             List<String> tags_to_check = new ArrayList();
-                            tags_to_check.add(Constants.travel);
+                            tags_to_check.add(MapConstants.travel);
                             postsQuery.whereContainsAll(Post.KEY_TAGS, tags_to_check);
                             getPosts(postsQuery);
                         }
                         if (item.getItemId() == R.id.fashion){
                             List<String> tags_to_check = new ArrayList();
-                            tags_to_check.add(Constants.fashion);
+                            tags_to_check.add(MapConstants.fashion);
                             postsQuery.whereContainsAll(Post.KEY_TAGS, tags_to_check);
                             getPosts(postsQuery);
                         }
                         if (item.getItemId() == R.id.nature){
                             List<String> tags_to_check = new ArrayList();
-                            tags_to_check.add(Constants.nature);
+                            tags_to_check.add(MapConstants.nature);
                             postsQuery.whereContainsAll(Post.KEY_TAGS, tags_to_check);
                             getPosts(postsQuery);
                         }

@@ -1,3 +1,9 @@
+/*
+ * MapUtil.java
+ * v1.0
+ * July 2019
+ * Copyright ©2019 Footprnt Inc.
+ */
 package com.example.footprnt.Map.Util;
 
 import android.app.Activity;
@@ -9,7 +15,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.footprnt.Map.PostAdapter;
 import com.example.footprnt.Models.Post;
-import com.example.footprnt.Util.LocationHelper;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
@@ -30,10 +35,11 @@ import java.util.Locale;
  * @version 1.0
  * @since 2019-07-22
  */
-public class Util {
+public class MapUtil {
 
     /**
      * Calculates relative time
+     *
      * @param rawJsonDate input date to convert
      * @return relative time
      */
@@ -54,13 +60,14 @@ public class Util {
 
     /**
      * Gets a post's date text
+     *
      * @param post post to retrieve date from
      * @return post's date text
      */
     public static String getPostDateText(Post post) {
         Date d = post.getCreatedAt();
         String dateText;
-        if (d==null) {
+        if (d == null) {
             dateText = "0s";
         } else {
             dateText = getRelativeTimeAgo(d.toString());
@@ -70,13 +77,14 @@ public class Util {
 
     /**
      * Gets a post's tags
+     *
      * @param post post to retrieve tags from
      * @return string format of tag (ie. #culture #food)
      */
     public static String getPostTags(Post post) {
         String tagname = "";
         JSONArray arr = post.getTags();
-        if (arr != null && arr.length() >0 ) {
+        if (arr != null && arr.length() > 0) {
             for (int i = 0; i < arr.length(); i++) {
                 try {
                     tagname += "#" + arr.getString(i) + " ";
@@ -92,8 +100,9 @@ public class Util {
 
     /**
      * Handles displaying all text into the view holder
-     * @param post post to display
-     * @param holder holder to display text into
+     *
+     * @param post    post to display
+     * @param holder  holder to display text into
      * @param context current context of post
      */
     public static void setPostText(Post post, PostAdapter.ViewHolder holder, Context context) {
@@ -114,16 +123,16 @@ public class Util {
         // set user
         holder.tvUser.setText(post.getUser().getUsername());
         // set date
-        String dateText = Util.getPostDateText(post);
+        String dateText = MapUtil.getPostDateText(post);
         holder.tvTimePosted.setText(dateText);
         // set location
-        LocationHelper helper = new LocationHelper();
+        com.example.footprnt.Util.Util helper = new com.example.footprnt.Util.Util();
         LatLng point = new LatLng(post.getLocation().getLatitude(), post.getLocation().getLongitude());
         String tvCityState = helper.getAddress(context, point);
         holder.tvLocation.setText(tvCityState);
         // set tags
-        String tags = Util.getPostTags(post);
-        if(tags != null) {
+        String tags = MapUtil.getPostTags(post);
+        if (tags != null) {
             holder.tvTags.setText(tags);
         } else {
             holder.tvTags.setVisibility(View.GONE);
@@ -132,8 +141,9 @@ public class Util {
 
     /**
      * Handles displaying all images into the view holder
-     * @param post post to display
-     * @param holder holder to display images into
+     *
+     * @param post    post to display
+     * @param holder  holder to display images into
      * @param context current context of post
      */
     public static void setPostImages(Post post, PostAdapter.ViewHolder holder, Context context) {
@@ -143,7 +153,7 @@ public class Util {
         } else {
             holder.ivPicture.setVisibility(View.GONE);
         }
-        if(post.getUser().getParseFile("profileImg")!=null) {
+        if (post.getUser().getParseFile("profileImg") != null) {
             String userImgUrl = post.getUser().getParseFile("profileImg").getUrl();
             Glide.with(context).load(userImgUrl).apply(RequestOptions.circleCropTransform()).into(holder.ivUserPicture);
         } else {

@@ -1,3 +1,9 @@
+/*
+ * MarkerDetails.java
+ * v1.0
+ * July 2019
+ * Copyright ©2019 Footprnt Inc.
+ */
 package com.example.footprnt.Models;
 
 import com.parse.ParseClassName;
@@ -8,6 +14,9 @@ import com.parse.ParseUser;
 
 import java.io.Serializable;
 
+/**
+ * @author Jocelyn Shen
+ */
 @ParseClassName("MarkerDetails")
 public class MarkerDetails extends ParseObject implements Serializable {
 
@@ -68,7 +77,7 @@ public class MarkerDetails extends ParseObject implements Serializable {
         }
 
         public Query withUser() {
-            include("user");
+            include(KEY_USER);
             return this;
         }
     }
