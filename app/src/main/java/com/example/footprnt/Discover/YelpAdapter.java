@@ -8,16 +8,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.footprnt.Models.Restaurant;
 import com.example.footprnt.R;
 
 import java.util.ArrayList;
 
 
-public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
-    ArrayList<String> posts;
+public class YelpAdapter extends RecyclerView.Adapter<YelpAdapter.ViewHolder> {
+    ArrayList<Restaurant> posts;
     Context context;
 
-    public PostAdapter(ArrayList<String> posts) {
+    public YelpAdapter(ArrayList<Restaurant> posts) {
         this.posts = posts;
     }
 
@@ -30,7 +31,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
-        View postView = inflater.inflate(R.layout.item_discover, parent, false);
+        View postView = inflater.inflate(R.layout.activity_yelp_service, parent, false);
         return new ViewHolder(postView);
 
 
@@ -38,8 +39,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        String cur = posts.get(position);
-        holder.tvItem.setText(cur);
+        Restaurant cur = posts.get(position);
+        holder.tvItem.setText(cur.getText());
+
     }
 
 

@@ -1,118 +1,85 @@
 package com.example.footprnt.Discover;
 
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.ImageView;
-import android.widget.TextView;
-
-import com.bumptech.glide.Glide;
-import com.example.footprnt.Models.Post;
-import com.example.footprnt.R;
+import com.example.footprnt.Models.Restaurant;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
-import butterknife.BindView;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class YelpService extends AppCompatActivity {
+public class YelpService {
 
-    Post post;
+    public static void findRestaurants(String location, Callback callback) {
 
-    @BindView(R.id.ivProfile)
-    ImageView ivProfile;
-    @BindView(R.id.cbRestaurant)
-    CheckBox cbRestaurant;
-    @BindView(R.id.cbLegal)
-    CheckBox cbLegal;
-    @BindView(R.id.tvTitle)
-    TextView tvTitle;
-    @BindView(R.id.tvPlace)
-    TextView tvPlace;
-    @BindView(R.id.tvPerson)
-    TextView tvPerson;
-    @BindView(R.id.tvFood)
-    TextView tvFood;
-    @BindView(R.id.tvYelp)
-    TextView tvYelp;
-    @BindView(R.id.btnLink)
-    Button btnLink;
-    @BindView(R.id.ivImage)
-    ImageView ivImage;
-
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_yelp_service);
-
-        String secretKey = getString(R.string.yelp_api_key);
-        final OkHttpClient client = new OkHttpClient();
-        final Request request = new Request.Builder()
-                .url("https://api.yelp.com/v3/businesses/search?latitude=" + post.getLocation().getLatitude() + "&longitude=" + post.getLocation().getLongitude() + "")
-                //.url("https://api.yelp.com/v3/businesses/north-india-restaurant-san-francisco")
-                .addHeader("Authorization", "Bearer " + secretKey)
+        OkHttpClient client = new OkHttpClient.Builder()
                 .build();
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Response response = client.newCall(request).execute();
-                    JSONObject data = new JSONObject(response.body().string().trim());
-                    JSONArray business = data.getJSONArray("businesses");
-                    final JSONObject jsonObject = business.getJSONObject(0);
 
-                    //JSONArray myResponse = (JSONArray)jsonObject.get("id");
-                    final String imageURL = jsonObject.getString("image_url");
-                    final String url = jsonObject.getString("url");
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                tvYelp.setText(jsonObject.getString("name"));
-                                Glide.with(YelpService.this)
-                                        .load(imageURL)
-                                        .override(100, 100)
-                                        .into(ivImage);
-                                btnLink.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        Intent i = new Intent(Intent.ACTION_VIEW);
-                                        i.setData(Uri.parse(url));
-                                        startActivity(i);
-                                        finish();
-                                    }
-                                });
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
-                } catch (IOException | JSONException e) {
-                    Log.e("YelpServiceActivity", "Didn't respond");
-                    e.printStackTrace();
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(Constants.YELP_BASE_URL).newBuilder();
+        urlBuilder.addQueryParameter(Constants.YELP_LOCATION_QUERY_PARAMETER, location);
+        String url = urlBuilder.build().toString();
+
+        Request request= new Request.Builder()
+                .url(url)
+                .header("Authorization", Constants.YELP_TOKEN)
+                .build();
+
+        Call call = client.newCall(request);
+        call.enqueue(callback);
+    }
+
+    public ArrayList<Restaurant> processResults(Response response) {
+        ArrayList<Restaurant> restaurants = new ArrayList<>();
+
+        try {
+            String jsonData = response.body().string();
+            JSONObject yelpJSON = new JSONObject(jsonData);
+            JSONArray businessesJSON = yelpJSON.getJSONArray("businesses");
+            for (int i = 0; i < businessesJSON.length(); i++) {
+                JSONObject restaurantJSON = businessesJSON.getJSONObject(i);
+                String name = restaurantJSON.getString("name");
+                String phone = restaurantJSON.optString("display_phone", "Phone not available");
+                String website = restaurantJSON.getString("url");
+                double rating = restaurantJSON.getDouble("rating");
+
+                String imageUrl = restaurantJSON.getString("image_url");
+
+                double latitude = (double) restaurantJSON.getJSONObject("coordinates").getDouble("latitude");
+
+                double longitude = (double) restaurantJSON.getJSONObject("coordinates").getDouble("longitude");
+
+                ArrayList<String> address = new ArrayList<>();
+                JSONArray addressJSON = restaurantJSON.getJSONObject("location")
+                        .getJSONArray("display_address");
+                for (int y = 0; y < addressJSON.length(); y++) {
+                    address.add(addressJSON.get(y).toString());
                 }
-            }
-        });
 
-        thread.start();
-        if (post.getTitle() != null) {
-            tvTitle.setText(post.getTitle());
+                ArrayList<String> categories = new ArrayList<>();
+                JSONArray categoriesJSON = restaurantJSON.getJSONArray("categories");
+
+                for (int y = 0; y < categoriesJSON.length(); y++) {
+                    categories.add(categoriesJSON.getJSONObject(y).getString("title"));
+                }
+                Restaurant restaurant = new Restaurant(name, phone, website, rating,
+                        imageUrl, address, latitude, longitude, categories);
+                restaurants.add(restaurant);
+            }
         }
-        if (post.getImage() != null) {
-            // Load profile image
-            Glide.with(this).load( post.getImage().getUrl()).into(ivProfile);
+        catch (IOException e){
+            e.printStackTrace();
         }
+        catch (JSONException e){
+            e.printStackTrace();
+        }
+        return restaurants;
     }
 }
