@@ -11,7 +11,7 @@ import com.example.footprnt.R;
 /**
  * Contains all constants for map fragment
  *
- * @author Jocelyn Shen
+ * @author Jocelyn Shen, Clarisa Leu
  * @version 1.0
  * @since 2019-07-22
  */
@@ -25,6 +25,7 @@ public class Constants {
     public static int POST_RADIUS = 5;
 
     // Map Styles:
+    public static String map_style = "map_style";
     public static int style_aubergine = R.raw.style_json_aubergine;
     public static int style_darkmode = R.raw.style_json_darkmode;
     public static int style_silver = R.raw.style_json_silver;

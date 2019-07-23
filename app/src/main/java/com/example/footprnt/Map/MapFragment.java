@@ -115,26 +115,20 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     private boolean FOOD = false;
     private boolean NATURE = false;
 
-    ImageView settings;
-    PopupMenu popup;
-
+    // Menu variables
+    private ImageView mSettings;
+    private PopupMenu mPopup;
 
     @Nullable
     @Override
-
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_map, container, false);
 
-        settings = v.findViewById(R.id.ivSettings);
-        popup = new PopupMenu(getActivity(), settings);
-        popup.getMenuInflater().inflate(R.menu.popup_menu_map, popup.getMenu());
-
-        configureMapStyleMenu();
         SupportMapFragment mapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFrag.getMapAsync(this);
         mHelper = new Util();
         mUser = ParseUser.getCurrentUser();
-        mMapStyle = mUser.getInt("map_style");
+        mMapStyle = mUser.getInt(Constants.map_style);
         ParseACL acl = new ParseACL();          // set permissions
         acl.setPublicReadAccess(true);
         acl.setPublicWriteAccess(true);
@@ -154,6 +148,14 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+
+        // Set up pop up menu
+        mSettings = v.findViewById(R.id.ivSettings);
+        mPopup = new PopupMenu(getActivity(), mSettings);
+        mPopup.getMenuInflater().inflate(R.menu.popup_menu_map, mPopup.getMenu());
+        configureMapStyleMenu();
+
         return v;
     }
 
@@ -161,10 +163,19 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
      * Helper function to set up the pop up menu which configures the style for map
      */
     private void configureMapStyleMenu() {
-        settings.setOnClickListener(new View.OnClickListener() {
+        // Set up initial check boxes in pop up menu
+        // TODO: update UI correctly when user opens fragment in beginning
+        for (int i = 0; i < mPopup.getMenu().size(); i++) {
+            if (mPopup.getMenu().getItem(i).getItemId() != mMapStyle) {
+                mPopup.getMenu().getItem(i).setChecked(false);
+            } else {
+                mPopup.getMenu().getItem(i).setChecked(true);
+            }
+        }
+        mSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                mPopup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     public boolean onMenuItemClick(MenuItem item) {
                         item.setActionView(new View(getContext()));
                         item.setShowAsAction(MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
@@ -181,53 +192,46 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                         });
                         switch (item.getItemId()) {
                             case R.id.edit_style_dark_mode:
-                                item.setChecked(true);
-                                mMap.setMapStyle(
-                                        MapStyleOptions.loadRawResourceStyle(
-                                                getContext(), R.raw.style_json_darkmode));
-                                mUser.put("map_style", Constants.style_darkmode);
-                                mUser.saveInBackground();
+                                toggleMenuItem(item, Constants.style_darkmode);
                                 return true;
                             case R.id.edit_style_silver:
-                                item.setChecked(true);
-                                mMap.setMapStyle(
-                                        MapStyleOptions.loadRawResourceStyle(
-                                                getContext(), R.raw.style_json_silver));
-                                mUser.put("map_style", Constants.style_silver);
-                                mUser.saveInBackground();
+                                toggleMenuItem(item, Constants.style_silver);
                                 return true;
                             case R.id.edit_style_aubergine:
-                                item.setChecked(true);
-                                mMap.setMapStyle(
-                                        MapStyleOptions.loadRawResourceStyle(
-                                                getContext(), R.raw.style_json_aubergine));
-                                mUser.put("map_style", Constants.style_aubergine);
-                                mUser.saveInBackground();
+                                toggleMenuItem(item, Constants.style_aubergine);
                                 return true;
                             case R.id.edit_style_retro:
-                                item.setChecked(true);
-                                mMap.setMapStyle(
-                                        MapStyleOptions.loadRawResourceStyle(
-                                                getContext(), R.raw.style_json_retro));
-                                mUser.put("map_style", Constants.style_retro);
-                                mUser.saveInBackground();
+                                toggleMenuItem(item, Constants.style_retro);
                                 return true;
                             case R.id.edit_style_basic:
-                                item.setChecked(true);
-                                mMap.setMapStyle(
-                                        MapStyleOptions.loadRawResourceStyle(
-                                                getContext(), R.raw.style_json_basic));
-                                mUser.put("map_style", Constants.style_basic);
-                                mUser.saveInBackground();
+                                toggleMenuItem(item, Constants.style_basic);
                                 return true;
                         }
                         return false;
                     }
                 });
-                popup.show();
+                mPopup.show();
             }
         });
     }
+
+    /**
+     * Helper method for onMenuItemSelected. Toggles menu items not selected and updates database
+     */
+    private void toggleMenuItem(MenuItem menuItem, int id) {
+        menuItem.setChecked(true);
+        mMap.setMapStyle(
+                MapStyleOptions.loadRawResourceStyle(
+                        getContext(), id));
+        mUser.put(Constants.map_style, id);
+        mUser.saveInBackground();
+        for (int i = 0; i < mPopup.getMenu().size(); i++) {
+            if (mPopup.getMenu().getItem(i).getItemId() != menuItem.getItemId()) {
+                mPopup.getMenu().getItem(i).setChecked(false);
+            }
+        }
+    }
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
