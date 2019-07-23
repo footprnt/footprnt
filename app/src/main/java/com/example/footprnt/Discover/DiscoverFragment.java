@@ -1,8 +1,13 @@
+/*
+ * DiscoverFragment.java
+ * v1.0
+ * July 2019
+ * Copyright ©2019 Footprnt Inc.
+ */
 package com.example.footprnt.Discover;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,12 +32,13 @@ import okhttp3.Response;
 public class DiscoverFragment extends Fragment {
     public static final String TAG = DiscoverFragment.class.getSimpleName();
 
-    @Bind(R.id.locationTextView) TextView mLocationTextView;
-    @Bind(R.id.listView) ListView mListView;
+    @BindView(R.id.locationTextView) TextView mLocationTextView;
+    @BindView(R.id.listView) ListView mListView;
 
     public ArrayList<Restaurant> restaurants = new ArrayList<>();
 
     // TODO: set up model for yelp business or query
+
     Post post;
 
     @BindView(R.id.ivProfile)
@@ -50,6 +56,7 @@ public class DiscoverFragment extends Fragment {
     @BindView(R.id.tvFood)
     TextView tvFood;
     @BindView(R.id.tvYelp)
+
     TextView tvYelp;
     @BindView(R.id.btnLink)
     Button btnLink;
@@ -62,6 +69,7 @@ public class DiscoverFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        String location;  // TODO: intialize with current location
         getRestaurants(location);
     }
 
@@ -78,6 +86,7 @@ public class DiscoverFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
 
+
     }
 
     private void getRestaurants(String location) {
@@ -87,6 +96,7 @@ public class DiscoverFragment extends Fragment {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
+
             }
 
             @Override

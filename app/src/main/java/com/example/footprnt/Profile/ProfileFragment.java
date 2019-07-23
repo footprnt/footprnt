@@ -1,5 +1,8 @@
 /*
- * Copyright 2019 Footprnt Inc.
+ * ProfileFragment.java
+ * v1.0
+ * July 2019
+ * Copyright ©2019 Footprnt Inc.
  */
 package com.example.footprnt.Profile;
 
@@ -23,6 +26,7 @@ import com.example.footprnt.LoginActivity;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.Profile.Adapters.MultiViewAdapter;
 import com.example.footprnt.R;
+import com.example.footprnt.Util.Constants;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
@@ -45,13 +49,11 @@ public class ProfileFragment extends Fragment {
     RecyclerView mLayout;
     MultiViewAdapter mMultiAdapter;
 
-
     // For stats view:
     HashMap<String, Integer> mCities;  // Contains the cities and number of times visited by user
     HashMap<String, Integer> mCountries;  // Contains the countries and number of times visited by user
     HashMap<String, Integer> mContinents;  // Contains the continents and number of times visited by user
-
-
+    ArrayList<HashMap<String, Integer>> mStats;  // Stats to be passed to adapter
 
     @Nullable
     @Override
@@ -65,14 +67,14 @@ public class ProfileFragment extends Fragment {
         mCountries = new HashMap<>();
         mContinents = new HashMap<>();
         mPosts = new ArrayList<>();
+        mStats = new ArrayList<>();
 
         // Get posts
         getPosts();
         mObjects.add(user);
 
         // For post feed view:
-        mMultiAdapter = new MultiViewAdapter(getActivity(), mObjects);
-
+        mMultiAdapter = new MultiViewAdapter(getContext(), mObjects);
         mLayout = v.findViewById(R.id.rvPosts);
         mLayout.setLayoutManager(new LinearLayoutManager(getContext()));
         mLayout.setAdapter(mMultiAdapter);
@@ -80,6 +82,14 @@ public class ProfileFragment extends Fragment {
         return v;
     }
 
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Constants.RELOAD_USERPROFILE_FRAGMENT_REQUEST_CODE) {
+            mMultiAdapter.notifyItemChanged(0);
+        }
+    }
 
 
     private void setUpLogOutButton(final View v) {
@@ -109,8 +119,8 @@ public class ProfileFragment extends Fragment {
         postsQuery
                 .getTop()
                 .withUser()
-                .whereEqualTo("user", ParseUser.getCurrentUser());
-        postsQuery.addDescendingOrder("createdAt");
+                .whereEqualTo(Constants.user, ParseUser.getCurrentUser());
+        postsQuery.addDescendingOrder(Constants.createdAt);
 
         postsQuery.findInBackground(new FindCallback<Post>() {
             @Override
@@ -151,8 +161,11 @@ public class ProfileFragment extends Fragment {
                     logError("Error querying posts", e, true);
                 }
 
-                // TODO: hashmaps filled
-                mObjects.add(mCities);
+                mStats.add(mCities);
+                mStats.add(mCountries);
+                mStats.add(mContinents);
+
+                mObjects.add(mStats);
                 mMultiAdapter.notifyDataSetChanged();
                 mObjects.addAll(mPosts);
                 mMultiAdapter.notifyDataSetChanged();
@@ -167,5 +180,6 @@ public class ProfileFragment extends Fragment {
             Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
         }
     }
+
 
 }

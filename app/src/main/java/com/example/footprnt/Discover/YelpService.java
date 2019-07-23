@@ -1,3 +1,9 @@
+/*
+ * YelpService.java
+ * v1.0
+ * July 2019
+ * Copyright ©2019 Footprnt Inc.
+ */
 package com.example.footprnt.Discover;
 
 import com.example.footprnt.Models.Restaurant;
@@ -79,6 +85,7 @@ public class YelpService {
         }
         catch (JSONException e){
             e.printStackTrace();
+
         }
         return restaurants;
     }

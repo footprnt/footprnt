@@ -6,8 +6,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
-    <!-- TODO: Hide API Key -->
-    <string name="google_maps_api_key">AIzaSyB6giE2uccJvP3W3Lt0Nz9Jau5l14vGHhM</string>
     <string name="my_stats">MY STATS</string>
     <string name="my_posts">MY POSTS</string>
     <string name="description">Description</string>
@@ -21,5 +19,5 @@
     <string name="delete">Delete</string>
     <string name="title_activity_edit_post">EditPost</string>
     <string name="post_message">Posted!</string>
-    <string name="camera_message">Picture wasn't taken!</string>
+    <string name="camera_message">Picture wasnt taken!</string>
 </resources>

@@ -1,3 +1,9 @@
+/*
+ * LoginActivity.java
+ * v1.0
+ * July 2019
+ * Copyright ©2019 Footprnt Inc.
+ */
 package com.example.footprnt;
 
 import android.content.Intent;
@@ -7,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.example.footprnt.Util.Constants;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
@@ -14,7 +21,7 @@ import com.parse.ParseUser;
 /**
  * Handles all login activity
  *
- * @author Jocelyn Shen
+ * @author Jocelyn Shen, Clarisa Leu
  * @version 1.0
  * @since 2019-07-22
  */
@@ -23,7 +30,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText mUsernameInput;
     private EditText mPasswordInput;
     private Button mLoginBtn;
-    private Button mSignupBtn;
+    private Button mSignUpBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +40,7 @@ public class LoginActivity extends AppCompatActivity {
         mUsernameInput = findViewById(R.id.username);
         mPasswordInput = findViewById(R.id.password);
         mLoginBtn = findViewById(R.id.btn_login);
-        mSignupBtn = findViewById(R.id.btn_signup);
+        mSignUpBtn = findViewById(R.id.btn_signup);
 
         ParseUser currentUser = ParseUser.getCurrentUser();
         if (currentUser != null) {
@@ -50,11 +57,11 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        mSignupBtn.setOnClickListener(new View.OnClickListener() {
+        mSignUpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(LoginActivity.this, SignupActivity.class);
-                startActivityForResult(intent, 20);
+                startActivityForResult(intent, Constants.SIGN_UP_ACTIVITY_REQUEST_CODE);
             }
         });
     }
