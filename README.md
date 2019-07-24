@@ -3,18 +3,21 @@
 
 **Required Must-have Stories**
 
- * News feed where users can see friends post (Home page). Add friend button
- * Map where users can see the places they've traveled (Swipe L or R from home page)
- * A profile page with user stats, export feature
- * A friend list, settings page etc.
- * Posting feature where users can add pictures/places they've been and share in news feed
+ * [x] News feed where users can see friends post (home page)
+ * [x] Map where users can see the places they've traveled (Swipe L or R from home page)
+ * [x] A profile page with user stats
+ * [x] Export feature for map
+ * [x] settings page etc.
+ * [x] Posting feature where users can add pictures/places they've been and share in news feed
  * Explore button on map which takes the users live location into account and lists fun things/activities to do in the area (another activity) - Or just an adventure of the day
 
 **Optional Nice-to-have Stories**
- * From the list of activities to do in the area - users can sort them based on price, date, cateogory (business, etc). One idea is to use the event brite api which sorts this for you already https://www.eventbrite.com/platform/api
+ * From the list of activities to do in the area - users can sort them based on price, date, cateogory (business, etc).
  * From the map, users have the option to toggle their visibility to other users (friends) and can see other users on the map as well by toggling button
+ * User can change style of map and markers
  * Users have the option to click the camera button on the toolbar and can learn more information about buildings/art with their camera
- * Travel badges .. more cities = more badges. Or more unique places = cool badges.
+ * Travel badges... more cities = more badges. Or more unique places = cool badges.
+ * Leader board for person who has traveled the most
 
 ## 2. Screen Archetypes
 
