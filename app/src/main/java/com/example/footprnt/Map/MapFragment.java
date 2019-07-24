@@ -52,7 +52,6 @@ import com.example.footprnt.Models.MarkerDetails;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.R;
 import com.example.footprnt.Util.Util;
-import com.example.footprnt.Util.Constants;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -83,7 +82,7 @@ import java.util.Locale;
 /**
  * Handles all map activities
  *
- * @author Jocelyn Shen
+ * @author Jocelyn Shen, Clarisa Leu
  * @version 1.0
  * @since 2019-07-22
  */
@@ -106,6 +105,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     private AlertDialog mAlertDialog = null;
     private ParseFile mParseFile;
     private ParseUser mUser;
+    private int mMapStyle;
 
     // Tag variables
     private ArrayList<String> mTags;
@@ -116,10 +116,15 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     private boolean FOOD = false;
     private boolean NATURE = false;
 
+    // Menu variables
+    private ImageView mSettings;
+    private PopupMenu mPopup;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_map, container, false);
+
         SupportMapFragment mapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFrag.getMapAsync(this);
         mHelper = new Util();
@@ -128,10 +133,95 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         acl.setPublicReadAccess(true);
         acl.setPublicWriteAccess(true);
         mUser.setACL(acl);
+        mUser.setACL(acl);
         mMarkerDetails = new ArrayList<>();
         mContinents = MapUtil.getContinents(getActivity());
+        mMapStyle = mUser.getInt(MapConstants.map_style);
+
+
+        // Set up pop up menu
+        mSettings = v.findViewById(R.id.ivSettings);
+        mPopup = new PopupMenu(getActivity(), mSettings);
+        mPopup.getMenuInflater().inflate(R.menu.popup_menu_map, mPopup.getMenu());
+        configureMapStyleMenu();
+
+
         return v;
     }
+
+    /**
+     * Helper function to set up the pop up menu which configures the style for map
+     */
+    private void configureMapStyleMenu() {
+        // Set up initial check boxes in pop up menu
+        // TODO: update UI correctly when user opens fragment in beginning and on transition
+        for (int i = 0; i < mPopup.getMenu().size(); i++) {
+            if (mPopup.getMenu().getItem(i).getItemId() != mMapStyle) {
+                mPopup.getMenu().getItem(i).setChecked(false);
+            } else {
+                mPopup.getMenu().getItem(i).setChecked(true);
+            }
+        }
+        mSettings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPopup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    public boolean onMenuItemClick(MenuItem item) {
+                        item.setActionView(new View(getContext()));
+                        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
+                        item.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+                            @Override
+                            public boolean onMenuItemActionExpand(MenuItem item) {
+                                return false;
+                            }
+
+                            @Override
+                            public boolean onMenuItemActionCollapse(MenuItem item) {
+                                return false;
+                            }
+                        });
+                        switch (item.getItemId()) {
+                            case R.id.edit_style_dark_mode:
+                                toggleMenuItem(item, MapConstants.style_darkmode);
+                                return true;
+                            case R.id.edit_style_silver:
+                                toggleMenuItem(item, MapConstants.style_silver);
+                                return true;
+                            case R.id.edit_style_aubergine:
+                                toggleMenuItem(item, MapConstants.style_aubergine);
+                                return true;
+                            case R.id.edit_style_retro:
+                                toggleMenuItem(item, MapConstants.style_retro);
+                                return true;
+                            case R.id.edit_style_basic:
+                                toggleMenuItem(item, MapConstants.style_basic);
+                                return true;
+                        }
+                        return false;
+                    }
+                });
+                mPopup.show();
+            }
+        });
+    }
+
+    /**
+     * Helper method for onMenuItemSelected. Toggles menu items not selected and updates database
+     */
+    private void toggleMenuItem(MenuItem menuItem, int id) {
+        menuItem.setChecked(true);
+        mMap.setMapStyle(
+                MapStyleOptions.loadRawResourceStyle(
+                        getContext(), id));
+        mUser.put(MapConstants.map_style, id);
+        mUser.saveInBackground();
+        for (int i = 0; i < mPopup.getMenu().size(); i++) {
+            if (mPopup.getMenu().getItem(i).getItemId() != menuItem.getItemId()) {
+                mPopup.getMenu().getItem(i).setChecked(false);
+            }
+        }
+    }
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -179,7 +269,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         try {
             boolean success = mMap.setMapStyle(
                     MapStyleOptions.loadRawResourceStyle(
-                            getContext(), R.raw.style_json_aubergine));
+                            getContext(), mMapStyle));
             if (!success) {
                 Log.e("map", "Style parsing failed.");
             }
@@ -240,7 +330,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                         MarkerDetails md = objects.get(i);
                         mMarkerDetails.add(md);
                     }
-                    for (MarkerDetails markerDetails: mMarkerDetails) {
+                    for (MarkerDetails markerDetails : mMarkerDetails) {
                         Marker m = createMarker(markerDetails.getLocation().getLatitude(), markerDetails.getLocation().getLongitude(), markerDetails.getTitle(), markerDetails.getDescription());
                     }
                 } else {
@@ -381,7 +471,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                         }
                     });
                 } else {
-                    Post p = createPost(snippet, title, mParseFile , mUser, mLastPoint);
+                    Post p = createPost(snippet, title, mParseFile, mUser, mLastPoint);
                 }
                 mAlertDialog.dismiss();
             }

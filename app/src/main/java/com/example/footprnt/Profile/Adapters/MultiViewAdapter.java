@@ -30,7 +30,7 @@ import com.example.footprnt.Profile.Adapters.ViewHolders.StatViewHolder;
 import com.example.footprnt.Profile.Adapters.ViewHolders.UserInfoViewHolder;
 import com.example.footprnt.Profile.EditPost;
 import com.example.footprnt.Profile.UserSettings;
-import com.example.footprnt.Profile.Util.Constants;
+import com.example.footprnt.Profile.Util.ProfileConstants;
 import com.example.footprnt.R;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
@@ -237,15 +237,15 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         final HashMap<String, Integer> continents = stats.get(2);
 
         if (cities != null) {
-            setUpPieChart(vh3.getPieChartCity(), cities.size(), Constants.totalNumCities, "Visited Cities");
+            setUpPieChart(vh3.getPieChartCity(), cities.size(), ProfileConstants.totalNumCities, "Visited Cities");
         }
 
         if (countries != null) {
-            setUpPieChart(vh3.getPieChartCountry(), countries.size(), Constants.totalNumContinents, "Visited Countries");
+            setUpPieChart(vh3.getPieChartCountry(), countries.size(), ProfileConstants.totalNumContinents, "Visited Countries");
         }
 
         if (continents != null) {
-            setUpPieChart(vh3.getPieChartContinent(), continents.size(), Constants.totalNumCountries, "Visited Continents");
+            setUpPieChart(vh3.getPieChartContinent(), continents.size(), ProfileConstants.totalNumCountries, "Visited Continents");
         }
 
     }

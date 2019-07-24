@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="all">
+        <item
+            android:id="@+id/edit_style_dark_mode"
+            android:title="Dark mode" />
+        <item
+            android:id="@+id/edit_style_silver"
+            android:title="Silver" />
+        <item
+            android:id="@+id/edit_style_retro"
+            android:title="Retro" />
+        <item
+            android:id="@+id/edit_style_basic"
+            android:title="Basic" />
+        <item
+            android:id="@+id/edit_style_aubergine"
+            android:title="Aubergine" />
+    </group>
+
+</menu>
