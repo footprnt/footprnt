@@ -98,6 +98,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     private JSONObject mContinents;
 
     // Display variables
+    private CustomInfoWindowAdapter mInfoAdapter;
     private MapRipple mMapRipple;
     private ArrayList<MarkerDetails> mMarkerDetails;
     private ImageView mImage;
@@ -135,6 +136,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         mUser.setACL(acl);
         mUser.setACL(acl);
         mMarkerDetails = new ArrayList<>();
+        mInfoAdapter = new CustomInfoWindowAdapter(getContext());
         mContinents = MapUtil.getContinents(getActivity());
         mMapStyle = mUser.getInt(MapConstants.map_style);
 
@@ -252,7 +254,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-//        mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(getContext()));
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
@@ -264,6 +265,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 return true;
             }
         });
+        mMap.setInfoWindowAdapter(mInfoAdapter);
         mMap.setOnMapLongClickListener(this);
         mMap.setOnMapClickListener(this);
         try {
@@ -330,12 +332,33 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                         MarkerDetails md = objects.get(i);
                         mMarkerDetails.add(md);
                     }
-                    for (MarkerDetails markerDetails : mMarkerDetails) {
-                        Marker m = createMarker(markerDetails.getLocation().getLatitude(), markerDetails.getLocation().getLongitude(), markerDetails.getTitle(), markerDetails.getDescription());
+                    for (MarkerDetails markerDetails: mMarkerDetails) {
+                        try {
+                            Marker m = createMarker(markerDetails);
+                        } catch (ParseException e1) {
+                            e1.printStackTrace();
+                        }
                     }
-                } else {
-                    mUser.put("markers", new ArrayList<>());
-                    mUser.saveInBackground();
+                }
+            }
+        });
+    }
+
+    public void loadAllMarkers(){
+        final MarkerDetails.Query postQuery = new MarkerDetails.Query();
+        postQuery.withUser();
+        postQuery.findInBackground(new FindCallback<MarkerDetails>() {
+            @Override
+            public void done(List<MarkerDetails> objects, ParseException e) {
+                if (e == null) {
+                    for (int i = 0; i < objects.size(); i++) {
+                        MarkerDetails md = objects.get(i);
+                        try {
+                            Marker m = createMarker(md);
+                        } catch (ParseException e1) {
+                            e1.printStackTrace();
+                        }
+                    }
                 }
             }
         });
@@ -344,18 +367,28 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     /**
      * Create a Google Map marker at specified point with title and text
      *
-     * @param latitude  latitude of point where placing marker
-     * @param longitude longitude of point where placing marker
-     * @param title     title of post
-     * @param snippet   description of post
+     * @param md marker detail
      */
-    protected Marker createMarker(double latitude, double longitude, String title, String snippet) {
+    protected Marker createMarker(MarkerDetails md) throws ParseException {
         BitmapDescriptor defaultMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
-        return mMap.addMarker(new MarkerOptions()
+        Post post = (Post) md.getPost();
+        double latitude = (post.fetchIfNeeded().getParseGeoPoint("location")).getLatitude();
+        double longitude = (post.fetchIfNeeded().getParseGeoPoint("location")).getLongitude();
+        String title = (post.fetchIfNeeded().getString("title"));
+        System.out.println(title);
+        String postObject;
+        if (post != null){
+            postObject = post.getObjectId();
+        } else {
+            postObject = null;
+        }
+
+        Marker m = mMap.addMarker(new MarkerOptions()
                 .position(new LatLng(latitude, longitude))
                 .title(title)
-                .snippet(snippet)
+                .snippet(postObject)
                 .icon(defaultMarker));
+        return m;
     }
 
     @Override
@@ -455,23 +488,40 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 final String title = ((EditText) mAlertDialog.findViewById(R.id.etTitle)).getText().toString();
                 final String snippet = ((EditText) mAlertDialog.findViewById(R.id.etSnippet)).getText().toString();
                 final MarkerDetails mOptions = new MarkerDetails();
-                mOptions.setLocation(new ParseGeoPoint(mLastPoint.latitude, mLastPoint.longitude));
-                mOptions.setDescription(snippet);
-                mOptions.setTitle(title);
                 mOptions.setUser(mUser);
-                Marker m = createMarker(mLastPoint.latitude, mLastPoint.longitude, title, snippet);
-                mMarkerDetails.add(mOptions);
-                mUser.put("markers", mMarkerDetails);
-                mUser.saveInBackground();
                 if (mParseFile != null) {
                     mParseFile.saveInBackground(new SaveCallback() {
                         @Override
                         public void done(ParseException e) {
                             Post p = createPost(snippet, title, mParseFile, mUser, mLastPoint);
+                            mOptions.setPost(p);
+                            try {
+                                createMarker(mOptions);
+                            } catch (ParseException e1) {
+                                e1.printStackTrace();
+                            }
+                            mOptions.saveInBackground(new SaveCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    loadMarkers();
+                                }
+                            });
                         }
                     });
                 } else {
-                    Post p = createPost(snippet, title, mParseFile, mUser, mLastPoint);
+                    Post p = createPost(snippet, title, mParseFile , mUser, mLastPoint);
+                    mOptions.setPost(p);
+                    try {
+                        createMarker(mOptions);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    mOptions.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            loadMarkers();
+                        }
+                    });
                 }
                 mAlertDialog.dismiss();
             }
@@ -682,21 +732,8 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 popup.getMenuInflater().inflate(R.menu.popup_toggle, popup.getMenu());
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     public boolean onMenuItemClick(MenuItem item) {
-                        System.out.println(item.getTitle());
                         if (item.getItemId() == R.id.allposts) {
-                            final MarkerDetails.Query postQuery = new MarkerDetails.Query();
-                            postQuery.withUser();
-                            postQuery.findInBackground(new FindCallback<MarkerDetails>() {
-                                @Override
-                                public void done(List<MarkerDetails> objects, ParseException e) {
-                                    if (e == null) {
-                                        for (int i = 0; i < objects.size(); i++) {
-                                            MarkerDetails m = objects.get(i);
-                                            createMarker(m.getLocation().getLatitude(), m.getLocation().getLongitude(), m.getTitle(), m.getImageUrl());
-                                        }
-                                    }
-                                }
-                            });
+                            loadAllMarkers();
                         }
                         if (item.getItemId() == R.id.yourposts) {
                             mMap.clear();
