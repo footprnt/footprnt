@@ -19,7 +19,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -87,7 +86,6 @@ public class Util {
         LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());
         BitmapDescriptor defaultMarker =
                 BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
-        map.addMarker(new MarkerOptions().position(userLocation).title(title).icon(defaultMarker));
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 12));
     }
 

@@ -1,6 +1,9 @@
 package com.example.footprnt.Map;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,14 +11,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.example.footprnt.Models.Post;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.example.footprnt.R;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
-import com.parse.FindCallback;
-import com.parse.ParseException;
-
-import java.util.List;
 
 public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter{
 
@@ -30,48 +32,60 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter{
     }
 
     public void getPostObject(final Marker marker, final View v){
-        final Post.Query postQuery = new Post.Query();
-        postQuery.withUser().whereEqualTo("objectId", marker.getSnippet());
-        postQuery.findInBackground(new FindCallback<Post>() {
-            @Override
-            public void done(List<Post> objects, ParseException e) {
-                Post post = objects.get(0);
-                System.out.println(post.getObjectId());
-                if (marker.getSnippet() != null){
-                    if (post != null){
-                        String title = marker.getTitle();
-                        TextView tvTitle = v.findViewById(R.id.title);
-                        if (title != null){
-                            tvTitle.setText(title);
-                        } else {
-                            tvTitle.setVisibility(View.INVISIBLE);
-                        }
-                        System.out.println(title);
-                        ImageView image = v.findViewById(R.id.imageMarker);
-                        if(post.getImage()!=null) {
-                            String imgUrl = post.getImage().getUrl();
-                            Glide.with(mContext).load(imgUrl).into(image);
-                        } else {
-                            image.setVisibility(View.GONE);
-                        }
-                        mConstraintLayout.setVisibility(View.VISIBLE);
+        final ImageView image = v.findViewById(R.id.imageMarker);
+        System.out.println("from inside adapter");
+        System.out.println(marker.getSnippet());
+        if (marker.getSnippet().length() > 0){
+            Glide.with(mContext).load(marker.getSnippet()).placeholder(R.drawable.ic_add_photo).listener(new RequestListener<Drawable>() {
+                @Override
+                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                    System.out.println("fail load resource");
+                    return false;
+                }
+
+                @Override
+                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                    System.out.println("on resource ready called");
+                    if(marker.getSnippet().equals(v.getTag())) {
+                        return false;
                     }
 
+                    mHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            v.setTag(marker.getSnippet());
+                            marker.showInfoWindow();
+                        }
+                    });
+
+                    return false;
                 }
-            }
-        });
+            }).into(image);
+        } else {
+            image.setVisibility(View.INVISIBLE);
+        }
+        String title = marker.getTitle();
+        TextView tvTitle = v.findViewById(R.id.title);
+        if (title != null && title.length() > 0){
+            tvTitle.setText(title);
+        } else {
+            tvTitle.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
     public View getInfoWindow(Marker marker) {
-        mConstraintLayout.setVisibility(View.INVISIBLE);
-        getPostObject(marker, mWindow);
-        return mWindow;
+//        mConstraintLayout.setVisibility(View.INVISIBLE);
+//        getPostObject(marker, mWindow);
+        return null;
     }
+
+    private Handler mHandler;
 
     @Override
     public View getInfoContents(Marker marker) {
-        mConstraintLayout.setVisibility(View.INVISIBLE);
+//        mConstraintLayout.setVisibility(View.INVISIBLE);
+        mHandler = new Handler();
         getPostObject(marker, mWindow);
         return mWindow;
     }

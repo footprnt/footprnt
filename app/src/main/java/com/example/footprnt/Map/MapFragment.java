@@ -97,7 +97,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     private GoogleMap mMap;
     private LocationManager mLocationManager;
     private LocationListener mLocationListener;
-    private LatLng mLastPoint;
     private Util mHelper;
     private boolean mJumpToCurrentLocation = false;
     private JSONObject mContinents;
@@ -105,6 +104,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
 
     // Display variables
     private CustomInfoWindowAdapter mInfoAdapter;
+    private boolean isInfoWindowShown;
     private MapRipple mMapRipple;
     private ArrayList<MarkerDetails> mMarkerDetails;
     private ImageView mImage;
@@ -174,35 +174,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 createPostCurrentLocation();
             }
         });
-    }
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-                if (marker.isInfoWindowShown()) {
-                    marker.hideInfoWindow();
-                } else {
-                    marker.showInfoWindow();
-                }
-                return true;
-            }
-        });
-        mMap.setInfoWindowAdapter(mInfoAdapter);
-        mMap.setOnMapLongClickListener(this);
-        mMap.setOnMapClickListener(this);
-        try {
-            boolean success = mMap.setMapStyle(
-                    MapStyleOptions.loadRawResourceStyle(
-                            getContext(), mMapStyle));
-            if (!success) {
-                Log.e("map", "Style parsing failed.");
-            }
-        } catch (Resources.NotFoundException e) {
-            Log.e("map", "Can't find style. Error: ", e);
-        }
         mLocationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
         mLocationListener = new LocationListener() {
             @Override
@@ -226,8 +197,41 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
             public void onProviderDisabled(String s) {
             }
         };
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+        mMap.setInfoWindowAdapter(mInfoAdapter);
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                if (!isInfoWindowShown) {
+                    marker.showInfoWindow();
+                    isInfoWindowShown = true;
+                } else {
+                    marker.hideInfoWindow();
+                    isInfoWindowShown = false;
+                }
+                return true;
+            }
+        });
+        mMap.setOnMapLongClickListener(this);
+        mMap.setOnMapClickListener(this);
+        try {
+            boolean success = mMap.setMapStyle(
+                    MapStyleOptions.loadRawResourceStyle(
+                            getContext(), mMapStyle));
+            if (!success) {
+                Log.e("map", "Style parsing failed.");
+            }
+        } catch (Resources.NotFoundException e) {
+            Log.e("map", "Can't find style. Error: ", e);
+        }
+
         mJumpToCurrentLocation = true;
         setUpMapIfNeeded();
+        loadMarkers();
     }
 
     private void setUpMapIfNeeded() {
@@ -253,7 +257,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 }
             }
         });
-        loadMarkers();
     }
 
     /**
@@ -315,17 +318,15 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         double latitude = (post.fetchIfNeeded().getParseGeoPoint("location")).getLatitude();
         double longitude = (post.fetchIfNeeded().getParseGeoPoint("location")).getLongitude();
         String title = (post.fetchIfNeeded().getString("title"));
-        String postObject;
-        if (post != null){
-            postObject = post.getObjectId();
-        } else {
-            postObject = null;
+        ParseFile image = post.fetchIfNeeded().getParseFile("image");
+        String imageUrl = "";
+        if (image != null){
+            imageUrl = image.getUrl();
         }
-
         Marker m = mMap.addMarker(new MarkerOptions()
                 .position(new LatLng(latitude, longitude))
                 .title(title)
-                .snippet(postObject)
+                .snippet(imageUrl)
                 .icon(defaultMarker));
         return m;
     }
@@ -365,7 +366,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 .withNumberOfRipples(3)
                 .withFillColor(Color.CYAN)
                 .withStrokeColor(Color.BLACK)
-                .withDistance(8046.72)      // 2000 metres radius
+                .withDistance(2000)      // 8046.72 for 5 miles
                 .withRippleDuration(12000)    //12000ms
                 .withTransparency(0.6f);
         mMapRipple.startRippleMapAnimation();      //in onMapReadyCallBack
@@ -399,7 +400,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         mImage.setVisibility(View.GONE);
         TextView location = mAlertDialog.findViewById(R.id.location);
         location.setText(mHelper.getAddress(getContext(), point));
-        mLastPoint = point;
+        final LatLng mLastPoint = point;
         mTags = new ArrayList<>();
         CULTURE = false;
         FASHION = false;
@@ -459,12 +460,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
-                    mOptions.saveInBackground(new SaveCallback() {
-                        @Override
-                        public void done(ParseException e) {
-                            loadMarkers();
-                        }
-                    });
+                    mOptions.saveInBackground();
                 }
                 mAlertDialog.dismiss();
             }
