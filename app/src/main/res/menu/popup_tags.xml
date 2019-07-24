@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/culture"
+        android:title="#culture"/>
+    <item
+        android:id="@+id/food"
+        android:title="#food"/>
+    <item
+        android:id="@+id/travel"
+        android:title="#travel"/>
+    <item
+        android:id="@+id/fashion"
+        android:title="#fashion"/>
+    <item
+        android:id="@+id/nature"
+        android:title="#nature"/>
+
+</menu>

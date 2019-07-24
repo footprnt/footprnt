@@ -10,9 +10,12 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.view.MenuItem;
+import android.view.View;
 
-import com.example.footprnt.Map.Util.Constants;
+import com.example.footprnt.Map.Util.MapConstants;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.R;
 import com.parse.FindCallback;
@@ -33,10 +36,11 @@ public class FeedActivity extends Activity {
 
     private ArrayList<Post> mPosts;
     private PostAdapter mPostAdapter;
-    private RecyclerView rvPosts;
+    private RecyclerView mPostsView;
     private SwipeRefreshLayout mSwipeContainer;
     private double mLat;
     private double mLong;
+    private View menu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,36 +49,28 @@ public class FeedActivity extends Activity {
         mLat = getIntent().getExtras().getDouble("latitude");
         mLong = getIntent().getExtras().getDouble("longitude");
         mPosts = new ArrayList<>();
-        getPosts(Constants.POST_RADIUS);
+        final Post.Query postsQuery = new Post.Query();
+        postsQuery
+                .getTop()
+                .withUser()
+                .withinPoint(new ParseGeoPoint(mLat, mLong), MapConstants.POST_RADIUS);
         mPostAdapter = new PostAdapter(mPosts);
-        rvPosts = findViewById(R.id.rvPosts);
+        mPostsView = findViewById(R.id.rvPosts);
+        getPosts(postsQuery);
+        menu = findViewById(R.id.dropdown);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        rvPosts.setLayoutManager(layoutManager);
-        rvPosts.setAdapter(mPostAdapter);
-        mSwipeContainer = findViewById(R.id.swipeContainer);
-        mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                fetchTimelineAsync();
-            }
-        });
-        mSwipeContainer.setColorSchemeResources(R.color.refresh_progress_1,
-                R.color.refresh_progress_2,
-                R.color.refresh_progress_3,
-                R.color.refresh_progress_4,
-                R.color.refresh_progress_5);
+        mPostsView.setLayoutManager(layoutManager);
+        mPostsView.setAdapter(mPostAdapter);
+        handleMenuAction();
+        handleSwipeRefresh();
     }
 
     /**
      * Queries posts within certain mile radius
      */
-    private void getPosts(int distance) {
-        final Post.Query postsQuery = new Post.Query();
-        postsQuery
-                .getTop()
-                .withUser()
-                .withinPoint(new ParseGeoPoint(mLat, mLong), distance);
-        postsQuery.addDescendingOrder(com.example.footprnt.Util.Constants.createdAt);
+    private void getPosts(Post.Query postsQuery) {
+        mPostAdapter.clear();
+        postsQuery.addDescendingOrder("createdAt");
         postsQuery.findInBackground(new FindCallback<Post>() {
             @Override
             public void done(List<Post> objects, ParseException e) {
@@ -93,11 +89,85 @@ public class FeedActivity extends Activity {
     }
 
     /**
-     * Handles swipe refresh
+     * Handles swipe refresh action
+     */
+    public void handleSwipeRefresh(){
+        mSwipeContainer = findViewById(R.id.swipeContainer);
+        mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                fetchTimelineAsync();
+            }
+        });
+        mSwipeContainer.setColorSchemeResources(R.color.refresh_progress_1,
+                R.color.refresh_progress_2,
+                R.color.refresh_progress_3,
+                R.color.refresh_progress_4,
+                R.color.refresh_progress_5);
+    }
+
+    /**
+     * Queries posts on swipe refresh
      */
     public void fetchTimelineAsync() {
         mPostAdapter.clear();
-        getPosts(Constants.POST_RADIUS);
+        final Post.Query postsQuery = new Post.Query();
+        postsQuery
+                .getTop()
+                .withUser()
+                .withinPoint(new ParseGeoPoint(mLat, mLong), MapConstants.POST_RADIUS);
+        getPosts(postsQuery);
         mSwipeContainer.setRefreshing(false);
+    }
+
+    public void handleMenuAction(){
+        menu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PopupMenu popup = new PopupMenu(FeedActivity.this, menu);
+                popup.getMenuInflater().inflate(R.menu.popup_tags, popup.getMenu());
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    public boolean onMenuItemClick(MenuItem item) {
+                        final Post.Query postsQuery = new Post.Query();
+                        postsQuery
+                                .getTop()
+                                .withUser()
+                                .withinPoint(new ParseGeoPoint(mLat, mLong), MapConstants.POST_RADIUS);
+                        if (item.getItemId() == R.id.culture){
+                            List<String> tags_to_check = new ArrayList();
+                            tags_to_check.add(MapConstants.culture);
+                            postsQuery.whereContainsAll(Post.KEY_TAGS, tags_to_check);
+                            getPosts(postsQuery);
+                        }
+                        if (item.getItemId() == R.id.food){
+                            List<String> tags_to_check = new ArrayList();
+                            tags_to_check.add(MapConstants.food);
+                            postsQuery.whereContainsAll(Post.KEY_TAGS, tags_to_check);
+                            getPosts(postsQuery);
+                        }
+                        if (item.getItemId() == R.id.travel){
+                            List<String> tags_to_check = new ArrayList();
+                            tags_to_check.add(MapConstants.travel);
+                            postsQuery.whereContainsAll(Post.KEY_TAGS, tags_to_check);
+                            getPosts(postsQuery);
+                        }
+                        if (item.getItemId() == R.id.fashion){
+                            List<String> tags_to_check = new ArrayList();
+                            tags_to_check.add(MapConstants.fashion);
+                            postsQuery.whereContainsAll(Post.KEY_TAGS, tags_to_check);
+                            getPosts(postsQuery);
+                        }
+                        if (item.getItemId() == R.id.nature){
+                            List<String> tags_to_check = new ArrayList();
+                            tags_to_check.add(MapConstants.nature);
+                            postsQuery.whereContainsAll(Post.KEY_TAGS, tags_to_check);
+                            getPosts(postsQuery);
+                        }
+                        return true;
+                    }
+                });
+                popup.show();
+            }
+        });
     }
 }

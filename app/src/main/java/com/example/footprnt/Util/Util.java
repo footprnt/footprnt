@@ -1,5 +1,5 @@
 /*
- * Util.java
+ * MapUtil.java
  * v1.0
  * July 2019
  * Copyright ©2019 Footprnt Inc.
@@ -83,7 +83,7 @@ public class Util {
      * @param location
      * @param title
      */
-    public void centreMapOnLocation(GoogleMap map, Location location, String title) {
+    public static void centreMapOnLocation(GoogleMap map, Location location, String title) {
         LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());
         BitmapDescriptor defaultMarker =
                 BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);

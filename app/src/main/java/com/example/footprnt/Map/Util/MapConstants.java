@@ -1,5 +1,5 @@
 /*
- * Constants.java
+ * MapConstants.java
  * v1.0
  * July 2019
  * Copyright ©2019 Footprnt Inc.
@@ -15,7 +15,7 @@ import com.example.footprnt.R;
  * @version 1.0
  * @since 2019-07-22
  */
-public class Constants {
+public class MapConstants {
 
     public static String culture = "culture";
     public static String food = "food";

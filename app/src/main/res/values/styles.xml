@@ -19,7 +19,7 @@
 
     </style>
 
-    <style name="MyTheme">
+    <style name="MyTheme" parent="@style/Theme.AppCompat.Light">
         <item name="android:alertDialogStyle">@style/Theme.UserDialog</item>
         <item name="android:windowFrame">@null</item>
         <item name="android:windowIsFloating">true</item>
