@@ -31,6 +31,7 @@ public class YelpService {
 
     /**
      * Find resteraunts in current location
+     *
      * @param location current location (city)
      * @param callback response from yelp
      */
@@ -43,7 +44,7 @@ public class YelpService {
         urlBuilder.addQueryParameter(Constants.YELP_LOCATION_QUERY_PARAMETER, location);
         String url = urlBuilder.build().toString();
 
-        Request request= new Request.Builder()
+        Request request = new Request.Builder()
                 .url(url)
                 .header("Authorization", Constants.YELP_TOKEN)
                 .build();
@@ -54,6 +55,7 @@ public class YelpService {
 
     /**
      * Helper function to parse through raw JSON response from Yelp
+     *
      * @param response raw response from Yelp API call
      * @return List of restaurants from Yelp in given location
      */
@@ -94,15 +96,12 @@ public class YelpService {
                         imageUrl, address, latitude, longitude, categories);
                 restaurants.add(restaurant);
             }
-        }
-        catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
-        }
-        catch (JSONException e){
+        } catch (JSONException e) {
             e.printStackTrace();
 
         }
         return restaurants;
     }
-};;;;;q;;;;;;;;;;;qq;
-hhbhbhbh
+}
