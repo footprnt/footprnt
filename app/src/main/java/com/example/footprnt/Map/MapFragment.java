@@ -42,9 +42,11 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Scroller;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -107,7 +109,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
 
     // Display variables
     private CustomInfoWindowAdapter mInfoAdapter;
-    private boolean isInfoWindowShown;
     ArrayList<Marker> markers;
     private Marker mMarkerShow;
     private MapRipple mMapRipple;
@@ -118,10 +119,10 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     private ParseFile mParseFile;
     private ParseUser mUser;
     private int mMapStyle;
+    private Switch mSwitch;
 
     // Tag variables
     private ArrayList<String> mTags;
-    private ImageView mToggleButton;
     private boolean CULTURE = false;
     private boolean FASHION = false;
     private boolean TRAVEL = false;
@@ -172,9 +173,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ImageView newPost = getView().findViewById(R.id.newPost);
-        mToggleButton = getView().findViewById(R.id.toggleMarkers);
-        mToggleButton.setAlpha(0.65f);
-        handleTagFiltering();
         newPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -209,6 +207,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        handleToggle();
         mMap.setInfoWindowAdapter(mInfoAdapter);
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
@@ -681,28 +680,29 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         });
     }
 
-    public void handleTagFiltering() {
-        mToggleButton.setOnClickListener(new View.OnClickListener() {
+    public void handleToggle() {
+        mSwitch = getView().findViewById(R.id.switch1);
+        mSwitch.setChecked(false);
+        mSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
-                PopupMenu popup = new PopupMenu(getActivity(), mToggleButton);
-                popup.getMenuInflater().inflate(R.menu.popup_toggle, popup.getMenu());
-                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    public boolean onMenuItemClick(MenuItem item) {
-                        if (item.getItemId() == R.id.allposts) {
-                            mMap.clear();
-                            loadAllMarkers();
-                        }
-                        if (item.getItemId() == R.id.yourposts) {
-                            mMap.clear();
-                            loadMarkers();
-                        }
-                        return true;
-                    }
-                });
-                popup.show();
+            public void onCheckedChanged(CompoundButton compoundButton, boolean bChecked) {
+                if (bChecked) {
+                    mMap.clear();
+                    loadAllMarkers();
+                } else {
+                    mMap.clear();
+                    loadMarkers();
+                }
             }
         });
+
+        if (mSwitch.isChecked()) {
+            mMap.clear();
+            loadAllMarkers();
+        } else {
+            mMap.clear();
+            loadMarkers();
+        }
     }
 
     /**

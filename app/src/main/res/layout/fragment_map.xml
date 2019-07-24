@@ -88,18 +88,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/topNav" />
 
-    <ImageView
-        android:id="@+id/toggleMarkers"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:background="#FFFFFF"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/fl"
-        app:srcCompat="@drawable/ic_list" />
-
     <FrameLayout
         android:id="@+id/fl"
         android:layout_width="0dp"
