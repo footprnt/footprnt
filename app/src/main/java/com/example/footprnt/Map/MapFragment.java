@@ -109,6 +109,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     private CustomInfoWindowAdapter mInfoAdapter;
     private boolean isInfoWindowShown;
     ArrayList<Marker> markers;
+    private Marker mMarkerShow;
     private MapRipple mMapRipple;
     private ArrayList<MarkerDetails> mMarkerDetails;
     private ImageView mImage;
@@ -212,12 +213,12 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                if (!isInfoWindowShown) {
-                    marker.showInfoWindow();
-                    isInfoWindowShown = true;
+                if (!marker.equals(mMarkerShow)) {
+                    mMarkerShow = marker;
+                    System.out.println(mMarkerShow);
                 } else {
                     marker.hideInfoWindow();
-                    isInfoWindowShown = false;
+                    mMarkerShow = null;
                 }
                 return true;
             }
