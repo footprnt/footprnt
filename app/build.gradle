@@ -65,9 +65,6 @@ android {
         implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
         // Picasso for image loading
         implementation 'com.squareup.picasso:picasso:2.5.2'
+         implementation 'com.android.support.constraint:constraint-layout:+'
     }
-}
-
-dependencies {
-    implementation 'com.android.support.constraint:constraint-layout:+'
 }
