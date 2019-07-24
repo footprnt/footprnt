@@ -104,6 +104,22 @@ public class StatViewHolder extends RecyclerView.ViewHolder {
     public void previousView(View v) {
         mViewFlipper.setInAnimation(v.getContext(), R.anim.slide_in_right);
         mViewFlipper.setOutAnimation(v.getContext(), R.anim.slide_in_right);
+
+//        Animation fadeIn = new AlphaAnimation(0, 1);
+//        fadeIn.setInterpolator(new DecelerateInterpolator()); //add this
+//        fadeIn.setDuration(700); //time in milliseconds
+//
+//        Animation fadeOut = new AlphaAnimation(1, 0);
+//        fadeOut.setInterpolator(new AccelerateInterpolator()); //and this
+//        fadeOut.setStartOffset(1000);
+//        fadeOut.setDuration(20); //time in milliseconds
+//
+//        AnimationSet animation = new AnimationSet(false); //change to false
+//        animation.addAnimation(fadeIn);
+//        animation.addAnimation(fadeOut);
+//        mViewFlipper.setOutAnimation(fadeOut);
+//        mViewFlipper.setInAnimation(fadeIn);
+        //mViewFlipper.setAnimation(animation);
         mViewFlipper.showPrevious();
     }
 
@@ -115,6 +131,19 @@ public class StatViewHolder extends RecyclerView.ViewHolder {
     public void nextView(View v) {
         mViewFlipper.setInAnimation(v.getContext(), android.R.anim.slide_in_left);
         mViewFlipper.setOutAnimation(v.getContext(), android.R.anim.slide_out_right);
+//        Animation fadeIn = new AlphaAnimation(0, 1);
+//        fadeIn.setInterpolator(new DecelerateInterpolator()); //add this
+//        fadeIn.setDuration(700); //time in milliseconds
+//
+//        Animation fadeOut = new AlphaAnimation(1, 0);
+//        fadeOut.setInterpolator(new AccelerateInterpolator()); //and this
+//        fadeOut.setStartOffset(1000);
+//        fadeOut.setDuration(20); //time in milliseconds
+//
+//        AnimationSet animation = new AnimationSet(false); //change to false
+//        animation.addAnimation(fadeIn);
+//        mViewFlipper.setOutAnimation(fadeOut);
+//        mViewFlipper.setInAnimation(fadeIn);
         mViewFlipper.showNext();
     }
 }

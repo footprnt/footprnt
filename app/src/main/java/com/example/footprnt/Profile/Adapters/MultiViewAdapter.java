@@ -37,6 +37,7 @@ import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.utils.ColorTemplate;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
@@ -278,24 +279,22 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         pieEntries.add(new PieEntry(visited, title));
         pieEntries.add(new PieEntry(total - visited));
         PieDataSet pieDataSet = new PieDataSet(pieEntries,"");
-        pieDataSet.setColors(R.color.colorPrimary, R.color.colorPrimaryDark);
+        pieDataSet.setColors(ColorTemplate.JOYFUL_COLORS);
         PieData pieData = new PieData(pieDataSet);
         pieChart.setData(pieData);
-        pieChart.setCenterTextColor(R.color.grey);
+//        pieChart.setCenterTextColor(R.color.grey);
         pieChart.setDrawCenterText(true);
 
         pieChart.animateY(1000);
         Legend l = pieChart.getLegend();
-        l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
-        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
-        l.setOrientation(Legend.LegendOrientation.VERTICAL);
-        l.setDrawInside(false);
-        l.setXEntrySpace(7f);
-        l.setYEntrySpace(0f);
-        l.setYOffset(0f);
-        pieChart.setEntryLabelColor(Color.BLACK);
-        pieChart.setEntryLabelTextSize(12f);
-        pieChart.setUsePercentValues(true);
+        //l.isEnabled(false);
+//        l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
+//        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
+//        l.setOrientation(Legend.LegendOrientation.VERTICAL);
+//        l.setDrawInside(false);
+//        l.setYOffset(0f);
+//        pieChart.setEntryLabelColor(Color.BLACK);
+//        pieChart.setEntryLabelTextSize(12f);
         pieChart.invalidate();
     }
 }
