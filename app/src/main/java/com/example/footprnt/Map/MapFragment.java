@@ -7,6 +7,7 @@
 package com.example.footprnt.Map;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
@@ -105,6 +106,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     // Display variables
     private CustomInfoWindowAdapter mInfoAdapter;
     private boolean isInfoWindowShown;
+    ArrayList<Marker> markers;
     private MapRipple mMapRipple;
     private ArrayList<MarkerDetails> mMarkerDetails;
     private ImageView mImage;
@@ -143,6 +145,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         mUser.setACL(acl);
         mUser.setACL(acl);
         mMarkerDetails = new ArrayList<>();
+        markers = new ArrayList<>();
         mInfoAdapter = new CustomInfoWindowAdapter(getContext());
         mContinents = MapUtil.getContinents(getActivity());
         mMapStyle = mUser.getInt(MapConstants.map_style);
@@ -263,8 +266,9 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
      * Loads map markers for all of current user's posts
      */
     public void loadMarkers() {
-        final MarkerDetails.Query postQuery = new MarkerDetails.Query();
         mMarkerDetails = new ArrayList<>();
+        markers = new ArrayList<>();
+        final MarkerDetails.Query postQuery = new MarkerDetails.Query();
         postQuery.withUser().whereEqualTo("user", mUser);
         postQuery.withUser().whereEqualTo(com.example.footprnt.Util.Constants.user, mUser);
         postQuery.findInBackground(new FindCallback<MarkerDetails>() {
@@ -278,6 +282,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                     for (MarkerDetails markerDetails: mMarkerDetails) {
                         try {
                             Marker m = createMarker(markerDetails);
+                            markers.add(m);
                         } catch (ParseException e1) {
                             e1.printStackTrace();
                         }
@@ -288,6 +293,8 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     }
 
     public void loadAllMarkers(){
+        mMarkerDetails = new ArrayList<>();
+        markers = new ArrayList<>();
         final MarkerDetails.Query postQuery = new MarkerDetails.Query();
         postQuery.withUser();
         postQuery.findInBackground(new FindCallback<MarkerDetails>() {
@@ -298,6 +305,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                         MarkerDetails md = objects.get(i);
                         try {
                             Marker m = createMarker(md);
+                            markers.add(m);
                         } catch (ParseException e1) {
                             e1.printStackTrace();
                         }
@@ -348,14 +356,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
 
     @Override
     public void onMapLongClick(LatLng latLng) {
-        mMapRipple = new MapRipple(mMap, latLng, getContext())
-                .withNumberOfRipples(3)
-                .withFillColor(Color.CYAN)
-                .withStrokeColor(Color.BLACK)
-                .withDistance(2000)      // 2000 metres radius
-                .withRippleDuration(4000)    //12000ms
-                .withTransparency(0.6f);
-        mMapRipple.startRippleMapAnimation();      //in onMapReadyCallBack
         Toast.makeText(getContext(), mHelper.getAddress(getContext(), latLng), Toast.LENGTH_LONG).show();
         showAlertDialogForPoint(latLng);
     }
@@ -408,6 +408,14 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         FOOD = false;
         NATURE = false;
         handleTags();
+        BitmapDescriptor defaultMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
+        final Marker temp = mMap.addMarker(new MarkerOptions().position(point).icon(defaultMarker));
+        mAlertDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                temp.remove();
+            }
+        });
         ivUpload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -469,6 +477,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
             @Override
             public void onClick(View v) {
                 mAlertDialog.cancel();
+                temp.remove();
             }
         });
     }
@@ -672,6 +681,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     public boolean onMenuItemClick(MenuItem item) {
                         if (item.getItemId() == R.id.allposts) {
+                            mMap.clear();
                             loadAllMarkers();
                         }
                         if (item.getItemId() == R.id.yourposts) {
