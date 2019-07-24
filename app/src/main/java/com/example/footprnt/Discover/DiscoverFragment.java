@@ -22,6 +22,9 @@ import com.example.footprnt.R;
 import java.util.ArrayList;
 
 
+/**
+ *
+ */
 public class DiscoverFragment extends Fragment {
     public static final String TAG = DiscoverFragment.class.getSimpleName();
 
