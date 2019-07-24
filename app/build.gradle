@@ -58,7 +58,7 @@ android {
         //For OkHttp to make HTTP requests
         implementation 'com.squareup.okhttp3:okhttp:3.11.0'
         // For animations & card view
-        implementation 'com.android.support:palette-v7:28.0.+'
+        implementation 'com.android.support:palette-v7:28.0.0'
         // CardView
         implementation 'com.android.support:cardview-v7:28.0.0'
         // Piechart
@@ -68,6 +68,3 @@ android {
     }
 }
 
-dependencies {
-    implementation 'com.android.support.constraint:constraint-layout:+'
-}
