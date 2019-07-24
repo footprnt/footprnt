@@ -6,7 +6,7 @@
  */
 package com.example.footprnt.Map;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
@@ -15,6 +15,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.location.Address;
+import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
@@ -26,7 +27,9 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
@@ -79,6 +82,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import static android.content.Context.LOCATION_SERVICE;
+
 /**
  * Handles all map activities
  *
@@ -96,6 +101,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     private Util mHelper;
     private boolean mJumpToCurrentLocation = false;
     private JSONObject mContinents;
+    private Location mLocation;
 
     // Display variables
     private CustomInfoWindowAdapter mInfoAdapter;
@@ -120,6 +126,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     // Menu variables
     private ImageView mSettings;
     private PopupMenu mPopup;
+    private FragmentActivity myContext;
 
     @Nullable
     @Override
@@ -140,96 +147,24 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         mContinents = MapUtil.getContinents(getActivity());
         mMapStyle = mUser.getInt(MapConstants.map_style);
 
-
         // Set up pop up menu
         mSettings = v.findViewById(R.id.ivSettings);
         mPopup = new PopupMenu(getActivity(), mSettings);
         mPopup.getMenuInflater().inflate(R.menu.popup_menu_map, mPopup.getMenu());
         configureMapStyleMenu();
-
-
         return v;
     }
 
-    /**
-     * Helper function to set up the pop up menu which configures the style for map
-     */
-    private void configureMapStyleMenu() {
-        // Set up initial check boxes in pop up menu
-        // TODO: update UI correctly when user opens fragment in beginning and on transition
-        for (int i = 0; i < mPopup.getMenu().size(); i++) {
-            if (mPopup.getMenu().getItem(i).getItemId() != mMapStyle) {
-                mPopup.getMenu().getItem(i).setChecked(false);
-            } else {
-                mPopup.getMenu().getItem(i).setChecked(true);
-            }
-        }
-        mSettings.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPopup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    public boolean onMenuItemClick(MenuItem item) {
-                        item.setActionView(new View(getContext()));
-                        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
-                        item.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
-                            @Override
-                            public boolean onMenuItemActionExpand(MenuItem item) {
-                                return false;
-                            }
-
-                            @Override
-                            public boolean onMenuItemActionCollapse(MenuItem item) {
-                                return false;
-                            }
-                        });
-                        switch (item.getItemId()) {
-                            case R.id.edit_style_dark_mode:
-                                toggleMenuItem(item, MapConstants.style_darkmode);
-                                return true;
-                            case R.id.edit_style_silver:
-                                toggleMenuItem(item, MapConstants.style_silver);
-                                return true;
-                            case R.id.edit_style_aubergine:
-                                toggleMenuItem(item, MapConstants.style_aubergine);
-                                return true;
-                            case R.id.edit_style_retro:
-                                toggleMenuItem(item, MapConstants.style_retro);
-                                return true;
-                            case R.id.edit_style_basic:
-                                toggleMenuItem(item, MapConstants.style_basic);
-                                return true;
-                        }
-                        return false;
-                    }
-                });
-                mPopup.show();
-            }
-        });
+    @Override
+    public void onAttach(Activity activity) {
+        myContext=(FragmentActivity) activity;
+        super.onAttach(activity);
     }
-
-    /**
-     * Helper method for onMenuItemSelected. Toggles menu items not selected and updates database
-     */
-    private void toggleMenuItem(MenuItem menuItem, int id) {
-        menuItem.setChecked(true);
-        mMap.setMapStyle(
-                MapStyleOptions.loadRawResourceStyle(
-                        getContext(), id));
-        mUser.put(MapConstants.map_style, id);
-        mUser.saveInBackground();
-        for (int i = 0; i < mPopup.getMenu().size(); i++) {
-            if (mPopup.getMenu().getItem(i).getItemId() != menuItem.getItemId()) {
-                mPopup.getMenu().getItem(i).setChecked(false);
-            }
-        }
-    }
-
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ImageView newPost = getView().findViewById(R.id.newPost);
-        ImageView findCurrentLoc = getView().findViewById(R.id.findCurrentLoc);
         mToggleButton = getView().findViewById(R.id.toggleMarkers);
         mToggleButton.setAlpha(0.65f);
         handleTagFiltering();
@@ -237,16 +172,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
             @Override
             public void onClick(View v) {
                 createPostCurrentLocation();
-            }
-        });
-        findCurrentLoc.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                    mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mLocationListener);
-                    Location lastKnownLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                    Util.centreMapOnLocation(mMap, lastKnownLocation, "Your location");
-                }
             }
         });
     }
@@ -278,42 +203,57 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         } catch (Resources.NotFoundException e) {
             Log.e("map", "Can't find style. Error: ", e);
         }
-        Intent intent = getActivity().getIntent();
-        if (intent.getIntExtra("Place Number", 0) == 0) {
-            mLocationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-            mLocationListener = new LocationListener() {
-                @Override
-                public void onLocationChanged(Location location) {
-                    if (mJumpToCurrentLocation) {
-                        mJumpToCurrentLocation = false;
-                        mHelper.centreMapOnLocation(mMap, location, "Your Location");
-                    }
+        mLocationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
+        mLocationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                mLocation = location;
+                if (mJumpToCurrentLocation) {
+                    mJumpToCurrentLocation = false;
+                    mHelper.centreMapOnLocation(mMap, location, "Your Location");
                 }
-
-                @Override
-                public void onStatusChanged(String s, int i, Bundle bundle) {
-                }
-
-                @Override
-                public void onProviderEnabled(String s) {
-                }
-
-                @Override
-                public void onProviderDisabled(String s) {
-                }
-            };
-
-            if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mLocationListener);
-                Location lastKnownLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                if (lastKnownLocation != null) {
-                    mHelper.centreMapOnLocation(mMap, lastKnownLocation, "Your Location");
-                }
-            } else {
-                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             }
-            loadMarkers();
+
+            @Override
+            public void onStatusChanged(String s, int i, Bundle bundle) {
+            }
+
+            @Override
+            public void onProviderEnabled(String s) {
+            }
+
+            @Override
+            public void onProviderDisabled(String s) {
+            }
+        };
+        mJumpToCurrentLocation = true;
+        setUpMapIfNeeded();
+    }
+
+    private void setUpMapIfNeeded() {
+        if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+            return;
         }
+        mMap.setMyLocationEnabled(true);
+        if (mJumpToCurrentLocation && mLocation != null) {
+            mJumpToCurrentLocation = false;
+            mHelper.centreMapOnLocation(mMap, mLocation, "Your Location");
+        }
+
+        mMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
+            @Override
+            public void onMyLocationChange(Location arg0) {
+                Location temp = new Location(LocationManager.GPS_PROVIDER);
+                temp.setLatitude(arg0.getLatitude());
+                temp.setLongitude(arg0.getLongitude());
+                if (mJumpToCurrentLocation) {
+                    mJumpToCurrentLocation = false;
+                    mHelper.centreMapOnLocation(mMap, temp, "Your Location");
+                }
+            }
+        });
+        loadMarkers();
     }
 
     /**
@@ -375,7 +315,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         double latitude = (post.fetchIfNeeded().getParseGeoPoint("location")).getLatitude();
         double longitude = (post.fetchIfNeeded().getParseGeoPoint("location")).getLongitude();
         String title = (post.fetchIfNeeded().getString("title"));
-        System.out.println(title);
         String postObject;
         if (post != null){
             postObject = post.getObjectId();
@@ -393,11 +332,15 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 mJumpToCurrentLocation = true;
-                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mLocationListener);
+                LocationManager locationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
+                Criteria criteria = new Criteria();
+                if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    mLocation = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+                }
+                setUpMapIfNeeded();
             }
         }
     }
@@ -745,5 +688,78 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 popup.show();
             }
         });
+    }
+
+    /**
+     * Helper function to set up the pop up menu which configures the style for map
+     */
+    private void configureMapStyleMenu() {
+        // Set up initial check boxes in pop up menu
+        // TODO: update UI correctly when user opens fragment in beginning and on transition
+        for (int i = 0; i < mPopup.getMenu().size(); i++) {
+            if (mPopup.getMenu().getItem(i).getItemId() != mMapStyle) {
+                mPopup.getMenu().getItem(i).setChecked(false);
+            } else {
+                mPopup.getMenu().getItem(i).setChecked(true);
+            }
+        }
+        mSettings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPopup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    public boolean onMenuItemClick(MenuItem item) {
+                        item.setActionView(new View(getContext()));
+                        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
+                        item.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+                            @Override
+                            public boolean onMenuItemActionExpand(MenuItem item) {
+                                return false;
+                            }
+
+                            @Override
+                            public boolean onMenuItemActionCollapse(MenuItem item) {
+                                return false;
+                            }
+                        });
+                        switch (item.getItemId()) {
+                            case R.id.edit_style_dark_mode:
+                                toggleMenuItem(item, MapConstants.style_darkmode);
+                                return true;
+                            case R.id.edit_style_silver:
+                                toggleMenuItem(item, MapConstants.style_silver);
+                                return true;
+                            case R.id.edit_style_aubergine:
+                                toggleMenuItem(item, MapConstants.style_aubergine);
+                                return true;
+                            case R.id.edit_style_retro:
+                                toggleMenuItem(item, MapConstants.style_retro);
+                                return true;
+                            case R.id.edit_style_basic:
+                                toggleMenuItem(item, MapConstants.style_basic);
+                                return true;
+                        }
+                        return false;
+                    }
+                });
+                mPopup.show();
+            }
+        });
+    }
+
+    /**
+     * Helper method for onMenuItemSelected. Toggles menu items not selected and updates database
+     */
+    private void toggleMenuItem(MenuItem menuItem, int id) {
+        menuItem.setChecked(true);
+        mMap.setMapStyle(
+                MapStyleOptions.loadRawResourceStyle(
+                        getContext(), id));
+        mUser.put(MapConstants.map_style, id);
+        mUser.saveInBackground();
+        for (int i = 0; i < mPopup.getMenu().size(); i++) {
+            if (mPopup.getMenu().getItem(i).getItemId() != menuItem.getItemId()) {
+                mPopup.getMenu().getItem(i).setChecked(false);
+            }
+        }
     }
 }

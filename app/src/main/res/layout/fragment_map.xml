@@ -20,20 +20,6 @@
         app:layout_constraintBottom_toBottomOf="@+id/map"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/findCurrentLoc"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginEnd="32dp"
-        android:layout_marginRight="32dp"
-        android:layout_marginBottom="24dp"
-        android:src="@drawable/ic_my_location"
-        android:tint="#659DBD"
-        app:backgroundTint="#FFFFFFFF"
-        app:layout_constraintBottom_toTopOf="@+id/newPost"
-        app:layout_constraintEnd_toEndOf="parent" />
-
     <android.support.v7.widget.Toolbar
         android:id="@+id/topNav"
         android:layout_width="match_parent"
@@ -58,11 +44,11 @@
         android:id="@+id/toggleMarkers"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
         android:layout_marginTop="32dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginRight="32dp"
         android:background="#FFFFFF"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/fl"
         app:srcCompat="@drawable/ic_list" />
 
