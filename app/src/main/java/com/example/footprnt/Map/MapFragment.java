@@ -154,7 +154,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
      */
     private void configureMapStyleMenu() {
         // Set up initial check boxes in pop up menu
-        // TODO: update UI correctly when user opens fragment in beginning
+        // TODO: update UI correctly when user opens fragment in beginning and on transition
         for (int i = 0; i < mPopup.getMenu().size(); i++) {
             if (mPopup.getMenu().getItem(i).getItemId() != mMapStyle) {
                 mPopup.getMenu().getItem(i).setChecked(false);

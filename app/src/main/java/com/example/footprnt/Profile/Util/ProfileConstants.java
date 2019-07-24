@@ -11,7 +11,7 @@ package com.example.footprnt.Profile.Util;
  *
  * @author Clarisa Leu-Rodriguez
  */
-public class Constants {
+public class ProfileConstants {
     // The total number of cities, countries, and continents in the world:
     public static final int totalNumCities = 4416;
     public static final int totalNumCountries = 195;
