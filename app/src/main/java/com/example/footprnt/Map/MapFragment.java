@@ -35,6 +35,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.PopupMenu;
+import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -441,38 +442,42 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
             public void onClick(View v) {
                 final String title = ((EditText) mAlertDialog.findViewById(R.id.etTitle)).getText().toString();
                 final String snippet = ((EditText) mAlertDialog.findViewById(R.id.etSnippet)).getText().toString();
-                final MarkerDetails mOptions = new MarkerDetails();
-                mOptions.setUser(mUser);
-                if (mParseFile != null) {
-                    mParseFile.saveInBackground(new SaveCallback() {
-                        @Override
-                        public void done(ParseException e) {
-                            Post p = createPost(snippet, title, mParseFile, mUser, mLastPoint);
-                            mOptions.setPost(p);
-                            try {
-                                createMarker(mOptions);
-                            } catch (ParseException e1) {
-                                e1.printStackTrace();
-                            }
-                            mOptions.saveInBackground(new SaveCallback() {
-                                @Override
-                                public void done(ParseException e) {
-                                    loadMarkers();
-                                }
-                            });
-                        }
-                    });
+                if( TextUtils.isEmpty(title) || TextUtils.isEmpty(snippet)){
+                    Toast.makeText(getContext(), R.string.post_incomplete, Toast.LENGTH_SHORT).show();
                 } else {
-                    Post p = createPost(snippet, title, mParseFile , mUser, mLastPoint);
-                    mOptions.setPost(p);
-                    try {
-                        createMarker(mOptions);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
+                    final MarkerDetails mOptions = new MarkerDetails();
+                    mOptions.setUser(mUser);
+                    if (mParseFile != null) {
+                        mParseFile.saveInBackground(new SaveCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                Post p = createPost(snippet, title, mParseFile, mUser, mLastPoint);
+                                mOptions.setPost(p);
+                                try {
+                                    createMarker(mOptions);
+                                } catch (ParseException e1) {
+                                    e1.printStackTrace();
+                                }
+                                mOptions.saveInBackground(new SaveCallback() {
+                                    @Override
+                                    public void done(ParseException e) {
+                                        loadMarkers();
+                                    }
+                                });
+                            }
+                        });
+                    } else {
+                        Post p = createPost(snippet, title, mParseFile , mUser, mLastPoint);
+                        mOptions.setPost(p);
+                        try {
+                            createMarker(mOptions);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        mOptions.saveInBackground();
                     }
-                    mOptions.saveInBackground();
+                    mAlertDialog.dismiss();
                 }
-                mAlertDialog.dismiss();
             }
         });
         cancelPost.setOnClickListener(new View.OnClickListener() {
@@ -489,9 +494,10 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
      */
     public void createPostCurrentLocation() {
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mLocationListener);
-            Location lastKnownLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            LatLng currLocation = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
+            Location location = mMap.getMyLocation();
+//            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mLocationListener);
+//            Location lastKnownLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            LatLng currLocation = new LatLng(location.getLatitude(), location.getLongitude());
             showAlertDialogForPoint(currLocation);
         }
     }
@@ -545,7 +551,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
             @Override
             public void done(ParseException e) {
                 if (e == null) {
-                    Toast.makeText(getContext(), R.string.post_message, Toast.LENGTH_SHORT);
+                    Toast.makeText(getContext(), R.string.post_message, Toast.LENGTH_SHORT).show();
                 } else {
                     e.printStackTrace();
                 }
