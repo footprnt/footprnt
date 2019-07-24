@@ -33,9 +33,11 @@ import com.example.footprnt.Profile.UserSettings;
 import com.example.footprnt.Profile.Util.ProfileConstants;
 import com.example.footprnt.R;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.utils.ColorTemplate;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
@@ -248,6 +250,20 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             setUpPieChart(vh3.getPieChartContinent(), continents.size(), ProfileConstants.totalNumCountries, "Visited Continents");
         }
 
+        vh3.getNextButton().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                vh3.nextView(v);
+            }
+        });
+
+        vh3.getPreviousButton().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                vh3.previousView(v);
+            }
+        });
+
     }
 
     /**
@@ -262,11 +278,23 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         List<PieEntry> pieEntries = new ArrayList<>();
         pieEntries.add(new PieEntry(visited, title));
         pieEntries.add(new PieEntry(total - visited));
-        PieDataSet pieDataSet = new PieDataSet(pieEntries, "User Stats");
-        pieDataSet.setColors(R.color.colorPrimary, R.color.colorPrimaryDark);
+        PieDataSet pieDataSet = new PieDataSet(pieEntries,"");
+        pieDataSet.setColors(ColorTemplate.JOYFUL_COLORS);
         PieData pieData = new PieData(pieDataSet);
         pieChart.setData(pieData);
+//        pieChart.setCenterTextColor(R.color.grey);
+        pieChart.setDrawCenterText(true);
+
         pieChart.animateY(1000);
+        Legend l = pieChart.getLegend();
+        //l.isEnabled(false);
+//        l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
+//        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
+//        l.setOrientation(Legend.LegendOrientation.VERTICAL);
+//        l.setDrawInside(false);
+//        l.setYOffset(0f);
+//        pieChart.setEntryLabelColor(Color.BLACK);
+//        pieChart.setEntryLabelTextSize(12f);
         pieChart.invalidate();
     }
 }
