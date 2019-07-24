@@ -7,6 +7,7 @@
 package com.example.footprnt.Discover.adapters;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,14 +21,11 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 /**
  *
  */
 public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAdapter.RestaurantViewHolder> {
-    private ArrayList<Restaurant> mRestaurants = new ArrayList<>();
+    private ArrayList<Restaurant> mRestaurants;
     private Context mContext;
 
     public RestaurantListAdapter(Context context, ArrayList<Restaurant> restaurants) {
@@ -35,9 +33,11 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
         mRestaurants = restaurants;
     }
 
+
+    @NonNull
     @Override
     public RestaurantListAdapter.RestaurantViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.restaurant_list_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_restaurant, parent, false);
         RestaurantViewHolder viewHolder = new RestaurantViewHolder(view);
         return viewHolder;
     }
@@ -53,29 +53,33 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
         return mRestaurants.size();
     }
 
-    public class RestaurantViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.restaurantImageView)
-        ImageView mRestaurantImageView;
-        @BindView(R.id.restaurantNameTextView)
-        TextView mNameTextView;
-        @BindView(R.id.categoryTextView)
-        TextView mCategoryTextView;
-        @BindView(R.id.ratingTextView)
-        TextView mRatingTextView;
+    public static class RestaurantViewHolder extends RecyclerView.ViewHolder {
+        //@BindView(R.id.ivRestaurantImage)
+        ImageView ivRestaurantImage;
+        //@BindView(R.id.tvRestaurantName)
+        TextView tvRestaurantName;
+        //@BindView(R.id.tvRestaurantCategory)
+        TextView tvRestaurantCategory;
+        //@BindView(R.id.tvRestaurantRating)
+        TextView tvRestaurantRating;
 
         private Context mContext;
 
         public RestaurantViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            //ButterKnife.bind(this, itemView);
             mContext = itemView.getContext();
+            ivRestaurantImage = itemView.findViewById(R.id.ivRestaurantImage);
+            tvRestaurantName = itemView.findViewById(R.id.tvRestaurantName);
+            tvRestaurantCategory = itemView.findViewById(R.id.tvRestaurantCategory);
+            tvRestaurantRating = itemView.findViewById(R.id.tvRestaurantRating);
         }
 
         public void bindRestaurant(Restaurant restaurant) {
-            mNameTextView.setText(restaurant.getName());
-            mCategoryTextView.setText(restaurant.getCategories().get(0));
-            mRatingTextView.setText("Rating: " + restaurant.getRating() + "/5");
-            Picasso.with(mContext).load(restaurant.getImageUrl()).into(mRestaurantImageView);
+            tvRestaurantName.setText(restaurant.getName());
+            tvRestaurantCategory.setText(restaurant.getCategories().get(0));
+            tvRestaurantRating.setText("Rating: " + restaurant.getRating() + "/5");
+            Picasso.with(mContext).load(restaurant.getImageUrl()).into(ivRestaurantImage);
         }
     }
 }

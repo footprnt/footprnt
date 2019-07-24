@@ -25,11 +25,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-
-        <activity android:name=".Discover.Services.YelpService"></activity>
-
-        <activity android:name=".Map.PostDetailActivity"></activity>
-
+        <activity android:name=".Discover.Activities.RestaurantsActivity"></activity>
+        <activity android:name=".Discover.Activities.MoviesActivity" />
+        <activity android:name=".Discover.Services.YelpService" />
+        <activity android:name=".Map.PostDetailActivity" />
         <activity
             android:name=".Profile.EditPost"
             android:label="@string/title_activity_edit_post"
