@@ -1,5 +1,5 @@
 /*
- * Constants.java
+ * MapConstants.java
  * v1.0
  * July 2019
  * Copyright ©2019 Footprnt Inc.
@@ -7,7 +7,7 @@
 package com.example.footprnt.Profile.Util;
 
 /**
- * Constants used in ProfileFragment
+ * MapConstants used in ProfileFragment
  *
  * @author Clarisa Leu-Rodriguez
  */

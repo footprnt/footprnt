@@ -24,6 +24,8 @@ public class MarkerDetails extends ParseObject implements Serializable {
     private static final String KEY_USER = "user";
     private static final String KEY_LOCATION = "location";
     private static final String KEY_TITLE = "title";
+    private static final String KEY_IMAGE = "image";
+    private static final String KEY_POST = "post";
 
     public String getDescription() {
         return getString(KEY_DESCRIPTION);
@@ -31,6 +33,14 @@ public class MarkerDetails extends ParseObject implements Serializable {
 
     public void setDescription(String description) {
         put(KEY_DESCRIPTION, description);
+    }
+
+    public String getPost() {
+        return getString(KEY_POST);
+    }
+
+    public void setPost(Post post) {
+        put(KEY_POST, post);
     }
 
     public String getTitle() {
@@ -56,6 +66,10 @@ public class MarkerDetails extends ParseObject implements Serializable {
     public void setUser(ParseUser user) {
         put(KEY_USER, user);
     }
+
+    public String getImageUrl() {return getString(KEY_IMAGE);}
+
+    public void setImageUrl(String image) { put(KEY_IMAGE, image);}
 
     public static class Query extends ParseQuery<MarkerDetails> {
         public Query() {
