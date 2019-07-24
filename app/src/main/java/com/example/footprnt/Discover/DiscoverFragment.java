@@ -43,22 +43,11 @@ public class DiscoverFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         // Defines the xml file for the fragment
         // Bind views
-        // TODO: set layout to fragment_discover with recycler view
-        final View view = inflater.inflate(R.layout.fragment_discover, parent, false);
+        View view = inflater.inflate(R.layout.fragment_discover, parent, false);
 
 
         etZip = view.findViewById(R.id.etZip);
-        btnFindRestaurants = view.findViewById(R.id.btnFindRestaurants);
-        btnFindRestaurants.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-                Intent i = new Intent(getContext(), RestaurantsActivity.class);
-                i.putExtra("zipcode", etZip.getText().toString());
-                startActivity(i);
-
-            }
-        });
         ArrayList<Restaurant> restaurants = new ArrayList<>();
 
 
@@ -70,7 +59,17 @@ public class DiscoverFragment extends Fragment {
     // Any view setup should occur here.  E.g., view lookups and attaching view listeners.
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+        btnFindRestaurants = view.findViewById(R.id.btnFindRestaurants);
+        btnFindRestaurants.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+                Intent i = new Intent(getActivity(), RestaurantsActivity.class);
+                i.putExtra("zipcode", etZip.getText().toString());
+                startActivity(i);
+
+            }
+        });
 
     }
 

@@ -29,11 +29,6 @@ public class RestaurantsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restaurants);
-        rvRestaurants.setLayoutManager(new LinearLayoutManager(this));
-        RecyclerView.LayoutManager layoutManager =
-                new LinearLayoutManager(RestaurantsActivity.this);
-        rvRestaurants.setLayoutManager(layoutManager);
-        rvRestaurants.setAdapter(mAdapter);
 
         String zipcode;
         zipcode = getIntent().getStringExtra("zipcode");
