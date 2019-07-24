@@ -57,6 +57,7 @@ import com.example.footprnt.Models.Post;
 import com.example.footprnt.R;
 import com.example.footprnt.Util.Util;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
@@ -136,6 +137,8 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         View v = inflater.inflate(R.layout.fragment_map, container, false);
 
         SupportMapFragment mapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        mapFrag.setRetainInstance(true);
+        MapsInitializer.initialize(this.getActivity());
         mapFrag.getMapAsync(this);
         mHelper = new Util();
         mUser = ParseUser.getCurrentUser();
