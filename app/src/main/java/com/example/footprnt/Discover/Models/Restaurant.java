@@ -1,7 +1,11 @@
-package com.example.footprnt.Models;
+package com.example.footprnt.Discover.Models;
 
 import java.util.ArrayList;
 
+/**
+ * Restaurant Model for Discover Fragment
+ * @author Stanley Nwakamma
+ */
 public class Restaurant {
     private String name;
     private String phone;

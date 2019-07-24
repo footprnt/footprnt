@@ -6,78 +6,57 @@
  */
 package com.example.footprnt.Discover;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TextView;
 
-import com.example.footprnt.Models.Post;
-import com.example.footprnt.Models.Restaurant;
+import com.example.footprnt.Discover.Models.Restaurant;
+import com.example.footprnt.Discover.Services.YelpService;
+import com.example.footprnt.Discover.adapters.RestaurantListAdapter;
 import com.example.footprnt.R;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
+import static com.parse.Parse.getApplicationContext;
+
+
 public class DiscoverFragment extends Fragment {
     public static final String TAG = DiscoverFragment.class.getSimpleName();
 
-    @BindView(R.id.locationTextView) TextView mLocationTextView;
-    @BindView(R.id.listView) ListView mListView;
+    @BindView(R.id.recyclerView)
+    RecyclerView mRecyclerView;
+    private RestaurantListAdapter mAdapter;
 
     public ArrayList<Restaurant> restaurants = new ArrayList<>();
-
-    // TODO: set up model for yelp business or query
-
-    Post post;
-
-    @BindView(R.id.ivProfile)
-    ImageView ivProfile;
-    @BindView(R.id.cbRestaurant)
-    CheckBox cbRestaurant;
-    @BindView(R.id.cbLegal)
-    CheckBox cbLegal;
-    @BindView(R.id.tvTitle)
-    TextView tvTitle;
-    @BindView(R.id.tvPlace)
-    TextView tvPlace;
-    @BindView(R.id.tvPerson)
-    TextView tvPerson;
-    @BindView(R.id.tvFood)
-    TextView tvFood;
-    @BindView(R.id.tvYelp)
-
-    TextView tvYelp;
-    @BindView(R.id.btnLink)
-    Button btnLink;
-    @BindView(R.id.ivImage)
-    ImageView ivImage;
-    YelpAdapter yelpAdapter;
-    ArrayList<Restaurant> posts;
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        String location;  // TODO: intialize with current location
+        setContentView(R.layout.fragment_discover);
+        ButterKnife.bind(this);
+
+        Intent intent = getIntent();
+        String location = intent.getStringExtra("location");
+
         getRestaurants(location);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         // Defines the xml file for the fragment
-        posts = new ArrayList<>();
-        YelpAdapter yelpAdapter = new YelpAdapter(posts);
+        public ArrayList<Restaurant> restaurants = new ArrayList<>();
         return inflater.inflate(R.layout.fragment_discover, parent, false);
     }
 
@@ -103,13 +82,20 @@ public class DiscoverFragment extends Fragment {
             public void onResponse(Call call, Response response) {
                 restaurants = yelpService.processResults(response);
 
-                DiscoverFragment.this.runOnUiThread(new Runnable() {
+                getActivity().runOnUiThread(new Runnable() {
 
                     @Override
                     public void run() {
+                        mAdapter = new RestaurantListAdapter(getApplicationContext(), restaurants);
+                        mRecyclerView.setAdapter(mAdapter);
+                        RecyclerView.LayoutManager layoutManager =
+                                new LinearLayoutManager(DiscoverFragment.this);
+                        mRecyclerView.setLayoutManager(layoutManager);
+                        mRecyclerView.setHasFixedSize(true);
                     }
+                });
             }
-        });
-    }
 
+        }
+    }
 }

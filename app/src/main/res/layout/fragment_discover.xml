@@ -31,9 +31,28 @@
             android:layout_height="5dp"
             android:background="@drawable/toolbar_dropshadow" />
 
-        <android.support.v7.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+
+
+        <EditText
+            android:id="@+id/locationEditText"
+            android:layout_width="114dp"
+            android:layout_height="47dp"
+            android:layout_above="@+id/findRestaurantsButton"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="10dp"
+            android:background="@color/colorTextIcons"
+            android:hint="Enter Zip Code"
+            android:padding="5dp" />
+
+        <Button
+            android:id="@+id/findRestaurantsButton"
+            android:layout_width="441dp"
+            android:layout_height="29dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:background="@color/colorAccent"
+            android:text="Find Restaurants"
+            android:textColor="@color/colorTextIcons" />
 
     </FrameLayout>
 

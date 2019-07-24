@@ -4,9 +4,10 @@
  * July 2019
  * Copyright ©2019 Footprnt Inc.
  */
-package com.example.footprnt.Discover;
+package com.example.footprnt.Discover.Services;
 
-import com.example.footprnt.Models.Restaurant;
+import com.example.footprnt.Discover.Util.Constants;
+import com.example.footprnt.Discover.Models.Restaurant;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -22,8 +23,17 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+/**
+ * YelpService for making API calls to Yelp
+ * @author Stanley Nwakamma
+ */
 public class YelpService {
 
+    /**
+     * Find resteraunts in current location
+     * @param location current location (city)
+     * @param callback response from yelp
+     */
     public static void findRestaurants(String location, Callback callback) {
 
         OkHttpClient client = new OkHttpClient.Builder()
@@ -42,6 +52,11 @@ public class YelpService {
         call.enqueue(callback);
     }
 
+    /**
+     * Helper function to parse through raw JSON response from Yelp
+     * @param response raw response from Yelp API call
+     * @return List of restaurants from Yelp in given location
+     */
     public ArrayList<Restaurant> processResults(Response response) {
         ArrayList<Restaurant> restaurants = new ArrayList<>();
 
@@ -58,9 +73,9 @@ public class YelpService {
 
                 String imageUrl = restaurantJSON.getString("image_url");
 
-                double latitude = (double) restaurantJSON.getJSONObject("coordinates").getDouble("latitude");
+                double latitude = restaurantJSON.getJSONObject("coordinates").getDouble("latitude");
 
-                double longitude = (double) restaurantJSON.getJSONObject("coordinates").getDouble("longitude");
+                double longitude = restaurantJSON.getJSONObject("coordinates").getDouble("longitude");
 
                 ArrayList<String> address = new ArrayList<>();
                 JSONArray addressJSON = restaurantJSON.getJSONObject("location")
