@@ -161,14 +161,17 @@ public class ProfileFragment extends Fragment {
                     logError("Error querying posts", e, true);
                 }
 
+
                 mStats.add(mCities);
                 mStats.add(mCountries);
                 mStats.add(mContinents);
 
                 mObjects.add(mStats);
                 mMultiAdapter.notifyDataSetChanged();
-                mObjects.addAll(mPosts);
-                mMultiAdapter.notifyDataSetChanged();
+                if(mPosts!=null) {
+                    mObjects.addAll(mPosts);
+                    mMultiAdapter.notifyDataSetChanged();
+                }
             }
         });
     }

@@ -8,7 +8,6 @@ package com.example.footprnt.Profile.Adapters.ViewHolders;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ViewFlipper;
 
 import com.example.footprnt.R;
@@ -21,12 +20,11 @@ import com.github.mikephil.charting.charts.PieChart;
  */
 public class StatViewHolder extends RecyclerView.ViewHolder {
     ViewFlipper mViewFlipper;
-    Button mNextView;
-    Button mPreviousView;
+    View mNextView;
+    View mPreviousView;
     PieChart mPieChartCity;
     PieChart mPieChartCountry;
     PieChart mPieChartContinent;
-    private float lastX;
 
     /**
      * Getter for the ViewFlipper to switch between pie charts
@@ -69,7 +67,7 @@ public class StatViewHolder extends RecyclerView.ViewHolder {
      *
      * @return next button for next view in view flipper
      */
-    public Button getNextButton() {
+    public View getNextButton() {
         return mNextView;
     }
 
@@ -78,7 +76,7 @@ public class StatViewHolder extends RecyclerView.ViewHolder {
      *
      * @return previous button for previous view in view flipper
      */
-    public Button getPreviousButton() {
+    public View getPreviousButton() {
         return mPreviousView;
     }
 
@@ -90,13 +88,11 @@ public class StatViewHolder extends RecyclerView.ViewHolder {
     public StatViewHolder(View v) {
         super(v);
         mViewFlipper = v.findViewById(R.id.viewFlipper);
-        mViewFlipper.setAnimateFirstView(true);
-        mNextView = v.findViewById(R.id.btnNext);
-        mPreviousView = v.findViewById(R.id.btnPrev);
+        mNextView = v.findViewById(R.id.next);
+        mPreviousView = v.findViewById(R.id.prev);
         mPieChartCity = v.findViewById(R.id.pieChartCity);
         mPieChartCountry = v.findViewById(R.id.pieChartCountry);
         mPieChartContinent = v.findViewById(R.id.pieChartContinent);
     }
-
 
 }

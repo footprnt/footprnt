@@ -260,6 +260,16 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             }
         });
 
+        vh3.getPreviousButton().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Using one of the built in animations:
+                vh3.getViewFlipper().setInAnimation(mContext, R.anim.flipin_reverse);
+                vh3.getViewFlipper().setOutAnimation(mContext, R.anim.flipout_reverse);
+                vh3.getViewFlipper().showPrevious();
+            }
+        });
+
     }
 
 
