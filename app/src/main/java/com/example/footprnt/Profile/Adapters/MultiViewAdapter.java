@@ -37,6 +37,9 @@ import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.parse.GetCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
@@ -204,8 +207,9 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
      * @param vh2      view holder to configure
      * @param position in adapter the USER_INFO item is
      */
-    private void configureUserInfoViewHolder(UserInfoViewHolder vh2, final int position) {
-        ParseUser user = (ParseUser) items.get(position);
+    private void configureUserInfoViewHolder(final UserInfoViewHolder vh2, final int position) {
+        final ParseUser user = ParseUser.getCurrentUser();
+                //= (ParseUser) items.get(position);
         if (user != null) {
             if (user.getParseFile(com.example.footprnt.Util.Constants.profileImage) != null) {
                 vh2.setIvProfileImage(user.getParseFile(com.example.footprnt.Util.Constants.profileImage).getUrl(), mContext);
@@ -215,9 +219,13 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 Glide.with(mContext).load(R.drawable.ic_user).into(vh2.getIvProfileImage());
             }
 
-            String des = user.getString("description");
-            vh2.getTvDescription().setText(des);
-            vh2.getTvUsername().setText(user.getUsername());
+            user.fetchInBackground(new GetCallback<ParseObject>() {
+                @Override
+                public void done(ParseObject object, ParseException e) {
+                    vh2.getTvDescription().setText(object.getString("description"));
+                }
+            });
+            vh2.getTvUsername().setText("@"+user.getUsername());
 
             vh2.getTvEditProfile().setOnClickListener(new View.OnClickListener() {
                 @Override

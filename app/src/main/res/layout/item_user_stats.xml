@@ -101,8 +101,8 @@
 
             <View
                 android:id="@+id/prev"
-                android:layout_width="181dp"
-                android:layout_height="250dp"
+                android:layout_width="99dp"
+                android:layout_height="251dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="8dp"
@@ -114,8 +114,8 @@
 
             <View
                 android:id="@+id/next"
-                android:layout_width="182dp"
-                android:layout_height="249dp"
+                android:layout_width="99dp"
+                android:layout_height="250dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginTop="8dp"
@@ -124,7 +124,7 @@
                 android:layout_marginBottom="8dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.272"
+                app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toEndOf="@+id/prev"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.0" />
