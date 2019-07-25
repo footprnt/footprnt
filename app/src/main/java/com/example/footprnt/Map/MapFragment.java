@@ -45,6 +45,7 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Scroller;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -100,6 +101,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
 
     // Map variables
     private GoogleMap mMap;
+    SupportMapFragment mapFrag;
     private LocationManager mLocationManager;
     private LocationListener mLocationListener;
     private Util mHelper;
@@ -139,7 +141,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_map, container, false);
 
-        SupportMapFragment mapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        mapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         MapsInitializer.initialize(this.getActivity());
         mapFrag.getMapAsync(this);
         mHelper = new Util();
@@ -208,6 +210,12 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setInfoWindowAdapter(mInfoAdapter);
+        mMap.getUiSettings().setMapToolbarEnabled(true);
+        View toolbar = ((View) mapFrag.getView().findViewById(Integer.parseInt("1")).
+                getParent()).findViewById(Integer.parseInt("4"));
+        RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) toolbar.getLayoutParams();
+        rlp.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
+        rlp.setMargins(100, 0, 0, 100);
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
@@ -223,7 +231,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                         marker.showInfoWindow();
                     }
                 }
-                return true;
+                return false;
             }
         });
         mMap.setOnMapLongClickListener(this);
@@ -251,6 +259,11 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
             return;
         }
         mMap.setMyLocationEnabled(true);
+        View locationButton = ((View) getActivity().findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
+        RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) locationButton.getLayoutParams();
+        rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
+        rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
+        rlp.setMargins(0, 200, 180, 0);
         if (mJumpToCurrentLocation && mLocation != null) {
             mJumpToCurrentLocation = false;
             mHelper.centreMapOnLocation(mMap, mLocation, "Your Location");
