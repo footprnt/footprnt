@@ -208,20 +208,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         handleToggle();
-        mMap.setInfoWindowAdapter(mInfoAdapter);
-        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-                if (!marker.equals(mMarkerShow)) {
-                    mMarkerShow = marker;
-                    System.out.println(mMarkerShow);
-                } else {
-                    marker.hideInfoWindow();
-                    mMarkerShow = null;
-                }
-                return true;
-            }
-        });
         mMap.setOnMapLongClickListener(this);
         mMap.setOnMapClickListener(this);
         try {
@@ -291,6 +277,20 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                         }
                     }
                 }
+                mMap.setInfoWindowAdapter(mInfoAdapter);
+                mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                    @Override
+                    public boolean onMarkerClick(Marker marker) {
+                        if (!marker.equals(mMarkerShow)) {
+                            mMarkerShow = marker;
+                            System.out.println(mMarkerShow);
+                        } else {
+                            marker.hideInfoWindow();
+                            mMarkerShow = null;
+                        }
+                        return true;
+                    }
+                });
             }
         });
     }
