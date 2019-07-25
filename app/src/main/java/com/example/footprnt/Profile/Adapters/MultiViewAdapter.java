@@ -183,7 +183,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 // TODO: fix default image loaded where no image present to be prettier
                 Glide.with(mContext).asBitmap().load(R.drawable.ic_add_photo).centerCrop().into(target);
             }
-            // TODO: fix this to start dialog vs. activity (see parent = AlertDialog)
+
             vh1.getIvImage().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
