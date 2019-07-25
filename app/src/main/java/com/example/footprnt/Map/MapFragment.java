@@ -144,7 +144,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         mapFrag.getMapAsync(this);
         mHelper = new Util();
         mUser = ParseUser.getCurrentUser();
-        ParseACL acl = new ParseACL();          // set permissions
+        ParseACL acl = new ParseACL(); // set permissions
         acl.setPublicReadAccess(true);
         acl.setPublicWriteAccess(true);
         mUser.setACL(acl);
@@ -237,6 +237,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         mJumpToCurrentLocation = true;
         setUpMapIfNeeded();
         loadMarkers();
+        handleToggle();
     }
 
     private void setUpMapIfNeeded() {
@@ -294,6 +295,9 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         });
     }
 
+    /**
+     * Loads map markers for all user's posts
+     */
     public void loadAllMarkers(){
         mMarkerDetails = new ArrayList<>();
         markers = new ArrayList<>();
@@ -318,7 +322,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     }
 
     /**
-     * Create a Google Map marker at specified point with title and text
+     * Create a Google Map marker at specified point with given marker details
      *
      * @param md marker detail
      */
@@ -495,8 +499,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     public void createPostCurrentLocation() {
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             Location location = mMap.getMyLocation();
-//            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mLocationListener);
-//            Location lastKnownLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             LatLng currLocation = new LatLng(location.getLatitude(), location.getLongitude());
             showAlertDialogForPoint(currLocation);
         }
@@ -680,6 +682,9 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         });
     }
 
+    /**
+     * Handles toggling of user posts vs all posts
+     */
     public void handleToggle() {
         mSwitch = getView().findViewById(R.id.switch1);
         mSwitch.setChecked(false);
