@@ -207,6 +207,20 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.setInfoWindowAdapter(mInfoAdapter);
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                if (!marker.equals(mMarkerShow)) {
+                    mMarkerShow = marker;
+                    marker.showInfoWindow();
+                } else {
+                    marker.hideInfoWindow();
+                    mMarkerShow = null;
+                }
+                return true;
+            }
+        });
         handleToggle();
         mMap.setOnMapLongClickListener(this);
         mMap.setOnMapClickListener(this);
@@ -277,20 +291,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                         }
                     }
                 }
-                mMap.setInfoWindowAdapter(mInfoAdapter);
-                mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                    @Override
-                    public boolean onMarkerClick(Marker marker) {
-                        if (!marker.equals(mMarkerShow)) {
-                            mMarkerShow = marker;
-                            System.out.println(mMarkerShow);
-                        } else {
-                            marker.hideInfoWindow();
-                            mMarkerShow = null;
-                        }
-                        return true;
-                    }
-                });
             }
         });
     }
@@ -410,6 +410,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         TRAVEL = false;
         FOOD = false;
         NATURE = false;
+        mParseFile = null;
         handleTags();
         BitmapDescriptor defaultMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
         final Marker temp = mMap.addMarker(new MarkerOptions().position(point).icon(defaultMarker));
