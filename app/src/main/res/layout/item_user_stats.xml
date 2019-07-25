@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="375dp">
+    android:layout_height="305dp">
 
 
     <ViewFlipper
@@ -72,12 +72,11 @@
     <TextView
         android:id="@+id/tvMyPosts"
         android:layout_width="119dp"
-        android:layout_height="24dp"
+        android:layout_height="0dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
         android:text="MY POSTS"
         android:textColor="@color/grey"
         android:textSize="18sp"

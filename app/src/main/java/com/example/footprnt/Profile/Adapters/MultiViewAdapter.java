@@ -214,7 +214,11 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 // TODO: change this to be more pretty (i.e. the tint of the image)
                 Glide.with(mContext).load(R.drawable.ic_user).into(vh2.getIvProfileImage());
             }
-            // TODO: Fix edit profile so it updates previous screen (this)
+
+            String des = user.getString("description");
+            vh2.getTvDescription().setText(des);
+            vh2.getTvUsername().setText(user.getUsername());
+
             vh2.getTvEditProfile().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
