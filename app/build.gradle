@@ -67,3 +67,7 @@ android {
         implementation 'com.squareup.picasso:picasso:2.5.2'
     }
 }
+
+dependencies {
+    implementation 'com.android.support.constraint:constraint-layout:+'
+}

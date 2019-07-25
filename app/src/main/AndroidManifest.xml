@@ -25,7 +25,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".Discover.Activities.RestaurantsActivity"></activity>
+        <activity android:name=".ForgotPassword"></activity>
+        <activity android:name=".Discover.Activities.RestaurantsActivity" />
         <activity android:name=".Discover.Activities.MoviesActivity" />
         <activity android:name=".Map.PostDetailActivity" />
         <activity
@@ -53,9 +54,10 @@
             android:name="com.google.android.maps"
             android:required="true" />
 
-        <activity android:name=".SignupActivity" />
-        <activity android:name=".HomeActivity"
-            android:configChanges="orientation|screenSize"/>
+        <activity android:name=".SignUpActivity" />
+        <activity
+            android:name=".HomeActivity"
+            android:configChanges="orientation|screenSize" />
         <activity
             android:name=".LoginActivity"
             android:label="@string/app_name">
