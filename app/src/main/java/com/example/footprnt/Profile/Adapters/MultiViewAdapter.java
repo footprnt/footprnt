@@ -10,7 +10,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -166,15 +165,14 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             String countryName = post.getCountry();
             String continentName = post.getContinent();
             vh1.getTvTitle().setText(String.format("%s, %s, %s", cityName, countryName, continentName));
-            vh1.getTvTitle().setTextColor(Color.WHITE);
-            vh1.getTvPalette().setBackgroundColor(ContextCompat.getColor(mContext, R.color.grey));
+            vh1.getTvTitle().setTextColor(ContextCompat.getColor(mContext, R.color.grey));
 
             SimpleTarget<Bitmap> target = new SimpleTarget<Bitmap>() {
                 @Override
                 public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                     vh1.getIvImage().setImageBitmap(resource);
                     Palette.from(resource).generate();
-                    vh1.getTvPalette().setBackgroundColor(ContextCompat.getColor(mContext, R.color.grey));
+                    vh1.getTvPalette().setBackgroundColor(ContextCompat.getColor(mContext, R.color.honeydew_off_white));
                 }
             };
 
