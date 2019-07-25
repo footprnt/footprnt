@@ -35,15 +35,18 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.PopupMenu;
+import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Scroller;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -57,6 +60,7 @@ import com.example.footprnt.Models.Post;
 import com.example.footprnt.R;
 import com.example.footprnt.Util.Util;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
@@ -105,8 +109,8 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
 
     // Display variables
     private CustomInfoWindowAdapter mInfoAdapter;
-    private boolean isInfoWindowShown;
     ArrayList<Marker> markers;
+    private Marker mMarkerShow;
     private MapRipple mMapRipple;
     private ArrayList<MarkerDetails> mMarkerDetails;
     private ImageView mImage;
@@ -115,10 +119,10 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     private ParseFile mParseFile;
     private ParseUser mUser;
     private int mMapStyle;
+    private Switch mSwitch;
 
     // Tag variables
     private ArrayList<String> mTags;
-    private ImageView mToggleButton;
     private boolean CULTURE = false;
     private boolean FASHION = false;
     private boolean TRAVEL = false;
@@ -136,6 +140,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         View v = inflater.inflate(R.layout.fragment_map, container, false);
 
         SupportMapFragment mapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        MapsInitializer.initialize(this.getActivity());
         mapFrag.getMapAsync(this);
         mHelper = new Util();
         mUser = ParseUser.getCurrentUser();
@@ -168,9 +173,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ImageView newPost = getView().findViewById(R.id.newPost);
-        mToggleButton = getView().findViewById(R.id.toggleMarkers);
-        mToggleButton.setAlpha(0.65f);
-        handleTagFiltering();
         newPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -209,12 +211,12 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                if (!isInfoWindowShown) {
+                if (!marker.equals(mMarkerShow)) {
+                    mMarkerShow = marker;
                     marker.showInfoWindow();
-                    isInfoWindowShown = true;
                 } else {
                     marker.hideInfoWindow();
-                    isInfoWindowShown = false;
+                    mMarkerShow = null;
                 }
                 return true;
             }
@@ -407,6 +409,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         TRAVEL = false;
         FOOD = false;
         NATURE = false;
+        mParseFile = null;
         handleTags();
         BitmapDescriptor defaultMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
         final Marker temp = mMap.addMarker(new MarkerOptions().position(point).icon(defaultMarker));
@@ -439,38 +442,42 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
             public void onClick(View v) {
                 final String title = ((EditText) mAlertDialog.findViewById(R.id.etTitle)).getText().toString();
                 final String snippet = ((EditText) mAlertDialog.findViewById(R.id.etSnippet)).getText().toString();
-                final MarkerDetails mOptions = new MarkerDetails();
-                mOptions.setUser(mUser);
-                if (mParseFile != null) {
-                    mParseFile.saveInBackground(new SaveCallback() {
-                        @Override
-                        public void done(ParseException e) {
-                            Post p = createPost(snippet, title, mParseFile, mUser, mLastPoint);
-                            mOptions.setPost(p);
-                            try {
-                                createMarker(mOptions);
-                            } catch (ParseException e1) {
-                                e1.printStackTrace();
-                            }
-                            mOptions.saveInBackground(new SaveCallback() {
-                                @Override
-                                public void done(ParseException e) {
-                                    loadMarkers();
-                                }
-                            });
-                        }
-                    });
+                if( TextUtils.isEmpty(title) || TextUtils.isEmpty(snippet)){
+                    Toast.makeText(getContext(), R.string.post_incomplete, Toast.LENGTH_SHORT).show();
                 } else {
-                    Post p = createPost(snippet, title, mParseFile , mUser, mLastPoint);
-                    mOptions.setPost(p);
-                    try {
-                        createMarker(mOptions);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
+                    final MarkerDetails mOptions = new MarkerDetails();
+                    mOptions.setUser(mUser);
+                    if (mParseFile != null) {
+                        mParseFile.saveInBackground(new SaveCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                Post p = createPost(snippet, title, mParseFile, mUser, mLastPoint);
+                                mOptions.setPost(p);
+                                try {
+                                    createMarker(mOptions);
+                                } catch (ParseException e1) {
+                                    e1.printStackTrace();
+                                }
+                                mOptions.saveInBackground(new SaveCallback() {
+                                    @Override
+                                    public void done(ParseException e) {
+                                        loadMarkers();
+                                    }
+                                });
+                            }
+                        });
+                    } else {
+                        Post p = createPost(snippet, title, mParseFile , mUser, mLastPoint);
+                        mOptions.setPost(p);
+                        try {
+                            createMarker(mOptions);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        mOptions.saveInBackground();
                     }
-                    mOptions.saveInBackground();
+                    mAlertDialog.dismiss();
                 }
-                mAlertDialog.dismiss();
             }
         });
         cancelPost.setOnClickListener(new View.OnClickListener() {
@@ -487,9 +494,10 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
      */
     public void createPostCurrentLocation() {
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mLocationListener);
-            Location lastKnownLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            LatLng currLocation = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
+            Location location = mMap.getMyLocation();
+//            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mLocationListener);
+//            Location lastKnownLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            LatLng currLocation = new LatLng(location.getLatitude(), location.getLongitude());
             showAlertDialogForPoint(currLocation);
         }
     }
@@ -543,7 +551,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
             @Override
             public void done(ParseException e) {
                 if (e == null) {
-                    Toast.makeText(getContext(), R.string.post_message, Toast.LENGTH_SHORT);
+                    Toast.makeText(getContext(), R.string.post_message, Toast.LENGTH_SHORT).show();
                 } else {
                     e.printStackTrace();
                 }
@@ -672,28 +680,29 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         });
     }
 
-    public void handleTagFiltering() {
-        mToggleButton.setOnClickListener(new View.OnClickListener() {
+    public void handleToggle() {
+        mSwitch = getView().findViewById(R.id.switch1);
+        mSwitch.setChecked(false);
+        mSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
-                PopupMenu popup = new PopupMenu(getActivity(), mToggleButton);
-                popup.getMenuInflater().inflate(R.menu.popup_toggle, popup.getMenu());
-                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    public boolean onMenuItemClick(MenuItem item) {
-                        if (item.getItemId() == R.id.allposts) {
-                            mMap.clear();
-                            loadAllMarkers();
-                        }
-                        if (item.getItemId() == R.id.yourposts) {
-                            mMap.clear();
-                            loadMarkers();
-                        }
-                        return true;
-                    }
-                });
-                popup.show();
+            public void onCheckedChanged(CompoundButton compoundButton, boolean bChecked) {
+                if (bChecked) {
+                    mMap.clear();
+                    loadAllMarkers();
+                } else {
+                    mMap.clear();
+                    loadMarkers();
+                }
             }
         });
+
+        if (mSwitch.isChecked()) {
+            mMap.clear();
+            loadAllMarkers();
+        } else {
+            mMap.clear();
+            loadMarkers();
+        }
     }
 
     /**

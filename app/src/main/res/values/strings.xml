@@ -20,4 +20,5 @@
     <string name="title_activity_edit_post">EditPost</string>
     <string name="post_message">Posted!</string>
     <string name="camera_message">Picture was not taken!</string>
+    <string name="post_incomplete">You must have title and snippet</string>
 </resources>
