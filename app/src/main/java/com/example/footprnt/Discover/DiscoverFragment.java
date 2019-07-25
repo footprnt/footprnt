@@ -23,7 +23,10 @@ import java.util.ArrayList;
 
 
 /**
+ * Fragment for the Discover view
  *
+ * @author Stanley Nwakamma 2019
+ * @version 1.0
  */
 public class DiscoverFragment extends Fragment {
     public static final String TAG = DiscoverFragment.class.getSimpleName();
@@ -36,45 +39,28 @@ public class DiscoverFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         Intent intent = getActivity().getIntent();
         String location = intent.getStringExtra("location");
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
-        // Defines the xml file for the fragment
-        // Bind views
         View view = inflater.inflate(R.layout.fragment_discover, parent, false);
-
-
         etZip = view.findViewById(R.id.etZip);
-
         ArrayList<Restaurant> restaurants = new ArrayList<>();
-
-
-
         return view;
     }
 
-    // This event is triggered soon after onCreateView().
-    // Any view setup should occur here.  E.g., view lookups and attaching view listeners.
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         btnFindRestaurants = view.findViewById(R.id.btnFindRestaurants);
         btnFindRestaurants.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Intent i = new Intent(getActivity(), RestaurantsActivity.class);
                 i.putExtra("zipcode", etZip.getText().toString());
                 startActivity(i);
-
             }
         });
-
     }
-
-
 }
