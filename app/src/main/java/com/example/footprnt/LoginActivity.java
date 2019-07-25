@@ -9,9 +9,11 @@ package com.example.footprnt;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.example.footprnt.Util.Constants;
 import com.parse.LogInCallback;
@@ -29,6 +31,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private EditText mUsernameInput;
     private EditText mPasswordInput;
+    private TextView mForgotPassword;
     private Button mLoginBtn;
     private Button mSignUpBtn;
 
@@ -38,6 +41,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mUsernameInput = findViewById(R.id.username);
+        mForgotPassword = findViewById(R.id.forgotPassword);
         mPasswordInput = findViewById(R.id.password);
         mLoginBtn = findViewById(R.id.btn_login);
         mSignUpBtn = findViewById(R.id.btn_signup);
@@ -47,6 +51,14 @@ public class LoginActivity extends AppCompatActivity {
             final Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
             startActivity(intent);
         }
+
+        mForgotPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent it = new Intent(LoginActivity.this, ForgotPassword.class);
+                startActivityForResult(it, 123);
+            }
+        });
 
         mLoginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,7 +72,7 @@ public class LoginActivity extends AppCompatActivity {
         mSignUpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(LoginActivity.this, SignupActivity.class);
+                Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
                 startActivityForResult(intent, Constants.SIGN_UP_ACTIVITY_REQUEST_CODE);
             }
         });

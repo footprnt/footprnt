@@ -8,7 +8,6 @@ package com.example.footprnt.Profile.Adapters.ViewHolders;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ViewFlipper;
 
 import com.example.footprnt.R;
@@ -21,8 +20,8 @@ import com.github.mikephil.charting.charts.PieChart;
  */
 public class StatViewHolder extends RecyclerView.ViewHolder {
     ViewFlipper mViewFlipper;
-    Button mNextView;
-    Button mPreviousView;
+    View mNextView;
+    View mPreviousView;
     PieChart mPieChartCity;
     PieChart mPieChartCountry;
     PieChart mPieChartContinent;
@@ -68,7 +67,7 @@ public class StatViewHolder extends RecyclerView.ViewHolder {
      *
      * @return next button for next view in view flipper
      */
-    public Button getNextButton() {
+    public View getNextButton() {
         return mNextView;
     }
 
@@ -77,7 +76,7 @@ public class StatViewHolder extends RecyclerView.ViewHolder {
      *
      * @return previous button for previous view in view flipper
      */
-    public Button getPreviousButton() {
+    public View getPreviousButton() {
         return mPreviousView;
     }
 
@@ -89,61 +88,11 @@ public class StatViewHolder extends RecyclerView.ViewHolder {
     public StatViewHolder(View v) {
         super(v);
         mViewFlipper = v.findViewById(R.id.viewFlipper);
-        mNextView = v.findViewById(R.id.btnNext);
-        mPreviousView = v.findViewById(R.id.btnPrev);
+        mNextView = v.findViewById(R.id.next);
+        mPreviousView = v.findViewById(R.id.prev);
         mPieChartCity = v.findViewById(R.id.pieChartCity);
         mPieChartCountry = v.findViewById(R.id.pieChartCountry);
         mPieChartContinent = v.findViewById(R.id.pieChartContinent);
     }
 
-    /**
-     * Show the previous view for the view flipper
-     *
-     * @param v view
-     */
-    public void previousView(View v) {
-        mViewFlipper.setInAnimation(v.getContext(), R.anim.slide_in_right);
-        mViewFlipper.setOutAnimation(v.getContext(), R.anim.slide_in_right);
-
-//        Animation fadeIn = new AlphaAnimation(0, 1);
-//        fadeIn.setInterpolator(new DecelerateInterpolator()); //add this
-//        fadeIn.setDuration(700); //time in milliseconds
-//
-//        Animation fadeOut = new AlphaAnimation(1, 0);
-//        fadeOut.setInterpolator(new AccelerateInterpolator()); //and this
-//        fadeOut.setStartOffset(1000);
-//        fadeOut.setDuration(20); //time in milliseconds
-//
-//        AnimationSet animation = new AnimationSet(false); //change to false
-//        animation.addAnimation(fadeIn);
-//        animation.addAnimation(fadeOut);
-//        mViewFlipper.setOutAnimation(fadeOut);
-//        mViewFlipper.setInAnimation(fadeIn);
-        //mViewFlipper.setAnimation(animation);
-        mViewFlipper.showPrevious();
-    }
-
-    /**
-     * Shows the next view for the view flipper
-     *
-     * @param v view
-     */
-    public void nextView(View v) {
-        mViewFlipper.setInAnimation(v.getContext(), android.R.anim.slide_in_left);
-        mViewFlipper.setOutAnimation(v.getContext(), android.R.anim.slide_out_right);
-//        Animation fadeIn = new AlphaAnimation(0, 1);
-//        fadeIn.setInterpolator(new DecelerateInterpolator()); //add this
-//        fadeIn.setDuration(700); //time in milliseconds
-//
-//        Animation fadeOut = new AlphaAnimation(1, 0);
-//        fadeOut.setInterpolator(new AccelerateInterpolator()); //and this
-//        fadeOut.setStartOffset(1000);
-//        fadeOut.setDuration(20); //time in milliseconds
-//
-//        AnimationSet animation = new AnimationSet(false); //change to false
-//        animation.addAnimation(fadeIn);
-//        mViewFlipper.setOutAnimation(fadeOut);
-//        mViewFlipper.setInAnimation(fadeIn);
-        mViewFlipper.showNext();
-    }
 }
