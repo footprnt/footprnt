@@ -1,108 +1,34 @@
-<?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/topNav"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/refresh_progress_1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+    <!-- Include other widget or layout tags here. These are considered
+            "child views" or "children" of the linear layout -->
 
+    <FrameLayout
+        android:layout_width="118dp"
+        android:layout_height="101dp">
 
+        <ImageView
+            android:id="@+id/imageView9"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:srcCompat="@tools:sample/avatars" />
+    </FrameLayout>
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvRestaurants"
+        android:layout_width="400dp"
+        android:layout_height="145dp" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="5dp"
-            android:background="@drawable/toolbar_dropshadow" />
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="400dp"
+        android:layout_height="170dp" />
+</LinearLayout>
 
-
-    <EditText
-        android:id="@+id/etZip"
-        android:layout_width="205dp"
-        android:layout_height="48dp"
-        android:layout_above="@+id/btnFindRestaurants"
-        android:layout_centerHorizontal="true"
-        android:layout_marginEnd="206dp"
-        android:layout_marginRight="206dp"
-        android:layout_marginBottom="100dp"
-        android:hint="Enter Zip Code"
-        android:padding="5dp"
-        app:layout_constraintBottom_toTopOf="@+id/btnFindRestaurants"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/topNav" />
-
-    <Button
-        android:id="@+id/btnFindRestaurants"
-        android:layout_width="375dp"
-        android:layout_height="27dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginStart="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="100dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginRight="10dp"
-        android:background="@color/colorAccent"
-        android:text="Find Restaurants"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etZip" />
-
-    <Button
-        android:id="@+id/btnFindHotels"
-        android:layout_width="372dp"
-        android:layout_height="33dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginBottom="10dp"
-        android:text="Find Hotels"
-        app:layout_constraintBottom_toTopOf="@+id/btnSeeLandmarks"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnFindRestaurants" />
-
-    <Button
-        android:id="@+id/btnSeeLandmarks"
-        android:layout_width="361dp"
-        android:layout_height="36dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginBottom="10dp"
-        android:text="See Landmarks"
-        app:layout_constraintBottom_toTopOf="@+id/btnSeeMovies"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnFindHotels" />
-
-    <Button
-        android:id="@+id/btnSeeMovies"
-        android:layout_width="359dp"
-        android:layout_height="39dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginRight="10dp"
-        android:text="See Latest Movies"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnSeeLandmarks" />
-
-
-</android.support.constraint.ConstraintLayout>

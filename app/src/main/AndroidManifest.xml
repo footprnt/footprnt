@@ -26,7 +26,6 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity android:name=".Discover.Activities.RestaurantsActivity"></activity>
-        <activity android:name=".Discover.Activities.MoviesActivity" />
         <activity android:name=".Map.PostDetailActivity" />
         <activity
             android:name=".Profile.EditPost"

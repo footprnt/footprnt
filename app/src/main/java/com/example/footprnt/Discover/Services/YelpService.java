@@ -25,12 +25,12 @@ import okhttp3.Response;
 
 /**
  * YelpService for making API calls to Yelp
- * @author Stanley Nwakamma
+ * @author Stanley Nwakamma 2019
  */
 public class YelpService {
 
     /**
-     * Find resteraunts in current location
+     * Finds restaurants in current location
      *
      * @param location current location (city)
      * @param callback response from yelp
@@ -61,7 +61,6 @@ public class YelpService {
      */
     public ArrayList<Restaurant> processResults(Response response) {
         ArrayList<Restaurant> restaurants = new ArrayList<>();
-
         try {
             String jsonData = response.body().string();
             JSONObject yelpJSON = new JSONObject(jsonData);

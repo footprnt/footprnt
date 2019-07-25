@@ -21,11 +21,11 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
- *
+ * Adapts restaurants to the recyclerview
+ * @author  Stanley Nwakamma 2019
  */
 public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAdapter.RestaurantViewHolder> {
     private ArrayList<Restaurant> mRestaurants;
@@ -55,13 +55,13 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
     }
 
     public static class RestaurantViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.ivRestaurantImage)
+        //@BindView(R.id.ivRestaurantImage)
         ImageView ivRestaurantImage;
-        @BindView(R.id.tvRestaurantName)
+        //@BindView(R.id.tvRestaurantName)
         TextView tvRestaurantName;
-        @BindView(R.id.tvRestaurantCategory)
+        //@BindView(R.id.tvRestaurantCategory)
         TextView tvRestaurantCategory;
-        @BindView(R.id.tvRestaurantRating)
+        //@BindView(R.id.tvRestaurantRating)
         TextView tvRestaurantRating;
 
         private Context mContext;
