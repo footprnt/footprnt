@@ -211,12 +211,17 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                if (!marker.equals(mMarkerShow)) {
+                if (mMarkerShow == null) {
                     mMarkerShow = marker;
                     marker.showInfoWindow();
                 } else {
-                    marker.hideInfoWindow();
-                    mMarkerShow = null;
+                    if (mMarkerShow.getPosition().equals(marker.getPosition())){
+                        marker.hideInfoWindow();
+                        mMarkerShow = null;
+                    } else {
+                        mMarkerShow = marker;
+                        marker.showInfoWindow();
+                    }
                 }
                 return true;
             }
