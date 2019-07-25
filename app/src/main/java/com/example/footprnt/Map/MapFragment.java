@@ -221,7 +221,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 return true;
             }
         });
-        handleToggle();
         mMap.setOnMapLongClickListener(this);
         mMap.setOnMapClickListener(this);
         try {
