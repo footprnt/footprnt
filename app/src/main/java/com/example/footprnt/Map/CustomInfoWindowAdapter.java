@@ -73,8 +73,6 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter{
 
     @Override
     public View getInfoWindow(Marker marker) {
-//        mConstraintLayout.setVisibility(View.INVISIBLE);
-//        getPostObject(marker, mWindow);
         return null;
     }
 
@@ -82,9 +80,10 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter{
 
     @Override
     public View getInfoContents(Marker marker) {
-//        mConstraintLayout.setVisibility(View.INVISIBLE);
-        mHandler = new Handler();
-        getPostObject(marker, mWindow);
+        try {
+            mHandler = new Handler();
+            getPostObject(marker, mWindow);
+        } catch (Exception e){}
         return mWindow;
     }
 }
