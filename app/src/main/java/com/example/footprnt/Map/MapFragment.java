@@ -9,7 +9,6 @@ package com.example.footprnt.Map;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -40,11 +39,13 @@ import android.support.v7.widget.PopupMenu;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -60,13 +61,15 @@ import com.bumptech.glide.Glide;
 import com.example.footprnt.Manifest;
 import com.example.footprnt.Map.Util.MapConstants;
 import com.example.footprnt.Map.Util.MapUtil;
+import com.example.footprnt.Map.Util.SingleLineET;
 import com.example.footprnt.Models.MarkerDetails;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.R;
 import com.example.footprnt.Util.Util;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceSelectionListener;
+import com.google.android.gms.location.places.ui.SupportPlaceAutocompleteFragment;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -77,10 +80,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.libraries.places.compat.Place;
-import com.google.android.libraries.places.compat.ui.PlaceAutocompleteFragment;
-import com.google.android.libraries.places.compat.ui.PlaceSelectionListener;
-import com.google.android.libraries.places.compat.ui.SupportPlaceAutocompleteFragment;
 import com.linroid.filtermenu.library.FilterMenu;
 import com.linroid.filtermenu.library.FilterMenuLayout;
 import com.parse.FindCallback;
@@ -103,9 +102,6 @@ import java.util.Locale;
 
 import static android.content.Context.LOCATION_SERVICE;
 
-//import com.google.android.gms.location.places.Places;
-
-
 /**
  * Handles all map activities
  *
@@ -113,7 +109,7 @@ import static android.content.Context.LOCATION_SERVICE;
  * @version 1.0
  * @since 2019-07-22
  */
-public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickListener, OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener {
+public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickListener, OnMapReadyCallback {
 
     // Map variables
     private GoogleMap mMap;
@@ -124,7 +120,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     private boolean mJumpToCurrentLocation = false;
     private JSONObject mContinents;
     private Location mLocation;
-    private PlaceAutocompleteFragment autocompleteFragment;
+    private EditText mSearchText;
 
     // Display variables
     private CustomInfoWindowAdapter mInfoAdapter;
@@ -140,7 +136,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     private Switch mSwitch;
     private float mLocationX;
     private float mLocationY;
-    private boolean mMenuItemsAdded;
 
     // Tag variables
     private ArrayList<String> mTags;
@@ -158,8 +153,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
-
         View v = inflater.inflate(R.layout.fragment_map, container, false);
 
         mapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
@@ -183,8 +176,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         mPopup = new PopupMenu(getActivity(), mSettings);
         mPopup.getMenuInflater().inflate(R.menu.popup_menu_map, mPopup.getMenu());
         configureMapStyleMenu();
-
-        mMenuItemsAdded = false;
         return v;
     }
 
@@ -197,8 +188,17 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mSearchText = getActivity().findViewById(R.id.searchText);
+        mSearchText.addTextChangedListener(new SingleLineET(mSearchText));
         layout = (FilterMenuLayout) getActivity().findViewById(R.id.filter_menu4);
         layout.setVisibility(View.INVISIBLE);
+        ImageView newPost = getView().findViewById(R.id.newPost);
+        newPost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createPostCurrentLocation();
+            }
+        });
         mLocationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
         mLocationListener = new LocationListener() {
             @Override
@@ -263,10 +263,11 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         }
 
         mJumpToCurrentLocation = true;
-        setupAutoCompleteFragment();
         setUpMapIfNeeded();
         loadMarkers();
         handleToggle();
+        init();
+        setupAutoCompleteFragment();
     }
 
     private void setUpMapIfNeeded() {
@@ -396,95 +397,55 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
 
     @Override
     public void onMapLongClick(final LatLng latLng) {
-        BitmapDescriptor defaultMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
-        final Marker m = mMap.addMarker(new MarkerOptions()
-                .position(latLng)
-                .title("")
-                .snippet("")
-                .icon(defaultMarker));
-        layout = getActivity().findViewById(R.id.filter_menu4);
+        System.out.println(mLocationX);
+        System.out.println(mLocationY);
         layout.setVisibility(View.VISIBLE);
+//        FilterMenu fm = new FilterMenu();
+//        FilterMenuLayout filterMenuLayout = new FilterMenuLayout(getContext(), );
+//        fm.setMenuLayout(filterMenuLayout);
+//        layout.setMenu(fm);
+        setupMenu(latLng);
+    }
 
-        if (!mMenuItemsAdded){
-            mMenuItemsAdded = true;
-            FilterMenu menu = new FilterMenu.Builder(getContext())
-                    .addItem(R.drawable.ic_pencil_white)
-                    .addItem(R.drawable.ic_world_white)
-                    .addItem(R.drawable.ic_rocket_white)
-                    .attach(layout)
-                    .withListener(new FilterMenu.OnMenuChangeListener() {
-                        @Override
-                        public void onMenuItemClick(View view, int position) {
-                            if (MapConstants.menuItems[position] == MapConstants.CREATE){
-                                showAlertDialogForPoint(latLng);
-                            }
-                            if (MapConstants.menuItems[position] == MapConstants.VIEW){
-                                MapRipple mMapRipple = new MapRipple(mMap, latLng, getContext())
-                                        .withNumberOfRipples(3)
-                                        .withFillColor(Color.CYAN)
-                                        .withStrokeColor(Color.BLACK)
-                                        .withDistance(2000)      // 8046.72 for 5 miles
-                                        .withRippleDuration(12000)    //12000ms
-                                        .withTransparency(0.6f);
-                                mMapRipple.startRippleMapAnimation();      //in onMapReadyCallBack
-                                Intent i = new Intent(getActivity(), FeedActivity.class);
-                                i.putExtra("latitude", latLng.latitude);
-                                i.putExtra("longitude", latLng.longitude);
-                                startActivity(i);
-                            }
-                            if (MapConstants.menuItems[position] == MapConstants.DISCOVER){
-                            }
+    public void setupMenu(final LatLng latLng){
+
+        FilterMenu menu = new FilterMenu.Builder(getContext())
+                .addItem(R.drawable.ic_pencil_white)
+                .addItem(R.drawable.ic_world_white)
+                .addItem(R.drawable.ic_rocket_white)
+                .attach(layout)
+                .withListener(new FilterMenu.OnMenuChangeListener() {
+                    @Override
+                    public void onMenuItemClick(View view, int position) {
+                        if (MapConstants.menuItems[position] == MapConstants.CREATE){
+                            showAlertDialogForPoint(latLng);
                         }
-                        @Override
-                        public void onMenuCollapse() {
-                            layout.setVisibility(View.INVISIBLE);
-                            m.remove();
+                        if (MapConstants.menuItems[position] == MapConstants.VIEW){
+                            MapRipple mMapRipple = new MapRipple(mMap, latLng, getContext())
+                                    .withNumberOfRipples(3)
+                                    .withFillColor(Color.CYAN)
+                                    .withStrokeColor(Color.BLACK)
+                                    .withDistance(2000)      // 8046.72 for 5 miles
+                                    .withRippleDuration(12000)    //12000ms
+                                    .withTransparency(0.6f);
+                            mMapRipple.startRippleMapAnimation();      //in onMapReadyCallBack
+                            Intent i = new Intent(getActivity(), FeedActivity.class);
+                            i.putExtra("latitude", latLng.latitude);
+                            i.putExtra("longitude", latLng.longitude);
+                            startActivity(i);
                         }
-                        @Override
-                        public void onMenuExpand() {
+                        if (MapConstants.menuItems[position] == MapConstants.DISCOVER){
+                            //TODO
                         }
-                    })
-                    .build();
-            menu.toggle(true);
-        } else {
-            FilterMenu menu = new FilterMenu.Builder(getContext())
-                    .attach(layout)
-                    .withListener(new FilterMenu.OnMenuChangeListener() {
-                        @Override
-                        public void onMenuItemClick(View view, int position) {
-                            if (MapConstants.menuItems[position] == MapConstants.CREATE){
-                                showAlertDialogForPoint(latLng);
-                            }
-                            if (MapConstants.menuItems[position] == MapConstants.VIEW){
-                                MapRipple mMapRipple = new MapRipple(mMap, latLng, getContext())
-                                        .withNumberOfRipples(3)
-                                        .withFillColor(Color.CYAN)
-                                        .withStrokeColor(Color.BLACK)
-                                        .withDistance(2000)      // 8046.72 for 5 miles
-                                        .withRippleDuration(12000)    //12000ms
-                                        .withTransparency(0.6f);
-                                mMapRipple.startRippleMapAnimation();      //in onMapReadyCallBack
-                                Intent i = new Intent(getActivity(), FeedActivity.class);
-                                i.putExtra("latitude", latLng.latitude);
-                                i.putExtra("longitude", latLng.longitude);
-                                startActivity(i);
-                            }
-                            if (MapConstants.menuItems[position] == MapConstants.DISCOVER){
-                                //TODO
-                            }
-                        }
-                        @Override
-                        public void onMenuCollapse() {
-                            layout.setVisibility(View.INVISIBLE);
-                            m.remove();
-                        }
-                        @Override
-                        public void onMenuExpand() {
-                        }
-                    })
-                    .build();
-            menu.toggle(true);
-        }
+                    }
+                    @Override
+                    public void onMenuCollapse() {
+                    }
+                    @Override
+                    public void onMenuExpand() {
+                    }
+                })
+                .build();
 
     }
 
@@ -600,6 +561,17 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     }
 
     /**
+     * Creates a post at the user's current location
+     */
+    public void createPostCurrentLocation() {
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            Location location = mMap.getMyLocation();
+            LatLng currLocation = new LatLng(location.getLatitude(), location.getLongitude());
+            showAlertDialogForPoint(currLocation);
+        }
+    }
+
+    /**
      * Creates and uploads post to Parse server
      *
      * @param description content of post
@@ -691,6 +663,41 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         }
     }
 
+    private void init(){
+        mSearchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH
+                        || actionId == EditorInfo.IME_ACTION_DONE
+                        || event.getAction() == KeyEvent.ACTION_DOWN
+                        || event.getAction() == KeyEvent.KEYCODE_ENTER){
+                    geoLocate();
+                }
+                return false;
+            }
+        });
+    }
+
+    private void geoLocate(){
+        String searchString = mSearchText.getText().toString();
+
+        Geocoder geocoder = new Geocoder(getContext());
+        List<Address> list = new ArrayList<>();
+        try{
+            list = geocoder.getFromLocationName(searchString, 1);
+        } catch (IOException e){
+
+        }
+
+        if (list.size() > 0){
+            Address address = list.get(0);
+            Location l = new Location(LocationManager.GPS_PROVIDER);
+            l.setLatitude(address.getLatitude());
+            l.setLongitude(address.getLongitude());
+            Util.centreMapOnLocation(mMap, l);
+            BitmapDescriptor defaultMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
+        }
+    }
 
     /**
      * Handles toggling of tags when in create view dialog
@@ -879,11 +886,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         }
     }
 
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-    }
-
     private void setupAutoCompleteFragment() {
         SupportPlaceAutocompleteFragment autocompleteFragment = new SupportPlaceAutocompleteFragment();
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
@@ -905,6 +907,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         FragmentTransaction ft = fm.beginTransaction();
         ft.replace(R.id.fragment_content, autocompleteFragment);
         ft.commit();
+//        FrameLayout fl = getActivity().findViewById(R.id.fragment_content);
+//        fl.setVisibility(View.INVISIBLE);
     }
-
 }
