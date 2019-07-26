@@ -61,7 +61,7 @@ public class ProfileFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         getActivity().setRequestedOrientation(
-                ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+                ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         View v = inflater.inflate(R.layout.fragment_profile, container, false);
         setUpToolbar(v);
 

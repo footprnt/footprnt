@@ -34,7 +34,8 @@ public class DiscoverFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        getActivity().setRequestedOrientation(
+                ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         Intent intent = getActivity().getIntent();
         String location = intent.getStringExtra("location");
 

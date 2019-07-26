@@ -13,6 +13,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
@@ -31,10 +32,11 @@ import com.example.footprnt.Util.Constants;
 public class HomeActivity extends AppCompatActivity {
 
     final FragmentManager mFragmentManager = getSupportFragmentManager();
-    final Fragment mFragment1 = new MapFragment();
-    final Fragment mFragment2 = new DiscoverFragment();
-    final Fragment mFragment3 = new ProfileFragment();
-
+    Fragment mFragment1;
+    Fragment mFragment2;
+    Fragment mFragment3;
+    ViewPager viewPager;
+    MenuItem prevMenuItem;
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -49,10 +51,10 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
 
         final BottomNavigationView navView = findViewById(R.id.nav_view);
-
-        final MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.pop_two  );
+        final MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.pop_two);
         navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -60,22 +62,60 @@ public class HomeActivity extends AppCompatActivity {
                 Fragment fragment;
                 switch (menuItem.getItemId()) {
                     case R.id.navigation_home:
-                        fragment = mFragment1;
+                        viewPager.setCurrentItem(0);
                         break;
                     case R.id.navigation_dashboard:
-                        fragment = mFragment2;
+                        viewPager.setCurrentItem(1);
                         break;
                     case R.id.navigation_notifications:
-                    default:
-                        fragment = mFragment3;
+                        viewPager.setCurrentItem(2);
                         break;
+                    default:
+                        viewPager.setCurrentItem(0);
+                        break;
+
                 }
-                mFragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
                 return true;
             }
         });
         navView.setSelectedItemId(R.id.navigation_home);
+
+
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if (prevMenuItem != null) {
+                    prevMenuItem.setChecked(false);
+                } else {
+                    navView.getMenu().getItem(0).setChecked(false);
+                }
+                navView.getMenu().getItem(position).setChecked(true);
+                prevMenuItem = navView.getMenu().getItem(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
+        setupViewPager(viewPager);
+
     }
 
-
+    private void setupViewPager(ViewPager viewPager) {
+        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(mFragmentManager);
+        mFragment1 = new MapFragment();
+        mFragment2 = new DiscoverFragment();
+        mFragment3 = new ProfileFragment();
+        viewPagerAdapter.addFragment(mFragment1);
+        viewPagerAdapter.addFragment(mFragment2);
+        viewPagerAdapter.addFragment(mFragment3);
+        viewPager.setAdapter(viewPagerAdapter);
+    }
 }
