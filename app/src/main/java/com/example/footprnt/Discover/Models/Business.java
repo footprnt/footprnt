@@ -3,10 +3,10 @@ package com.example.footprnt.Discover.Models;
 import java.util.ArrayList;
 
 /**
- * Restaurant Model for Discover Fragment
+ * Business Model for Discover Fragment
  * @author Stanley Nwakamma
  */
-public class Restaurant {
+public class Business {
     private String name;
     private String phone;
     private String website;
@@ -17,9 +17,9 @@ public class Restaurant {
     private double longitude;
     private ArrayList<String> categories = new ArrayList<>();
 
-    public Restaurant(String name, String phone, String website,
-                      double rating, String imageUrl, ArrayList<String> address,
-                      double latitude, double longitude, ArrayList<String> categories) {
+    public Business(String name, String phone, String website,
+                    double rating, String imageUrl, ArrayList<String> address,
+                    double latitude, double longitude, ArrayList<String> categories) {
         this.name = name;
         this.phone = phone;
         this.website = website;
