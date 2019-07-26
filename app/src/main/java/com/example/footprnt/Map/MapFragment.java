@@ -207,13 +207,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         mSearchText.addTextChangedListener(new SingleLineET(mSearchText));
         layout = (FilterMenuLayout) getActivity().findViewById(R.id.filter_menu4);
         layout.setVisibility(View.GONE);
-//        ImageView newPost = getView().findViewById(R.id.newPost);
-//        newPost.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                createPostCurrentLocation();
-//            }
-//        });
         mLocationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
         mLocationListener = new LocationListener() {
             @Override
@@ -424,6 +417,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 .icon(defaultMarker));
         layout = getActivity().findViewById(R.id.filter_menu4);
         layout.setVisibility(View.VISIBLE);
+
         if (!mMenuItemsAdded){
             mMenuItemsAdded = true;
             FilterMenu menu = new FilterMenu.Builder(getContext())
@@ -469,7 +463,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                     })
                     .build();
             menu.toggle(true);
-
         } else {
             FilterMenu menu = new FilterMenu.Builder(getContext())
                     .attach(layout)
@@ -628,17 +621,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 temp.remove();
             }
         });
-    }
-
-    /**
-     * Creates a post at the user's current location
-     */
-    public void createPostCurrentLocation() {
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            Location location = mMap.getMyLocation();
-            LatLng currLocation = new LatLng(location.getLatitude(), location.getLongitude());
-            showAlertDialogForPoint(currLocation);
-        }
     }
 
     /**

@@ -119,9 +119,15 @@ BottomNavigationView navView;
         navView.setVisibility(View.INVISIBLE);
     }
 
+
+    @Override
+    public void onBackPressed() {
+    }
+
     public void showBottomNav(){
         shaddow.setVisibility(View.VISIBLE);
         navView.setVisibility(View.VISIBLE);
+
     }
 
     private void setupViewPager(ViewPager viewPager) {
