@@ -7,6 +7,7 @@
 package com.example.footprnt.Map;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -40,13 +41,12 @@ import android.support.v7.widget.PopupMenu;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -250,7 +250,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 getParent()).findViewById(Integer.parseInt("4"));
         RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) toolbar.getLayoutParams();
         rlp.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
-        rlp.setMargins(100, 0, 0, 100);
+        rlp.setMargins(100, 0, 0, 250);
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
@@ -716,18 +716,27 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     }
 
     private void init(){
-        mSearchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        ImageView search = getActivity().findViewById(R.id.search);
+        search.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH
-                        || actionId == EditorInfo.IME_ACTION_DONE
-                        || event.getAction() == KeyEvent.ACTION_DOWN
-                        || event.getAction() == KeyEvent.KEYCODE_ENTER){
-                    geoLocate();
-                }
-                return false;
+            public void onClick(View v) {
+                geoLocate();
+                InputMethodManager inputManager = (InputMethodManager) myContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputManager.hideSoftInputFromWindow(myContext.getCurrentFocus().getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
             }
         });
+//        mSearchText.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+//            @Override
+//            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+//                if (actionId == EditorInfo.IME_ACTION_SEARCH
+//                        || actionId == EditorInfo.IME_ACTION_DONE
+//                        || event.getAction() == KeyEvent.ACTION_DOWN
+//                        || event.getAction() == KeyEvent.KEYCODE_ENTER){
+//                    geoLocate();
+//                }
+//                return false;
+//            }
+//        });
     }
 
     private void geoLocate(){
