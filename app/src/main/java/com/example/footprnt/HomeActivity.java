@@ -16,6 +16,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.example.footprnt.Discover.DiscoverFragment;
 import com.example.footprnt.Map.MapFragment;
@@ -32,6 +33,8 @@ import com.example.footprnt.Util.Constants;
 public class HomeActivity extends AppCompatActivity {
 
     final FragmentManager mFragmentManager = getSupportFragmentManager();
+BottomNavigationView navView;
+ View shaddow;
     Fragment mFragment1;
     Fragment mFragment2;
     Fragment mFragment3;
@@ -52,8 +55,9 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         viewPager = (ViewPager) findViewById(R.id.viewpager);
+        shaddow = findViewById(R.id.shadow);
 
-        final BottomNavigationView navView = findViewById(R.id.nav_view);
+        navView = findViewById(R.id.nav_view);
         final MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.pop_two);
         navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -105,7 +109,16 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         setupViewPager(viewPager);
+    }
 
+    public void hideBottomNav(){
+        shaddow.setVisibility(View.INVISIBLE);
+        navView.setVisibility(View.INVISIBLE);
+    }
+
+    public void showBottomNav(){
+        shaddow.setVisibility(View.VISIBLE);
+        navView.setVisibility(View.VISIBLE);
     }
 
     private void setupViewPager(ViewPager viewPager) {

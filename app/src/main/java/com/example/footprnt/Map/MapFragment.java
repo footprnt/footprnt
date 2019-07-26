@@ -29,6 +29,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -58,6 +59,7 @@ import android.widget.Toast;
 
 import com.arsy.maps_library.MapRipple;
 import com.bumptech.glide.Glide;
+import com.example.footprnt.HomeActivity;
 import com.example.footprnt.Manifest;
 import com.example.footprnt.Map.Util.MapConstants;
 import com.example.footprnt.Map.Util.MapUtil;
@@ -133,6 +135,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     private float mLocationX;
     private float mLocationY;
     private boolean mMenuItemsAdded;
+    ConstraintLayout mToolbar;
 
     // Tag variables
     private ArrayList<String> mTags;
@@ -170,12 +173,25 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
 
         // Set up pop up menu
         mSettings = v.findViewById(R.id.ivSettings);
+        mToolbar = v.findViewById(R.id.relLayout1);
         mPopup = new PopupMenu(getActivity(), mSettings);
         mPopup.getMenuInflater().inflate(R.menu.popup_menu_map, mPopup.getMenu());
         configureMapStyleMenu();
 
         mMenuItemsAdded = false;
         return v;
+    }
+
+    private void hideToolBar(){
+        View locationButton = ((View) getActivity().findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
+        locationButton.setVisibility(View.INVISIBLE);
+        mToolbar.setVisibility(View.INVISIBLE);
+    }
+
+    private void showToolbar(){
+        View locationButton = ((View) getActivity().findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
+        locationButton.setVisibility(View.VISIBLE);
+        mToolbar.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -395,6 +411,8 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
 
     @Override
     public void onMapLongClick(final LatLng latLng) {
+        ((HomeActivity)getActivity()).hideBottomNav();
+        hideToolBar();
         BitmapDescriptor defaultMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
         final Marker m = mMap.addMarker(new MarkerOptions()
                 .position(latLng)
@@ -437,6 +455,8 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                         @Override
                         public void onMenuCollapse() {
                             layout.setVisibility(View.INVISIBLE);
+                            ((HomeActivity)getActivity()).showBottomNav();
+                            showToolbar();
                             m.remove();
                         }
                         @Override
@@ -477,6 +497,8 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                         public void onMenuCollapse() {
                             layout.setVisibility(View.INVISIBLE);
                             m.remove();
+                            showToolbar();
+                            ((HomeActivity)getActivity()).showBottomNav();
                         }
                         @Override
                         public void onMenuExpand() {

@@ -2,24 +2,9 @@
 
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/touch"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <!--<android.support.design.widget.FloatingActionButton
-        android:id="@+id/newPost"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginEnd="32dp"
-        android:layout_marginRight="32dp"
-        android:layout_marginBottom="80dp"
-        android:src="@drawable/ic_new_post"
-        android:tint="#FFFFFF"
-        app:backgroundTint="#659DBD"
-        app:layout_constraintBottom_toBottomOf="@+id/map"
-        app:layout_constraintEnd_toEndOf="parent" />-->
 
 
     <com.linroid.filtermenu.library.FilterMenuLayout
@@ -28,8 +13,8 @@
         android:layout_height="wrap_content"
         android:clickable="true"
         android:elevation="8dp"
-        app:fm_centerBottom="50dp"
-        app:fm_centerRight="50dp"
+        app:fm_centerBottom="100dp"
+        app:fm_centerRight="30dp"
         app:fm_collapsedRadius="24dp"
         app:fm_expandedRadius="86dp"
         app:fm_primaryColor="#ff5791aa"
@@ -37,7 +22,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"></com.linroid.filtermenu.library.FilterMenuLayout>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <fragment
         android:id="@+id/map"
@@ -121,6 +106,7 @@
             app:srcCompat="@drawable/ic_more_vert_grey" />
 
     </android.support.constraint.ConstraintLayout>
+
     <FrameLayout
         android:id="@+id/map_touch_layer"
         android:layout_width="match_parent"
