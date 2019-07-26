@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/cvRoot"
     android:layout_width="match_parent"
-    android:layout_height="250dp"
+    android:layout_height="284dp"
     android:layout_marginLeft="8dp"
     android:layout_marginTop="8dp"
     android:layout_marginRight="8dp"
@@ -25,7 +25,7 @@
 
         <TextView
             android:id="@+id/textView2"
-            android:layout_width="360dp"
+            android:layout_width="match_parent"
             android:layout_height="67dp"
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
@@ -35,7 +35,7 @@
             android:layout_marginBottom="8dp"
             android:height="100dp"
             android:gravity="center"
-            android:text="CONGRATS! YOU'VE VISITED ALL OF THE COUNTRIES IN THE WORLD!"
+            android:text="CONGRATS! YOU'VE VISITED ALL OF THE CONTINENTS IN THE WORLD!"
             android:textColor="@color/grey"
             android:textSize="20dp"
             android:textStyle="bold"

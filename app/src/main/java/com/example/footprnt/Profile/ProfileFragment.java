@@ -91,6 +91,11 @@ public class ProfileFragment extends Fragment {
         if (resultCode == Constants.RELOAD_USERPROFILE_FRAGMENT_REQUEST_CODE) {
             mMultiAdapter.notifyItemChanged(0);
         }
+        if(resultCode == 302){
+            int position = data.getIntExtra("position",0);
+            mObjects.remove(position);
+            mMultiAdapter.notifyItemChanged(position);
+        }
     }
 
 

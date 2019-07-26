@@ -212,9 +212,9 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     Intent it = new Intent(mContext, EditPost.class);
                     Bundle bundle = new Bundle();
                     bundle.putSerializable(Post.class.getSimpleName(), post);
+                    bundle.putSerializable("position", position);
                     it.putExtras(bundle);
-                    // Start activity for result to reconfigure user view after return
-                    mContext.startActivity(it);
+                    ((Activity)mContext).startActivityForResult(it, 302);
                 }
             });
         }

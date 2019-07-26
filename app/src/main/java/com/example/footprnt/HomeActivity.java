@@ -48,6 +48,9 @@ BottomNavigationView navView;
         if (resultCode == Constants.RELOAD_USERPROFILE_FRAGMENT_REQUEST_CODE) {
             mFragment3.onActivityResult(requestCode, resultCode, data);
         }
+        if(resultCode == 302){
+            mFragment3.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     @Override

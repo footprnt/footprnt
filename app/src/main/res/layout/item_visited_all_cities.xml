@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/cvRoot"
     android:layout_width="match_parent"
-    android:layout_height="250dp"
+    android:layout_height="284dp"
     android:layout_marginLeft="8dp"
     android:layout_marginTop="8dp"
     android:layout_marginRight="8dp"
@@ -19,13 +19,13 @@
         <View
             android:id="@+id/vPalette"
             android:transitionName="palette"
-            android:background="@color/ivory_off_white"
+            android:background="@color/honeydew_off_white"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
         <TextView
             android:id="@+id/textView2"
-            android:layout_width="360dp"
+            android:layout_width="match_parent"
             android:layout_height="67dp"
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
