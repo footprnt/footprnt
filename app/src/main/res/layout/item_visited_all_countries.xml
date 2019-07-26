@@ -3,11 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/cvRoot"
     android:layout_width="match_parent"
-    android:layout_height="250dp"
+    android:layout_height="284dp"
     android:layout_marginLeft="8dp"
     android:layout_marginTop="8dp"
     android:layout_marginRight="8dp"
-    android:layout_marginBottom="80dp"
+    android:layout_marginBottom="8dp"
     android:clickable="true"
     android:foreground="?android:attr/selectableItemBackground"
     card_view:cardElevation="@dimen/card_elevation">>
@@ -19,12 +19,14 @@
         <View
             android:id="@+id/vPalette"
             android:transitionName="palette"
-            android:background="@color/honeydew_off_white"
+            android:background="@color/ivory_off_white"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
+
         <TextView
+            android:id="@+id/textView2"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="67dp"
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
@@ -32,14 +34,32 @@
             android:layout_marginRight="8dp"
             android:layout_marginBottom="8dp"
             android:height="100dp"
-            android:textColor="@color/grey"
             android:gravity="center"
-            android:text="NO POSTS TO SHOW"
+            android:text="CONGRATS! YOU'VE VISITED ALL OF THE CONTINENTS IN THE WORLD!"
+            android:textColor="@color/grey"
             android:textSize="20dp"
             android:textStyle="bold"
             card_view:layout_constraintBottom_toBottomOf="parent"
             card_view:layout_constraintEnd_toEndOf="parent"
+            card_view:layout_constraintHorizontal_bias="0.0"
             card_view:layout_constraintStart_toStartOf="parent"
-            card_view:layout_constraintTop_toTopOf="parent" />
+            card_view:layout_constraintTop_toTopOf="parent"
+            card_view:layout_constraintVertical_bias="0.167" />
+
+        <ImageView
+            android:id="@+id/imageView8"
+            android:layout_width="126dp"
+            android:layout_height="110dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
+            card_view:layout_constraintBottom_toBottomOf="@+id/vPalette"
+            card_view:layout_constraintEnd_toEndOf="parent"
+            card_view:layout_constraintHorizontal_bias="0.497"
+            card_view:layout_constraintStart_toStartOf="parent"
+            card_view:layout_constraintTop_toBottomOf="@+id/textView2"
+            card_view:srcCompat="@drawable/trophy" />
     </android.support.constraint.ConstraintLayout>
 </android.support.v7.widget.CardView>

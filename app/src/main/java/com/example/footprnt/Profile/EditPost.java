@@ -39,6 +39,7 @@ public class EditPost extends AppCompatActivity {
     EditText mEtTitle;
     EditText mEtLocation;
     Button mBtnDelete;
+    Button mBtnSave;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +51,8 @@ public class EditPost extends AppCompatActivity {
         Intent intent = this.getIntent();
         Bundle bundle = intent.getExtras();
         final Post post = (Post) bundle.getSerializable(Post.class.getSimpleName());
+        final int position = (int) bundle.getSerializable("position");
+
         // Set views
         mIvPicture = findViewById(R.id.ivPicture);
         mTvDate = findViewById(R.id.tvPostedAt);
@@ -57,21 +60,29 @@ public class EditPost extends AppCompatActivity {
         mEtTitle = findViewById(R.id.etTitle);
         mEtLocation = findViewById(R.id.etLocation);
         mBtnDelete = findViewById(R.id.btnDelete);
+        mBtnSave = findViewById(R.id.btnSave);
 
         String date = util.getRelativeTimeAgo(post.getCreatedAt().toString());
         mTvDate.setText(date);
         mEtTitle.setText(post.getTitle());
         mEtDescription.setText(post.getDescription());
-        String city = post.getCity();
-        String country = post.getCountry();
-        String continent = post.getContinent();
-        mEtLocation.setText(city + ", " + country + ", " + continent);
 
-        //TODO: Add save/delete button
+        StringBuilder sb = new StringBuilder();
+        if(post.getCity()!=null){
+            sb.append(post.getCity()+",");
+        }
+        if(post.getCountry()!=null){
+            sb.append(post.getCountry()+",");
+        }
+
+        if(post.getContinent()!=null){
+            sb.append(post.getContinent());
+        }
+
+        mEtLocation.setText(sb);
+
         if (post.getImage() != null) {
             Glide.with(this).load(post.getImage().getUrl()).into(mIvPicture);
-        } else {
-            Glide.with(this).load(R.drawable.ic_add_photo).into(mIvPicture);
         }
 
         // Set view window to be smaller for pop up effect
@@ -79,7 +90,7 @@ public class EditPost extends AppCompatActivity {
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int width = displayMetrics.widthPixels;
         int height = displayMetrics.heightPixels;
-        getWindow().setLayout((int) (width * .8), (int) (height * .7));
+        getWindow().setLayout((int) (width * .8), (int) (height * .8));
 
 
         // Delete post
@@ -96,6 +107,9 @@ public class EditPost extends AppCompatActivity {
                                 @Override
                                 public void done(ParseException e) {
                                     object.deleteInBackground();
+                                    Intent it = new Intent();
+                                    it.putExtra("position", position);
+                                    setResult(302, it);
                                     finish();
                                 }
                             });

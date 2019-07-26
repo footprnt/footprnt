@@ -165,8 +165,6 @@ public class UserSettings extends AppCompatActivity {
         mIvProfileImage = findViewById(R.id.ivProfileImageMain);
         if (user.getParseFile(Constants.profileImage) != null) {
             Glide.with(this).load(user.getParseFile(Constants.profileImage).getUrl()).into(mIvProfileImage);
-        } else {
-            Glide.with(this).load(R.drawable.ic_user).into(mIvProfileImage);
         }
         mEtUsername.setText(user.getUsername());
         mEtDescription.setText(user.getString("description"));
