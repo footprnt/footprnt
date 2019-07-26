@@ -40,17 +40,18 @@ public class EditPost extends AppCompatActivity {
     EditText mEtLocation;
     Button mBtnDelete;
     Button mBtnSave;
+    Post post;
+    Util util = new Util();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_edit_post);
-        Util util = new Util();
 
         // Get post from serializable extras
         Intent intent = this.getIntent();
         Bundle bundle = intent.getExtras();
-        final Post post = (Post) bundle.getSerializable(Post.class.getSimpleName());
+        post = (Post) bundle.getSerializable(Post.class.getSimpleName());
         final int position = (int) bundle.getSerializable("position");
 
         // Set views
@@ -62,28 +63,7 @@ public class EditPost extends AppCompatActivity {
         mBtnDelete = findViewById(R.id.btnDelete);
         mBtnSave = findViewById(R.id.btnSave);
 
-        String date = util.getRelativeTimeAgo(post.getCreatedAt().toString());
-        mTvDate.setText(date);
-        mEtTitle.setText(post.getTitle());
-        mEtDescription.setText(post.getDescription());
-
-        StringBuilder sb = new StringBuilder();
-        if(post.getCity()!=null){
-            sb.append(post.getCity()+",");
-        }
-        if(post.getCountry()!=null){
-            sb.append(post.getCountry()+",");
-        }
-
-        if(post.getContinent()!=null){
-            sb.append(post.getContinent());
-        }
-
-        mEtLocation.setText(sb);
-
-        if (post.getImage() != null) {
-            Glide.with(this).load(post.getImage().getUrl()).into(mIvPicture);
-        }
+        setViews();
 
         // Set view window to be smaller for pop up effect
         DisplayMetrics displayMetrics = new DisplayMetrics();
@@ -120,6 +100,50 @@ public class EditPost extends AppCompatActivity {
             }
         });
 
+
+        mBtnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                post.setTitle(mEtTitle.getText().toString());
+                post.setDescription(mEtDescription.getText().toString());
+                post.getUser().saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        Intent it = new Intent();
+                        it.putExtra("position", position);
+                        setResult(301, it);
+                        finish();
+                    }
+                });
+
+            }
+        });
+
     }
 
+
+    private void setViews(){
+        String date = util.getRelativeTimeAgo(post.getCreatedAt().toString());
+        mTvDate.setText(date);
+        mEtTitle.setText(post.getTitle());
+        mEtDescription.setText(post.getDescription());
+
+        StringBuilder sb = new StringBuilder();
+        if(post.getCity()!=null){
+            sb.append(post.getCity()+",");
+        }
+        if(post.getCountry()!=null){
+            sb.append(post.getCountry()+",");
+        }
+
+        if(post.getContinent()!=null){
+            sb.append(post.getContinent());
+        }
+
+        mEtLocation.setText(sb);
+
+        if (post.getImage() != null) {
+            Glide.with(this).load(post.getImage().getUrl()).into(mIvPicture);
+        }
+    }
 }
