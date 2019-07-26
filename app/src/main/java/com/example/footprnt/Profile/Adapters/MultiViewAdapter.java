@@ -25,6 +25,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.example.footprnt.Models.Post;
+import com.example.footprnt.Profile.Adapters.ViewHolders.NoPostsViewHolder;
 import com.example.footprnt.Profile.Adapters.ViewHolders.PostViewHolder;
 import com.example.footprnt.Profile.Adapters.ViewHolders.StatViewHolder;
 import com.example.footprnt.Profile.Adapters.ViewHolders.UserInfoViewHolder;
@@ -56,7 +57,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     ArrayList<Object> items;
 
     // Identifier for objects in items and which view to load:
-    private final int USER_INFO = 0, POST = 1, STAT = 2;
+    private final int USER_INFO = 0, POST = 1, STAT = 2, NO_POSTS = 3;
 
 
     /**
@@ -94,6 +95,8 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             return USER_INFO;
         } else if (items.get(position) instanceof ArrayList) {
             return STAT;
+        }  else if(items.get(position) instanceof String){
+            return NO_POSTS;
         }
         return -1;
     }
@@ -122,6 +125,11 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             case STAT:
                 View v3 = inflater.inflate(R.layout.item_user_stats, viewGroup, false);
                 viewHolder = new StatViewHolder(v3);
+                break;
+            case NO_POSTS:
+                View v4 = inflater.inflate(R.layout.item_no_posts, viewGroup, false);
+                viewHolder = new NoPostsViewHolder(v4);
+                break;
         }
         return viewHolder;
     }
@@ -149,6 +157,9 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 StatViewHolder vh3 = (StatViewHolder) viewHolder;
                 configureStatViewHolder(vh3, position);
                 break;
+            case NO_POSTS:
+                NoPostsViewHolder vh4 = (NoPostsViewHolder) viewHolder;
+                configureNoPostsViewHolder(vh4, position);
         }
     }
 
@@ -283,6 +294,22 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             }
         });
 
+    }
+
+    /**
+     * Method to configure the no posts view holder
+     *
+     * @param vh4      view holder to configure
+     * @param position position in adapter the no posts item is
+     */
+    private void configureNoPostsViewHolder(final NoPostsViewHolder vh4, final int position) {
+        SimpleTarget<Bitmap> target = new SimpleTarget<Bitmap>() {
+            @Override
+            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                Palette.from(resource).generate();
+                vh4.getTvPalette().setBackgroundColor(ContextCompat.getColor(mContext, R.color.honeydew_off_white));
+            }
+        };
     }
 
 

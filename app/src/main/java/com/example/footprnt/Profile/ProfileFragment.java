@@ -57,7 +57,6 @@ public class ProfileFragment extends Fragment {
     ArrayList<HashMap<String, Integer>> mStats;  // Stats to be passed to adapter
 
 
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -172,10 +171,15 @@ public class ProfileFragment extends Fragment {
                 mStats.add(mCountries);
                 mStats.add(mContinents);
 
+
                 mObjects.add(mStats);
                 mMultiAdapter.notifyDataSetChanged();
-                if(mPosts!=null) {
+                if (mPosts.size() > 0 && mPosts != null) {
                     mObjects.addAll(mPosts);
+                    mMultiAdapter.notifyDataSetChanged();
+                } else {
+                    // Handle case if user has no posts yet
+                    mObjects.add("No posts!");
                     mMultiAdapter.notifyDataSetChanged();
                 }
             }
