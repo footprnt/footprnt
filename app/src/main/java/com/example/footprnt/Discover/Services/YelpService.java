@@ -35,13 +35,13 @@ public class YelpService {
      * @param location current location (city)
      * @param callback response from yelp
      */
-    public static void findRestaurants(String location, Callback callback) {
+    public static void findRestaurants(String baltimore, Callback callback) {
 
         OkHttpClient client = new OkHttpClient.Builder()
                 .build();
 
         HttpUrl.Builder urlBuilder = HttpUrl.parse(Constants.YELP_BASE_URL).newBuilder();
-        urlBuilder.addQueryParameter(Constants.YELP_LOCATION_QUERY_PARAMETER, location);
+        urlBuilder.addQueryParameter(Constants.YELP_LOCATION_QUERY_PARAMETER, baltimore);
         String url = urlBuilder.build().toString();
 
         Request request = new Request.Builder()
