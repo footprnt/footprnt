@@ -196,8 +196,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         super.onViewCreated(view, savedInstanceState);
         setupAutoCompleteFragment();
         layout = (FilterMenuLayout) getActivity().findViewById(R.id.filter_menu4);
-
-        layout.setVisibility(View.GONE);
+        layout.setVisibility(View.INVISIBLE);
         mLocationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
         mLocationListener = new LocationListener() {
             @Override
