@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/touch"
     android:layout_width="match_parent"
-    android:id="@+id/fragment_map"
     android:layout_height="match_parent">
 
     <android.support.design.widget.FloatingActionButton
@@ -19,26 +21,50 @@
         app:layout_constraintBottom_toBottomOf="@+id/map"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/topNav"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@android:color/white"
+
+    <com.linroid.filtermenu.library.FilterMenuLayout
+        android:id="@+id/filter_menu4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:elevation="8dp"
+        app:fm_centerLeft="50dp"
+        app:fm_centerTop="150dp"
+        app:fm_collapsedRadius="24dp"
+        app:fm_expandedRadius="86dp"
+        app:fm_primaryColor="#ff5791aa"
+        app:fm_primaryDarkColor="#ff334862"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"></com.linroid.filtermenu.library.FilterMenuLayout>
+
+    <fragment
+        android:id="@+id/map"
+        class="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+        />
+
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/relLayout1"
         android:layout_width="0dp"
-        android:layout_height="40dp"
+        android:layout_height="50dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toStartOf="@+id/ivSettings"
-        app:layout_constraintStart_toStartOf="@+id/topNav"
-        app:layout_constraintTop_toTopOf="@+id/topNav">
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:background="@drawable/while_color"
+        android:elevation="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
 
         <ImageView
@@ -61,59 +87,47 @@
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/ivSettings"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.538" />
 
         <EditText
+            android:id="@+id/searchText"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
-            android:hint="Explore area"
+            android:hint="Enter Address, City or Zip Code"
+            android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/switch1"
             app:layout_constraintStart_toEndOf="@+id/imageView6"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:imeOptions="actionSearch"/>
+
+        <ImageView
+            android:id="@+id/ivSettings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/searchText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_more_vert_grey" />
 
     </android.support.constraint.ConstraintLayout>
-
-    <fragment
-        android:id="@+id/map"
-        class="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/topNav" />
-
     <FrameLayout
-        android:id="@+id/fl"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/map">
-
-        <View
-            android:id="@+id/view"
-            android:layout_width="match_parent"
-            android:layout_height="5dp"
-            android:background="@drawable/toolbar_dropshadow" />
+        android:id="@+id/map_touch_layer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
 
     </FrameLayout>
 
-    <ImageView
-        android:id="@+id/ivSettings"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        app:layout_constraintEnd_toEndOf="@+id/topNav"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_more_vert_grey" />
 
 </android.support.constraint.ConstraintLayout>
+

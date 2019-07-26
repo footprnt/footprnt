@@ -39,13 +39,18 @@ import android.support.v7.widget.PopupMenu;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Scroller;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -56,6 +61,7 @@ import com.bumptech.glide.Glide;
 import com.example.footprnt.Manifest;
 import com.example.footprnt.Map.Util.MapConstants;
 import com.example.footprnt.Map.Util.MapUtil;
+import com.example.footprnt.Map.Util.SingleLineET;
 import com.example.footprnt.Models.MarkerDetails;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.R;
@@ -70,6 +76,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.linroid.filtermenu.library.FilterMenu;
+import com.linroid.filtermenu.library.FilterMenuLayout;
 import com.parse.FindCallback;
 import com.parse.ParseACL;
 import com.parse.ParseException;
@@ -97,22 +105,23 @@ import static android.content.Context.LOCATION_SERVICE;
  * @version 1.0
  * @since 2019-07-22
  */
-public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickListener, GoogleMap.OnMapClickListener, OnMapReadyCallback {
+public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickListener, OnMapReadyCallback {
 
     // Map variables
     private GoogleMap mMap;
+    SupportMapFragment mapFrag;
     private LocationManager mLocationManager;
     private LocationListener mLocationListener;
     private Util mHelper;
     private boolean mJumpToCurrentLocation = false;
     private JSONObject mContinents;
     private Location mLocation;
+    private EditText mSearchText;
 
     // Display variables
     private CustomInfoWindowAdapter mInfoAdapter;
     ArrayList<Marker> markers;
-    private Marker mMarkerShow;
-    private MapRipple mMapRipple;
+    FilterMenuLayout layout;
     private ArrayList<MarkerDetails> mMarkerDetails;
     private ImageView mImage;
     private File mPhotoFile;
@@ -121,6 +130,8 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     private ParseUser mUser;
     private int mMapStyle;
     private Switch mSwitch;
+    private float mLocationX;
+    private float mLocationY;
 
     // Tag variables
     private ArrayList<String> mTags;
@@ -142,12 +153,12 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
 
         View v = inflater.inflate(R.layout.fragment_map, container, false);
 
-        SupportMapFragment mapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        mapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         MapsInitializer.initialize(this.getActivity());
         mapFrag.getMapAsync(this);
         mHelper = new Util();
         mUser = ParseUser.getCurrentUser();
-        ParseACL acl = new ParseACL();          // set permissions
+        ParseACL acl = new ParseACL(); // set permissions
         acl.setPublicReadAccess(true);
         acl.setPublicWriteAccess(true);
         mUser.setACL(acl);
@@ -175,6 +186,10 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mSearchText = getActivity().findViewById(R.id.searchText);
+        mSearchText.addTextChangedListener(new SingleLineET(mSearchText));
+        layout = (FilterMenuLayout) getActivity().findViewById(R.id.filter_menu4);
+        layout.setVisibility(View.INVISIBLE);
         ImageView newPost = getView().findViewById(R.id.newPost);
         newPost.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -189,7 +204,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 mLocation = location;
                 if (mJumpToCurrentLocation) {
                     mJumpToCurrentLocation = false;
-                    mHelper.centreMapOnLocation(mMap, location, "Your Location");
+                    mHelper.centreMapOnLocation(mMap, location);
                 }
             }
 
@@ -205,27 +220,35 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
             public void onProviderDisabled(String s) {
             }
         };
+        FrameLayout mapTouchLayer = getActivity().findViewById(R.id.map_touch_layer);
+        mapTouchLayer.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                mLocationX = (event.getX());
+                mLocationY = (event.getY());
+                return false; // Pass on the touch to the map or shadow layer.
+            }
+        });
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setInfoWindowAdapter(mInfoAdapter);
+        mMap.getUiSettings().setMapToolbarEnabled(true);
+        View toolbar = ((View) mapFrag.getView().findViewById(Integer.parseInt("1")).
+                getParent()).findViewById(Integer.parseInt("4"));
+        RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) toolbar.getLayoutParams();
+        rlp.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
+        rlp.setMargins(100, 0, 0, 100);
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                if (!marker.equals(mMarkerShow)) {
-                    mMarkerShow = marker;
-                    marker.showInfoWindow();
-                } else {
-                    marker.hideInfoWindow();
-                    mMarkerShow = null;
-                }
-                return true;
+                marker.showInfoWindow();
+                return false;
             }
         });
         mMap.setOnMapLongClickListener(this);
-        mMap.setOnMapClickListener(this);
         try {
             boolean success = mMap.setMapStyle(
                     MapStyleOptions.loadRawResourceStyle(
@@ -240,6 +263,8 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         mJumpToCurrentLocation = true;
         setUpMapIfNeeded();
         loadMarkers();
+        handleToggle();
+        init();
     }
 
     private void setUpMapIfNeeded() {
@@ -248,9 +273,14 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
             return;
         }
         mMap.setMyLocationEnabled(true);
+        View locationButton = ((View) getActivity().findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
+        RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) locationButton.getLayoutParams();
+        rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
+        rlp.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
+        rlp.setMargins(0, 200, 180, 0);
         if (mJumpToCurrentLocation && mLocation != null) {
             mJumpToCurrentLocation = false;
-            mHelper.centreMapOnLocation(mMap, mLocation, "Your Location");
+            mHelper.centreMapOnLocation(mMap, mLocation);
         }
 
         mMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
@@ -261,7 +291,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 temp.setLongitude(arg0.getLongitude());
                 if (mJumpToCurrentLocation) {
                     mJumpToCurrentLocation = false;
-                    mHelper.centreMapOnLocation(mMap, temp, "Your Location");
+                    mHelper.centreMapOnLocation(mMap, temp);
                 }
             }
         });
@@ -297,6 +327,9 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         });
     }
 
+    /**
+     * Loads map markers for all user's posts
+     */
     public void loadAllMarkers(){
         mMarkerDetails = new ArrayList<>();
         markers = new ArrayList<>();
@@ -321,7 +354,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     }
 
     /**
-     * Create a Google Map marker at specified point with title and text
+     * Create a Google Map marker at specified point with given marker details
      *
      * @param md marker detail
      */
@@ -360,25 +393,57 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     }
 
     @Override
-    public void onMapLongClick(LatLng latLng) {
-        Toast.makeText(getContext(), mHelper.getAddress(getContext(), latLng), Toast.LENGTH_LONG).show();
-        showAlertDialogForPoint(latLng);
+    public void onMapLongClick(final LatLng latLng) {
+        System.out.println(mLocationX);
+        System.out.println(mLocationY);
+        layout.setVisibility(View.VISIBLE);
+//        FilterMenu fm = new FilterMenu();
+//        FilterMenuLayout filterMenuLayout = new FilterMenuLayout(getContext(), );
+//        fm.setMenuLayout(filterMenuLayout);
+//        layout.setMenu(fm);
+        setupMenu(latLng);
     }
 
-    @Override
-    public void onMapClick(LatLng latLng) {
-        mMapRipple = new MapRipple(mMap, latLng, getContext())
-                .withNumberOfRipples(3)
-                .withFillColor(Color.CYAN)
-                .withStrokeColor(Color.BLACK)
-                .withDistance(2000)      // 8046.72 for 5 miles
-                .withRippleDuration(12000)    //12000ms
-                .withTransparency(0.6f);
-        mMapRipple.startRippleMapAnimation();      //in onMapReadyCallBack
-        Intent i = new Intent(getActivity(), FeedActivity.class);
-        i.putExtra("latitude", latLng.latitude);
-        i.putExtra("longitude", latLng.longitude);
-        startActivity(i);
+    public void setupMenu(final LatLng latLng){
+
+        FilterMenu menu = new FilterMenu.Builder(getContext())
+                .addItem(R.drawable.ic_pencil_white)
+                .addItem(R.drawable.ic_world_white)
+                .addItem(R.drawable.ic_rocket_white)
+                .attach(layout)
+                .withListener(new FilterMenu.OnMenuChangeListener() {
+                    @Override
+                    public void onMenuItemClick(View view, int position) {
+                        if (MapConstants.menuItems[position] == MapConstants.CREATE){
+                            showAlertDialogForPoint(latLng);
+                        }
+                        if (MapConstants.menuItems[position] == MapConstants.VIEW){
+                            MapRipple mMapRipple = new MapRipple(mMap, latLng, getContext())
+                                    .withNumberOfRipples(3)
+                                    .withFillColor(Color.CYAN)
+                                    .withStrokeColor(Color.BLACK)
+                                    .withDistance(2000)      // 8046.72 for 5 miles
+                                    .withRippleDuration(12000)    //12000ms
+                                    .withTransparency(0.6f);
+                            mMapRipple.startRippleMapAnimation();      //in onMapReadyCallBack
+                            Intent i = new Intent(getActivity(), FeedActivity.class);
+                            i.putExtra("latitude", latLng.latitude);
+                            i.putExtra("longitude", latLng.longitude);
+                            startActivity(i);
+                        }
+                        if (MapConstants.menuItems[position] == MapConstants.DISCOVER){
+                            //TODO
+                        }
+                    }
+                    @Override
+                    public void onMenuCollapse() {
+                    }
+                    @Override
+                    public void onMenuExpand() {
+                    }
+                })
+                .build();
+
     }
 
     /**
@@ -498,8 +563,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     public void createPostCurrentLocation() {
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             Location location = mMap.getMyLocation();
-//            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mLocationListener);
-//            Location lastKnownLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             LatLng currLocation = new LatLng(location.getLatitude(), location.getLongitude());
             showAlertDialogForPoint(currLocation);
         }
@@ -597,6 +660,42 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         }
     }
 
+    private void init(){
+        mSearchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH
+                        || actionId == EditorInfo.IME_ACTION_DONE
+                        || event.getAction() == KeyEvent.ACTION_DOWN
+                        || event.getAction() == KeyEvent.KEYCODE_ENTER){
+                    geoLocate();
+                }
+                return false;
+            }
+        });
+    }
+
+    private void geoLocate(){
+        String searchString = mSearchText.getText().toString();
+
+        Geocoder geocoder = new Geocoder(getContext());
+        List<Address> list = new ArrayList<>();
+        try{
+            list = geocoder.getFromLocationName(searchString, 1);
+        } catch (IOException e){
+
+        }
+
+        if (list.size() > 0){
+            Address address = list.get(0);
+            Location l = new Location(LocationManager.GPS_PROVIDER);
+            l.setLatitude(address.getLatitude());
+            l.setLongitude(address.getLongitude());
+            Util.centreMapOnLocation(mMap, l);
+            BitmapDescriptor defaultMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
+        }
+    }
+
     /**
      * Handles toggling of tags when in create view dialog
      */
@@ -683,6 +782,9 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         });
     }
 
+    /**
+     * Handles toggling of user posts vs all posts
+     */
     public void handleToggle() {
         mSwitch = getView().findViewById(R.id.switch1);
         mSwitch.setChecked(false);
