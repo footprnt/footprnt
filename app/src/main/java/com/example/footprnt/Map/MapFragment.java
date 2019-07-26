@@ -461,7 +461,11 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                                 //TODO
                             }
                             if (MapConstants.menuItems[position] == MapConstants.CURRENT) {
-                                
+                                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                                    Location location = mMap.getMyLocation();
+                                    LatLng currLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                                    showAlertDialogForPoint(currLocation);
+                                }
                             }
                         }
                         @Override
