@@ -132,6 +132,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     private Switch mSwitch;
     private float mLocationX;
     private float mLocationY;
+    private boolean mMenuItemsAdded;
 
     // Tag variables
     private ArrayList<String> mTags;
@@ -174,6 +175,8 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         mPopup = new PopupMenu(getActivity(), mSettings);
         mPopup.getMenuInflater().inflate(R.menu.popup_menu_map, mPopup.getMenu());
         configureMapStyleMenu();
+
+        mMenuItemsAdded = false;
         return v;
     }
 
@@ -189,14 +192,14 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         mSearchText = getActivity().findViewById(R.id.searchText);
         mSearchText.addTextChangedListener(new SingleLineET(mSearchText));
         layout = (FilterMenuLayout) getActivity().findViewById(R.id.filter_menu4);
-        layout.setVisibility(View.INVISIBLE);
-        ImageView newPost = getView().findViewById(R.id.newPost);
-        newPost.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                createPostCurrentLocation();
-            }
-        });
+        layout.setVisibility(View.GONE);
+//        ImageView newPost = getView().findViewById(R.id.newPost);
+//        newPost.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                createPostCurrentLocation();
+//            }
+//        });
         mLocationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
         mLocationListener = new LocationListener() {
             @Override
@@ -394,55 +397,96 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
 
     @Override
     public void onMapLongClick(final LatLng latLng) {
-        System.out.println(mLocationX);
-        System.out.println(mLocationY);
+        BitmapDescriptor defaultMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
+        final Marker m = mMap.addMarker(new MarkerOptions()
+                .position(latLng)
+                .title("")
+                .snippet("")
+                .icon(defaultMarker));
+        layout = getActivity().findViewById(R.id.filter_menu4);
         layout.setVisibility(View.VISIBLE);
-//        FilterMenu fm = new FilterMenu();
-//        FilterMenuLayout filterMenuLayout = new FilterMenuLayout(getContext(), );
-//        fm.setMenuLayout(filterMenuLayout);
-//        layout.setMenu(fm);
-        setupMenu(latLng);
-    }
+        if (!mMenuItemsAdded){
+            mMenuItemsAdded = true;
+            FilterMenu menu = new FilterMenu.Builder(getContext())
+                    .addItem(R.drawable.ic_pencil_white)
+                    .addItem(R.drawable.ic_world_white)
+                    .addItem(R.drawable.ic_rocket_white)
+                    .attach(layout)
+                    .withListener(new FilterMenu.OnMenuChangeListener() {
+                        @Override
+                        public void onMenuItemClick(View view, int position) {
+                            if (MapConstants.menuItems[position] == MapConstants.CREATE){
+                                showAlertDialogForPoint(latLng);
+                            }
+                            if (MapConstants.menuItems[position] == MapConstants.VIEW){
+                                MapRipple mMapRipple = new MapRipple(mMap, latLng, getContext())
+                                        .withNumberOfRipples(3)
+                                        .withFillColor(Color.CYAN)
+                                        .withStrokeColor(Color.BLACK)
+                                        .withDistance(2000)      // 8046.72 for 5 miles
+                                        .withRippleDuration(12000)    //12000ms
+                                        .withTransparency(0.6f);
+                                mMapRipple.startRippleMapAnimation();      //in onMapReadyCallBack
+                                Intent i = new Intent(getActivity(), FeedActivity.class);
+                                i.putExtra("latitude", latLng.latitude);
+                                i.putExtra("longitude", latLng.longitude);
+                                startActivity(i);
+                            }
+                            if (MapConstants.menuItems[position] == MapConstants.DISCOVER){
+                                //TODO
+                            }
+                        }
+                        @Override
+                        public void onMenuCollapse() {
+                            layout.setVisibility(View.INVISIBLE);
+                            m.remove();
+                        }
+                        @Override
+                        public void onMenuExpand() {
+                        }
+                    })
+                    .build();
+            menu.toggle(true);
 
-    public void setupMenu(final LatLng latLng){
-
-        FilterMenu menu = new FilterMenu.Builder(getContext())
-                .addItem(R.drawable.ic_pencil_white)
-                .addItem(R.drawable.ic_world_white)
-                .addItem(R.drawable.ic_rocket_white)
-                .attach(layout)
-                .withListener(new FilterMenu.OnMenuChangeListener() {
-                    @Override
-                    public void onMenuItemClick(View view, int position) {
-                        if (MapConstants.menuItems[position] == MapConstants.CREATE){
-                            showAlertDialogForPoint(latLng);
+        } else {
+            FilterMenu menu = new FilterMenu.Builder(getContext())
+                    .attach(layout)
+                    .withListener(new FilterMenu.OnMenuChangeListener() {
+                        @Override
+                        public void onMenuItemClick(View view, int position) {
+                            if (MapConstants.menuItems[position] == MapConstants.CREATE){
+                                showAlertDialogForPoint(latLng);
+                            }
+                            if (MapConstants.menuItems[position] == MapConstants.VIEW){
+                                MapRipple mMapRipple = new MapRipple(mMap, latLng, getContext())
+                                        .withNumberOfRipples(3)
+                                        .withFillColor(Color.CYAN)
+                                        .withStrokeColor(Color.BLACK)
+                                        .withDistance(2000)      // 8046.72 for 5 miles
+                                        .withRippleDuration(12000)    //12000ms
+                                        .withTransparency(0.6f);
+                                mMapRipple.startRippleMapAnimation();      //in onMapReadyCallBack
+                                Intent i = new Intent(getActivity(), FeedActivity.class);
+                                i.putExtra("latitude", latLng.latitude);
+                                i.putExtra("longitude", latLng.longitude);
+                                startActivity(i);
+                            }
+                            if (MapConstants.menuItems[position] == MapConstants.DISCOVER){
+                                //TODO
+                            }
                         }
-                        if (MapConstants.menuItems[position] == MapConstants.VIEW){
-                            MapRipple mMapRipple = new MapRipple(mMap, latLng, getContext())
-                                    .withNumberOfRipples(3)
-                                    .withFillColor(Color.CYAN)
-                                    .withStrokeColor(Color.BLACK)
-                                    .withDistance(2000)      // 8046.72 for 5 miles
-                                    .withRippleDuration(12000)    //12000ms
-                                    .withTransparency(0.6f);
-                            mMapRipple.startRippleMapAnimation();      //in onMapReadyCallBack
-                            Intent i = new Intent(getActivity(), FeedActivity.class);
-                            i.putExtra("latitude", latLng.latitude);
-                            i.putExtra("longitude", latLng.longitude);
-                            startActivity(i);
+                        @Override
+                        public void onMenuCollapse() {
+                            layout.setVisibility(View.INVISIBLE);
+                            m.remove();
                         }
-                        if (MapConstants.menuItems[position] == MapConstants.DISCOVER){
-                            //TODO
+                        @Override
+                        public void onMenuExpand() {
                         }
-                    }
-                    @Override
-                    public void onMenuCollapse() {
-                    }
-                    @Override
-                    public void onMenuExpand() {
-                    }
-                })
-                .build();
+                    })
+                    .build();
+            menu.toggle(true);
+        }
 
     }
 
