@@ -170,10 +170,11 @@ public class ProfileFragment extends Fragment {
                 mStats.add(mCities);
                 mStats.add(mCountries);
                 mStats.add(mContinents);
-
-
                 mObjects.add(mStats);
+
                 mMultiAdapter.notifyDataSetChanged();
+
+
                 if (mPosts.size() > 0 && mPosts != null) {
                     mObjects.addAll(mPosts);
                     mMultiAdapter.notifyDataSetChanged();

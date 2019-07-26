@@ -96,12 +96,13 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             return USER_INFO;
         } else if (items.get(position) instanceof ArrayList) {
             return STAT;
-        }  else if(items.get(position) instanceof String){
+        } else if (items.get(position) instanceof String) {
             return NO_POSTS;
         }
         return -1;
     }
 
+    LayoutInflater inflater;
 
     /**
      * Creates different RecyclerView.ViewHolder objects based on the item view type.
@@ -113,7 +114,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         RecyclerView.ViewHolder viewHolder = null;
-        LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
+        inflater = LayoutInflater.from(viewGroup.getContext());
         switch (viewType) {
             case POST:
                 View v1 = inflater.inflate(R.layout.item_post_card, viewGroup, false);
@@ -258,25 +259,51 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         final HashMap<String, Integer> countries = stats.get(1);
         final HashMap<String, Integer> continents = stats.get(2);
 
-        if (cities != null) {
+        if (cities != null && cities.size() < ProfileConstants.totalNumCities) {
             setUpPieChart(vh3.getPieChartCity(), cities.size(), ProfileConstants.totalNumCities, "Visited Cities");
+        } else {
+
+            View view = vh3.getRootView().findViewById(R.id.pieChartCity);
+            if(view!=null) {
+                ViewGroup parent = (ViewGroup) view.getParent();
+                int index = parent.indexOfChild(view);
+                parent.removeView(view);
+                view = inflater.inflate(R.layout.item_visited_all_cities, parent, false);
+                parent.addView(view, index);
+            }
         }
 
-        if (countries != null) {
-            setUpPieChart(vh3.getPieChartCountry(), countries.size(), ProfileConstants.totalNumContinents, "Visited Countries");
+
+        if (countries != null && countries.size() < ProfileConstants.totalNumCountries) {
+            setUpPieChart(vh3.getPieChartCountry(), countries.size(), ProfileConstants.totalNumCountries, "Visited Countries");
+        } else {
+            View view = vh3.getRootView().findViewById(R.id.pieChartCountry);
+            if(view!=null) {
+                ViewGroup parent = (ViewGroup) view.getParent();
+                int index = parent.indexOfChild(view);
+                parent.removeView(view);
+                view = inflater.inflate(R.layout.item_visited_all_countries, parent, false);
+                parent.addView(view, index);
+            }
         }
 
-        if (continents != null) {
-            setUpPieChart(vh3.getPieChartContinent(), continents.size(), ProfileConstants.totalNumCountries, "Visited Continents");
+        if (continents != null && continents.size() < ProfileConstants.totalNumContinents) {
+            setUpPieChart(vh3.getPieChartContinent(), continents.size(), ProfileConstants.totalNumContinents, "Visited Continents");
+        } else {
+            View view = vh3.getRootView().findViewById(R.id.pieChartContinent);
+            if(view!=null) {
+                ViewGroup parent = (ViewGroup) view.getParent();
+                int index = parent.indexOfChild(view);
+                parent.removeView(view);
+                view = inflater.inflate(R.layout.item_visited_all_continents, parent, false);
+                parent.addView(view, index);
+            }
         }
-
 
         final MediaPlayer mp = MediaPlayer.create(mContext, R.raw.pop);
         vh3.getNextButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
                 mp.start();
                 vh3.getViewFlipper().setInAnimation(mContext, R.anim.flipin);
                 vh3.getViewFlipper().setOutAnimation(mContext, R.anim.flipout);

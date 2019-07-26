@@ -52,7 +52,7 @@ public class HomeActivity extends AppCompatActivity {
 
         final BottomNavigationView navView = findViewById(R.id.nav_view);
 
-        final MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.pop_two);
+        final MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.pop_two  );
         navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
