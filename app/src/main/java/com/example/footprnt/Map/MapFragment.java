@@ -197,7 +197,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setupAutoCompleteFragment();
         layout = (FilterMenuLayout) getActivity().findViewById(R.id.filter_menu4);
         layout.setVisibility(View.INVISIBLE);
         mLocationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
@@ -264,6 +263,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         }
 
         mJumpToCurrentLocation = true;
+        setupAutoCompleteFragment();
         setUpMapIfNeeded();
         loadMarkers();
         handleToggle();
@@ -433,7 +433,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                                 startActivity(i);
                             }
                             if (MapConstants.menuItems[position] == MapConstants.DISCOVER){
-                                //TODO
                             }
                         }
                         @Override
@@ -885,20 +884,8 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
 
     }
 
-    private LatLng sydney = new LatLng(-8.579892, 116.095239);
-
-
     private void setupAutoCompleteFragment() {
-
         SupportPlaceAutocompleteFragment autocompleteFragment = new SupportPlaceAutocompleteFragment();
-        android.support.v4.app.FragmentManager fm = getFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.fragment_content, autocompleteFragment);
-        ft.commit();
-
-//        autocompleteFragment = (PlaceAutocompleteFragment)
-//                getActivity().getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
-//
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
@@ -914,34 +901,10 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 Log.e("Error", status.getStatusMessage());
             }
         });
-//        SupportPlaceAutocompleteFragment autocompleteFragment = (SupportPlaceAutocompleteFragment)
-//                getChildFragmentManager()
-//                        .findFragmentById(R.id.place_autocomplete_fragment);
-//
-//        autocompleteFragment.setOnPlaceSelectedListener(new com.google.android.gms.location.places.ui.PlaceSelectionListener() {
-//            @Override
-//            public void onPlaceSelected(com.google.android.gms.location.places.Place place) {
-//                Location l = new Location(LocationManager.GPS_PROVIDER);
-//                l.setLatitude(place.getLatLng().latitude);
-//                l.setLatitude(place.getLatLng().longitude);
-//                Util.centreMapOnLocation(mMap, l);
-//                BitmapDescriptor defaultMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
-//            }
-//
-//            @Override
-//            public void onError(Status status) {
-//                Log.e("Error", status.getStatusMessage());
-//            }
-//        });
+        android.support.v4.app.FragmentManager fm = getFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.fragment_content, autocompleteFragment);
+        ft.commit();
     }
-
-//    @Override
-//    public void onDestroyView() {
-//        if (autocompleteFragment != null) {
-//            FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
-//            fragmentTransaction.remove(autocompleteFragment).commitNowAllowingStateLoss();
-//        }
-//        super.onDestroyView();
-//    }
 
 }

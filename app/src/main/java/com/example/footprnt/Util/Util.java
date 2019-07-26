@@ -85,7 +85,7 @@ public class Util {
         LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());
         BitmapDescriptor defaultMarker =
                 BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
-        map.animateCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 12));
+        map.animateCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 10));
     }
 
     /**
