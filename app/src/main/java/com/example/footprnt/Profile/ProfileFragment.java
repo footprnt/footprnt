@@ -91,11 +91,19 @@ public class ProfileFragment extends Fragment {
         if (resultCode == Constants.RELOAD_USERPROFILE_FRAGMENT_REQUEST_CODE) {
             mMultiAdapter.notifyItemChanged(0);
         }
+        // delete post
         if(resultCode == 302){
             int position = data.getIntExtra("position",0);
             mObjects.remove(position);
             mMultiAdapter.notifyItemChanged(position);
         }
+        // save post
+        if(resultCode == 301){
+            int position = data.getIntExtra("position",0);
+            mMultiAdapter.notifyItemChanged(1);  // stats update
+            mMultiAdapter.notifyItemChanged(position);
+        }
+
     }
 
 

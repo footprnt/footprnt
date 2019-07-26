@@ -172,7 +172,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
      * @param position position in adapter the POST item is
      */
     private void configurePostViewHolder(final PostViewHolder vh1, final int position) {
-        final Post post = (Post) items.get(position);
+        Post post = (Post) items.get(position);
         if (post != null) {
             vh1.getRootView().setTag(post);
             StringBuilder sb = new StringBuilder();
@@ -209,9 +209,10 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             vh1.getIvImage().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Post post2 = (Post)items.get(position);
                     Intent it = new Intent(mContext, EditPost.class);
                     Bundle bundle = new Bundle();
-                    bundle.putSerializable(Post.class.getSimpleName(), post);
+                    bundle.putSerializable(Post.class.getSimpleName(), post2);
                     bundle.putSerializable("position", position);
                     it.putExtras(bundle);
                     ((Activity)mContext).startActivityForResult(it, 302);
