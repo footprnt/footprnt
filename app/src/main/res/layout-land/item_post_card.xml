@@ -6,7 +6,7 @@
     android:layout_marginTop="8dp"
     android:layout_marginBottom="8dp"
     android:layout_width="match_parent"
-    android:layout_height="200dp"
+    android:layout_height="230dp"
     android:clickable="true"
     card_view:cardElevation="@dimen/card_elevation"
     android:foreground="?android:attr/selectableItemBackground">>
@@ -18,21 +18,21 @@
 
         <ImageView
             android:id="@+id/ivImage"
-            android:transitionName="profile"
-            android:layout_width="280dp"
+            android:layout_width="617dp"
             android:layout_height="match_parent"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerCrop"
+            android:transitionName="profile" />
 
         <RelativeLayout
             android:layout_alignParentBottom="true"
-            android:layout_width="100dp"
+            android:layout_width="150dp"
             android:layout_height="match_parent">
 
             <View
                 android:id="@+id/vPalette"
-                android:transitionName="palette"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:transitionName="palette" />
 
             <TextView
                 android:id="@+id/tvTitle"

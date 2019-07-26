@@ -24,6 +24,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class UserInfoViewHolder extends RecyclerView.ViewHolder {
     CircleImageView mIvProfileImage;
     TextView mTvEditProfile;
+    TextView mUsername;
+    TextView mDescription;
 
     /**
      * Setter for the profile image on profile page
@@ -50,6 +52,24 @@ public class UserInfoViewHolder extends RecyclerView.ViewHolder {
         return mIvProfileImage;
     }
 
+    /**
+     * Getter for TextView for username
+     *
+     * @return TextView for username
+     */
+    public TextView getTvUsername() {
+        return mUsername;
+    }
+
+    /**
+     * Getter for TextView for Description
+     *
+     * @return TextView for Description
+     */
+    public TextView getTvDescription() {
+        return mDescription;
+    }
+
 
     /**
      * Constructor for UserInfoViewHolder
@@ -60,5 +80,7 @@ public class UserInfoViewHolder extends RecyclerView.ViewHolder {
         super(v);
         mIvProfileImage = v.findViewById(R.id.ivProfileImageMain);
         mTvEditProfile = v.findViewById(R.id.tvEditProfile);
+        mDescription = v.findViewById(R.id.tvDescription);
+        mUsername = v.findViewById(R.id.tvUsername);
     }
 }

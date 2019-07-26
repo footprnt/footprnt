@@ -10,7 +10,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -33,11 +33,13 @@ import com.example.footprnt.Profile.UserSettings;
 import com.example.footprnt.Profile.Util.ProfileConstants;
 import com.example.footprnt.R;
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.parse.GetCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
@@ -164,27 +166,25 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             String countryName = post.getCountry();
             String continentName = post.getContinent();
             vh1.getTvTitle().setText(String.format("%s, %s, %s", cityName, countryName, continentName));
-            vh1.getTvTitle().setTextColor(Color.WHITE);
-            vh1.getTvPalette().setBackgroundColor(ContextCompat.getColor(mContext, R.color.grey));
+            vh1.getTvTitle().setTextColor(ContextCompat.getColor(mContext, R.color.grey));
 
             SimpleTarget<Bitmap> target = new SimpleTarget<Bitmap>() {
                 @Override
                 public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                     vh1.getIvImage().setImageBitmap(resource);
                     Palette.from(resource).generate();
-                    vh1.getTvPalette().setBackgroundColor(ContextCompat.getColor(mContext, R.color.grey));
+                    vh1.getTvPalette().setBackgroundColor(ContextCompat.getColor(mContext, R.color.honeydew_off_white));
                 }
             };
 
             vh1.getIvImage().setTag(target);
-            // TODO: Maybe don't crop image as it looks very small
             if (post.getImage() != null) {
                 Glide.with(mContext).asBitmap().load(post.getImage().getUrl()).centerCrop().into(target);
             } else {
                 // TODO: fix default image loaded where no image present to be prettier
                 Glide.with(mContext).asBitmap().load(R.drawable.ic_add_photo).centerCrop().into(target);
             }
-            // TODO: fix this to start dialog vs. activity (see parent = AlertDialog)
+
             vh1.getIvImage().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -205,8 +205,9 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
      * @param vh2      view holder to configure
      * @param position in adapter the USER_INFO item is
      */
-    private void configureUserInfoViewHolder(UserInfoViewHolder vh2, final int position) {
-        ParseUser user = (ParseUser) items.get(position);
+    private void configureUserInfoViewHolder(final UserInfoViewHolder vh2, final int position) {
+        final ParseUser user = ParseUser.getCurrentUser();
+        //= (ParseUser) items.get(position);
         if (user != null) {
             if (user.getParseFile(com.example.footprnt.Util.Constants.profileImage) != null) {
                 vh2.setIvProfileImage(user.getParseFile(com.example.footprnt.Util.Constants.profileImage).getUrl(), mContext);
@@ -215,7 +216,15 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 // TODO: change this to be more pretty (i.e. the tint of the image)
                 Glide.with(mContext).load(R.drawable.ic_user).into(vh2.getIvProfileImage());
             }
-            // TODO: Fix edit profile so it updates previous screen (this)
+
+            user.fetchInBackground(new GetCallback<ParseObject>() {
+                @Override
+                public void done(ParseObject object, ParseException e) {
+                    vh2.getTvDescription().setText(object.getString("description"));
+                }
+            });
+            vh2.getTvUsername().setText("@" + user.getUsername());
+
             vh2.getTvEditProfile().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -250,21 +259,32 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             setUpPieChart(vh3.getPieChartContinent(), continents.size(), ProfileConstants.totalNumCountries, "Visited Continents");
         }
 
+
+        final MediaPlayer mp = MediaPlayer.create(mContext, R.raw.pop);
         vh3.getNextButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                vh3.nextView(v);
+
+
+                mp.start();
+                vh3.getViewFlipper().setInAnimation(mContext, R.anim.flipin);
+                vh3.getViewFlipper().setOutAnimation(mContext, R.anim.flipout);
+                vh3.getViewFlipper().showNext();
             }
         });
 
         vh3.getPreviousButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                vh3.previousView(v);
+                mp.start();
+                vh3.getViewFlipper().setInAnimation(mContext, R.anim.flipin_reverse);
+                vh3.getViewFlipper().setOutAnimation(mContext, R.anim.flipout_reverse);
+                vh3.getViewFlipper().showPrevious();
             }
         });
 
     }
+
 
     /**
      * Helper method to set up the user statistic pie chart
@@ -278,23 +298,12 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         List<PieEntry> pieEntries = new ArrayList<>();
         pieEntries.add(new PieEntry(visited, title));
         pieEntries.add(new PieEntry(total - visited));
-        PieDataSet pieDataSet = new PieDataSet(pieEntries,"");
+        PieDataSet pieDataSet = new PieDataSet(pieEntries, "");
         pieDataSet.setColors(ColorTemplate.JOYFUL_COLORS);
         PieData pieData = new PieData(pieDataSet);
         pieChart.setData(pieData);
-//        pieChart.setCenterTextColor(R.color.grey);
         pieChart.setDrawCenterText(true);
-
         pieChart.animateY(1000);
-        Legend l = pieChart.getLegend();
-        //l.isEnabled(false);
-//        l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
-//        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
-//        l.setOrientation(Legend.LegendOrientation.VERTICAL);
-//        l.setDrawInside(false);
-//        l.setYOffset(0f);
-//        pieChart.setEntryLabelColor(Color.BLACK);
-//        pieChart.setEntryLabelTextSize(12f);
         pieChart.invalidate();
     }
 }
