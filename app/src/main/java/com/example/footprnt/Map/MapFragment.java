@@ -121,6 +121,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     private JSONObject mContinents;
     private Location mLocation;
     private EditText mSearchText;
+    private LatLng mTappedLocation;
 
     // Display variables
     private CustomInfoWindowAdapter mInfoAdapter;
@@ -405,7 +406,8 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     }
 
     @Override
-    public void onMapLongClick(final LatLng latLng) {
+    public void onMapLongClick(LatLng latLng) {
+        mTappedLocation = latLng;
         final MediaPlayer mp = MediaPlayer.create(getContext(), R.raw.bubble);
         final MediaPlayer mp2 = MediaPlayer.create(getContext(), R.raw.bubble_close);
         mp.start();
@@ -431,10 +433,10 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                         @Override
                         public void onMenuItemClick(View view, int position) {
                             if (MapConstants.menuItems[position] == MapConstants.CREATE){
-                                showAlertDialogForPoint(latLng);
+                                showAlertDialogForPoint(mTappedLocation);
                             }
                             if (MapConstants.menuItems[position] == MapConstants.VIEW){
-                                MapRipple mMapRipple = new MapRipple(mMap, latLng, getContext())
+                                MapRipple mMapRipple = new MapRipple(mMap, mTappedLocation, getContext())
                                         .withNumberOfRipples(3)
                                         .withFillColor(Color.CYAN)
                                         .withStrokeColor(Color.BLACK)
@@ -443,8 +445,8 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                                         .withTransparency(0.6f);
                                 mMapRipple.startRippleMapAnimation();      //in onMapReadyCallBack
                                 Intent i = new Intent(getActivity(), FeedActivity.class);
-                                i.putExtra("latitude", latLng.latitude);
-                                i.putExtra("longitude", latLng.longitude);
+                                i.putExtra("latitude", mTappedLocation.latitude);
+                                i.putExtra("longitude", mTappedLocation.longitude);
                                 startActivity(i);
                             }
                             if (MapConstants.menuItems[position] == MapConstants.DISCOVER){
@@ -472,10 +474,10 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                         @Override
                         public void onMenuItemClick(View view, int position) {
                             if (MapConstants.menuItems[position] == MapConstants.CREATE){
-                                showAlertDialogForPoint(latLng);
+                                showAlertDialogForPoint(mTappedLocation);
                             }
                             if (MapConstants.menuItems[position] == MapConstants.VIEW){
-                                MapRipple mMapRipple = new MapRipple(mMap, latLng, getContext())
+                                MapRipple mMapRipple = new MapRipple(mMap, mTappedLocation, getContext())
                                         .withNumberOfRipples(3)
                                         .withFillColor(Color.CYAN)
                                         .withStrokeColor(Color.BLACK)
@@ -484,8 +486,8 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                                         .withTransparency(0.6f);
                                 mMapRipple.startRippleMapAnimation();      //in onMapReadyCallBack
                                 Intent i = new Intent(getActivity(), FeedActivity.class);
-                                i.putExtra("latitude", latLng.latitude);
-                                i.putExtra("longitude", latLng.longitude);
+                                i.putExtra("latitude", mTappedLocation.latitude);
+                                i.putExtra("longitude", mTappedLocation.longitude);
                                 startActivity(i);
                             }
                             if (MapConstants.menuItems[position] == MapConstants.DISCOVER){
@@ -516,6 +518,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
      * @param point point where post is being created
      */
     private void showAlertDialogForPoint(final LatLng point) {
+        System.out.println(point);
         View messageView = LayoutInflater.from(getActivity()).inflate(R.layout.message_item, null);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
         alertDialogBuilder.setView(messageView);
