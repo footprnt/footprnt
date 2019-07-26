@@ -65,7 +65,6 @@ import com.example.footprnt.HomeActivity;
 import com.example.footprnt.Manifest;
 import com.example.footprnt.Map.Util.MapConstants;
 import com.example.footprnt.Map.Util.MapUtil;
-import com.example.footprnt.Map.Util.SingleLineET;
 import com.example.footprnt.Models.MarkerDetails;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.R;
@@ -207,7 +206,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mSearchText = getActivity().findViewById(R.id.searchText);
-        mSearchText.addTextChangedListener(new SingleLineET(mSearchText));
         layout = (FilterMenuLayout) getActivity().findViewById(R.id.filter_menu4);
         layout.setVisibility(View.GONE);
         mLocationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
@@ -733,12 +731,11 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         mSearchText.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH
-                        || actionId == EditorInfo.IME_ACTION_DONE
-                        || event.getAction() == KeyEvent.ACTION_DOWN
-                        || event.getAction() == KeyEvent.KEYCODE_ENTER){
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
                     geoLocate();
                 }
+                InputMethodManager inputManager = (InputMethodManager) myContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputManager.hideSoftInputFromWindow(myContext.getCurrentFocus().getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
                 return false;
             }
         });
@@ -761,12 +758,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
             l.setLatitude(address.getLatitude());
             l.setLongitude(address.getLongitude());
             Util.centreMapOnLocation(mMap, l);
-            BitmapDescriptor defaultMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
-            Marker m = mMap.addMarker(new MarkerOptions()
-                    .position(new LatLng(l.getLatitude(), l.getLongitude()))
-                    .title("")
-                    .snippet("")
-                    .icon(defaultMarker));
         }
     }
 
