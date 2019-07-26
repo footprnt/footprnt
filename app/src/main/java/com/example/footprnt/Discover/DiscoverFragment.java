@@ -46,15 +46,6 @@ public class DiscoverFragment extends Fragment {
     final YelpService yelpService = new YelpService();
 
 
-//    @Override
-//    public void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        Intent intent = getActivity().getIntent();
-//        String location = intent.getStringExtra("location");
-//
-//
-//    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_discover, parent, false);
@@ -108,52 +99,7 @@ public class DiscoverFragment extends Fragment {
         });
 
 
-
-
         return view;
+
     }
-
-//    @Override
-//    public void onViewCreated(View view, Bundle savedInstanceState) {
-//        btnFindRestaurants = view.findViewById(R.id.btnFindRestaurants);
-//        btnFindRestaurants.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent i = new Intent(getActivity(), RestaurantsActivity.class);
-//                i.putExtra("zipcode", etZip.getText().toString());
-//                startActivity(i);
-//            }
-//        });
-//    }
-
-//    public void getRestaurants(String location) {
-//        final YelpService yelpService = new YelpService();
-//        YelpService.findBusinesses(location, Constants.RESTAURANT, new Callback() {
-//            @Override
-//            public void onFailure(Call call, IOException e) {
-//                e.printStackTrace();
-//                //display an error message
-//            }
-//
-//            @Override
-//            public void onResponse(Call call, Response response) throws IOException {
-//                businesses = yelpService.processResults(response);
-//                getActivity().runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        mAdapter = new ListAdapter(getApplicationContext(), businesses);
-//                        rvRestaurants = rvRestaurants.findViewById(R.id.rvRestaurants);
-//                        RecyclerView.LayoutManager layoutManager =
-//                                new LinearLayoutManager(getContext());
-//                        rvRestaurants.setLayoutManager(layoutManager);
-//                        rvRestaurants.setAdapter(mAdapter);
-//                        mAdapter.notifyDataSetChanged();
-//                        run();
-//
-//                    }
-//                });
-//
-//            }
-//        });
-//    }
 }

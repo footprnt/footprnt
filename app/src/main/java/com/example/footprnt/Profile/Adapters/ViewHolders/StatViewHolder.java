@@ -23,6 +23,7 @@ public class StatViewHolder extends RecyclerView.ViewHolder {
     View mNextView;
     View mPreviousView;
     PieChart mPieChartCity;
+    View mRootView;
     PieChart mPieChartCountry;
     PieChart mPieChartContinent;
 
@@ -80,6 +81,10 @@ public class StatViewHolder extends RecyclerView.ViewHolder {
         return mPreviousView;
     }
 
+    public View getRootView (){
+        return mRootView;
+    }
+
     /**
      * Constructor for StatViewHolder
      *
@@ -87,6 +92,7 @@ public class StatViewHolder extends RecyclerView.ViewHolder {
      */
     public StatViewHolder(View v) {
         super(v);
+        mRootView = v;
         mViewFlipper = v.findViewById(R.id.viewFlipper);
         mNextView = v.findViewById(R.id.next);
         mPreviousView = v.findViewById(R.id.prev);

@@ -9,7 +9,6 @@ package com.example.footprnt.Map;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -22,6 +21,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -29,6 +29,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -58,6 +59,7 @@ import android.widget.Toast;
 
 import com.arsy.maps_library.MapRipple;
 import com.bumptech.glide.Glide;
+import com.example.footprnt.HomeActivity;
 import com.example.footprnt.Manifest;
 import com.example.footprnt.Map.Util.MapConstants;
 import com.example.footprnt.Map.Util.MapUtil;
@@ -133,6 +135,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     private float mLocationX;
     private float mLocationY;
     private boolean mMenuItemsAdded;
+    ConstraintLayout mToolbar;
 
     // Tag variables
     private ArrayList<String> mTags;
@@ -150,8 +153,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
-
         View v = inflater.inflate(R.layout.fragment_map, container, false);
 
         mapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
@@ -172,12 +173,25 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
 
         // Set up pop up menu
         mSettings = v.findViewById(R.id.ivSettings);
+        mToolbar = v.findViewById(R.id.relLayout1);
         mPopup = new PopupMenu(getActivity(), mSettings);
         mPopup.getMenuInflater().inflate(R.menu.popup_menu_map, mPopup.getMenu());
         configureMapStyleMenu();
 
         mMenuItemsAdded = false;
         return v;
+    }
+
+    private void hideToolBar(){
+        View locationButton = ((View) getActivity().findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
+        locationButton.setVisibility(View.INVISIBLE);
+        mToolbar.setVisibility(View.INVISIBLE);
+    }
+
+    private void showToolbar(){
+        View locationButton = ((View) getActivity().findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
+        locationButton.setVisibility(View.VISIBLE);
+        mToolbar.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -193,13 +207,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         mSearchText.addTextChangedListener(new SingleLineET(mSearchText));
         layout = (FilterMenuLayout) getActivity().findViewById(R.id.filter_menu4);
         layout.setVisibility(View.GONE);
-//        ImageView newPost = getView().findViewById(R.id.newPost);
-//        newPost.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                createPostCurrentLocation();
-//            }
-//        });
         mLocationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
         mLocationListener = new LocationListener() {
             @Override
@@ -397,6 +404,11 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
 
     @Override
     public void onMapLongClick(final LatLng latLng) {
+        final MediaPlayer mp = MediaPlayer.create(getContext(), R.raw.bubble);
+        final MediaPlayer mp2 = MediaPlayer.create(getContext(), R.raw.bubble_close);
+        mp.start();
+        ((HomeActivity)getActivity()).hideBottomNav();
+        hideToolBar();
         BitmapDescriptor defaultMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
         final Marker m = mMap.addMarker(new MarkerOptions()
                 .position(latLng)
@@ -405,6 +417,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 .icon(defaultMarker));
         layout = getActivity().findViewById(R.id.filter_menu4);
         layout.setVisibility(View.VISIBLE);
+
         if (!mMenuItemsAdded){
             mMenuItemsAdded = true;
             FilterMenu menu = new FilterMenu.Builder(getContext())
@@ -439,6 +452,9 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                         @Override
                         public void onMenuCollapse() {
                             layout.setVisibility(View.INVISIBLE);
+                            ((HomeActivity)getActivity()).showBottomNav();
+                            showToolbar();
+                            mp2.start();
                             m.remove();
                         }
                         @Override
@@ -447,7 +463,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                     })
                     .build();
             menu.toggle(true);
-
         } else {
             FilterMenu menu = new FilterMenu.Builder(getContext())
                     .attach(layout)
@@ -478,7 +493,10 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                         @Override
                         public void onMenuCollapse() {
                             layout.setVisibility(View.INVISIBLE);
+                            mp2.start();
                             m.remove();
+                            showToolbar();
+                            ((HomeActivity)getActivity()).showBottomNav();
                         }
                         @Override
                         public void onMenuExpand() {
@@ -549,9 +567,13 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 }
             }
         });
+
+        final MediaPlayer mp = MediaPlayer.create(getContext(), R.raw.swipe_two);
         sendPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Add sound when user sends post
+                mp.start();
                 final String title = ((EditText) mAlertDialog.findViewById(R.id.etTitle)).getText().toString();
                 final String snippet = ((EditText) mAlertDialog.findViewById(R.id.etSnippet)).getText().toString();
                 if( TextUtils.isEmpty(title) || TextUtils.isEmpty(snippet)){
@@ -599,17 +621,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 temp.remove();
             }
         });
-    }
-
-    /**
-     * Creates a post at the user's current location
-     */
-    public void createPostCurrentLocation() {
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            Location location = mMap.getMyLocation();
-            LatLng currLocation = new LatLng(location.getLatitude(), location.getLongitude());
-            showAlertDialogForPoint(currLocation);
-        }
     }
 
     /**
