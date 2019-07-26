@@ -34,6 +34,7 @@ import com.example.footprnt.Profile.UserSettings;
 import com.example.footprnt.Profile.Util.ProfileConstants;
 import com.example.footprnt.R;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
@@ -218,7 +219,6 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
      */
     private void configureUserInfoViewHolder(final UserInfoViewHolder vh2, final int position) {
         final ParseUser user = ParseUser.getCurrentUser();
-        //= (ParseUser) items.get(position);
         if (user != null) {
             if (user.getParseFile(com.example.footprnt.Util.Constants.profileImage) != null) {
                 vh2.setIvProfileImage(user.getParseFile(com.example.footprnt.Util.Constants.profileImage).getUrl(), mContext);
@@ -303,13 +303,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
      * @param position position in adapter the no posts item is
      */
     private void configureNoPostsViewHolder(final NoPostsViewHolder vh4, final int position) {
-        SimpleTarget<Bitmap> target = new SimpleTarget<Bitmap>() {
-            @Override
-            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                Palette.from(resource).generate();
-                vh4.getTvPalette().setBackgroundColor(ContextCompat.getColor(mContext, R.color.honeydew_off_white));
-            }
-        };
+        vh4.getRootView().setTag(items.get(position));
     }
 
 
@@ -326,9 +320,10 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         pieEntries.add(new PieEntry(visited, title));
         pieEntries.add(new PieEntry(total - visited));
         PieDataSet pieDataSet = new PieDataSet(pieEntries, "");
-        pieDataSet.setColors(ColorTemplate.JOYFUL_COLORS);
+        pieDataSet.setColors(ColorTemplate.LIBERTY_COLORS);
         PieData pieData = new PieData(pieDataSet);
         pieChart.setData(pieData);
+        pieChart.setDescription(new Description());
         pieChart.setDrawCenterText(true);
         pieChart.animateY(1000);
         pieChart.invalidate();

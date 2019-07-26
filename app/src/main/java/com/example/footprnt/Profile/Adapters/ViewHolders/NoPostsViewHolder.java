@@ -47,7 +47,6 @@ public class NoPostsViewHolder extends RecyclerView.ViewHolder {
         super(v);
         mRootView = itemView;
         mVPalette = v.findViewById(R.id.vPalette);
-
     }
 
 }
