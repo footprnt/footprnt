@@ -411,6 +411,9 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
 
     @Override
     public void onMapLongClick(final LatLng latLng) {
+        final MediaPlayer mp = MediaPlayer.create(getContext(), R.raw.bubble);
+        final MediaPlayer mp2 = MediaPlayer.create(getContext(), R.raw.bubble_close);
+        mp.start();
         ((HomeActivity)getActivity()).hideBottomNav();
         hideToolBar();
         BitmapDescriptor defaultMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
@@ -457,6 +460,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                             layout.setVisibility(View.INVISIBLE);
                             ((HomeActivity)getActivity()).showBottomNav();
                             showToolbar();
+                            mp2.start();
                             m.remove();
                         }
                         @Override
@@ -496,6 +500,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                         @Override
                         public void onMenuCollapse() {
                             layout.setVisibility(View.INVISIBLE);
+                            mp2.start();
                             m.remove();
                             showToolbar();
                             ((HomeActivity)getActivity()).showBottomNav();
