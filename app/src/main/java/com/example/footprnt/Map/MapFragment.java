@@ -32,6 +32,7 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
@@ -79,6 +80,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.libraries.places.compat.Place;
 import com.google.android.libraries.places.compat.ui.PlaceAutocompleteFragment;
 import com.google.android.libraries.places.compat.ui.PlaceSelectionListener;
+import com.google.android.libraries.places.compat.ui.SupportPlaceAutocompleteFragment;
 import com.linroid.filtermenu.library.FilterMenu;
 import com.linroid.filtermenu.library.FilterMenuLayout;
 import com.parse.FindCallback;
@@ -122,6 +124,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     private boolean mJumpToCurrentLocation = false;
     private JSONObject mContinents;
     private Location mLocation;
+    private PlaceAutocompleteFragment autocompleteFragment;
 
     // Display variables
     private CustomInfoWindowAdapter mInfoAdapter;
@@ -886,9 +889,16 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
 
 
     private void setupAutoCompleteFragment() {
-        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
-                getActivity().getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
 
+        SupportPlaceAutocompleteFragment autocompleteFragment = new SupportPlaceAutocompleteFragment();
+        android.support.v4.app.FragmentManager fm = getFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.fragment_content, autocompleteFragment);
+        ft.commit();
+
+//        autocompleteFragment = (PlaceAutocompleteFragment)
+//                getActivity().getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+//
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
@@ -904,5 +914,34 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 Log.e("Error", status.getStatusMessage());
             }
         });
+//        SupportPlaceAutocompleteFragment autocompleteFragment = (SupportPlaceAutocompleteFragment)
+//                getChildFragmentManager()
+//                        .findFragmentById(R.id.place_autocomplete_fragment);
+//
+//        autocompleteFragment.setOnPlaceSelectedListener(new com.google.android.gms.location.places.ui.PlaceSelectionListener() {
+//            @Override
+//            public void onPlaceSelected(com.google.android.gms.location.places.Place place) {
+//                Location l = new Location(LocationManager.GPS_PROVIDER);
+//                l.setLatitude(place.getLatLng().latitude);
+//                l.setLatitude(place.getLatLng().longitude);
+//                Util.centreMapOnLocation(mMap, l);
+//                BitmapDescriptor defaultMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
+//            }
+//
+//            @Override
+//            public void onError(Status status) {
+//                Log.e("Error", status.getStatusMessage());
+//            }
+//        });
     }
+
+//    @Override
+//    public void onDestroyView() {
+//        if (autocompleteFragment != null) {
+//            FragmentTransaction fragmentTransaction = getChildFragmentManager().beginTransaction();
+//            fragmentTransaction.remove(autocompleteFragment).commitNowAllowingStateLoss();
+//        }
+//        super.onDestroyView();
+//    }
+
 }

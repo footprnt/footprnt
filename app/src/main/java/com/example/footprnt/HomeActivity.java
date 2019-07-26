@@ -34,6 +34,10 @@ public class HomeActivity extends AppCompatActivity {
     final Fragment mFragment2 = new DiscoverFragment();
     final Fragment mFragment3 = new ProfileFragment();
 
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

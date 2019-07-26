@@ -46,7 +46,6 @@ android {
         //noinspection GradleDependency
         implementation "com.google.android.gms:play-services-location:$googlePlayVersion"
         implementation  'com.google.android.gms:play-services-location:15.0.1'
-        implementation 'com.google.android.gms:play-services-places:15.0.1'
         // Glide v4 uses this new annotation processor -- see https://bumptech.github.io/glide/doc/generatedapi.html
         implementation 'com.github.aarsy:GoogleMapsRippleEffect:6ae11a2379'
         implementation 'com.github.bumptech.glide:glide:4.9.0'
@@ -78,6 +77,7 @@ android {
         implementation 'com.google.android.gms:play-services-places:16.0.0'
         implementation 'com.google.android.libraries.places:places-compat:1.1.0'
 
+//        implementation 'com.google.android.gms:play-services-places:15.0.1'
     }
 }
 

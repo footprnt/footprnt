@@ -2,25 +2,9 @@
 
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/touch"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <!--<android.support.design.widget.FloatingActionButton
-        android:id="@+id/newPost"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginEnd="32dp"
-        android:layout_marginRight="32dp"
-        android:layout_marginBottom="48dp"
-        android:src="@drawable/ic_new_post"
-        android:tint="#FFFFFF"
-        app:backgroundTint="#659DBD"
-        app:layout_constraintBottom_toBottomOf="@+id/map"
-        app:layout_constraintEnd_toEndOf="parent" />-->
-
 
     <com.linroid.filtermenu.library.FilterMenuLayout
         android:id="@+id/filter_menu4"
@@ -37,7 +21,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"></com.linroid.filtermenu.library.FilterMenuLayout>
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <fragment
         android:id="@+id/map"
@@ -91,7 +75,20 @@
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_more_vert_grey" />
 
-        <fragment
+        <FrameLayout
+            android:id="@+id/fragment_content"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/switch1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!--<fragment
             android:id="@+id/place_autocomplete_fragment"
             android:name="com.google.android.libraries.places.compat.ui.PlaceAutocompleteFragment"
             android:layout_width="0dp"
@@ -105,7 +102,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/switch1"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent" />-->
 
     </android.support.constraint.ConstraintLayout>
 
@@ -119,3 +116,5 @@
 
 </android.support.constraint.ConstraintLayout>
 
+    <!--android:name="com.google.android.gms.location.places.ui.SupportPlaceAutocompleteFragment"-->
+<!--            android:name="com.google.android.libraries.places.compat.ui.PlaceAutocompleteFragment"-->
