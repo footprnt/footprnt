@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/touch"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -20,6 +21,24 @@
         app:layout_constraintBottom_toBottomOf="@+id/map"
         app:layout_constraintEnd_toEndOf="parent" />
 
+
+    <com.linroid.filtermenu.library.FilterMenuLayout
+        android:id="@+id/filter_menu4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:elevation="8dp"
+        app:fm_centerLeft="50dp"
+        app:fm_centerTop="150dp"
+        app:fm_collapsedRadius="24dp"
+        app:fm_expandedRadius="86dp"
+        app:fm_primaryColor="#ff5791aa"
+        app:fm_primaryDarkColor="#ff334862"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"></com.linroid.filtermenu.library.FilterMenuLayout>
+
     <fragment
         android:id="@+id/map"
         class="com.google.android.gms.maps.SupportMapFragment"
@@ -28,7 +47,9 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/relLayout1"
@@ -40,9 +61,10 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:background="@drawable/while_color"
-        app:layout_constraintEnd_toEndOf="@+id/fl"
-        app:layout_constraintStart_toStartOf="@+id/fl"
-        app:layout_constraintTop_toTopOf="@+id/fl">
+        android:elevation="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
 
         <ImageView
@@ -98,22 +120,13 @@
             app:srcCompat="@drawable/ic_more_vert_grey" />
 
     </android.support.constraint.ConstraintLayout>
-
     <FrameLayout
-        android:id="@+id/fl"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/map">
-
-        <View
-            android:id="@+id/view"
-            android:layout_width="match_parent"
-            android:layout_height="5dp"
-            android:background="@drawable/toolbar_dropshadow" />
+        android:id="@+id/map_touch_layer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
 
     </FrameLayout>
 
+
 </android.support.constraint.ConstraintLayout>
+
