@@ -4,7 +4,7 @@
  * July 2019
  * Copyright ©2019 Footprnt Inc.
  */
-package com.example.footprnt.Discover.adapters;
+package com.example.footprnt.Discover.Adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;

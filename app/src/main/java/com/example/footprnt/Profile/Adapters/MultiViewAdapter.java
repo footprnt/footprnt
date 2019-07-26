@@ -25,6 +25,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.example.footprnt.Models.Post;
+import com.example.footprnt.Profile.Adapters.ViewHolders.NoPostsViewHolder;
 import com.example.footprnt.Profile.Adapters.ViewHolders.PostViewHolder;
 import com.example.footprnt.Profile.Adapters.ViewHolders.StatViewHolder;
 import com.example.footprnt.Profile.Adapters.ViewHolders.UserInfoViewHolder;
@@ -33,6 +34,7 @@ import com.example.footprnt.Profile.UserSettings;
 import com.example.footprnt.Profile.Util.ProfileConstants;
 import com.example.footprnt.R;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
@@ -56,7 +58,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     ArrayList<Object> items;
 
     // Identifier for objects in items and which view to load:
-    private final int USER_INFO = 0, POST = 1, STAT = 2;
+    private final int USER_INFO = 0, POST = 1, STAT = 2, NO_POSTS = 3;
 
 
     /**
@@ -94,10 +96,13 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             return USER_INFO;
         } else if (items.get(position) instanceof ArrayList) {
             return STAT;
+        } else if (items.get(position) instanceof String) {
+            return NO_POSTS;
         }
         return -1;
     }
 
+    LayoutInflater inflater;
 
     /**
      * Creates different RecyclerView.ViewHolder objects based on the item view type.
@@ -109,7 +114,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         RecyclerView.ViewHolder viewHolder = null;
-        LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
+        inflater = LayoutInflater.from(viewGroup.getContext());
         switch (viewType) {
             case POST:
                 View v1 = inflater.inflate(R.layout.item_post_card, viewGroup, false);
@@ -122,6 +127,11 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             case STAT:
                 View v3 = inflater.inflate(R.layout.item_user_stats, viewGroup, false);
                 viewHolder = new StatViewHolder(v3);
+                break;
+            case NO_POSTS:
+                View v4 = inflater.inflate(R.layout.item_no_posts, viewGroup, false);
+                viewHolder = new NoPostsViewHolder(v4);
+                break;
         }
         return viewHolder;
     }
@@ -149,6 +159,9 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 StatViewHolder vh3 = (StatViewHolder) viewHolder;
                 configureStatViewHolder(vh3, position);
                 break;
+            case NO_POSTS:
+                NoPostsViewHolder vh4 = (NoPostsViewHolder) viewHolder;
+                configureNoPostsViewHolder(vh4, position);
         }
     }
 
@@ -162,10 +175,21 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         final Post post = (Post) items.get(position);
         if (post != null) {
             vh1.getRootView().setTag(post);
+            StringBuilder sb = new StringBuilder();
             String cityName = post.getCity();
+            if (cityName != null) {
+                sb.append(cityName + ", ");
+            }
             String countryName = post.getCountry();
+            if (countryName != null) {
+                sb.append(countryName + ", ");
+            }
             String continentName = post.getContinent();
-            vh1.getTvTitle().setText(String.format("%s, %s, %s", cityName, countryName, continentName));
+            if (continentName != null) {
+
+                sb.append(continentName);
+            }
+            vh1.getTvTitle().setText(sb);
             vh1.getTvTitle().setTextColor(ContextCompat.getColor(mContext, R.color.grey));
 
             SimpleTarget<Bitmap> target = new SimpleTarget<Bitmap>() {
@@ -180,9 +204,6 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             vh1.getIvImage().setTag(target);
             if (post.getImage() != null) {
                 Glide.with(mContext).asBitmap().load(post.getImage().getUrl()).centerCrop().into(target);
-            } else {
-                // TODO: fix default image loaded where no image present to be prettier
-                Glide.with(mContext).asBitmap().load(R.drawable.ic_add_photo).centerCrop().into(target);
             }
 
             vh1.getIvImage().setOnClickListener(new View.OnClickListener() {
@@ -191,9 +212,9 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     Intent it = new Intent(mContext, EditPost.class);
                     Bundle bundle = new Bundle();
                     bundle.putSerializable(Post.class.getSimpleName(), post);
+                    bundle.putSerializable("position", position);
                     it.putExtras(bundle);
-                    // Start activity for result to reconfigure user view after return
-                    mContext.startActivity(it);
+                    ((Activity)mContext).startActivityForResult(it, 302);
                 }
             });
         }
@@ -207,14 +228,9 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
      */
     private void configureUserInfoViewHolder(final UserInfoViewHolder vh2, final int position) {
         final ParseUser user = ParseUser.getCurrentUser();
-        //= (ParseUser) items.get(position);
         if (user != null) {
             if (user.getParseFile(com.example.footprnt.Util.Constants.profileImage) != null) {
                 vh2.setIvProfileImage(user.getParseFile(com.example.footprnt.Util.Constants.profileImage).getUrl(), mContext);
-            } else {
-                // User does not have an image, load preset image
-                // TODO: change this to be more pretty (i.e. the tint of the image)
-                Glide.with(mContext).load(R.drawable.ic_user).into(vh2.getIvProfileImage());
             }
 
             user.fetchInBackground(new GetCallback<ParseObject>() {
@@ -247,25 +263,51 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         final HashMap<String, Integer> countries = stats.get(1);
         final HashMap<String, Integer> continents = stats.get(2);
 
-        if (cities != null) {
+        if (cities != null && cities.size() < ProfileConstants.totalNumCities) {
             setUpPieChart(vh3.getPieChartCity(), cities.size(), ProfileConstants.totalNumCities, "Visited Cities");
+        } else {
+
+            View view = vh3.getRootView().findViewById(R.id.pieChartCity);
+            if (view != null) {
+                ViewGroup parent = (ViewGroup) view.getParent();
+                int index = parent.indexOfChild(view);
+                parent.removeView(view);
+                view = inflater.inflate(R.layout.item_visited_all_cities, parent, false);
+                parent.addView(view, index);
+            }
         }
 
-        if (countries != null) {
-            setUpPieChart(vh3.getPieChartCountry(), countries.size(), ProfileConstants.totalNumContinents, "Visited Countries");
+
+        if (countries != null && countries.size() < ProfileConstants.totalNumCountries) {
+            setUpPieChart(vh3.getPieChartCountry(), countries.size(), ProfileConstants.totalNumCountries, "Visited Countries");
+        } else {
+            View view = vh3.getRootView().findViewById(R.id.pieChartCountry);
+            if (view != null) {
+                ViewGroup parent = (ViewGroup) view.getParent();
+                int index = parent.indexOfChild(view);
+                parent.removeView(view);
+                view = inflater.inflate(R.layout.item_visited_all_countries, parent, false);
+                parent.addView(view, index);
+            }
         }
 
-        if (continents != null) {
-            setUpPieChart(vh3.getPieChartContinent(), continents.size(), ProfileConstants.totalNumCountries, "Visited Continents");
+        if (continents != null && continents.size() < ProfileConstants.totalNumContinents) {
+            setUpPieChart(vh3.getPieChartContinent(), continents.size(), ProfileConstants.totalNumContinents, "Visited Continents");
+        } else {
+            View view = vh3.getRootView().findViewById(R.id.pieChartContinent);
+            if (view != null) {
+                ViewGroup parent = (ViewGroup) view.getParent();
+                int index = parent.indexOfChild(view);
+                parent.removeView(view);
+                view = inflater.inflate(R.layout.item_visited_all_continents, parent, false);
+                parent.addView(view, index);
+            }
         }
-
 
         final MediaPlayer mp = MediaPlayer.create(mContext, R.raw.pop);
         vh3.getNextButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
                 mp.start();
                 vh3.getViewFlipper().setInAnimation(mContext, R.anim.flipin);
                 vh3.getViewFlipper().setOutAnimation(mContext, R.anim.flipout);
@@ -285,6 +327,16 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     }
 
+    /**
+     * Method to configure the no posts view holder
+     *
+     * @param vh4      view holder to configure
+     * @param position position in adapter the no posts item is
+     */
+    private void configureNoPostsViewHolder(final NoPostsViewHolder vh4, final int position) {
+        vh4.getRootView().setTag(items.get(position));
+    }
+
 
     /**
      * Helper method to set up the user statistic pie chart
@@ -299,9 +351,10 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         pieEntries.add(new PieEntry(visited, title));
         pieEntries.add(new PieEntry(total - visited));
         PieDataSet pieDataSet = new PieDataSet(pieEntries, "");
-        pieDataSet.setColors(ColorTemplate.JOYFUL_COLORS);
+        pieDataSet.setColors(ColorTemplate.LIBERTY_COLORS);
         PieData pieData = new PieData(pieDataSet);
         pieChart.setData(pieData);
+        pieChart.setDescription(new Description());
         pieChart.setDrawCenterText(true);
         pieChart.animateY(1000);
         pieChart.invalidate();

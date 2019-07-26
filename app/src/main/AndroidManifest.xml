@@ -27,9 +27,12 @@
         android:usesCleartextTraffic="true">
         <activity android:name=".ForgotPassword"
             android:screenOrientation="portrait"></activity>
-        <activity android:name=".Discover.Activities.RestaurantsActivity" />
-        <activity android:name=".Discover.Activities.MoviesActivity" />
-        <activity android:name=".Map.PostDetailActivity" />
+        <activity android:name=".Discover.Activities.RestaurantsActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Discover.Activities.MoviesActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Map.PostDetailActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".Profile.EditPost"
             android:label="@string/title_activity_edit_post"
@@ -37,9 +40,11 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".Profile.UserSettings"
             android:screenOrientation="portrait"
+
             />
         <activity
             android:name=".Map.FeedActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/MyTheme" />
 
         <provider
@@ -62,7 +67,8 @@
             android:screenOrientation="portrait"/>
         <activity
             android:name=".HomeActivity"
-            android:configChanges="keyboard|keyboardHidden" />
+            android:configChanges="orientation|keyboard|keyboardHidden"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".LoginActivity"
             android:label="@string/app_name"

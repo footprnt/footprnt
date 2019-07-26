@@ -7,7 +7,6 @@
 package com.example.footprnt.Profile;
 
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -57,12 +56,9 @@ public class ProfileFragment extends Fragment {
     ArrayList<HashMap<String, Integer>> mStats;  // Stats to be passed to adapter
 
 
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        getActivity().setRequestedOrientation(
-                ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
         View v = inflater.inflate(R.layout.fragment_profile, container, false);
         setUpToolbar(v);
 
@@ -94,6 +90,11 @@ public class ProfileFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Constants.RELOAD_USERPROFILE_FRAGMENT_REQUEST_CODE) {
             mMultiAdapter.notifyItemChanged(0);
+        }
+        if(resultCode == 302){
+            int position = data.getIntExtra("position",0);
+            mObjects.remove(position);
+            mMultiAdapter.notifyItemChanged(position);
         }
     }
 
@@ -171,11 +172,17 @@ public class ProfileFragment extends Fragment {
                 mStats.add(mCities);
                 mStats.add(mCountries);
                 mStats.add(mContinents);
-
                 mObjects.add(mStats);
+
                 mMultiAdapter.notifyDataSetChanged();
-                if(mPosts!=null) {
+
+
+                if (mPosts.size() > 0 && mPosts != null) {
                     mObjects.addAll(mPosts);
+                    mMultiAdapter.notifyDataSetChanged();
+                } else {
+                    // Handle case if user has no posts yet
+                    mObjects.add("No posts!");
                     mMultiAdapter.notifyDataSetChanged();
                 }
             }
