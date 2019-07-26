@@ -39,13 +39,11 @@ import android.support.v7.widget.PopupMenu;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -61,11 +59,13 @@ import com.bumptech.glide.Glide;
 import com.example.footprnt.Manifest;
 import com.example.footprnt.Map.Util.MapConstants;
 import com.example.footprnt.Map.Util.MapUtil;
-import com.example.footprnt.Map.Util.SingleLineET;
 import com.example.footprnt.Models.MarkerDetails;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.R;
 import com.example.footprnt.Util.Util;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -76,6 +76,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.libraries.places.compat.Place;
+import com.google.android.libraries.places.compat.ui.PlaceAutocompleteFragment;
+import com.google.android.libraries.places.compat.ui.PlaceSelectionListener;
 import com.linroid.filtermenu.library.FilterMenu;
 import com.linroid.filtermenu.library.FilterMenuLayout;
 import com.parse.FindCallback;
@@ -98,6 +101,9 @@ import java.util.Locale;
 
 import static android.content.Context.LOCATION_SERVICE;
 
+//import com.google.android.gms.location.places.Places;
+
+
 /**
  * Handles all map activities
  *
@@ -105,7 +111,7 @@ import static android.content.Context.LOCATION_SERVICE;
  * @version 1.0
  * @since 2019-07-22
  */
-public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickListener, OnMapReadyCallback {
+public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickListener, OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener {
 
     // Map variables
     private GoogleMap mMap;
@@ -116,7 +122,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     private boolean mJumpToCurrentLocation = false;
     private JSONObject mContinents;
     private Location mLocation;
-    private EditText mSearchText;
 
     // Display variables
     private CustomInfoWindowAdapter mInfoAdapter;
@@ -189,9 +194,9 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mSearchText = getActivity().findViewById(R.id.searchText);
-        mSearchText.addTextChangedListener(new SingleLineET(mSearchText));
+        setupAutoCompleteFragment();
         layout = (FilterMenuLayout) getActivity().findViewById(R.id.filter_menu4);
+
         layout.setVisibility(View.GONE);
         mLocationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
         mLocationListener = new LocationListener() {
@@ -260,7 +265,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         setUpMapIfNeeded();
         loadMarkers();
         handleToggle();
-        init();
     }
 
     private void setUpMapIfNeeded() {
@@ -686,41 +690,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         }
     }
 
-    private void init(){
-        mSearchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH
-                        || actionId == EditorInfo.IME_ACTION_DONE
-                        || event.getAction() == KeyEvent.ACTION_DOWN
-                        || event.getAction() == KeyEvent.KEYCODE_ENTER){
-                    geoLocate();
-                }
-                return false;
-            }
-        });
-    }
-
-    private void geoLocate(){
-        String searchString = mSearchText.getText().toString();
-
-        Geocoder geocoder = new Geocoder(getContext());
-        List<Address> list = new ArrayList<>();
-        try{
-            list = geocoder.getFromLocationName(searchString, 1);
-        } catch (IOException e){
-
-        }
-
-        if (list.size() > 0){
-            Address address = list.get(0);
-            Location l = new Location(LocationManager.GPS_PROVIDER);
-            l.setLatitude(address.getLatitude());
-            l.setLongitude(address.getLongitude());
-            Util.centreMapOnLocation(mMap, l);
-            BitmapDescriptor defaultMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
-        }
-    }
 
     /**
      * Handles toggling of tags when in create view dialog
@@ -907,5 +876,34 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 mPopup.getMenu().getItem(i).setChecked(false);
             }
         }
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+    private LatLng sydney = new LatLng(-8.579892, 116.095239);
+
+
+    private void setupAutoCompleteFragment() {
+        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
+                getActivity().getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                Location l = new Location(LocationManager.GPS_PROVIDER);
+                l.setLatitude(place.getLatLng().latitude);
+                l.setLatitude(place.getLatLng().longitude);
+                Util.centreMapOnLocation(mMap, l);
+                BitmapDescriptor defaultMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
+            }
+
+            @Override
+            public void onError(Status status) {
+                Log.e("Error", status.getStatusMessage());
+            }
+        });
     }
 }

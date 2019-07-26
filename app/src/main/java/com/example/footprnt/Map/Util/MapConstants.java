@@ -7,6 +7,8 @@
 package com.example.footprnt.Map.Util;
 
 import com.example.footprnt.R;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 
 /**
  * Contains all constants for map fragment
@@ -36,5 +38,8 @@ public class MapConstants {
     public static String CREATE = "Create";
     public static String VIEW = "View";
     public static String DISCOVER = "Discover";
+
+    public static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(
+            new LatLng(-40, -168), new LatLng(71, 136));
 
 }
