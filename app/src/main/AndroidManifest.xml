@@ -27,10 +27,7 @@
         android:usesCleartextTraffic="true">
         <activity android:name=".ForgotPassword"
             android:screenOrientation="portrait"></activity>
-        <activity android:name=".Discover.Activities.RestaurantsActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".Discover.Activities.MoviesActivity"
-            android:screenOrientation="portrait"/>
+
         <activity android:name=".Map.PostDetailActivity"
             android:screenOrientation="portrait"/>
         <activity

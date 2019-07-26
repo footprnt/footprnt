@@ -6,74 +6,100 @@
  */
 package com.example.footprnt.Discover;
 
-import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 
-import com.example.footprnt.Discover.Activities.RestaurantsActivity;
-import com.example.footprnt.Discover.Models.Restaurant;
+import com.example.footprnt.Discover.Adapters.ListAdapter;
+import com.example.footprnt.Discover.Models.Business;
+import com.example.footprnt.Discover.Services.YelpService;
+import com.example.footprnt.Discover.Util.Constants;
 import com.example.footprnt.R;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
+
+/**
+ * Fragment for the Discover view
+ *
+ * @author Stanley Nwakamma 2019
+ * @version 1.0
+ */
 public class DiscoverFragment extends Fragment {
     public static final String TAG = DiscoverFragment.class.getSimpleName();
 
-    Button btnFindRestaurants;
-    EditText etZip;
+    RecyclerView rvRestaurants;
+    RecyclerView rvMuseums;
+    ListAdapter mAdapterResteraunts;
+    ListAdapter mAdapterMuseums;
+    ArrayList<Business> mResteraunts;
+    ArrayList<Business> mMuseums;
+    final YelpService yelpService = new YelpService();
 
-    public ArrayList<Restaurant> restaurants = new ArrayList<>();
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        getActivity().setRequestedOrientation(
-                ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        Intent intent = getActivity().getIntent();
-        String location = intent.getStringExtra("location");
-
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
-        // Defines the xml file for the fragment
-        // Bind views
         View view = inflater.inflate(R.layout.fragment_discover, parent, false);
+        rvRestaurants = view.findViewById(R.id.rvRestaurants);
+        rvMuseums = view.findViewById(R.id.rvMuseums);
 
-
-        etZip = view.findViewById(R.id.etZip);
-
-        ArrayList<Restaurant> restaurants = new ArrayList<>();
-
-
-
-        return view;
-    }
-
-    // This event is triggered soon after onCreateView().
-    // Any view setup should occur here.  E.g., view lookups and attaching view listeners.
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        btnFindRestaurants = view.findViewById(R.id.btnFindRestaurants);
-        btnFindRestaurants.setOnClickListener(new View.OnClickListener() {
+        // Fill up lists with query
+        mResteraunts = new ArrayList<>();
+        mMuseums = new ArrayList<>();
+        // TODO: fill with current location
+        yelpService.findBusinesses("Scottsdale", Constants.RESTAURANT, new Callback() {
             @Override
-            public void onClick(View v) {
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
 
-                Intent i = new Intent(getActivity(), RestaurantsActivity.class);
-                i.putExtra("zipcode", etZip.getText().toString());
-                startActivity(i);
-
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                mResteraunts = yelpService.processResults(response);
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+                        rvRestaurants.setLayoutManager(linearLayoutManager);
+                        mAdapterResteraunts = new ListAdapter(getContext(), mResteraunts);
+                        rvRestaurants.setAdapter(mAdapterResteraunts);
+                    }
+                });
             }
         });
 
+        yelpService.findBusinesses("Scottsdale", Constants.MUSEUM, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                mMuseums = yelpService.processResults(response);
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+                        rvMuseums.setLayoutManager(linearLayoutManager);
+                        mAdapterMuseums = new ListAdapter(getContext(), mMuseums);
+                        rvMuseums.setAdapter(mAdapterMuseums);
+                    }
+                });
+            }
+        });
+
+
+        return view;
+
     }
-
-
 }
