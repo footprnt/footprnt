@@ -175,10 +175,21 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         final Post post = (Post) items.get(position);
         if (post != null) {
             vh1.getRootView().setTag(post);
+            StringBuilder sb = new StringBuilder();
             String cityName = post.getCity();
+            if (cityName != null) {
+                sb.append(cityName + ", ");
+            }
             String countryName = post.getCountry();
+            if (countryName != null) {
+                sb.append(countryName + ", ");
+            }
             String continentName = post.getContinent();
-            vh1.getTvTitle().setText(String.format("%s, %s, %s", cityName, countryName, continentName));
+            if (continentName != null) {
+
+                sb.append(continentName);
+            }
+            vh1.getTvTitle().setText(sb);
             vh1.getTvTitle().setTextColor(ContextCompat.getColor(mContext, R.color.grey));
 
             SimpleTarget<Bitmap> target = new SimpleTarget<Bitmap>() {
@@ -264,7 +275,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         } else {
 
             View view = vh3.getRootView().findViewById(R.id.pieChartCity);
-            if(view!=null) {
+            if (view != null) {
                 ViewGroup parent = (ViewGroup) view.getParent();
                 int index = parent.indexOfChild(view);
                 parent.removeView(view);
@@ -278,7 +289,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             setUpPieChart(vh3.getPieChartCountry(), countries.size(), ProfileConstants.totalNumCountries, "Visited Countries");
         } else {
             View view = vh3.getRootView().findViewById(R.id.pieChartCountry);
-            if(view!=null) {
+            if (view != null) {
                 ViewGroup parent = (ViewGroup) view.getParent();
                 int index = parent.indexOfChild(view);
                 parent.removeView(view);
@@ -291,7 +302,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             setUpPieChart(vh3.getPieChartContinent(), continents.size(), ProfileConstants.totalNumContinents, "Visited Continents");
         } else {
             View view = vh3.getRootView().findViewById(R.id.pieChartContinent);
-            if(view!=null) {
+            if (view != null) {
                 ViewGroup parent = (ViewGroup) view.getParent();
                 int index = parent.indexOfChild(view);
                 parent.removeView(view);

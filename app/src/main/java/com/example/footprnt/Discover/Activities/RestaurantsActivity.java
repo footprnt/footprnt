@@ -7,7 +7,7 @@ import android.support.v7.widget.RecyclerView;
 
 import com.example.footprnt.Discover.Models.Restaurant;
 import com.example.footprnt.Discover.Services.YelpService;
-import com.example.footprnt.Discover.adapters.RestaurantListAdapter;
+import com.example.footprnt.Discover.Adapters.RestaurantListAdapter;
 import com.example.footprnt.R;
 
 import java.io.IOException;
