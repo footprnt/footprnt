@@ -13,4 +13,10 @@
     <color name="statusBarBlue">#407695</color>
     <color name="starry_night">#0375B4</color>
     <color name="sunshine">#465C8B</color>
+    <color name="ivory_off_white">#FFFFF0</color>
+    <color name="azure_off_white">#F0FFFF</color>
+    <color name="seashell_off_white">#FFF5EE</color>
+    <color name="honeydew_off_white">#F0FFF0</color>
+    <color name="whitesmoke_off_white">#F5F5F5</color>
+    <color name="ghostwhite_off_white">#F0F8FF</color>
 </resources>

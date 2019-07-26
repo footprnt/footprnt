@@ -80,13 +80,12 @@ public class Util {
      *
      * @param map
      * @param location
-     * @param title
      */
-    public static void centreMapOnLocation(GoogleMap map, Location location, String title) {
+    public static void centreMapOnLocation(GoogleMap map, Location location) {
         LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());
         BitmapDescriptor defaultMarker =
                 BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 12));
+        map.animateCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 12));
     }
 
     /**

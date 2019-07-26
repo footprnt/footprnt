@@ -133,6 +133,10 @@ public class FeedActivity extends Activity {
                                 .getTop()
                                 .withUser()
                                 .withinPoint(new ParseGeoPoint(mLat, mLong), MapConstants.POST_RADIUS);
+                        if (item.getItemId() == R.id.all){
+                            List<String> tags_to_check = new ArrayList();
+                            getPosts(postsQuery);
+                        }
                         if (item.getItemId() == R.id.culture){
                             List<String> tags_to_check = new ArrayList();
                             tags_to_check.add(MapConstants.culture);

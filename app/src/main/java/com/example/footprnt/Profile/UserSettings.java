@@ -20,7 +20,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.footprnt.R;
@@ -49,9 +48,11 @@ public class UserSettings extends AppCompatActivity {
     TextView mTvEditPhoto;
     ImageView mIvBackArrow;
     ImageView mIvSave;
+    TextView mChangePassword;
     EditText mEtUsername;
     EditText mEtNumber;
     EditText mEtEmail;
+    EditText mEtDescription;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +63,7 @@ public class UserSettings extends AppCompatActivity {
         updateCurrentViews();
 
         // Set on click listener for photo
+        // TODO: don't show videos
         mTvEditPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -93,7 +95,6 @@ public class UserSettings extends AppCompatActivity {
         });
 
         // Go back to profile activity if user clicks back
-        // TODO: fix
         mIvBackArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -112,6 +113,7 @@ public class UserSettings extends AppCompatActivity {
                 user.setUsername(mEtUsername.getText().toString());
                 user.put(Constants.phone, mEtNumber.getText().toString());
                 user.put(Constants.email, mEtEmail.getText().toString());
+                user.put("description", mEtDescription.getText().toString());
                 user.saveInBackground(new SaveCallback() {
                     @Override
                     public void done(ParseException e) {
@@ -135,7 +137,6 @@ public class UserSettings extends AppCompatActivity {
                 mParseFile = new ParseFile(photoFile);
             } else {
                 mParseFile = null;
-                Toast.makeText(this, "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
             }
         } else {
             if (resultCode == this.RESULT_OK) {
@@ -168,6 +169,7 @@ public class UserSettings extends AppCompatActivity {
             Glide.with(this).load(R.drawable.ic_user).into(mIvProfileImage);
         }
         mEtUsername.setText(user.getUsername());
+        mEtDescription.setText(user.getString("description"));
         mEtNumber.setText(String.format("%s", user.get(Constants.phone)));
         mEtEmail.setText(String.format("%s", user.get(Constants.email)));
     }
@@ -183,5 +185,6 @@ public class UserSettings extends AppCompatActivity {
         mEtNumber = findViewById(R.id.etNumber);
         mEtEmail = findViewById(R.id.etEmail);
         mIvSave = findViewById(R.id.ivSave);
+        mEtDescription = findViewById(R.id.etDescription);
     }
 }

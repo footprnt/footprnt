@@ -5,12 +5,9 @@
     android:gravity="center"
     android:orientation="vertical"
     android:paddingLeft="16dp"
-    android:paddingRight="16dp">
+    android:paddingRight="16dp"
+    android:id="@+id/fragment_discover">
 
-
-    <FrameLayout
-        android:layout_width="120dp"
-        android:layout_height="101dp" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvRestaurants"

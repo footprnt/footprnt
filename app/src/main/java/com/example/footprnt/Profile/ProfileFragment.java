@@ -7,6 +7,7 @@
 package com.example.footprnt.Profile;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -55,11 +56,15 @@ public class ProfileFragment extends Fragment {
     HashMap<String, Integer> mContinents;  // Contains the continents and number of times visited by user
     ArrayList<HashMap<String, Integer>> mStats;  // Stats to be passed to adapter
 
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        getActivity().setRequestedOrientation(
+                ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
         View v = inflater.inflate(R.layout.fragment_profile, container, false);
-        setUpLogOutButton(v);
+        setUpToolbar(v);
+
 
         // Populate stat maps and get posts
         mObjects = new ArrayList<>();
@@ -92,7 +97,7 @@ public class ProfileFragment extends Fragment {
     }
 
 
-    private void setUpLogOutButton(final View v) {
+    private void setUpToolbar(final View v) {
         // Log out button
         final ImageView settings = v.findViewById(R.id.settings);
         settings.setOnClickListener(new View.OnClickListener() {
@@ -161,14 +166,22 @@ public class ProfileFragment extends Fragment {
                     logError("Error querying posts", e, true);
                 }
 
+
                 mStats.add(mCities);
                 mStats.add(mCountries);
                 mStats.add(mContinents);
 
+
                 mObjects.add(mStats);
                 mMultiAdapter.notifyDataSetChanged();
-                mObjects.addAll(mPosts);
-                mMultiAdapter.notifyDataSetChanged();
+                if (mPosts.size() > 0 && mPosts != null) {
+                    mObjects.addAll(mPosts);
+                    mMultiAdapter.notifyDataSetChanged();
+                } else {
+                    // Handle case if user has no posts yet
+                    mObjects.add("No posts!");
+                    mMultiAdapter.notifyDataSetChanged();
+                }
             }
         });
     }
