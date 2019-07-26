@@ -39,7 +39,7 @@ public class HomeActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         // Reload the user image on the profile fragment
-        if(resultCode == Constants.RELOAD_USERPROFILE_FRAGMENT_REQUEST_CODE){
+        if (resultCode == Constants.RELOAD_USERPROFILE_FRAGMENT_REQUEST_CODE) {
             mFragment3.onActivityResult(requestCode, resultCode, data);
         }
     }
@@ -48,11 +48,13 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
         final BottomNavigationView navView = findViewById(R.id.nav_view);
+
         navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                final Fragment fragment;
+                Fragment fragment;
                 switch (menuItem.getItemId()) {
                     case R.id.navigation_home:
                         fragment = mFragment1;
@@ -71,4 +73,6 @@ public class HomeActivity extends AppCompatActivity {
         });
         navView.setSelectedItemId(R.id.navigation_home);
     }
+
+
 }

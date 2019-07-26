@@ -10,7 +10,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -166,20 +166,18 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             String countryName = post.getCountry();
             String continentName = post.getContinent();
             vh1.getTvTitle().setText(String.format("%s, %s, %s", cityName, countryName, continentName));
-            vh1.getTvTitle().setTextColor(Color.WHITE);
-            vh1.getTvPalette().setBackgroundColor(ContextCompat.getColor(mContext, R.color.grey));
+            vh1.getTvTitle().setTextColor(ContextCompat.getColor(mContext, R.color.grey));
 
             SimpleTarget<Bitmap> target = new SimpleTarget<Bitmap>() {
                 @Override
                 public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                     vh1.getIvImage().setImageBitmap(resource);
                     Palette.from(resource).generate();
-                    vh1.getTvPalette().setBackgroundColor(ContextCompat.getColor(mContext, R.color.grey));
+                    vh1.getTvPalette().setBackgroundColor(ContextCompat.getColor(mContext, R.color.honeydew_off_white));
                 }
             };
 
             vh1.getIvImage().setTag(target);
-            // TODO: Maybe don't crop image as it looks very small
             if (post.getImage() != null) {
                 Glide.with(mContext).asBitmap().load(post.getImage().getUrl()).centerCrop().into(target);
             } else {
@@ -209,7 +207,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
      */
     private void configureUserInfoViewHolder(final UserInfoViewHolder vh2, final int position) {
         final ParseUser user = ParseUser.getCurrentUser();
-                //= (ParseUser) items.get(position);
+        //= (ParseUser) items.get(position);
         if (user != null) {
             if (user.getParseFile(com.example.footprnt.Util.Constants.profileImage) != null) {
                 vh2.setIvProfileImage(user.getParseFile(com.example.footprnt.Util.Constants.profileImage).getUrl(), mContext);
@@ -225,7 +223,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     vh2.getTvDescription().setText(object.getString("description"));
                 }
             });
-            vh2.getTvUsername().setText("@"+user.getUsername());
+            vh2.getTvUsername().setText("@" + user.getUsername());
 
             vh2.getTvEditProfile().setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -262,10 +260,13 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
 
 
+        final MediaPlayer mp = MediaPlayer.create(mContext, R.raw.pop);
         vh3.getNextButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Using one of the built in animations:
+
+
+                mp.start();
                 vh3.getViewFlipper().setInAnimation(mContext, R.anim.flipin);
                 vh3.getViewFlipper().setOutAnimation(mContext, R.anim.flipout);
                 vh3.getViewFlipper().showNext();
@@ -275,7 +276,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         vh3.getPreviousButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Using one of the built in animations:
+                mp.start();
                 vh3.getViewFlipper().setInAnimation(mContext, R.anim.flipin_reverse);
                 vh3.getViewFlipper().setOutAnimation(mContext, R.anim.flipout_reverse);
                 vh3.getViewFlipper().showPrevious();
@@ -283,9 +284,6 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         });
 
     }
-
-
-
 
 
     /**
