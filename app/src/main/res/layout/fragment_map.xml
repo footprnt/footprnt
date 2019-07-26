@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.design.widget.FloatingActionButton
+    <!--<android.support.design.widget.FloatingActionButton
         android:id="@+id/newPost"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -19,7 +19,7 @@
         android:tint="#FFFFFF"
         app:backgroundTint="#659DBD"
         app:layout_constraintBottom_toBottomOf="@+id/map"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent" />-->
 
 
     <com.linroid.filtermenu.library.FilterMenuLayout
@@ -28,8 +28,8 @@
         android:layout_height="wrap_content"
         android:clickable="true"
         android:elevation="8dp"
-        app:fm_centerLeft="50dp"
-        app:fm_centerTop="150dp"
+        app:fm_centerBottom="50dp"
+        app:fm_centerRight="50dp"
         app:fm_collapsedRadius="24dp"
         app:fm_expandedRadius="86dp"
         app:fm_primaryColor="#ff5791aa"

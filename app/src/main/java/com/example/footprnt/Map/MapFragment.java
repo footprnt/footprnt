@@ -132,7 +132,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     private Switch mSwitch;
     private float mLocationX;
     private float mLocationY;
-    private boolean mMenuItemsAdded = false;
+    private boolean mMenuItemsAdded;
 
     // Tag variables
     private ArrayList<String> mTags;
@@ -175,6 +175,8 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         mPopup = new PopupMenu(getActivity(), mSettings);
         mPopup.getMenuInflater().inflate(R.menu.popup_menu_map, mPopup.getMenu());
         configureMapStyleMenu();
+
+        mMenuItemsAdded = false;
         return v;
     }
 
@@ -191,13 +193,13 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         mSearchText.addTextChangedListener(new SingleLineET(mSearchText));
         layout = (FilterMenuLayout) getActivity().findViewById(R.id.filter_menu4);
         layout.setVisibility(View.GONE);
-        ImageView newPost = getView().findViewById(R.id.newPost);
-        newPost.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                createPostCurrentLocation();
-            }
-        });
+//        ImageView newPost = getView().findViewById(R.id.newPost);
+//        newPost.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                createPostCurrentLocation();
+//            }
+//        });
         mLocationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
         mLocationListener = new LocationListener() {
             @Override
@@ -395,8 +397,12 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
 
     @Override
     public void onMapLongClick(final LatLng latLng) {
-        System.out.println(mLocationX);
-        System.out.println(mLocationY);
+        BitmapDescriptor defaultMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
+        final Marker m = mMap.addMarker(new MarkerOptions()
+                .position(latLng)
+                .title("")
+                .snippet("")
+                .icon(defaultMarker));
         layout = getActivity().findViewById(R.id.filter_menu4);
         layout.setVisibility(View.VISIBLE);
         if (!mMenuItemsAdded){
@@ -433,12 +439,15 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                         @Override
                         public void onMenuCollapse() {
                             layout.setVisibility(View.INVISIBLE);
+                            m.remove();
                         }
                         @Override
                         public void onMenuExpand() {
                         }
                     })
                     .build();
+            menu.toggle(true);
+
         } else {
             FilterMenu menu = new FilterMenu.Builder(getContext())
                     .attach(layout)
@@ -469,13 +478,14 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                         @Override
                         public void onMenuCollapse() {
                             layout.setVisibility(View.INVISIBLE);
+                            m.remove();
                         }
                         @Override
                         public void onMenuExpand() {
                         }
                     })
                     .build();
-            layout.setMenu(menu);
+            menu.toggle(true);
         }
 
     }
