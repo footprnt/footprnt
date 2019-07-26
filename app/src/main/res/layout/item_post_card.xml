@@ -20,8 +20,10 @@
             android:id="@+id/ivImage"
             android:layout_width="272dp"
             android:layout_height="match_parent"
+            android:background="#FFFFFF"
             android:scaleType="centerCrop"
-            android:transitionName="profile" />
+            android:transitionName="profile"
+            card_view:srcCompat="@drawable/no_photo" />
 
         <RelativeLayout
             android:layout_width="111dp"

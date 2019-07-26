@@ -204,9 +204,6 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             vh1.getIvImage().setTag(target);
             if (post.getImage() != null) {
                 Glide.with(mContext).asBitmap().load(post.getImage().getUrl()).centerCrop().into(target);
-            } else {
-                // TODO: fix default image loaded where no image present to be prettier
-                Glide.with(mContext).asBitmap().load(R.drawable.ic_add_photo).centerCrop().into(target);
             }
 
             vh1.getIvImage().setOnClickListener(new View.OnClickListener() {
@@ -234,10 +231,6 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         if (user != null) {
             if (user.getParseFile(com.example.footprnt.Util.Constants.profileImage) != null) {
                 vh2.setIvProfileImage(user.getParseFile(com.example.footprnt.Util.Constants.profileImage).getUrl(), mContext);
-            } else {
-                // User does not have an image, load preset image
-                // TODO: change this to be more pretty (i.e. the tint of the image)
-                Glide.with(mContext).load(R.drawable.ic_user).into(vh2.getIvProfileImage());
             }
 
             user.fetchInBackground(new GetCallback<ParseObject>() {
