@@ -25,6 +25,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.example.footprnt.Models.Post;
+import com.example.footprnt.Profile.Adapters.ViewHolders.NoPostsViewHolder;
 import com.example.footprnt.Profile.Adapters.ViewHolders.PostViewHolder;
 import com.example.footprnt.Profile.Adapters.ViewHolders.StatViewHolder;
 import com.example.footprnt.Profile.Adapters.ViewHolders.UserInfoViewHolder;
@@ -33,6 +34,7 @@ import com.example.footprnt.Profile.UserSettings;
 import com.example.footprnt.Profile.Util.ProfileConstants;
 import com.example.footprnt.R;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
@@ -56,7 +58,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     ArrayList<Object> items;
 
     // Identifier for objects in items and which view to load:
-    private final int USER_INFO = 0, POST = 1, STAT = 2;
+    private final int USER_INFO = 0, POST = 1, STAT = 2, NO_POSTS = 3;
 
 
     /**
@@ -94,6 +96,8 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             return USER_INFO;
         } else if (items.get(position) instanceof ArrayList) {
             return STAT;
+        }  else if(items.get(position) instanceof String){
+            return NO_POSTS;
         }
         return -1;
     }
@@ -122,6 +126,11 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             case STAT:
                 View v3 = inflater.inflate(R.layout.item_user_stats, viewGroup, false);
                 viewHolder = new StatViewHolder(v3);
+                break;
+            case NO_POSTS:
+                View v4 = inflater.inflate(R.layout.item_no_posts, viewGroup, false);
+                viewHolder = new NoPostsViewHolder(v4);
+                break;
         }
         return viewHolder;
     }
@@ -149,6 +158,9 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 StatViewHolder vh3 = (StatViewHolder) viewHolder;
                 configureStatViewHolder(vh3, position);
                 break;
+            case NO_POSTS:
+                NoPostsViewHolder vh4 = (NoPostsViewHolder) viewHolder;
+                configureNoPostsViewHolder(vh4, position);
         }
     }
 
@@ -207,7 +219,6 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
      */
     private void configureUserInfoViewHolder(final UserInfoViewHolder vh2, final int position) {
         final ParseUser user = ParseUser.getCurrentUser();
-        //= (ParseUser) items.get(position);
         if (user != null) {
             if (user.getParseFile(com.example.footprnt.Util.Constants.profileImage) != null) {
                 vh2.setIvProfileImage(user.getParseFile(com.example.footprnt.Util.Constants.profileImage).getUrl(), mContext);
@@ -285,6 +296,16 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     }
 
+    /**
+     * Method to configure the no posts view holder
+     *
+     * @param vh4      view holder to configure
+     * @param position position in adapter the no posts item is
+     */
+    private void configureNoPostsViewHolder(final NoPostsViewHolder vh4, final int position) {
+        vh4.getRootView().setTag(items.get(position));
+    }
+
 
     /**
      * Helper method to set up the user statistic pie chart
@@ -299,9 +320,10 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         pieEntries.add(new PieEntry(visited, title));
         pieEntries.add(new PieEntry(total - visited));
         PieDataSet pieDataSet = new PieDataSet(pieEntries, "");
-        pieDataSet.setColors(ColorTemplate.JOYFUL_COLORS);
+        pieDataSet.setColors(ColorTemplate.LIBERTY_COLORS);
         PieData pieData = new PieData(pieDataSet);
         pieChart.setData(pieData);
+        pieChart.setDescription(new Description());
         pieChart.setDrawCenterText(true);
         pieChart.animateY(1000);
         pieChart.invalidate();
