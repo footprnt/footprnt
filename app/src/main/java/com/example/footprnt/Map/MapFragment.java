@@ -38,11 +38,13 @@ import android.support.v7.widget.PopupMenu;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -112,6 +114,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     private boolean mJumpToCurrentLocation = false;
     private JSONObject mContinents;
     private Location mLocation;
+    private EditText mSearchText;
 
     // Display variables
     private CustomInfoWindowAdapter mInfoAdapter;
@@ -179,6 +182,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mSearchText = getActivity().findViewById(R.id.searchText);
         layout = (FilterMenuLayout) getActivity().findViewById(R.id.filter_menu4);
         layout.setVisibility(View.INVISIBLE);
         ImageView newPost = getView().findViewById(R.id.newPost);
@@ -195,7 +199,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 mLocation = location;
                 if (mJumpToCurrentLocation) {
                     mJumpToCurrentLocation = false;
-                    mHelper.centreMapOnLocation(mMap, location, "Your Location");
+                    mHelper.centreMapOnLocation(mMap, location);
                 }
             }
 
@@ -255,6 +259,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         setUpMapIfNeeded();
         loadMarkers();
         handleToggle();
+        init();
     }
 
     private void setUpMapIfNeeded() {
@@ -270,7 +275,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         rlp.setMargins(0, 200, 180, 0);
         if (mJumpToCurrentLocation && mLocation != null) {
             mJumpToCurrentLocation = false;
-            mHelper.centreMapOnLocation(mMap, mLocation, "Your Location");
+            mHelper.centreMapOnLocation(mMap, mLocation);
         }
 
         mMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
@@ -281,7 +286,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 temp.setLongitude(arg0.getLongitude());
                 if (mJumpToCurrentLocation) {
                     mJumpToCurrentLocation = false;
-                    mHelper.centreMapOnLocation(mMap, temp, "Your Location");
+                    mHelper.centreMapOnLocation(mMap, temp);
                 }
             }
         });
@@ -387,6 +392,10 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         System.out.println(mLocationX);
         System.out.println(mLocationY);
         layout.setVisibility(View.VISIBLE);
+//        FilterMenu fm = new FilterMenu();
+//        FilterMenuLayout filterMenuLayout = new FilterMenuLayout(getContext(), );
+//        fm.setMenuLayout(filterMenuLayout);
+//        layout.setMenu(fm);
         setupMenu(latLng);
     }
 
@@ -646,8 +655,40 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         }
     }
 
-    public void handleSearch() {
+    private void init(){
+        mSearchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH
+                        || actionId == EditorInfo.IME_ACTION_DONE
+                        || event.getAction() == KeyEvent.ACTION_DOWN
+                        || event.getAction() == KeyEvent.KEYCODE_ENTER){
+                    geoLocate();
+                }
+                return false;
+            }
+        });
+    }
 
+    private void geoLocate(){
+        String searchString = mSearchText.getText().toString();
+
+        Geocoder geocoder = new Geocoder(getContext());
+        List<Address> list = new ArrayList<>();
+        try{
+            list = geocoder.getFromLocationName(searchString, 1);
+        } catch (IOException e){
+
+        }
+
+        if (list.size() > 0){
+            Address address = list.get(0);
+            Location l = new Location(LocationManager.GPS_PROVIDER);
+            l.setLatitude(address.getLatitude());
+            l.setLongitude(address.getLongitude());
+            Util.centreMapOnLocation(mMap, l);
+            BitmapDescriptor defaultMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
+        }
     }
 
     /**

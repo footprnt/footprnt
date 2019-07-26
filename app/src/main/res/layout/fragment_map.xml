@@ -92,7 +92,7 @@
             app:layout_constraintVertical_bias="0.538" />
 
         <EditText
-            android:id="@+id/editText"
+            android:id="@+id/searchText"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginStart="8dp"
@@ -104,7 +104,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/switch1"
             app:layout_constraintStart_toEndOf="@+id/imageView6"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:imeOptions="actionSearch"/>
 
         <ImageView
             android:id="@+id/ivSettings"
@@ -114,7 +115,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toBottomOf="@+id/editText"
+            app:layout_constraintBottom_toBottomOf="@+id/searchText"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_more_vert_grey" />
