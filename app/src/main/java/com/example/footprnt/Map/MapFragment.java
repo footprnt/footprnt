@@ -22,6 +22,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -440,9 +441,13 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 }
             }
         });
+
+        final MediaPlayer mp = MediaPlayer.create(getContext(), R.raw.swipe_two);
         sendPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Add sound when user sends post
+                mp.start();
                 final String title = ((EditText) mAlertDialog.findViewById(R.id.etTitle)).getText().toString();
                 final String snippet = ((EditText) mAlertDialog.findViewById(R.id.etSnippet)).getText().toString();
                 if( TextUtils.isEmpty(title) || TextUtils.isEmpty(snippet)){

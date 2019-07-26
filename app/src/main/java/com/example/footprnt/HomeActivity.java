@@ -7,6 +7,7 @@
 package com.example.footprnt;
 
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -51,9 +52,11 @@ public class HomeActivity extends AppCompatActivity {
 
         final BottomNavigationView navView = findViewById(R.id.nav_view);
 
+        final MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.pop_two);
         navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                mp.start();
                 Fragment fragment;
                 switch (menuItem.getItemId()) {
                     case R.id.navigation_home:
