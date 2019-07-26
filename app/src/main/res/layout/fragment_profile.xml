@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:orientation="vertical"
     android:layout_height="match_parent"
+    android:id="@+id/fragment_profile"
     android:background="@color/whitesmoke_off_white">
 
 
