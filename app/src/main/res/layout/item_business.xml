@@ -1,44 +1,44 @@
-<android.support.v7.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/CardView.Light"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginTop="8dp"
     android:layout_marginStart="8dp"
+    android:layout_marginTop="8dp"
     android:layout_marginEnd="8dp">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
         <ImageView
             android:id="@+id/ivBusinessImage"
-            android:layout_width="0dp"
+            android:layout_width="298dp"
             android:layout_height="0dp"
             android:scaleType="centerCrop"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="H,1:1"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <View
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="#7F000000"
-            app:layout_constraintTop_toTopOf="@+id/top_space"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/top_space" />
 
         <Space
             android:id="@+id/top_space"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/tvBusinessName"/>
+            app:layout_constraintBottom_toTopOf="@+id/tvBusinessName"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:id="@+id/tvBusinessName"
@@ -49,6 +49,9 @@
             android:text="Business Name"
             android:textAppearance="@style/TextAppearance.AppCompat.Headline"
             android:textColor="#FFFFFFFF"
+            android:textSize="30sp"
+            android:textStyle="bold|italic"
+            android:typeface="serif"
             app:layout_constraintBottom_toTopOf="@+id/tvBusinessCategory"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -63,13 +66,15 @@
             android:text="Business category"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textColor="#B3FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold|italic"
             app:layout_constraintBottom_toTopOf="@+id/action_button_1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
         <Button
-            style="@style/Widget.AppCompat.Button.Borderless"
             android:id="@+id/action_button_1"
+            style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -77,12 +82,12 @@
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
             android:textColor="#FFFFFFFF"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <Button
-            style="@style/Widget.AppCompat.Button.Borderless"
             android:id="@+id/action_button_2"
+            style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -90,17 +95,18 @@
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
             android:textColor="#FFFFFFFF"
-            app:layout_constraintTop_toTopOf="@+id/action_button_1"
-            app:layout_constraintStart_toEndOf="@+id/action_button_1" />
+            app:layout_constraintStart_toEndOf="@+id/action_button_1"
+            app:layout_constraintTop_toTopOf="@+id/action_button_1" />
 
         <TextView
             android:id="@+id/tvBusinessRating"
-            android:layout_width="89dp"
-            android:layout_height="24dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="23dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginRight="5dp"
             android:layout_marginBottom="4dp"
             android:text="Rating"
+            android:textColor="@color/honeydew_off_white"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />

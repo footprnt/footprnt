@@ -74,7 +74,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
         public void bindBusiness(Business business) {
             tvBusinessName.setText(business.getName());
             tvBusinessCategory.setText(business.getCategories().get(0));
-            tvBusinessRating.setText("Rating: " + business.getRating() + "/5");
+            tvBusinessRating.setText(String.format("Rating: %s/5", business.getRating()));
             Picasso.with(mContext).load(business.getImageUrl()).into(ivBusinessImage);
         }
     }
