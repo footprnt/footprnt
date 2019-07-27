@@ -328,6 +328,10 @@ public class MapUtil {
         return m;
     }
 
+    /**
+     * Hides toolbar for aesthetics
+     * @param activity
+     */
     public static void hideToolBar(Activity activity) {
         ConstraintLayout mToolbar = activity.findViewById(R.id.relLayout1);
         View locationButton = ((View) activity.findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
@@ -335,6 +339,10 @@ public class MapUtil {
         mToolbar.setVisibility(View.INVISIBLE);
     }
 
+    /**
+     * Shows toolbar again
+     * @param activity
+     */
     public static void showToolbar(Activity activity) {
         ConstraintLayout mToolbar = activity.findViewById(R.id.relLayout1);
         View locationButton = ((View) activity.findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));

@@ -195,7 +195,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         setupMapStyles();
         setupMapUserLocation();
         loadMarkers();
-        handleToggle();
+        handleSwitch();
         handleSearch();
     }
 
@@ -241,6 +241,9 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         }
     }
 
+    /**
+     * Initializes map and sets user permissions
+     */
     private void initialization(){
         mMapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         MapsInitializer.initialize(this.getActivity());
@@ -260,6 +263,9 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         mMenuItemsAdded = false;
     }
 
+    /**
+     * Sets up map styles
+     */
     private void setupMapStyles(){
         View toolbar = ((View) mMapFrag.getView().findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("4"));
         RelativeLayout.LayoutParams rlpToolbar = (RelativeLayout.LayoutParams) toolbar.getLayoutParams();
@@ -273,6 +279,9 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getContext(), mMapStyle));
     }
 
+    /**
+     * Requests permission for location and handles finding user location
+     */
     private void setupMapUserLocation() {
         if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
@@ -583,7 +592,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     /**
      * Handles toggling of user posts vs all posts
      */
-    public void handleToggle() {
+    public void handleSwitch() {
         mSwitch = getView().findViewById(R.id.switch1);
         mSwitch.setChecked(false);
         mSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

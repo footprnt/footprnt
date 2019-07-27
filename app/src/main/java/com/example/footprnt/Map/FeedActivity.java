@@ -48,6 +48,15 @@ public class FeedActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed);
+        initialization();
+        handleMenuAction();
+        handleSwipeRefresh();
+    }
+
+    /**
+     * Initializes all variables
+     */
+    private void initialization(){
         mLat = getIntent().getExtras().getDouble("latitude");
         mLong = getIntent().getExtras().getDouble("longitude");
         mPosts = new ArrayList<>();
@@ -65,8 +74,6 @@ public class FeedActivity extends Activity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mPostsView.setLayoutManager(layoutManager);
         mPostsView.setAdapter(mPostAdapter);
-        handleMenuAction();
-        handleSwipeRefresh();
     }
 
     /**
@@ -129,6 +136,9 @@ public class FeedActivity extends Activity {
         mSwipeContainer.setRefreshing(false);
     }
 
+    /**
+     * Handles applying tags and filter menu action
+     */
     public void handleMenuAction(){
         menu.setOnClickListener(new View.OnClickListener() {
             @Override
