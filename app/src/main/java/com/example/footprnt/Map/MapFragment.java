@@ -55,6 +55,7 @@ import com.arsy.maps_library.MapRipple;
 import com.bumptech.glide.Glide;
 import com.example.footprnt.HomeActivity;
 import com.example.footprnt.Manifest;
+import com.example.footprnt.Map.Util.CustomInfoWindowAdapter;
 import com.example.footprnt.Map.Util.MapConstants;
 import com.example.footprnt.Map.Util.MapUtil;
 import com.example.footprnt.Models.MarkerDetails;
@@ -418,11 +419,14 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 temp.remove();
             }
         });
-        handleCameraButtons();
+        handlePhotoButtons();
         handlePostButtons(point, temp);
     }
 
-    private void handleCameraButtons(){
+    /**
+     * Handles upload image and take image buttons in alert dialog
+     */
+    private void handlePhotoButtons(){
         ImageView ivUpload = mAlertDialog.findViewById(R.id.ivUpload);
         ImageView ivCamera = mAlertDialog.findViewById(R.id.ivCamera);
         ivUpload.setOnClickListener(new View.OnClickListener() {
@@ -445,6 +449,11 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         });
     }
 
+    /**
+     * Handles send post and cancel post buttons in alert dialog
+     * @param point point where post is being made
+     * @param temp temporary marker for UI purposes
+     */
     private void handlePostButtons(final LatLng point, final Marker temp){
         ImageView sendPost = mAlertDialog.findViewById(R.id.dropdown);
         ImageView cancelPost = mAlertDialog.findViewById(R.id.cancelPost);

@@ -1,10 +1,9 @@
-package com.example.footprnt.Map;
+package com.example.footprnt.Map.Util;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -19,18 +18,30 @@ import com.example.footprnt.R;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
 
+/**
+ * Adapts Google Maps marker to custom info window
+ *
+ * @author Jocelyn Shen
+ * @version 1.0
+ * @since 2019-07-22
+ */
 public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter{
 
     private final View mWindow;
     private Context mContext;
-    private ConstraintLayout mConstraintLayout;
+    private Handler mHandler;
 
     public CustomInfoWindowAdapter(Context context){
         mContext = context;
         mWindow = LayoutInflater.from(context).inflate(R.layout.image_marker, null);
-        mConstraintLayout = mWindow.findViewById(R.id.constraintLayout);
     }
 
+    /**
+     * Grabs the post associated with marker
+     *
+     * @param marker marker clicked on by user
+     * @param v view
+     */
     public void getPostObject(final Marker marker, final View v){
         final ImageView image = v.findViewById(R.id.imageMarker);
         if (marker.getSnippet().length() > 0){
@@ -75,8 +86,6 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter{
     public View getInfoWindow(Marker marker) {
         return null;
     }
-
-    private Handler mHandler;
 
     @Override
     public View getInfoContents(Marker marker) {
