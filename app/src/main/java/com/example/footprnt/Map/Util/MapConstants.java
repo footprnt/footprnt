@@ -32,9 +32,10 @@ public class MapConstants {
     public static int style_retro = R.raw.style_json_retro;
     public static int style_basic = R.raw.style_json_basic;
 
-    public static String menuItems[] = {"Create", "View", "Discover"};
+    public static String menuItems[] = {"Create", "View", "Discover", "Current"};
     public static String CREATE = "Create";
     public static String VIEW = "View";
     public static String DISCOVER = "Discover";
+    public static String CURRENT = "Current";
 
 }

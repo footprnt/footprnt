@@ -14,6 +14,7 @@ import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.example.footprnt.Map.Util.MapConstants;
 import com.example.footprnt.Models.Post;
@@ -41,6 +42,7 @@ public class FeedActivity extends Activity {
     private double mLat;
     private double mLong;
     private View menu;
+    private TextView mNoPosts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +58,8 @@ public class FeedActivity extends Activity {
                 .withinPoint(new ParseGeoPoint(mLat, mLong), MapConstants.POST_RADIUS);
         mPostAdapter = new PostAdapter(mPosts);
         mPostsView = findViewById(R.id.rvPosts);
+        mNoPosts = findViewById(R.id.noPosts);
+        mNoPosts.setVisibility(View.INVISIBLE);
         getPosts(postsQuery);
         menu = findViewById(R.id.dropdown);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -86,6 +90,9 @@ public class FeedActivity extends Activity {
                 }
             }
         });
+        if (mPosts.size() == 0){
+            mNoPosts.setVisibility(View.VISIBLE);
+        }
     }
 
     /**
