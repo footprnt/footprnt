@@ -14,19 +14,18 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.example.footprnt.LoginActivity;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.Profile.Adapters.MultiViewAdapter;
 import com.example.footprnt.R;
 import com.example.footprnt.Util.Constants;
+import com.example.footprnt.Util.Util;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
@@ -62,7 +61,6 @@ public class ProfileFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_profile, container, false);
         setUpToolbar(v);
 
-
         // Populate stat maps and get posts
         mObjects = new ArrayList<>();
         mCities = new HashMap<>();
@@ -91,19 +89,19 @@ public class ProfileFragment extends Fragment {
         if (resultCode == Constants.RELOAD_USERPROFILE_FRAGMENT_REQUEST_CODE) {
             mMultiAdapter.notifyItemChanged(0);
         }
-        // delete post
-        if(resultCode == 302){
-            int position = data.getIntExtra("position",0);
+
+        // Delete post
+        if (resultCode == 302) {
+            int position = data.getIntExtra(Constants.position, 0);
             mObjects.remove(position);
             mMultiAdapter.notifyItemChanged(position);
         }
-        // save post
-        if(resultCode == 301){
-            int position = data.getIntExtra("position",0);
-            mMultiAdapter.notifyItemChanged(1);  // stats update
+        // TODO: fix so UI updates
+        // Save post
+        if (resultCode == 301) {
+            int position = data.getIntExtra(Constants.position, 0);
             mMultiAdapter.notifyItemChanged(position);
         }
-
     }
 
 
@@ -131,6 +129,7 @@ public class ProfileFragment extends Fragment {
     // Get posts
     private void getPosts() {
         final Post.Query postsQuery = new Post.Query();
+        // Only add current user's posts
         postsQuery
                 .getTop()
                 .withUser()
@@ -143,47 +142,50 @@ public class ProfileFragment extends Fragment {
                 if (e == null) {
                     for (int i = 0; i < objects.size(); i++) {
                         final Post post = objects.get(i);
-                        // Only add current user's posts
-                        mPosts.add(post);
                         // Get post stats and update user stats
-                        String city = post.getCity();
-                        String country = post.getCountry();
-                        String continent = post.getContinent();
-
-                        // Fill HashMaps - Cities
-                        if (!mCities.containsKey(city)) {
-                            // User first visit
-                            mCities.put(city, 1);
-                        } else {
-                            // User already visited, increment count
-                            mCities.put(city, mCities.get(city) + 1);
+                        mPosts.add(post);
+                        // Fill HashMaps and handle null values
+                        // Cities
+                        if (post.getCity() != null) {
+                            String city = post.getCity();
+                            if (!mCities.containsKey(city)) {
+                                // User first visit
+                                mCities.put(city, 1);
+                            } else {
+                                // User already visited, increment count
+                                mCities.put(city, mCities.get(city) + 1);
+                            }
                         }
 
                         // Countries
-                        if (!mCountries.containsKey(country)) {
-                            mCountries.put(country, 1);
-                        } else {
-                            mCountries.put(country, mCountries.get(country) + 1);
+                        if (post.getCountry() != null) {
+                            String country = post.getCountry();
+                            if (!mCountries.containsKey(country)) {
+                                mCountries.put(country, 1);
+                            } else {
+                                mCountries.put(country, mCountries.get(country) + 1);
+                            }
                         }
+
                         // Continents
-                        if (!mContinents.containsKey(continent)) {
-                            mContinents.put(continent, 1);
-                        } else {
-                            mContinents.put(continent, mContinents.get(continent) + 1);
+                        if (post.getContinent() != null) {
+                            String continent = post.getContinent();
+                            if (!mContinents.containsKey(continent)) {
+                                mContinents.put(continent, 1);
+                            } else {
+                                mContinents.put(continent, mContinents.get(continent) + 1);
+                            }
                         }
                     }
                 } else {
-                    logError("Error querying posts", e, true);
+                    Util.logError(getContext(), TAG, "Error querying posts", e, true);
                 }
-
 
                 mStats.add(mCities);
                 mStats.add(mCountries);
                 mStats.add(mContinents);
                 mObjects.add(mStats);
-
                 mMultiAdapter.notifyDataSetChanged();
-
 
                 if (mPosts.size() > 0 && mPosts != null) {
                     mObjects.addAll(mPosts);
@@ -196,14 +198,4 @@ public class ProfileFragment extends Fragment {
             }
         });
     }
-
-    // Helper method to handle errors, log them, and alert user
-    private void logError(String message, Throwable error, boolean alertUser) {
-        Log.e(TAG, message, error);
-        if (alertUser) {
-            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-        }
-    }
-
-
 }

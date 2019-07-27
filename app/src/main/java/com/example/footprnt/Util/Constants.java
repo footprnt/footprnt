@@ -26,6 +26,11 @@ public class Constants {
     public static String user = "user";
     public static String objectId = "objectId";
 
+    // For getting extras for intents:
+    public static String post = "Post";
+    public static String position = "Position";
+
+
     // For camera:
     public static String photoFileName = "photo.jpg";
     public static String fileProvider = "com.example.fileprovider";

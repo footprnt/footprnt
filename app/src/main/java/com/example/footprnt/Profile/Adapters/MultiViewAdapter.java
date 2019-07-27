@@ -228,7 +228,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
      * @param position in adapter the USER_INFO item is
      */
     private void configureUserInfoViewHolder(final UserInfoViewHolder vh2, final int position) {
-        final ParseUser user = ParseUser.getCurrentUser();
+        final ParseUser user = (ParseUser)items.get(position);
         if (user != null) {
             if (user.getParseFile(com.example.footprnt.Util.Constants.profileImage) != null) {
                 vh2.setIvProfileImage(user.getParseFile(com.example.footprnt.Util.Constants.profileImage).getUrl(), mContext);
@@ -237,7 +237,9 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             user.fetchInBackground(new GetCallback<ParseObject>() {
                 @Override
                 public void done(ParseObject object, ParseException e) {
-                    vh2.getTvDescription().setText(object.getString("description"));
+                    if(object.getString("description")!=null) {
+                        vh2.getTvDescription().setText(object.getString("description"));
+                    }
                 }
             });
             vh2.getTvUsername().setText("@" + user.getUsername());

@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.R;
+import com.example.footprnt.Util.Constants;
 import com.example.footprnt.Util.Util;
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -70,7 +71,7 @@ public class EditPost extends AppCompatActivity {
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int width = displayMetrics.widthPixels;
         int height = displayMetrics.heightPixels;
-        getWindow().setLayout((int) (width * .8), (int) (height * .8));
+        getWindow().setLayout((int) (width * .8), (int) (height * .9));
 
 
         // Delete post
@@ -78,8 +79,8 @@ public class EditPost extends AppCompatActivity {
         mBtnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ParseQuery<ParseObject> query = ParseQuery.getQuery("Post");
-                query.whereEqualTo("objectId", post.getObjectId());
+                ParseQuery<ParseObject> query = ParseQuery.getQuery(Constants.post);
+                query.whereEqualTo(Constants.objectId, post.getObjectId());
                 query.getInBackground(post.getObjectId(), new GetCallback<ParseObject>() {
                     public void done(final ParseObject object, ParseException e) {
                         if (e == null) {
@@ -88,7 +89,7 @@ public class EditPost extends AppCompatActivity {
                                 public void done(ParseException e) {
                                     object.deleteInBackground();
                                     Intent it = new Intent();
-                                    it.putExtra("position", position);
+                                    it.putExtra(Constants.position, position);
                                     setResult(302, it);
                                     finish();
                                 }
@@ -122,26 +123,26 @@ public class EditPost extends AppCompatActivity {
     }
 
 
-    private void setViews(){
+    private void setViews() {
         String date = util.getRelativeTimeAgo(post.getCreatedAt().toString());
         mTvDate.setText(date);
         mEtTitle.setText(post.getTitle());
         mEtDescription.setText(post.getDescription());
 
+        // Check for null values for either city, country, or continent
         StringBuilder sb = new StringBuilder();
-        if(post.getCity()!=null){
-            sb.append(post.getCity()+",");
+        if (post.getCity() != null) {
+            sb.append(post.getCity() + ",");
         }
-        if(post.getCountry()!=null){
-            sb.append(post.getCountry()+",");
+        if (post.getCountry() != null) {
+            sb.append(post.getCountry() + ",");
         }
 
-        if(post.getContinent()!=null){
+        if (post.getContinent() != null) {
             sb.append(post.getContinent());
         }
 
         mEtLocation.setText(sb);
-
         if (post.getImage() != null) {
             Glide.with(this).load(post.getImage().getUrl()).into(mIvPicture);
         }
