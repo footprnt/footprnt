@@ -1,9 +1,3 @@
-/*
- * MapFragment.java
- * v1.0
- * July 2019
- * Copyright ©2019 Footprnt Inc.
- */
 package com.example.footprnt.Map;
 
 import android.app.Activity;
@@ -396,7 +390,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
      * @param point point where post is being created
      */
     private void createPostDialog(LatLng point) {
-        View messageView = LayoutInflater.from(getActivity()).inflate(R.layout.message_item, null);
+        View messageView = LayoutInflater.from(getActivity()).inflate(R.layout.create_post, null);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
         alertDialogBuilder.setView(messageView);
         mAlertDialog = alertDialogBuilder.create();

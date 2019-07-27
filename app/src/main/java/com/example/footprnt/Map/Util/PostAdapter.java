@@ -1,9 +1,3 @@
-/*
- * PostAdapter.java
- * v1.0
- * July 2019
- * Copyright ©2019 Footprnt Inc.
- */
 package com.example.footprnt.Map.Util;
 
 import android.app.Activity;
