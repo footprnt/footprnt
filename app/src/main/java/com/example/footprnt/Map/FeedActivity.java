@@ -84,15 +84,17 @@ public class FeedActivity extends Activity {
                         mPosts.add(post);
                         mPostAdapter.notifyItemInserted(mPosts.size() - 1);
                     }
+                    if (mPosts.size() == 0){
+                        mNoPosts.setVisibility(View.VISIBLE);
+                    } else {
+                        mNoPosts.setVisibility(View.INVISIBLE);
+                    }
                     mSwipeContainer.setRefreshing(false);
                 } else {
                     e.printStackTrace();
                 }
             }
         });
-        if (mPosts.size() == 0){
-            mNoPosts.setVisibility(View.VISIBLE);
-        }
     }
 
     /**
