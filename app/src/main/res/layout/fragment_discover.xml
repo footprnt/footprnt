@@ -13,7 +13,7 @@
     <android.support.constraint.ConstraintLayout
         android:id="@+id/constraintLayout2"
         android:layout_width="408dp"
-        android:layout_height="536dp"
+        android:layout_height="558dp"
         android:layout_gravity="bottom|end"
         android:layout_marginTop="2dp"
         android:foregroundGravity="bottom"
@@ -26,14 +26,15 @@
         <ScrollView
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
+            android:layout_marginTop="4dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
             <LinearLayout
-                android:layout_width="392dp"
-                android:layout_height="520dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginTop="8dp"
@@ -50,8 +51,8 @@
                     android:id="@+id/rvRestaurants"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp"
                     app:layout_constraintBottom_toTopOf="@+id/rvMuseums"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -59,8 +60,8 @@
                     android:id="@+id/rvMuseums"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/rvRestaurants"
                     tools:layout_editor_absoluteX="2dp" />
@@ -68,12 +69,16 @@
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/rvClubs"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp" />
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/rvHotels"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp" />
 
             </LinearLayout>
 
@@ -91,7 +96,29 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+
+        <FrameLayout
+            android:id="@+id/day_activity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:layout_editor_absoluteX="41dp"
+            tools:layout_editor_absoluteY="83dp">
+
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="329dp"
+                android:layout_height="95dp"
+                android:text='This area is reserved for "Activity of the day" view'
+                android:textSize="24sp" />
+        </FrameLayout>
     </android.support.constraint.ConstraintLayout>
 
+    <include
+        layout="@layout/toolbar_custom_profile"
+        android:layout_width="405dp"
+        android:layout_height="54dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="4dp" />
 
 </android.support.constraint.ConstraintLayout>
