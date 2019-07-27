@@ -78,8 +78,6 @@ import com.parse.ParseFile;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
-import org.json.JSONObject;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
@@ -101,24 +99,26 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     private SupportMapFragment mMapFrag;
     private Util mHelper;
     private boolean mJumpToCurrentLocation = false;
-    private JSONObject mContinents;
     private Location mLocation;
-    private EditText mSearchText;
     private LatLng mTappedLocation;
+    private int mMapStyle;
 
-    // Display variables
+    // Search variables
+    private EditText mSearchText;
+    private ImageView mSearch;
+    private FragmentActivity myContext;
+
+    // Marker variables
     private CustomInfoWindowAdapter mInfoAdapter;
     ArrayList<Marker> markers;
-    private FilterMenuLayout mFilterMenuLayout;
     private ArrayList<MarkerDetails> mMarkerDetails;
+
+    // Post variables
+    private ParseUser mUser;
     private ImageView mImage;
     private File mPhotoFile;
     private AlertDialog mAlertDialog = null;
     private ParseFile mParseFile;
-    private ParseUser mUser;
-    private int mMapStyle;
-    private Switch mSwitch;
-    private boolean mMenuItemsAdded;
 
     // Tag variables
     private ArrayList<String> mTags;
@@ -131,8 +131,14 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     // Menu variables
     private ImageView mSettings;
     private PopupMenu mPopup;
-    private FragmentActivity myContext;
-    private ImageView mSearch;
+    private FilterMenuLayout mFilterMenuLayout;
+    private Switch mSwitch;
+    private boolean mMenuItemsAdded;
+
+    // Sound variables
+    private MediaPlayer mSwipe;
+    private MediaPlayer mBubble;
+    private MediaPlayer mBubbleClose;
 
     @Nullable
     @Override
@@ -152,6 +158,9 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         mSearch = getActivity().findViewById(R.id.search);
         mPopup = new PopupMenu(getActivity(), mSettings);
         mPopup.getMenuInflater().inflate(R.menu.popup_menu_map, mPopup.getMenu());
+        mSwipe = MediaPlayer.create(getContext(), R.raw.swipe_two);
+        mBubble = MediaPlayer.create(getContext(), R.raw.bubble);
+        mBubbleClose = MediaPlayer.create(getContext(), R.raw.bubble_close);
         configureMapStyleMenu();
     }
 
@@ -258,8 +267,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         mMarkerDetails = new ArrayList<>();
         markers = new ArrayList<>();
         mInfoAdapter = new CustomInfoWindowAdapter(getContext());
-        mContinents = MapUtil.getContinents(getActivity());
-        mMapStyle = mUser.getInt(MapConstants.map_style);
+        mMapStyle = mUser.getInt(MapConstants.MAP_STYLE);
         mMenuItemsAdded = false;
     }
 
@@ -364,40 +372,45 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     }
 
     /**
+     * Popups feed at tapped location
+     */
+    private void createFeed(){
+        MapRipple mMapRipple = new MapRipple(mMap, mTappedLocation, getContext())
+                .withNumberOfRipples(3)
+                .withFillColor(Color.CYAN)
+                .withStrokeColor(Color.BLACK)
+                .withDistance(2000)      // 8046.72 for 5 miles
+                .withRippleDuration(12000)    //12000ms
+                .withTransparency(0.6f);
+        mMapRipple.startRippleMapAnimation();      //in onMapReadyCallBack
+        Intent i = new Intent(getActivity(), FeedActivity.class);
+        i.putExtra("latitude", mTappedLocation.latitude);
+        i.putExtra("longitude", mTappedLocation.longitude);
+        startActivity(i);
+    }
+
+    /**
      * Shows create post dialog box at the point selected
      *
      * @param point point where post is being created
      */
-    private void createPostDialog(final LatLng point) {
-        final LatLng mLastPoint = point;
+    private void createPostDialog(LatLng point) {
         View messageView = LayoutInflater.from(getActivity()).inflate(R.layout.message_item, null);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
         alertDialogBuilder.setView(messageView);
         mAlertDialog = alertDialogBuilder.create();
         mAlertDialog.show();
-        // handle tags
         mTags = new ArrayList<>();
-        CULTURE = false;
-        FASHION = false;
-        TRAVEL = false;
-        FOOD = false;
-        NATURE = false;
-        mParseFile = null;
         handleTags();
         EditText etDescription = mAlertDialog.findViewById(R.id.etSnippet);
         etDescription.setScroller(new Scroller(getContext()));
         etDescription.setMaxLines(3);
         etDescription.setVerticalScrollBarEnabled(true);
         etDescription.setMovementMethod(new ScrollingMovementMethod());
-        ImageView sendPost = mAlertDialog.findViewById(R.id.dropdown);
-        ImageView cancelPost = mAlertDialog.findViewById(R.id.cancelPost);
-        ImageView ivUpload = mAlertDialog.findViewById(R.id.ivUpload);
-        ImageView ivCamera = mAlertDialog.findViewById(R.id.ivCamera);
         mImage = mAlertDialog.findViewById(R.id.image);
         mImage.setVisibility(View.GONE);
         TextView location = mAlertDialog.findViewById(R.id.location);
         location.setText(mHelper.getAddress(getContext(), point));
-
         final Marker temp = mMap.addMarker(new MarkerOptions().position(point).icon(MapConstants.DEFAULT_MARKER));
         mAlertDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
@@ -405,6 +418,13 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 temp.remove();
             }
         });
+        handleCameraButtons();
+        handlePostButtons(point, temp);
+    }
+
+    private void handleCameraButtons(){
+        ImageView ivUpload = mAlertDialog.findViewById(R.id.ivUpload);
+        ImageView ivCamera = mAlertDialog.findViewById(R.id.ivCamera);
         ivUpload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -423,12 +443,15 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 }
             }
         });
+    }
 
-        final MediaPlayer mp = MediaPlayer.create(getContext(), R.raw.swipe_two);
+    private void handlePostButtons(final LatLng point, final Marker temp){
+        ImageView sendPost = mAlertDialog.findViewById(R.id.dropdown);
+        ImageView cancelPost = mAlertDialog.findViewById(R.id.cancelPost);
         sendPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mp.start();                 // Add sound when user sends post
+                mSwipe.start();                 // Add sound when user sends post
                 final String title = ((EditText) mAlertDialog.findViewById(R.id.etTitle)).getText().toString();
                 final String snippet = ((EditText) mAlertDialog.findViewById(R.id.etSnippet)).getText().toString();
                 if( TextUtils.isEmpty(title) || TextUtils.isEmpty(snippet)){
@@ -440,7 +463,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                         mParseFile.saveInBackground(new SaveCallback() {
                             @Override
                             public void done(ParseException e) {
-                                Post p = MapUtil.createPost(getActivity(), getContext(), snippet, title, mParseFile, mUser, mLastPoint, mTags);
+                                Post p = MapUtil.createPost(getActivity(), getContext(), snippet, title, mParseFile, mUser, point, mTags);
                                 mOptions.setPost(p);
                                 try {
                                     MapUtil.createMarker(mMap, mOptions);
@@ -456,7 +479,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                             }
                         });
                     } else {
-                        Post p = MapUtil.createPost(getActivity(), getContext(), snippet, title, mParseFile, mUser, mLastPoint, mTags);
+                        Post p = MapUtil.createPost(getActivity(), getContext(), snippet, title, mParseFile, mUser, point, mTags);
                         mOptions.setPost(p);
                         try {
                             MapUtil.createMarker(mMap, mOptions);
@@ -469,6 +492,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 }
             }
         });
+
         cancelPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -507,6 +531,12 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
      * Handles toggling of tags when in create view dialog
      */
     public void handleTags() {
+        CULTURE = false;
+        FASHION = false;
+        TRAVEL = false;
+        FOOD = false;
+        NATURE = false;
+        mParseFile = null;
         final TextView culture = mAlertDialog.findViewById(R.id.culture);
         final TextView food = mAlertDialog.findViewById(R.id.food);
         final TextView fashion = mAlertDialog.findViewById(R.id.fashion);
@@ -623,34 +653,21 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
      */
     private void configureFilterMenu(LatLng latLng){
         final Marker m = mMap.addMarker(new MarkerOptions().position(latLng).icon(MapConstants.DEFAULT_MARKER));
-        final MediaPlayer mp = MediaPlayer.create(getContext(), R.raw.bubble);
-        final MediaPlayer mp2 = MediaPlayer.create(getContext(), R.raw.bubble_close);
-        mp.start();
+        mBubble.start();
         mFilterMenuLayout.setVisibility(View.VISIBLE);
         FilterMenu.OnMenuChangeListener menuChangeListener = new FilterMenu.OnMenuChangeListener() {
             @Override
             public void onMenuItemClick(View view, int position) {
-                if (MapConstants.menuItems[position] == MapConstants.CREATE) {
+                if (MapConstants.MENU_ITEMS[position] == MapConstants.CREATE) {
                     createPostDialog(mTappedLocation);
                 }
-                if (MapConstants.menuItems[position] == MapConstants.VIEW) {
-                    MapRipple mMapRipple = new MapRipple(mMap, mTappedLocation, getContext())
-                            .withNumberOfRipples(3)
-                            .withFillColor(Color.CYAN)
-                            .withStrokeColor(Color.BLACK)
-                            .withDistance(2000)      // 8046.72 for 5 miles
-                            .withRippleDuration(12000)    //12000ms
-                            .withTransparency(0.6f);
-                    mMapRipple.startRippleMapAnimation();      //in onMapReadyCallBack
-                    Intent i = new Intent(getActivity(), FeedActivity.class);
-                    i.putExtra("latitude", mTappedLocation.latitude);
-                    i.putExtra("longitude", mTappedLocation.longitude);
-                    startActivity(i);
+                if (MapConstants.MENU_ITEMS[position] == MapConstants.VIEW) {
+                    createFeed();
                 }
-                if (MapConstants.menuItems[position] == MapConstants.DISCOVER) {
+                if (MapConstants.MENU_ITEMS[position] == MapConstants.DISCOVER) {
                     //TODO
                 }
-                if (MapConstants.menuItems[position] == MapConstants.CURRENT) {
+                if (MapConstants.MENU_ITEMS[position] == MapConstants.CURRENT) {
                     if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                         Location location = mMap.getMyLocation();
                         LatLng currLocation = new LatLng(location.getLatitude(), location.getLongitude());
@@ -663,7 +680,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 mFilterMenuLayout.setVisibility(View.INVISIBLE);
                 ((HomeActivity)getActivity()).showBottomNav();
                 MapUtil.showToolbar(getActivity());
-                mp2.start();
+                mBubbleClose.start();
                 m.remove();
             }
             @Override
@@ -754,7 +771,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         mMap.setMapStyle(
                 MapStyleOptions.loadRawResourceStyle(
                         getContext(), id));
-        mUser.put(MapConstants.map_style, id);
+        mUser.put(MapConstants.MAP_STYLE, id);
         mUser.saveInBackground();
         for (int i = 0; i < mPopup.getMenu().size(); i++) {
             if (mPopup.getMenu().getItem(i).getItemId() != menuItem.getItemId()) {
