@@ -13,10 +13,10 @@
         android:layout_height="wrap_content"
         android:clickable="true"
         android:elevation="8dp"
-        app:fm_centerBottom="100dp"
-        app:fm_centerRight="30dp"
-        app:fm_collapsedRadius="24dp"
-        app:fm_expandedRadius="86dp"
+        app:fm_centerHorizontal="true"
+        app:fm_centerBottom="30dp"
+        app:fm_collapsedRadius="40dp"
+        app:fm_expandedRadius="150dp"
         app:fm_primaryColor="#ff5791aa"
         app:fm_primaryDarkColor="#ff334862"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -53,7 +53,7 @@
 
 
         <ImageView
-            android:id="@+id/imageView6"
+            android:id="@+id/search"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -88,9 +88,10 @@
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/switch1"
-            app:layout_constraintStart_toEndOf="@+id/imageView6"
+            app:layout_constraintStart_toEndOf="@+id/search"
             app:layout_constraintTop_toTopOf="parent"
-            android:imeOptions="actionSearch"/>
+            android:singleLine="true"
+            android:imeOptions="actionDone"/>
 
         <ImageView
             android:id="@+id/ivSettings"
