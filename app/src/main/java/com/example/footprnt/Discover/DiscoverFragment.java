@@ -39,10 +39,16 @@ public class DiscoverFragment extends Fragment {
 
     RecyclerView rvRestaurants;
     RecyclerView rvMuseums;
-    ListAdapter mAdapterResteraunts;
+    RecyclerView rvHotels;
+    RecyclerView rvClubs;
+    ListAdapter mAdapterRestaurants;
     ListAdapter mAdapterMuseums;
-    ArrayList<Business> mResteraunts;
+    ListAdapter mAdapterHotels;
+    ListAdapter mAdapterClubs;
+    ArrayList<Business> mRestaurants;
     ArrayList<Business> mMuseums;
+    ArrayList<Business> mHotels;
+    ArrayList<Business> mClubs;
     final YelpService yelpService = new YelpService();
 
 
@@ -51,40 +57,44 @@ public class DiscoverFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_discover, parent, false);
         rvRestaurants = view.findViewById(R.id.rvRestaurants);
         rvMuseums = view.findViewById(R.id.rvMuseums);
+        rvHotels = view.findViewById(R.id.rvHotels);
+        rvClubs = view.findViewById(R.id.rvClubs);
 
         // Fill up lists with query
-        mResteraunts = new ArrayList<>();
+        mRestaurants = new ArrayList<>();
         mMuseums = new ArrayList<>();
+        mHotels = new ArrayList<>();
+        mClubs = new ArrayList<>();
         // TODO: fill with current location
-        yelpService.findBusinesses("Scottsdale", Constants.RESTAURANT, new Callback() {
+        yelpService.findBusinesses("Sunnyvale", Constants.RESTAURANT, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                mResteraunts = yelpService.processResults(response);
+            public void onResponse(Call call, Response response) {
+                mRestaurants = yelpService.processResults(response);
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
                         rvRestaurants.setLayoutManager(linearLayoutManager);
-                        mAdapterResteraunts = new ListAdapter(getContext(), mResteraunts);
-                        rvRestaurants.setAdapter(mAdapterResteraunts);
+                        mAdapterRestaurants = new ListAdapter(getContext(), mRestaurants);
+                        rvRestaurants.setAdapter(mAdapterRestaurants);
                     }
                 });
             }
         });
 
-        yelpService.findBusinesses("Scottsdale", Constants.MUSEUM, new Callback() {
+        yelpService.findBusinesses("Sunnyvale", Constants.MUSEUM, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onResponse(Call call, Response response) {
                 mMuseums = yelpService.processResults(response);
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
@@ -93,6 +103,48 @@ public class DiscoverFragment extends Fragment {
                         rvMuseums.setLayoutManager(linearLayoutManager);
                         mAdapterMuseums = new ListAdapter(getContext(), mMuseums);
                         rvMuseums.setAdapter(mAdapterMuseums);
+                    }
+                });
+            }
+        });
+
+        yelpService.findBusinesses("Sunnyvale", Constants.HOTEL, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) {
+                mHotels = yelpService.processResults(response);
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+                        rvHotels.setLayoutManager(linearLayoutManager);
+                        mAdapterHotels = new ListAdapter(getContext(), mHotels);
+                        rvHotels.setAdapter(mAdapterHotels);
+                    }
+                });
+            }
+        });
+
+        yelpService.findBusinesses("Sunnyvale", Constants.CLUB, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) {
+                mClubs = yelpService.processResults(response);
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+                        rvClubs.setLayoutManager(linearLayoutManager);
+                        mAdapterClubs = new ListAdapter(getContext(), mClubs);
+                        rvClubs.setAdapter(mAdapterClubs);
                     }
                 });
             }

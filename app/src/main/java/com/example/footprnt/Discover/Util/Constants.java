@@ -10,5 +10,6 @@ public class Constants {
     public static final String RESTAURANT = "restaurant";
     public static final String HOTEL = "hotel";
     public static final String MUSEUM = "museum";
+    public static final String CLUB = "club";
     public static final String YELP_LOCATION_QUERY_PARAMETER = "location";
 }
