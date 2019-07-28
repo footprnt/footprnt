@@ -12,10 +12,10 @@ public class Business {
     private String website;
     private double rating;
     private String imageUrl;
-    private ArrayList<String> address = new ArrayList<>();
+    private ArrayList<String> address;
     private double latitude;
     private double longitude;
-    private ArrayList<String> categories = new ArrayList<>();
+    private ArrayList<String> categories;
 
     public Business(String name, String phone, String website,
                     double rating, String imageUrl, ArrayList<String> address,

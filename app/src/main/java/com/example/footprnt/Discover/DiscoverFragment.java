@@ -7,6 +7,8 @@
 package com.example.footprnt.Discover;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -53,7 +55,14 @@ public class DiscoverFragment extends Fragment {
 
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
+
+
         View view = inflater.inflate(R.layout.fragment_discover, parent, false);
         rvRestaurants = view.findViewById(R.id.rvRestaurants);
         rvMuseums = view.findViewById(R.id.rvMuseums);
@@ -72,10 +81,12 @@ public class DiscoverFragment extends Fragment {
                 e.printStackTrace();
             }
 
+            private final Handler mHandler = new Handler(Looper.getMainLooper());
+
             @Override
             public void onResponse(Call call, Response response) {
                 mRestaurants = yelpService.processResults(response);
-                getActivity().runOnUiThread(new Runnable() {
+                mHandler.post(new Runnable(){
                     @Override
                     public void run() {
                         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
@@ -93,10 +104,12 @@ public class DiscoverFragment extends Fragment {
                 e.printStackTrace();
             }
 
+            private final Handler mHandler = new Handler(Looper.getMainLooper());
+
             @Override
             public void onResponse(Call call, Response response) {
                 mMuseums = yelpService.processResults(response);
-                getActivity().runOnUiThread(new Runnable() {
+                mHandler.post(new Runnable(){
                     @Override
                     public void run() {
                         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
@@ -114,10 +127,12 @@ public class DiscoverFragment extends Fragment {
                 e.printStackTrace();
             }
 
+            private final Handler mHandler = new Handler(Looper.getMainLooper());
+
             @Override
             public void onResponse(Call call, Response response) {
                 mHotels = yelpService.processResults(response);
-                getActivity().runOnUiThread(new Runnable() {
+                mHandler.post(new Runnable(){
                     @Override
                     public void run() {
                         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
@@ -135,10 +150,12 @@ public class DiscoverFragment extends Fragment {
                 e.printStackTrace();
             }
 
+            private final Handler mHandler = new Handler(Looper.getMainLooper());
+
             @Override
             public void onResponse(Call call, Response response) {
                 mClubs = yelpService.processResults(response);
-                getActivity().runOnUiThread(new Runnable() {
+                mHandler.post(new Runnable(){
                     @Override
                     public void run() {
                         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);

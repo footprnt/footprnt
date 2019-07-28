@@ -37,14 +37,12 @@ public class YelpService {
      * @param query    type of query to make
      * @param callback response from yelp
      */
+
     public static void findBusinesses(String location, String query, Callback callback) {
-
-
         OkHttpClient client = new OkHttpClient.Builder()
                 .build();
 
         HttpUrl.Builder urlBuilder = HttpUrl.parse(Constants.YELP_BASE_URL + location + "&term=" + query).newBuilder();
-        //urlBuilder.addQueryParameter(Constants.YELP_LOCATION_QUERY_PARAMETER, location);
         String url = urlBuilder.build().toString();
 
         Request request = new Request.Builder()
@@ -59,7 +57,7 @@ public class YelpService {
      * Helper function to parse through raw JSON response from Yelp
      *
      * @param response raw response from Yelp API call
-     * @return List of restaurants from Yelp in given location
+     * @return List of businesses from Yelp in given location
      */
     public ArrayList<Business> processResults(Response response) {
         ArrayList<Business> businesses = new ArrayList<>();
@@ -101,7 +99,6 @@ public class YelpService {
             e.printStackTrace();
         } catch (JSONException e) {
             e.printStackTrace();
-
         }
         return businesses;
     }
