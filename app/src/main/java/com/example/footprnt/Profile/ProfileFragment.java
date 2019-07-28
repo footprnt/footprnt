@@ -24,6 +24,7 @@ import com.example.footprnt.LoginActivity;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.Profile.Adapters.MultiViewAdapter;
 import com.example.footprnt.R;
+import com.example.footprnt.Repository.PostRepository;
 import com.example.footprnt.Util.Constants;
 import com.example.footprnt.Util.Util;
 import com.parse.FindCallback;
@@ -48,6 +49,9 @@ public class ProfileFragment extends Fragment {
     RecyclerView mLayout;
     MultiViewAdapter mMultiAdapter;
 
+    // For Room persistence implementation:
+    PostRepository postRepository;
+
     // For stats view:
     HashMap<String, Integer> mCities;  // Contains the cities and number of times visited by user
     HashMap<String, Integer> mCountries;  // Contains the countries and number of times visited by user
@@ -59,6 +63,7 @@ public class ProfileFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_profile, container, false);
+        postRepository = new PostRepository(getActivity().getApplicationContext());
         setUpToolbar(v);
 
         // Populate stat maps and get posts
