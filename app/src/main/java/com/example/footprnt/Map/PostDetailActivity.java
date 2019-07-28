@@ -1,9 +1,3 @@
-/*
- * PostDetailActivity.java
- * v1.0
- * July 2019
- * Copyright ©2019 Footprnt Inc.
- */
 package com.example.footprnt.Map;
 
 import android.os.Bundle;
@@ -12,6 +6,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.example.footprnt.Map.Util.MapUtil;
+import com.example.footprnt.Map.Util.PostAdapter;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.R;
 
