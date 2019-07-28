@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 /**
  * Business Model for Discover Fragment
- * @author Stanley Nwakamma
+ * @author Stanley Nwakamma, 2019
  */
 public class Business {
     private String name;

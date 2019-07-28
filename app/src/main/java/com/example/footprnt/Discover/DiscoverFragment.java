@@ -29,10 +29,13 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
+import static com.example.footprnt.Discover.Services.YelpService.findBusinesses;
+
 
 /**
  * Fragment for the Discover view
- *
+ * Displays all business queried from Yelp API.
+ * Businesses displayed: Restaurants, Museums, Hotels, Clubs.
  * @author Stanley Nwakamma 2019
  * @version 1.0
  */
@@ -53,7 +56,6 @@ public class DiscoverFragment extends Fragment {
     ArrayList<Business> mClubs;
     final YelpService yelpService = new YelpService();
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,7 +63,6 @@ public class DiscoverFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
-
 
         View view = inflater.inflate(R.layout.fragment_discover, parent, false);
         rvRestaurants = view.findViewById(R.id.rvRestaurants);
@@ -74,8 +75,10 @@ public class DiscoverFragment extends Fragment {
         mMuseums = new ArrayList<>();
         mHotels = new ArrayList<>();
         mClubs = new ArrayList<>();
-        // TODO: fill with current location
-        yelpService.findBusinesses("Sunnyvale", Constants.RESTAURANT, new Callback() {
+
+        // TODO: Get businesses by current location, or ask user to select a location.
+
+        findBusinesses("Sunnyvale", Constants.RESTAURANT, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
@@ -86,7 +89,7 @@ public class DiscoverFragment extends Fragment {
             @Override
             public void onResponse(Call call, Response response) {
                 mRestaurants = yelpService.processResults(response);
-                mHandler.post(new Runnable(){
+                mHandler.post(new Runnable() {
                     @Override
                     public void run() {
                         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
@@ -98,7 +101,7 @@ public class DiscoverFragment extends Fragment {
             }
         });
 
-        yelpService.findBusinesses("Sunnyvale", Constants.MUSEUM, new Callback() {
+        findBusinesses("Sunnyvale", Constants.MUSEUM, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
@@ -109,7 +112,7 @@ public class DiscoverFragment extends Fragment {
             @Override
             public void onResponse(Call call, Response response) {
                 mMuseums = yelpService.processResults(response);
-                mHandler.post(new Runnable(){
+                mHandler.post(new Runnable() {
                     @Override
                     public void run() {
                         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
@@ -121,7 +124,7 @@ public class DiscoverFragment extends Fragment {
             }
         });
 
-        yelpService.findBusinesses("Sunnyvale", Constants.HOTEL, new Callback() {
+        findBusinesses("Sunnyvale", Constants.HOTEL, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
@@ -132,7 +135,7 @@ public class DiscoverFragment extends Fragment {
             @Override
             public void onResponse(Call call, Response response) {
                 mHotels = yelpService.processResults(response);
-                mHandler.post(new Runnable(){
+                mHandler.post(new Runnable() {
                     @Override
                     public void run() {
                         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
@@ -144,7 +147,7 @@ public class DiscoverFragment extends Fragment {
             }
         });
 
-        yelpService.findBusinesses("Sunnyvale", Constants.CLUB, new Callback() {
+        findBusinesses("Sunnyvale", Constants.CLUB, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
@@ -155,7 +158,7 @@ public class DiscoverFragment extends Fragment {
             @Override
             public void onResponse(Call call, Response response) {
                 mClubs = yelpService.processResults(response);
-                mHandler.post(new Runnable(){
+                mHandler.post(new Runnable() {
                     @Override
                     public void run() {
                         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);

@@ -26,12 +26,12 @@ import okhttp3.Response;
 /**
  * YelpService for making API calls to Yelp
  *
- * @author Stanley Nwakamma 2019
+ * @author Stanley Nwakamma, 2019
  */
 public class YelpService {
 
     /**
-     * Finds <query> in <location><
+     * Finds <query> in <location>
      *
      * @param location location to query in
      * @param query    type of query to make
@@ -60,22 +60,22 @@ public class YelpService {
      * @return List of businesses from Yelp in given location
      */
     public ArrayList<Business> processResults(Response response) {
+
         ArrayList<Business> businesses = new ArrayList<>();
+
         try {
             String jsonData = response.body().string();
             JSONObject yelpJSON = new JSONObject(jsonData);
             JSONArray businessesJSON = yelpJSON.getJSONArray("businesses");
+
             for (int i = 0; i < businessesJSON.length(); i++) {
                 JSONObject businessJSON = businessesJSON.getJSONObject(i);
                 String name = businessJSON.getString("name");
                 String phone = businessJSON.optString("display_phone", "Phone not available");
                 String website = businessJSON.getString("url");
                 double rating = businessJSON.getDouble("rating");
-
                 String imageUrl = businessJSON.getString("image_url");
-
                 double latitude = businessJSON.getJSONObject("coordinates").getDouble("latitude");
-
                 double longitude = businessJSON.getJSONObject("coordinates").getDouble("longitude");
 
                 ArrayList<String> address = new ArrayList<>();
@@ -91,6 +91,7 @@ public class YelpService {
                 for (int y = 0; y < categoriesJSON.length(); y++) {
                     categories.add(categoriesJSON.getJSONObject(y).getString("title"));
                 }
+
                 Business business = new Business(name, phone, website, rating,
                         imageUrl, address, latitude, longitude, categories);
                 businesses.add(business);
@@ -100,6 +101,7 @@ public class YelpService {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
         return businesses;
     }
 }

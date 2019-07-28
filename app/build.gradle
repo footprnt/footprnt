@@ -70,8 +70,6 @@ android {
         implementation 'com.ramotion.circlemenu:circle-menu:0.3.1'
         implementation 'com.linroid.filtermenu:library:0.2.3@aar'
         implementation 'com.android.support.constraint:constraint-layout:1.1.3'
-
-
     }
 }
 
