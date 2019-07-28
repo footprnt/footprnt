@@ -60,7 +60,7 @@ BottomNavigationView navView;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        viewPager = findViewById(R.id.viewpager);
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
         shaddow = findViewById(R.id.shadow);
 
         navView = findViewById(R.id.nav_view);
@@ -69,6 +69,7 @@ BottomNavigationView navView;
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 mp.start();
+                Fragment fragment;
                 switch (menuItem.getItemId()) {
                     case R.id.navigation_home:
                         viewPager.setCurrentItem(0);
