@@ -22,8 +22,10 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 /**
- * Adapts Businesss to the recyclerview
- * @author  Stanley Nwakamma 2019
+ * Adapts Businesses to the RecyclerView on the discover page fragment
+ * handles and binds the collected data to the view
+ *
+ * @author  Stanley Nwakamma, 2019
  */
 public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHolder> {
     private ArrayList<Business> mBusinesses;
@@ -34,13 +36,11 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
         mContext = context;
     }
 
-
     @NonNull
     @Override
     public ListAdapter.BusinessViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_business, parent, false);
-        BusinessViewHolder viewHolder = new BusinessViewHolder(view);
-        return viewHolder;
+        return new BusinessViewHolder(view);
     }
 
     @Override
@@ -48,11 +48,11 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
         holder.bindBusiness(mBusinesses.get(position));
     }
 
-
     @Override
     public int getItemCount() {
         return mBusinesses.size();
     }
+
 
     public static class BusinessViewHolder extends RecyclerView.ViewHolder {
         ImageView ivBusinessImage;
