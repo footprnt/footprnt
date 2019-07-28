@@ -6,6 +6,10 @@
  */
 package com.example.footprnt.Models;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
+
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
@@ -25,7 +29,10 @@ import java.util.Date;
  * @author Clarisa Leu, Jocelyn Shen
  */
 @ParseClassName("Post")
+@Entity(tableName = "posts")
 public class Post extends ParseObject implements Serializable {
+
+    // Keys for getting from database:
     public static final String KEY_DESCRIPTION = "description";
     public static final String KEY_IMAGE = "image";
     public static final String KEY_USER = "user";
@@ -35,6 +42,49 @@ public class Post extends ParseObject implements Serializable {
     public static final String KEY_CITY = "city";
     public static final String KEY_CONTINENT = "continent";
     public static final String KEY_TAGS = "tags";
+    public static final String KEY_OBJECT_ID = "objectId";
+    public static final int postLimit = 20;
+
+
+    // Attributes of post:
+    @PrimaryKey
+    @ColumnInfo(name = "rowid")
+    public static String objectId;
+    @ColumnInfo(name = "user")
+    public static ParseUser user;
+    @ColumnInfo(name = "description")
+    public static String description;
+    @ColumnInfo(name = "title")
+    public static String title;
+    @ColumnInfo(name = "city")
+    public static String city;
+    @ColumnInfo(name = "country")
+    public static String country;
+    @ColumnInfo(name = "continent")
+    public static String continent;
+    @ColumnInfo(name = "location")
+    public static ParseGeoPoint location;
+    @ColumnInfo(name = "tags")
+    public static JSONArray tags;
+    @ColumnInfo(name = "image")
+    public static ParseFile image;
+
+
+    /**
+     * Constructor for Post
+     */
+    public Post() {
+        description = getString(KEY_DESCRIPTION);
+        title = getString(KEY_TITLE);
+        image = getParseFile(KEY_IMAGE);
+        user = getParseUser(KEY_USER);
+        location = getParseGeoPoint(KEY_LOCATION);
+        city = getString(KEY_CITY);
+        country = getString(KEY_COUNTRY);
+        continent = getString(KEY_CONTINENT);
+        tags = getJSONArray(KEY_TAGS);
+    }
+
 
     /**
      * Getter for the description of post
@@ -42,7 +92,7 @@ public class Post extends ParseObject implements Serializable {
      * @return description of post
      */
     public String getDescription() {
-        return getString(KEY_DESCRIPTION);
+        return description;
     }
 
     /**
@@ -51,7 +101,8 @@ public class Post extends ParseObject implements Serializable {
      * @param description of post to set
      */
     public void setDescription(String description) {
-        put(KEY_DESCRIPTION, description);
+        Post.description = description;
+        put(KEY_DESCRIPTION, Post.description);
     }
 
     /**
@@ -60,7 +111,7 @@ public class Post extends ParseObject implements Serializable {
      * @return title of post
      */
     public String getTitle() {
-        return getString(KEY_TITLE);
+        return title;
     }
 
     /**
@@ -69,7 +120,8 @@ public class Post extends ParseObject implements Serializable {
      * @param title of post to set
      */
     public void setTitle(String title) {
-        put(KEY_TITLE, title);
+        Post.title = title;
+        put(KEY_TITLE, Post.title);
     }
 
     /**
@@ -78,7 +130,7 @@ public class Post extends ParseObject implements Serializable {
      * @return ParseFile image of post
      */
     public ParseFile getImage() {
-        return getParseFile(KEY_IMAGE);
+        return image;
     }
 
     /**
@@ -87,7 +139,8 @@ public class Post extends ParseObject implements Serializable {
      * @param image of post to set
      */
     public void setImage(ParseFile image) {
-        put(KEY_IMAGE, image);
+        Post.image = image;
+        put(KEY_IMAGE, Post.image);
     }
 
     /**
@@ -96,7 +149,7 @@ public class Post extends ParseObject implements Serializable {
      * @return ParseUser who made post
      */
     public ParseUser getUser() {
-        return getParseUser(KEY_USER);
+        return user;
     }
 
     /**
@@ -105,7 +158,8 @@ public class Post extends ParseObject implements Serializable {
      * @param user ParseUser to assign to post
      */
     public void setUser(ParseUser user) {
-        put(KEY_USER, user);
+        Post.user = user;
+        put(KEY_USER, Post.user);
     }
 
     /**
@@ -114,7 +168,7 @@ public class Post extends ParseObject implements Serializable {
      * @return ParseGeoPoint with the latitude of longitude of where post was made
      */
     public ParseGeoPoint getLocation() {
-        return getParseGeoPoint(KEY_LOCATION);
+        return location;
     }
 
     /**
@@ -123,7 +177,8 @@ public class Post extends ParseObject implements Serializable {
      * @param point with the latitude of longitude of where post was made
      */
     public void setLocation(ParseGeoPoint point) {
-        put(KEY_LOCATION, point);
+        location = point;
+        put(KEY_LOCATION, Post.location);
     }
 
     /**
@@ -132,7 +187,7 @@ public class Post extends ParseObject implements Serializable {
      * @return country where post was made
      */
     public String getCountry() {
-        return getString(KEY_COUNTRY);
+        return country;
     }
 
     /**
@@ -141,7 +196,8 @@ public class Post extends ParseObject implements Serializable {
      * @param country where post was made
      */
     public void setCountry(String country) {
-        put(KEY_COUNTRY, country);
+        Post.country = country;
+        put(KEY_COUNTRY, Post.country);
     }
 
     /**
@@ -150,7 +206,7 @@ public class Post extends ParseObject implements Serializable {
      * @return continent where post was made
      */
     public String getContinent() {
-        return getString(KEY_CONTINENT);
+        return continent;
     }
 
     /**
@@ -159,7 +215,8 @@ public class Post extends ParseObject implements Serializable {
      * @param continent where post was made
      */
     public void setContinent(String continent) {
-        put(KEY_CONTINENT, continent);
+        Post.continent = continent;
+        put(KEY_CONTINENT, Post.continent);
     }
 
     /**
@@ -168,7 +225,7 @@ public class Post extends ParseObject implements Serializable {
      * @return city where post was made
      */
     public String getCity() {
-        return getString(KEY_CITY);
+        return city;
     }
 
     /**
@@ -177,7 +234,8 @@ public class Post extends ParseObject implements Serializable {
      * @param city where post was made
      */
     public void setCity(String city) {
-        put(KEY_CITY, city);
+        Post.city = city;
+        put(KEY_CITY, Post.city);
     }
 
     /**
@@ -186,7 +244,7 @@ public class Post extends ParseObject implements Serializable {
      * @return JSONArray with tags of post
      */
     public JSONArray getTags() {
-        return getJSONArray(KEY_TAGS);
+        return tags;
     }
 
     /**
@@ -195,6 +253,7 @@ public class Post extends ParseObject implements Serializable {
      * @param tags with tags of post
      */
     public void setTags(ArrayList<String> tags) {
+        //Post.tags = tags;
         put(KEY_TAGS, tags);
     }
 
@@ -217,7 +276,7 @@ public class Post extends ParseObject implements Serializable {
         }
 
         public Query getTop() {
-            setLimit(20);
+            setLimit(postLimit);
             return this;
         }
 
@@ -231,7 +290,7 @@ public class Post extends ParseObject implements Serializable {
             return this;
         }
 
-        public Query withTag(String tag, ArrayList<String> tags){
+        public Query withTag(String tag, ArrayList<String> tags) {
             whereContainedIn(tag, tags);
             return this;
         }
