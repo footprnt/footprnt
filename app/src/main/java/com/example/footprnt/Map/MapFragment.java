@@ -1,9 +1,3 @@
-/*
- * MapFragment.java
- * v1.0
- * July 2019
- * Copyright ©2019 Footprnt Inc.
- */
 package com.example.footprnt.Map;
 
 import android.app.Activity;
@@ -11,16 +5,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.location.Address;
 import android.location.Criteria;
-import android.location.Geocoder;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -30,7 +20,6 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
-import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -40,18 +29,15 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.PopupMenu;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Scroller;
@@ -63,21 +49,17 @@ import com.arsy.maps_library.MapRipple;
 import com.bumptech.glide.Glide;
 import com.example.footprnt.HomeActivity;
 import com.example.footprnt.Manifest;
+import com.example.footprnt.Map.Util.CustomInfoWindowAdapter;
 import com.example.footprnt.Map.Util.MapConstants;
 import com.example.footprnt.Map.Util.MapUtil;
 import com.example.footprnt.Models.MarkerDetails;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.R;
 import com.example.footprnt.Util.Util;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
@@ -88,19 +70,13 @@ import com.parse.FindCallback;
 import com.parse.ParseACL;
 import com.parse.ParseException;
 import com.parse.ParseFile;
-import com.parse.ParseGeoPoint;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import static android.content.Context.LOCATION_SERVICE;
 
@@ -111,37 +87,33 @@ import static android.content.Context.LOCATION_SERVICE;
  * @version 1.0
  * @since 2019-07-22
  */
-public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickListener, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickListener, OnMapReadyCallback {
 
     // Map variables
     private GoogleMap mMap;
-    SupportMapFragment mapFrag;
-    private LocationManager mLocationManager;
-    private LocationListener mLocationListener;
+    private SupportMapFragment mMapFrag;
     private Util mHelper;
     private boolean mJumpToCurrentLocation = false;
-    private JSONObject mContinents;
     private Location mLocation;
-    private EditText mSearchText;
     private LatLng mTappedLocation;
-    private GoogleApiClient googleApiClient;
+    private int mMapStyle;
 
-    // Display variables
+    // Search variables
+    private EditText mSearchText;
+    private ImageView mSearch;
+    private FragmentActivity myContext;
+
+    // Marker variables
     private CustomInfoWindowAdapter mInfoAdapter;
     ArrayList<Marker> markers;
-    FilterMenuLayout layout;
     private ArrayList<MarkerDetails> mMarkerDetails;
+
+    // Post variables
+    private ParseUser mUser;
     private ImageView mImage;
     private File mPhotoFile;
     private AlertDialog mAlertDialog = null;
     private ParseFile mParseFile;
-    private ParseUser mUser;
-    private int mMapStyle;
-    private Switch mSwitch;
-    private float mLocationX;
-    private float mLocationY;
-    private boolean mMenuItemsAdded;
-    ConstraintLayout mToolbar;
 
     // Tag variables
     private ArrayList<String> mTags;
@@ -154,247 +126,43 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     // Menu variables
     private ImageView mSettings;
     private PopupMenu mPopup;
-    private FragmentActivity myContext;
+    private FilterMenuLayout mFilterMenuLayout;
+    private Switch mSwitch;
+    private boolean mMenuItemsAdded;
+
+    // Sound variables
+    private MediaPlayer mSwipe;
+    private MediaPlayer mBubble;
+    private MediaPlayer mBubbleClose;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_map, container, false);
-
-        mapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
-        MapsInitializer.initialize(this.getActivity());
-        mapFrag.getMapAsync(this);
-        mHelper = new Util();
-        mUser = ParseUser.getCurrentUser();
-        ParseACL acl = new ParseACL(); // set permissions
-        acl.setPublicReadAccess(true);
-        acl.setPublicWriteAccess(true);
-        mUser.setACL(acl);
-        mUser.setACL(acl);
-        mMarkerDetails = new ArrayList<>();
-        markers = new ArrayList<>();
-        mInfoAdapter = new CustomInfoWindowAdapter(getContext());
-        mContinents = MapUtil.getContinents(getActivity());
-        mMapStyle = mUser.getInt(MapConstants.map_style);
-
-        // Set up pop up menu
-        mSettings = v.findViewById(R.id.ivSettings);
-        mToolbar = v.findViewById(R.id.relLayout1);
-        mPopup = new PopupMenu(getActivity(), mSettings);
-        mPopup.getMenuInflater().inflate(R.menu.popup_menu_map, mPopup.getMenu());
-        configureMapStyleMenu();
-
-        mMenuItemsAdded = false;
+        initialization();
         return v;
     }
 
-    private void hideToolBar() {
-        View locationButton = ((View) getActivity().findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
-        locationButton.setVisibility(View.INVISIBLE);
-        mToolbar.setVisibility(View.INVISIBLE);
-    }
-
-    private void showToolbar() {
-        View locationButton = ((View) getActivity().findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
-        locationButton.setVisibility(View.VISIBLE);
-        mToolbar.setVisibility(View.VISIBLE);
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mSearchText = view.findViewById(R.id.searchText);
+        mFilterMenuLayout = view.findViewById(R.id.filter_menu4);
+        mFilterMenuLayout.setVisibility(View.GONE);
+        mSettings = view.findViewById(R.id.ivSettings);
+        mSearch = getActivity().findViewById(R.id.search);
+        mPopup = new PopupMenu(getActivity(), mSettings);
+        mPopup.getMenuInflater().inflate(R.menu.popup_menu_map, mPopup.getMenu());
+        mSwipe = MediaPlayer.create(getContext(), R.raw.swipe_two);
+        mBubble = MediaPlayer.create(getContext(), R.raw.bubble);
+        mBubbleClose = MediaPlayer.create(getContext(), R.raw.bubble_close);
+        configureMapStyleMenu();
     }
 
     @Override
     public void onAttach(Activity activity) {
         myContext = (FragmentActivity) activity;
         super.onAttach(activity);
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        mSearchText = getActivity().findViewById(R.id.searchText);
-        layout = (FilterMenuLayout) getActivity().findViewById(R.id.filter_menu4);
-        layout.setVisibility(View.GONE);
-        mLocationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
-        mLocationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-                mLocation = location;
-                if (mJumpToCurrentLocation) {
-                    mJumpToCurrentLocation = false;
-                    mHelper.centreMapOnLocation(mMap, location);
-                }
-            }
-
-            @Override
-            public void onStatusChanged(String s, int i, Bundle bundle) {
-            }
-
-            @Override
-            public void onProviderEnabled(String s) {
-            }
-
-            @Override
-            public void onProviderDisabled(String s) {
-            }
-        };
-        FrameLayout mapTouchLayer = getActivity().findViewById(R.id.map_touch_layer);
-        mapTouchLayer.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                mLocationX = (event.getX());
-                mLocationY = (event.getY());
-                return false; // Pass on the touch to the map or shadow layer.
-            }
-        });
-        googleApiClient = new GoogleApiClient.Builder(getContext())
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-    }
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-        mMap.setInfoWindowAdapter(mInfoAdapter);
-        mMap.getUiSettings().setMapToolbarEnabled(true);
-        View toolbar = ((View) mapFrag.getView().findViewById(Integer.parseInt("1")).
-                getParent()).findViewById(Integer.parseInt("4"));
-        RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) toolbar.getLayoutParams();
-        rlp.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
-        rlp.setMargins(100, 0, 0, 250);
-        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-                marker.showInfoWindow();
-                return false;
-            }
-        });
-        mMap.setOnMapLongClickListener(this);
-        try {
-            boolean success = mMap.setMapStyle(
-                    MapStyleOptions.loadRawResourceStyle(
-                            getContext(), mMapStyle));
-            if (!success) {
-                Log.e("map", "Style parsing failed.");
-            }
-        } catch (Resources.NotFoundException e) {
-            Log.e("map", "Can't find style. Error: ", e);
-        }
-
-        mJumpToCurrentLocation = true;
-        setUpMapIfNeeded();
-        loadMarkers();
-        handleToggle();
-        init();
-    }
-
-    private void setUpMapIfNeeded() {
-        if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-            return;
-        }
-        mMap.setMyLocationEnabled(true);
-        View locationButton = ((View) getActivity().findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
-        RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) locationButton.getLayoutParams();
-        rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
-        rlp.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
-        rlp.setMargins(0, 200, 180, 0);
-        if (mJumpToCurrentLocation && mLocation != null) {
-            mJumpToCurrentLocation = false;
-            mHelper.centreMapOnLocation(mMap, mLocation);
-        }
-
-        mMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
-            @Override
-            public void onMyLocationChange(Location arg0) {
-                Location temp = new Location(LocationManager.GPS_PROVIDER);
-                temp.setLatitude(arg0.getLatitude());
-                temp.setLongitude(arg0.getLongitude());
-                if (mJumpToCurrentLocation) {
-                    mJumpToCurrentLocation = false;
-                    mHelper.centreMapOnLocation(mMap, temp);
-                }
-            }
-        });
-    }
-
-    /**
-     * Loads map markers for all of current user's posts
-     */
-    public void loadMarkers() {
-        mMarkerDetails = new ArrayList<>();
-        markers = new ArrayList<>();
-        final MarkerDetails.Query postQuery = new MarkerDetails.Query();
-        postQuery.withUser().whereEqualTo("user", mUser);
-        postQuery.withUser().whereEqualTo(com.example.footprnt.Util.Constants.user, mUser);
-        postQuery.findInBackground(new FindCallback<MarkerDetails>() {
-            @Override
-            public void done(List<MarkerDetails> objects, ParseException e) {
-                if (e == null) {
-                    for (int i = 0; i < objects.size(); i++) {
-                        MarkerDetails md = objects.get(i);
-                        mMarkerDetails.add(md);
-                    }
-                    for (MarkerDetails markerDetails : mMarkerDetails) {
-                        try {
-                            Marker m = createMarker(markerDetails);
-                            markers.add(m);
-                        } catch (ParseException e1) {
-                            e1.printStackTrace();
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-    /**
-     * Loads map markers for all user's posts
-     */
-    public void loadAllMarkers() {
-        mMarkerDetails = new ArrayList<>();
-        markers = new ArrayList<>();
-        final MarkerDetails.Query postQuery = new MarkerDetails.Query();
-        postQuery.withUser();
-        postQuery.findInBackground(new FindCallback<MarkerDetails>() {
-            @Override
-            public void done(List<MarkerDetails> objects, ParseException e) {
-                if (e == null) {
-                    for (int i = 0; i < objects.size(); i++) {
-                        MarkerDetails md = objects.get(i);
-                        try {
-                            Marker m = createMarker(md);
-                            markers.add(m);
-                        } catch (ParseException e1) {
-                            e1.printStackTrace();
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-    /**
-     * Create a Google Map marker at specified point with given marker details
-     *
-     * @param md marker detail
-     */
-    protected Marker createMarker(MarkerDetails md) throws ParseException {
-        BitmapDescriptor defaultMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
-        Post post = (Post) md.getPost();
-        double latitude = (post.fetchIfNeeded().getParseGeoPoint("location")).getLatitude();
-        double longitude = (post.fetchIfNeeded().getParseGeoPoint("location")).getLongitude();
-        String title = (post.fetchIfNeeded().getString("title"));
-        ParseFile image = post.fetchIfNeeded().getParseFile("image");
-        String imageUrl = "";
-        if (image != null) {
-            imageUrl = image.getUrl();
-        }
-        Marker m = mMap.addMarker(new MarkerOptions()
-                .position(new LatLng(latitude, longitude))
-                .title(title)
-                .snippet(imageUrl)
-                .icon(defaultMarker));
-        return m;
     }
 
     @Override
@@ -407,298 +175,40 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                     mLocation = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
                 }
-                setUpMapIfNeeded();
+                setupMapUserLocation();
             }
         }
     }
 
     @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+        mMap.setInfoWindowAdapter(mInfoAdapter);
+        mMap.getUiSettings().setMapToolbarEnabled(true);
+
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                marker.showInfoWindow();
+                return false;
+            }
+        });
+        mMap.setOnMapLongClickListener(this);
+
+        mJumpToCurrentLocation = true;
+        setupMapStyles();
+        setupMapUserLocation();
+        loadMarkers();
+        handleSwitch();
+        handleSearch();
+    }
+
+    @Override
     public void onMapLongClick(LatLng latLng) {
         mTappedLocation = latLng;
-        final MediaPlayer mp = MediaPlayer.create(getContext(), R.raw.bubble);
-        final MediaPlayer mp2 = MediaPlayer.create(getContext(), R.raw.bubble_close);
-        mp.start();
         ((HomeActivity) getActivity()).hideBottomNav();
-        hideToolBar();
-        BitmapDescriptor defaultMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
-        final Marker m = mMap.addMarker(new MarkerOptions()
-                .position(latLng)
-                .title("")
-                .snippet("")
-                .icon(defaultMarker));
-        layout = getActivity().findViewById(R.id.filter_menu4);
-        layout.setVisibility(View.VISIBLE);
-
-        if (!mMenuItemsAdded) {
-            mMenuItemsAdded = true;
-            FilterMenu menu = new FilterMenu.Builder(getContext())
-                    .addItem(R.drawable.ic_pencil_white)
-                    .addItem(R.drawable.ic_world_white)
-                    .addItem(R.drawable.ic_rocket_white)
-                    .addItem(R.drawable.ic_new_post)
-                    .attach(layout)
-                    .withListener(new FilterMenu.OnMenuChangeListener() {
-                        @Override
-                        public void onMenuItemClick(View view, int position) {
-                            if (MapConstants.menuItems[position] == MapConstants.CREATE) {
-                                showAlertDialogForPoint(mTappedLocation);
-                            }
-                            if (MapConstants.menuItems[position] == MapConstants.VIEW) {
-                                MapRipple mMapRipple = new MapRipple(mMap, mTappedLocation, getContext())
-                                        .withNumberOfRipples(3)
-                                        .withFillColor(Color.CYAN)
-                                        .withStrokeColor(Color.BLACK)
-                                        .withDistance(2000)      // 8046.72 for 5 miles
-                                        .withRippleDuration(12000)    //12000ms
-                                        .withTransparency(0.6f);
-                                mMapRipple.startRippleMapAnimation();      //in onMapReadyCallBack
-                                Intent i = new Intent(getActivity(), FeedActivity.class);
-                                i.putExtra("latitude", mTappedLocation.latitude);
-                                i.putExtra("longitude", mTappedLocation.longitude);
-                                startActivity(i);
-                            }
-                            if (MapConstants.menuItems[position] == MapConstants.DISCOVER) {
-                                //TODO
-                            }
-                            if (MapConstants.menuItems[position] == MapConstants.CURRENT) {
-                                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                                    Location location = mMap.getMyLocation();
-                                    LatLng currLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                                    showAlertDialogForPoint(currLocation);
-                                }
-                            }
-                        }
-                        @Override
-                        public void onMenuCollapse() {
-                            layout.setVisibility(View.INVISIBLE);
-                            ((HomeActivity)getActivity()).showBottomNav();
-                            showToolbar();
-                            mp2.start();
-                            m.remove();
-                        }
-                        @Override
-                        public void onMenuExpand() {
-                        }
-                    })
-                    .build();
-            menu.toggle(true);
-        } else {
-            FilterMenu menu = new FilterMenu.Builder(getContext())
-                    .attach(layout)
-                    .withListener(new FilterMenu.OnMenuChangeListener() {
-                        @Override
-                        public void onMenuItemClick(View view, int position) {
-                            if (MapConstants.menuItems[position] == MapConstants.CREATE){
-                                showAlertDialogForPoint(mTappedLocation);
-                            }
-                            if (MapConstants.menuItems[position] == MapConstants.VIEW){
-                                MapRipple mMapRipple = new MapRipple(mMap, mTappedLocation, getContext())
-                                        .withNumberOfRipples(3)
-                                        .withFillColor(Color.CYAN)
-                                        .withStrokeColor(Color.BLACK)
-                                        .withDistance(2000)      // 8046.72 for 5 miles
-                                        .withRippleDuration(12000)    //12000ms
-                                        .withTransparency(0.6f);
-                                mMapRipple.startRippleMapAnimation();      //in onMapReadyCallBack
-                                Intent i = new Intent(getActivity(), FeedActivity.class);
-                                i.putExtra("latitude", mTappedLocation.latitude);
-                                i.putExtra("longitude", mTappedLocation.longitude);
-                                startActivity(i);
-                            }
-                            if (MapConstants.menuItems[position] == MapConstants.DISCOVER){
-                                //TODO
-                            }
-                        }
-                        @Override
-                        public void onMenuCollapse() {
-                            layout.setVisibility(View.INVISIBLE);
-                            mp2.start();
-                            m.remove();
-                            showToolbar();
-                            ((HomeActivity)getActivity()).showBottomNav();
-                        }
-                        @Override
-                        public void onMenuExpand() {
-                        }
-                    })
-                    .build();
-            menu.toggle(true);
-        }
-
-    }
-
-    /**
-     * Shows create post dialog box at the point selected
-     *
-     * @param point point where post is being created
-     */
-    private void showAlertDialogForPoint(final LatLng point) {
-        System.out.println(point);
-        View messageView = LayoutInflater.from(getActivity()).inflate(R.layout.message_item, null);
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-        alertDialogBuilder.setView(messageView);
-        mAlertDialog = alertDialogBuilder.create();
-        mAlertDialog.show();
-        EditText etDescription = mAlertDialog.findViewById(R.id.etSnippet);
-        etDescription.setScroller(new Scroller(getContext()));
-        etDescription.setMaxLines(3);
-        etDescription.setVerticalScrollBarEnabled(true);
-        etDescription.setMovementMethod(new ScrollingMovementMethod());
-        ImageView sendPost = mAlertDialog.findViewById(R.id.dropdown);
-        ImageView cancelPost = mAlertDialog.findViewById(R.id.cancelPost);
-        ImageView ivUpload = mAlertDialog.findViewById(R.id.ivUpload);
-        ImageView ivCamera = mAlertDialog.findViewById(R.id.ivCamera);
-        mImage = mAlertDialog.findViewById(R.id.image);
-        mImage.setVisibility(View.GONE);
-        TextView location = mAlertDialog.findViewById(R.id.location);
-        location.setText(mHelper.getAddress(getContext(), point));
-        final LatLng mLastPoint = point;
-        mTags = new ArrayList<>();
-        CULTURE = false;
-        FASHION = false;
-        TRAVEL = false;
-        FOOD = false;
-        NATURE = false;
-        mParseFile = null;
-        handleTags();
-        BitmapDescriptor defaultMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
-        final Marker temp = mMap.addMarker(new MarkerOptions().position(point).icon(defaultMarker));
-        mAlertDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                temp.remove();
-            }
-        });
-        ivUpload.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI), com.example.footprnt.Util.Constants.GET_FROM_GALLERY);
-            }
-        });
-        ivCamera.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                mPhotoFile = mHelper.getPhotoFileUri(getActivity(), com.example.footprnt.Util.Constants.photoFileName);
-                Uri fileProvider = FileProvider.getUriForFile(getActivity(), com.example.footprnt.Util.Constants.fileProvider, mPhotoFile);
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
-                if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
-                    startActivityForResult(intent, com.example.footprnt.Util.Constants.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
-                }
-            }
-        });
-
-        final MediaPlayer mp = MediaPlayer.create(getContext(), R.raw.swipe_two);
-        sendPost.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Add sound when user sends post
-                mp.start();
-                final String title = ((EditText) mAlertDialog.findViewById(R.id.etTitle)).getText().toString();
-                final String snippet = ((EditText) mAlertDialog.findViewById(R.id.etSnippet)).getText().toString();
-                if( TextUtils.isEmpty(title) || TextUtils.isEmpty(snippet)){
-                    Toast.makeText(getContext(), R.string.post_incomplete, Toast.LENGTH_SHORT).show();
-                } else {
-                    final MarkerDetails mOptions = new MarkerDetails();
-                    mOptions.setUser(mUser);
-                    if (mParseFile != null) {
-                        mParseFile.saveInBackground(new SaveCallback() {
-                            @Override
-                            public void done(ParseException e) {
-                                Post p = createPost(snippet, title, mParseFile, mUser, mLastPoint);
-                                mOptions.setPost(p);
-                                try {
-                                    createMarker(mOptions);
-                                } catch (ParseException e1) {
-                                    e1.printStackTrace();
-                                }
-                                mOptions.saveInBackground(new SaveCallback() {
-                                    @Override
-                                    public void done(ParseException e) {
-                                        loadMarkers();
-                                    }
-                                });
-                            }
-                        });
-                    } else {
-                        Post p = createPost(snippet, title, mParseFile , mUser, mLastPoint);
-                        mOptions.setPost(p);
-                        try {
-                            createMarker(mOptions);
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-                        mOptions.saveInBackground();
-                    }
-                    mAlertDialog.dismiss();
-                }
-            }
-        });
-        cancelPost.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mAlertDialog.cancel();
-                temp.remove();
-            }
-        });
-    }
-
-    /**
-     * Creates and uploads post to Parse server
-     *
-     * @param description content of post
-     * @param title       title of post
-     * @param imageFile   image uploaded
-     * @param user        user who created the post
-     * @param point       geopoint where post was created
-     */
-    private Post createPost(String description, String title, ParseFile imageFile, ParseUser user, LatLng point) {
-        final Post newPost = new Post();
-        newPost.setDescription(description);
-        if (imageFile == null) {
-            newPost.remove(com.example.footprnt.Util.Constants.image);
-        } else {
-            newPost.setImage(imageFile);
-        }
-        newPost.setUser(user);
-        newPost.setTitle(title);
-        newPost.setLocation(new ParseGeoPoint(point.latitude, point.longitude));
-        Geocoder gcd = new Geocoder(getContext(), Locale.getDefault());
-        List<Address> addresses = null;
-        try {
-            addresses = gcd.getFromLocation(point.latitude, point.longitude, 1);
-            if (addresses.size() > 0) {
-                String city = addresses.get(0).getLocality();
-                String country = addresses.get(0).getCountryName();
-                String country_code = addresses.get(0).getCountryCode();
-                if (city != null) {
-                    newPost.setCity(city);
-                }
-                if (country != null) {
-                    newPost.setCountry(country);
-                }
-                if (country_code != null && mContinents.has(country_code)) {
-                    String continent = mContinents.getString(country_code);
-                    newPost.setContinent(continent);
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        newPost.setTags(mTags);
-        newPost.saveInBackground(new SaveCallback() {
-            @Override
-            public void done(ParseException e) {
-                if (e == null) {
-                    Toast.makeText(getContext(), R.string.post_message, Toast.LENGTH_SHORT).show();
-                } else {
-                    e.printStackTrace();
-                }
-            }
-        });
-        return newPost;
+        MapUtil.hideToolBar(getActivity());
+        configureFilterMenu(latLng);
     }
 
     @Override
@@ -735,12 +245,274 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         }
     }
 
-    private void init(){
-        ImageView search = getActivity().findViewById(R.id.search);
-        search.setOnClickListener(new View.OnClickListener() {
+    /**
+     * Initializes map and sets user permissions
+     */
+    private void initialization(){
+        mMapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        MapsInitializer.initialize(this.getActivity());
+        mMapFrag.getMapAsync(this);
+        mHelper = new Util();
+        mUser = ParseUser.getCurrentUser();
+        ParseACL acl = new ParseACL(); // set permissions
+        acl.setPublicReadAccess(true);
+        acl.setPublicWriteAccess(true);
+        mUser.setACL(acl);
+        mUser.setACL(acl);
+        mMarkerDetails = new ArrayList<>();
+        markers = new ArrayList<>();
+        mInfoAdapter = new CustomInfoWindowAdapter(getContext());
+        mMapStyle = mUser.getInt(MapConstants.MAP_STYLE);
+        mMenuItemsAdded = false;
+    }
+
+    /**
+     * Sets up map styles
+     */
+    private void setupMapStyles(){
+        View toolbar = ((View) mMapFrag.getView().findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("4"));
+        RelativeLayout.LayoutParams rlpToolbar = (RelativeLayout.LayoutParams) toolbar.getLayoutParams();
+        rlpToolbar.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
+        rlpToolbar.setMargins(100, 0, 0, 250);
+        View locationButton = ((View) getActivity().findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
+        RelativeLayout.LayoutParams rlpMyLocation = (RelativeLayout.LayoutParams) locationButton.getLayoutParams();
+        rlpMyLocation.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
+        rlpMyLocation.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
+        rlpMyLocation.setMargins(0, 200, 180, 0);
+        mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getContext(), mMapStyle));
+    }
+
+    /**
+     * Requests permission for location and handles finding user location
+     */
+    private void setupMapUserLocation() {
+        if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+            return;
+        }
+        mMap.setMyLocationEnabled(true);
+        if (mJumpToCurrentLocation && mLocation != null) {
+            mJumpToCurrentLocation = false;
+            MapUtil.centreMapOnLocation(mMap, mLocation);
+        }
+
+        mMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
+            @Override
+            public void onMyLocationChange(Location arg0) {
+                Location temp = new Location(LocationManager.GPS_PROVIDER);
+                temp.setLatitude(arg0.getLatitude());
+                temp.setLongitude(arg0.getLongitude());
+                if (mJumpToCurrentLocation) {
+                    mJumpToCurrentLocation = false;
+                    MapUtil.centreMapOnLocation(mMap, temp);
+                }
+            }
+        });
+    }
+
+    /**
+     * Loads map markers for all of current user's posts
+     */
+    public void loadMarkers() {
+        mMarkerDetails = new ArrayList<>();
+        markers = new ArrayList<>();
+        final MarkerDetails.Query postQuery = new MarkerDetails.Query();
+        postQuery.withUser().whereEqualTo("user", mUser);
+        postQuery.withUser().whereEqualTo(com.example.footprnt.Util.Constants.user, mUser);
+        postQuery.findInBackground(new FindCallback<MarkerDetails>() {
+            @Override
+            public void done(List<MarkerDetails> objects, ParseException e) {
+                if (e == null) {
+                    for (int i = 0; i < objects.size(); i++) {
+                        MarkerDetails md = objects.get(i);
+                        mMarkerDetails.add(md);
+                    }
+                    for (MarkerDetails markerDetails : mMarkerDetails) {
+                        try {
+                            Marker m = MapUtil.createMarker(mMap, markerDetails);
+                            markers.add(m);
+                        } catch (ParseException e1) {
+                            e1.printStackTrace();
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * Loads map markers for all user's posts
+     */
+    public void loadAllMarkers() {
+        mMarkerDetails = new ArrayList<>();
+        markers = new ArrayList<>();
+        final MarkerDetails.Query postQuery = new MarkerDetails.Query();
+        postQuery.withUser();
+        postQuery.findInBackground(new FindCallback<MarkerDetails>() {
+            @Override
+            public void done(List<MarkerDetails> objects, ParseException e) {
+                if (e == null) {
+                    for (int i = 0; i < objects.size(); i++) {
+                        MarkerDetails md = objects.get(i);
+                        try {
+                            Marker m = MapUtil.createMarker(mMap, md);
+                            markers.add(m);
+                        } catch (ParseException e1) {
+                            e1.printStackTrace();
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * Popups feed at tapped location
+     */
+    private void createFeed(){
+        MapRipple mMapRipple = new MapRipple(mMap, mTappedLocation, getContext())
+                .withNumberOfRipples(3)
+                .withFillColor(Color.CYAN)
+                .withStrokeColor(Color.BLACK)
+                .withDistance(2000)      // 8046.72 for 5 miles
+                .withRippleDuration(12000)    //12000ms
+                .withTransparency(0.6f);
+        mMapRipple.startRippleMapAnimation();      //in onMapReadyCallBack
+        Intent i = new Intent(getActivity(), FeedActivity.class);
+        i.putExtra("latitude", mTappedLocation.latitude);
+        i.putExtra("longitude", mTappedLocation.longitude);
+        startActivity(i);
+    }
+
+    /**
+     * Shows create post dialog box at the point selected
+     *
+     * @param point point where post is being created
+     */
+    private void createPostDialog(LatLng point) {
+        View messageView = LayoutInflater.from(getActivity()).inflate(R.layout.create_post, null);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+        alertDialogBuilder.setView(messageView);
+        mAlertDialog = alertDialogBuilder.create();
+        mAlertDialog.show();
+        mTags = new ArrayList<>();
+        handleTags();
+        EditText etDescription = mAlertDialog.findViewById(R.id.etSnippet);
+        etDescription.setScroller(new Scroller(getContext()));
+        etDescription.setMaxLines(3);
+        etDescription.setVerticalScrollBarEnabled(true);
+        etDescription.setMovementMethod(new ScrollingMovementMethod());
+        mImage = mAlertDialog.findViewById(R.id.image);
+        mImage.setVisibility(View.GONE);
+        TextView location = mAlertDialog.findViewById(R.id.location);
+        location.setText(mHelper.getAddress(getContext(), point));
+        final Marker temp = mMap.addMarker(new MarkerOptions().position(point).icon(MapConstants.DEFAULT_MARKER));
+        mAlertDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                temp.remove();
+            }
+        });
+        handlePhotoButtons();
+        handlePostButtons(point, temp);
+    }
+
+    /**
+     * Handles upload image and take image buttons in alert dialog
+     */
+    private void handlePhotoButtons(){
+        ImageView ivUpload = mAlertDialog.findViewById(R.id.ivUpload);
+        ImageView ivCamera = mAlertDialog.findViewById(R.id.ivCamera);
+        ivUpload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                geoLocate();
+                startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI), com.example.footprnt.Util.Constants.GET_FROM_GALLERY);
+            }
+        });
+        ivCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                mPhotoFile = mHelper.getPhotoFileUri(getActivity(), com.example.footprnt.Util.Constants.photoFileName);
+                Uri fileProvider = FileProvider.getUriForFile(getActivity(), com.example.footprnt.Util.Constants.fileProvider, mPhotoFile);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
+                if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                    startActivityForResult(intent, com.example.footprnt.Util.Constants.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+                }
+            }
+        });
+    }
+
+    /**
+     * Handles send post and cancel post buttons in alert dialog
+     * @param point point where post is being made
+     * @param temp temporary marker for UI purposes
+     */
+    private void handlePostButtons(final LatLng point, final Marker temp){
+        ImageView sendPost = mAlertDialog.findViewById(R.id.dropdown);
+        ImageView cancelPost = mAlertDialog.findViewById(R.id.cancelPost);
+        sendPost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mSwipe.start();                 // Add sound when user sends post
+                final String title = ((EditText) mAlertDialog.findViewById(R.id.etTitle)).getText().toString();
+                final String snippet = ((EditText) mAlertDialog.findViewById(R.id.etSnippet)).getText().toString();
+                if( TextUtils.isEmpty(title) || TextUtils.isEmpty(snippet)){
+                    Toast.makeText(getContext(), R.string.post_incomplete, Toast.LENGTH_SHORT).show();
+                } else {
+                    final MarkerDetails mOptions = new MarkerDetails();
+                    mOptions.setUser(mUser);
+                    if (mParseFile != null) {
+                        mParseFile.saveInBackground(new SaveCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                Post p = MapUtil.createPost(getActivity(), getContext(), snippet, title, mParseFile, mUser, point, mTags);
+                                mOptions.setPost(p);
+                                try {
+                                    MapUtil.createMarker(mMap, mOptions);
+                                } catch (ParseException e1) {
+                                    e1.printStackTrace();
+                                }
+                                mOptions.saveInBackground(new SaveCallback() {
+                                    @Override
+                                    public void done(ParseException e) {
+                                        loadMarkers();
+                                    }
+                                });
+                            }
+                        });
+                    } else {
+                        Post p = MapUtil.createPost(getActivity(), getContext(), snippet, title, mParseFile, mUser, point, mTags);
+                        mOptions.setPost(p);
+                        try {
+                            MapUtil.createMarker(mMap, mOptions);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        mOptions.saveInBackground();
+                    }
+                    mAlertDialog.dismiss();
+                }
+            }
+        });
+
+        cancelPost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mAlertDialog.cancel();
+                temp.remove();
+            }
+        });
+    }
+
+    /**
+     * Handles searching for location
+     */
+    private void handleSearch(){
+        mSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MapUtil.geoLocate(mSearchText, mMap, getContext());
                 InputMethodManager inputManager = (InputMethodManager) myContext.getSystemService(Context.INPUT_METHOD_SERVICE);
                 inputManager.hideSoftInputFromWindow(myContext.getCurrentFocus().getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
             }
@@ -749,7 +521,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    geoLocate();
+                    MapUtil.geoLocate(mSearchText, mMap, getContext());
                 }
                 InputMethodManager inputManager = (InputMethodManager) myContext.getSystemService(Context.INPUT_METHOD_SERVICE);
                 inputManager.hideSoftInputFromWindow(myContext.getCurrentFocus().getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
@@ -758,30 +530,16 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         });
     }
 
-    private void geoLocate(){
-        String searchString = mSearchText.getText().toString();
-
-        Geocoder geocoder = new Geocoder(getContext());
-        List<Address> list = new ArrayList<>();
-        try{
-            list = geocoder.getFromLocationName(searchString, 1);
-        } catch (IOException e){
-
-        }
-
-        if (list.size() > 0){
-            Address address = list.get(0);
-            Location l = new Location(LocationManager.GPS_PROVIDER);
-            l.setLatitude(address.getLatitude());
-            l.setLongitude(address.getLongitude());
-            Util.centreMapOnLocation(mMap, l);
-        }
-    }
-
     /**
      * Handles toggling of tags when in create view dialog
      */
     public void handleTags() {
+        CULTURE = false;
+        FASHION = false;
+        TRAVEL = false;
+        FOOD = false;
+        NATURE = false;
+        mParseFile = null;
         final TextView culture = mAlertDialog.findViewById(R.id.culture);
         final TextView food = mAlertDialog.findViewById(R.id.food);
         final TextView fashion = mAlertDialog.findViewById(R.id.fashion);
@@ -867,7 +625,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     /**
      * Handles toggling of user posts vs all posts
      */
-    public void handleToggle() {
+    public void handleSwitch() {
         mSwitch = getView().findViewById(R.id.switch1);
         mSwitch.setChecked(false);
         mSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -893,10 +651,70 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     }
 
     /**
+     * Configures on map long press filter menu animation and sound
+     * @param latLng location to launch create post or view feed
+     */
+    private void configureFilterMenu(LatLng latLng){
+        final Marker m = mMap.addMarker(new MarkerOptions().position(latLng).icon(MapConstants.DEFAULT_MARKER));
+        mBubble.start();
+        mFilterMenuLayout.setVisibility(View.VISIBLE);
+        FilterMenu.OnMenuChangeListener menuChangeListener = new FilterMenu.OnMenuChangeListener() {
+            @Override
+            public void onMenuItemClick(View view, int position) {
+                if (MapConstants.MENU_ITEMS[position] == MapConstants.CREATE) {
+                    createPostDialog(mTappedLocation);
+                }
+                if (MapConstants.MENU_ITEMS[position] == MapConstants.VIEW) {
+                    createFeed();
+                }
+                if (MapConstants.MENU_ITEMS[position] == MapConstants.DISCOVER) {
+                    //TODO
+                }
+                if (MapConstants.MENU_ITEMS[position] == MapConstants.CURRENT) {
+                    if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                        Location location = mMap.getMyLocation();
+                        LatLng currLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                        createPostDialog(currLocation);
+                    }
+                }
+            }
+            @Override
+            public void onMenuCollapse() {
+                mFilterMenuLayout.setVisibility(View.INVISIBLE);
+                ((HomeActivity)getActivity()).showBottomNav();
+                MapUtil.showToolbar(getActivity());
+                mBubbleClose.start();
+                m.remove();
+            }
+            @Override
+            public void onMenuExpand() {
+            }
+        };
+
+        if (!mMenuItemsAdded) {
+            mMenuItemsAdded = true;
+            FilterMenu menu = new FilterMenu.Builder(getContext())
+                    .addItem(R.drawable.ic_pencil_white)
+                    .addItem(R.drawable.ic_world_white)
+                    .addItem(R.drawable.ic_rocket_white)
+                    .addItem(R.drawable.ic_new_post)
+                    .attach(mFilterMenuLayout)
+                    .withListener(menuChangeListener)
+                    .build();
+            menu.toggle(true);
+        } else {
+            FilterMenu menu = new FilterMenu.Builder(getContext())
+                    .attach(mFilterMenuLayout)
+                    .withListener(menuChangeListener)
+                    .build();
+            menu.toggle(true);
+        }
+    }
+
+    /**
      * Helper function to set up the pop up menu which configures the style for map
      */
     private void configureMapStyleMenu() {
-        // Set up initial check boxes in pop up menu
         // TODO: update UI correctly when user opens fragment in beginning and on transition
         for (int i = 0; i < mPopup.getMenu().size(); i++) {
             if (mPopup.getMenu().getItem(i).getItemId() != mMapStyle) {
@@ -925,19 +743,19 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                         });
                         switch (item.getItemId()) {
                             case R.id.edit_style_dark_mode:
-                                toggleMenuItem(item, MapConstants.style_darkmode);
+                                toggleMenuItem(item, MapConstants.STYLE_DARKMODE);
                                 return true;
                             case R.id.edit_style_silver:
-                                toggleMenuItem(item, MapConstants.style_silver);
+                                toggleMenuItem(item, MapConstants.STYLE_SILVER);
                                 return true;
                             case R.id.edit_style_aubergine:
-                                toggleMenuItem(item, MapConstants.style_aubergine);
+                                toggleMenuItem(item, MapConstants.STYLE_AUBERGINE);
                                 return true;
                             case R.id.edit_style_retro:
-                                toggleMenuItem(item, MapConstants.style_retro);
+                                toggleMenuItem(item, MapConstants.STYLE_RETRO);
                                 return true;
                             case R.id.edit_style_basic:
-                                toggleMenuItem(item, MapConstants.style_basic);
+                                toggleMenuItem(item, MapConstants.STYLE_BASIC);
                                 return true;
                         }
                         return false;
@@ -956,27 +774,12 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         mMap.setMapStyle(
                 MapStyleOptions.loadRawResourceStyle(
                         getContext(), id));
-        mUser.put(MapConstants.map_style, id);
+        mUser.put(MapConstants.MAP_STYLE, id);
         mUser.saveInBackground();
         for (int i = 0; i < mPopup.getMenu().size(); i++) {
             if (mPopup.getMenu().getItem(i).getItemId() != menuItem.getItemId()) {
                 mPopup.getMenu().getItem(i).setChecked(false);
             }
         }
-    }
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
     }
 }

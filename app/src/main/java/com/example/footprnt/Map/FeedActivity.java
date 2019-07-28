@@ -1,9 +1,3 @@
-/*
- * FeedActivity.java
- * v1.0
- * July 2019
- * Copyright ©2019 Footprnt Inc.
- */
 package com.example.footprnt.Map;
 
 import android.app.Activity;
@@ -17,6 +11,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.example.footprnt.Map.Util.MapConstants;
+import com.example.footprnt.Map.Util.PostAdapter;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.R;
 import com.parse.FindCallback;
@@ -41,13 +36,22 @@ public class FeedActivity extends Activity {
     private SwipeRefreshLayout mSwipeContainer;
     private double mLat;
     private double mLong;
-    private View menu;
+    private View mMenu;
     private TextView mNoPosts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed);
+        initialization();
+        handleMenuAction();
+        handleSwipeRefresh();
+    }
+
+    /**
+     * Initializes all variables
+     */
+    private void initialization(){
         mLat = getIntent().getExtras().getDouble("latitude");
         mLong = getIntent().getExtras().getDouble("longitude");
         mPosts = new ArrayList<>();
@@ -61,12 +65,10 @@ public class FeedActivity extends Activity {
         mNoPosts = findViewById(R.id.noPosts);
         mNoPosts.setVisibility(View.INVISIBLE);
         getPosts(postsQuery);
-        menu = findViewById(R.id.dropdown);
+        mMenu = findViewById(R.id.dropdown);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mPostsView.setLayoutManager(layoutManager);
         mPostsView.setAdapter(mPostAdapter);
-        handleMenuAction();
-        handleSwipeRefresh();
     }
 
     /**
@@ -84,15 +86,17 @@ public class FeedActivity extends Activity {
                         mPosts.add(post);
                         mPostAdapter.notifyItemInserted(mPosts.size() - 1);
                     }
+                    if (mPosts.size() == 0){
+                        mNoPosts.setVisibility(View.VISIBLE);
+                    } else {
+                        mNoPosts.setVisibility(View.INVISIBLE);
+                    }
                     mSwipeContainer.setRefreshing(false);
                 } else {
                     e.printStackTrace();
                 }
             }
         });
-        if (mPosts.size() == 0){
-            mNoPosts.setVisibility(View.VISIBLE);
-        }
     }
 
     /**
@@ -127,11 +131,14 @@ public class FeedActivity extends Activity {
         mSwipeContainer.setRefreshing(false);
     }
 
+    /**
+     * Handles applying tags and filter menu action
+     */
     public void handleMenuAction(){
-        menu.setOnClickListener(new View.OnClickListener() {
+        mMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PopupMenu popup = new PopupMenu(FeedActivity.this, menu);
+                PopupMenu popup = new PopupMenu(FeedActivity.this, mMenu);
                 popup.getMenuInflater().inflate(R.menu.popup_tags, popup.getMenu());
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     public boolean onMenuItemClick(MenuItem item) {

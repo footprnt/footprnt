@@ -9,15 +9,10 @@ package com.example.footprnt.Util;
 import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
-import android.location.Location;
 import android.os.Environment;
 import android.text.format.DateUtils;
 import android.util.Log;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.io.File;
@@ -74,18 +69,6 @@ public class Util {
             return null;
         }
         return null;
-    }
-
-    /**
-     *
-     * @param map
-     * @param location
-     */
-    public static void centreMapOnLocation(GoogleMap map, Location location) {
-        LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());
-        BitmapDescriptor defaultMarker =
-                BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
-        map.animateCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 12));
     }
 
     /**
