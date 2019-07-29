@@ -6,6 +6,7 @@
  */
 package com.example.footprnt.Profile;
 
+import android.arch.lifecycle.LiveData;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -64,6 +65,7 @@ public class ProfileFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_profile, container, false);
+
         postRepository = new PostRepository(getActivity().getApplicationContext());
         setUpToolbar(v);
 
@@ -75,8 +77,10 @@ public class ProfileFragment extends Fragment {
         mPosts = new ArrayList<>();
         mStats = new ArrayList<>();
 
-        // Get posts
-        getPosts();
+        // Get posts from DB or Network
+        if(!updatePostList()) {
+            getPosts();
+        }
         mObjects.add(user);
 
         // For post feed view:
@@ -130,6 +134,19 @@ public class ProfileFragment extends Fragment {
         });
     }
 
+    private boolean updatePostList() {
+        LiveData<List<PostWrapper>> data = postRepository.getPosts();
+        List<PostWrapper> list = data.getValue();
+        if(list!=null) {
+            for (PostWrapper p : list) {
+                mObjects.add(p);
+                mMultiAdapter.notifyDataSetChanged();
+            }
+            return true;
+        }
+        return false;
+    }
+
     // Get posts
     private void getPosts() {
         final Post.Query postsQuery = new Post.Query();
@@ -147,7 +164,11 @@ public class ProfileFragment extends Fragment {
                     for (int i = 0; i < objects.size(); i++) {
                         final Post post = objects.get(i);
                         // Wrap post and add to repo & DB
-                        postRepository.insertPost(new PostWrapper(post));
+                        final PostWrapper postWrapper = new PostWrapper(post);
+                        LiveData<PostWrapper> ptest = postRepository.getPost(postWrapper.objectId);
+                        if(ptest.getValue()==null) {
+                            postRepository.insertPost(new PostWrapper(post));
+                        }
                         // Get post stats and update user stats
                         mPosts.add(post);
                         // Fill HashMaps and handle null values

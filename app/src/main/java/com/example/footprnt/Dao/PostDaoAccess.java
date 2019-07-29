@@ -28,4 +28,7 @@ public interface PostDaoAccess {
 
     @Query("SELECT * FROM posts")
     LiveData<List<PostWrapper>> fetchAllPosts();
+
+    @Query("SELECT * FROM posts WHERE objectId =:objectId")
+    LiveData<PostWrapper> getPost(String objectId);
 }

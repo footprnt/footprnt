@@ -6,6 +6,7 @@
  */
 package com.example.footprnt.Repository;
 
+import android.annotation.SuppressLint;
 import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Room;
 import android.content.Context;
@@ -32,11 +33,13 @@ public class PostRepository {
         postDatabase = Room.databaseBuilder(context, PostDatabase.class, AppConstants.POST_DB_NAME).build();
     }
 
+
     /**
      * Insert post into database
      *
      * @param post
      */
+    @SuppressLint("StaticFieldLeak")
     public void insertPost(final PostWrapper post) {
         new AsyncTask<Void, Void, Void>() {
             @Override
@@ -54,5 +57,10 @@ public class PostRepository {
      */
     public LiveData<List<PostWrapper>> getPosts() {
         return postDatabase.daoAccess().fetchAllPosts();
+    }
+
+
+    public LiveData<PostWrapper> getPost(String objectId) {
+        return postDatabase.daoAccess().getPost(objectId);
     }
 }
