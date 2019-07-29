@@ -17,7 +17,7 @@ import android.view.ViewGroup;
 import com.example.footprnt.Discover.Adapters.ListAdapter;
 import com.example.footprnt.Discover.Models.Business;
 import com.example.footprnt.Discover.Services.YelpService;
-import com.example.footprnt.Discover.Util.Constants;
+import com.example.footprnt.Discover.Util.DiscoverConstants;
 import com.example.footprnt.R;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -33,6 +33,7 @@ import okhttp3.Response;
  * Fragment for the Discover view
  * Displays all business queried from Yelp API.
  * Businesses displayed: Restaurants, Museums, Hotels, Clubs.
+ *
  * @author Stanley Nwakamma, Clarisa Leu
  * @version 1.0
  */
@@ -54,7 +55,6 @@ public class DiscoverFragment extends Fragment {
     final YelpService yelpService = new YelpService();
     private LatLng mLocation;
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_discover, parent, false);
@@ -69,7 +69,7 @@ public class DiscoverFragment extends Fragment {
         mHotels = new ArrayList<>();
         mClubs = new ArrayList<>();
         // TODO: fill with current location
-        yelpService.findBusinesses("Sunnyvale", Constants.RESTAURANT, new Callback() {
+        yelpService.findBusinesses("Sunnyvale", DiscoverConstants.RESTAURANT, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
@@ -90,7 +90,7 @@ public class DiscoverFragment extends Fragment {
             }
         });
 
-        yelpService.findBusinesses("Sunnyvale", Constants.MUSEUM, new Callback() {
+        yelpService.findBusinesses("Sunnyvale", DiscoverConstants.MUSEUM, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
@@ -111,7 +111,7 @@ public class DiscoverFragment extends Fragment {
             }
         });
 
-        yelpService.findBusinesses("Sunnyvale", Constants.HOTEL, new Callback() {
+        yelpService.findBusinesses("Sunnyvale", DiscoverConstants.HOTEL, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
@@ -132,7 +132,7 @@ public class DiscoverFragment extends Fragment {
             }
         });
 
-        yelpService.findBusinesses("Sunnyvale", Constants.CLUB, new Callback() {
+        yelpService.findBusinesses("Sunnyvale", DiscoverConstants.CLUB, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
@@ -153,12 +153,10 @@ public class DiscoverFragment extends Fragment {
             }
         });
 
-
         return view;
-
     }
 
-    public void setDataFromMapFragment(LatLng latLng){
+    public void setDataFromMapFragment(LatLng latLng) {
         mLocation = latLng;
     }
 }

@@ -9,9 +9,11 @@ package com.example.footprnt.Util;
 /**
  * MapConstants used in application
  *
- * @author Clarisa Leu
+ * @author Clarisa Leu, Jocelyn Shen, Stanley
  */
-public class Constants {
+public class AppConstants {
+    // For Database:
+    public static String POST_DB_NAME = "db_posts";
 
     // For getting attributes in database:
     public static String profileImage = "profileImg";
@@ -51,4 +53,8 @@ public class Constants {
     public static final int GET_FROM_GALLERY = 3;
     public static final int UPDATE_POST_FROM_PROFILE = 301;
     public static final int DELETE_POST_FROM_PROFILE = 302;
+
+    // For Logcat:
+    public static final String APP_TAG = "footprnt";
+
 }

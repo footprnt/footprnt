@@ -19,6 +19,7 @@ import com.github.mikephil.charting.charts.PieChart;
  * @author Clarisa Leu-Rodriguez
  */
 public class StatViewHolder extends RecyclerView.ViewHolder {
+
     ViewFlipper mViewFlipper;
     View mNextView;
     View mPreviousView;

@@ -22,6 +22,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * @author Clarisa Leu-Rodriguez
  */
 public class UserInfoViewHolder extends RecyclerView.ViewHolder {
+
     CircleImageView mIvProfileImage;
     TextView mTvEditProfile;
     TextView mUsername;

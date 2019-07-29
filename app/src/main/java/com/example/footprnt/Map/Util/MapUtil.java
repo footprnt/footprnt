@@ -17,6 +17,8 @@ import com.bumptech.glide.request.RequestOptions;
 import com.example.footprnt.Models.MarkerDetails;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.R;
+import com.example.footprnt.Util.AppConstants;
+import com.example.footprnt.Util.AppUtil;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
@@ -138,7 +140,7 @@ public class MapUtil {
         String dateText = MapUtil.getPostDateText(post);
         holder.tvTimePosted.setText(dateText);
         // set location
-        com.example.footprnt.Util.Util helper = new com.example.footprnt.Util.Util();
+        AppUtil helper = new AppUtil();
         LatLng point = new LatLng(post.getLocation().getLatitude(), post.getLocation().getLongitude());
         String tvCityState = helper.getAddress(context, point);
         holder.tvLocation.setText(tvCityState);
@@ -252,7 +254,7 @@ public class MapUtil {
         final Post newPost = new Post();
         newPost.setDescription(description);
         if (imageFile == null) {
-            newPost.remove(com.example.footprnt.Util.Constants.image);
+            newPost.remove(AppConstants.image);
         } else {
             newPost.setImage(imageFile);
         }

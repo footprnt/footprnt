@@ -23,8 +23,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.footprnt.R;
-import com.example.footprnt.Util.Constants;
-import com.example.footprnt.Util.Util;
+import com.example.footprnt.Util.AppConstants;
+import com.example.footprnt.Util.AppUtil;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
@@ -39,11 +39,11 @@ import java.io.File;
  * @author Clarisa Leu-Rodriguez
  */
 public class UserSettings extends AppCompatActivity {
-    Util util;
+
+    AppUtil mAppUtil = new AppUtil();
     File mPhotoFile;
     ParseFile mParseFile;
-    final ParseUser user = ParseUser.getCurrentUser();
-
+    final ParseUser mUser = ParseUser.getCurrentUser();
     ImageView mIvProfileImage;
     TextView mTvEditPhoto;
     ImageView mIvBackArrow;
@@ -58,7 +58,6 @@ public class UserSettings extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_settings);
-        util = new Util();
         setViews();
         updateCurrentViews();
 
@@ -73,7 +72,7 @@ public class UserSettings extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // Upload image
-                        startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI), Constants.GET_FROM_GALLERY);
+                        startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI), AppConstants.GET_FROM_GALLERY);
                     }
                 });
                 builder.setNegativeButton("Take a Photo", new DialogInterface.OnClickListener() {
@@ -81,11 +80,11 @@ public class UserSettings extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         // Take Photo
                         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        mPhotoFile = util.getPhotoFileUri(UserSettings.this, Constants.photoFileName);
-                        Uri fileProvider = FileProvider.getUriForFile(UserSettings.this, Constants.fileProvider, mPhotoFile);
+                        mPhotoFile = mAppUtil.getPhotoFileUri(UserSettings.this, AppConstants.photoFileName);
+                        Uri fileProvider = FileProvider.getUriForFile(UserSettings.this, AppConstants.fileProvider, mPhotoFile);
                         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
                         if (intent.resolveActivity(UserSettings.this.getPackageManager()) != null) {
-                            startActivityForResult(intent, Constants.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+                            startActivityForResult(intent, AppConstants.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
                         }
                     }
                 });
@@ -106,20 +105,20 @@ public class UserSettings extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (mParseFile != null) {
-                    user.put(Constants.profileImage, mParseFile);
+                    mUser.put(AppConstants.profileImage, mParseFile);
                 }
 
-                user.setEmail(mEtEmail.getText().toString());
-                user.setUsername(mEtUsername.getText().toString());
-                user.put(Constants.phone, mEtNumber.getText().toString());
-                user.put(Constants.email, mEtEmail.getText().toString());
-                user.put("description", mEtDescription.getText().toString());
-                user.saveInBackground(new SaveCallback() {
+                mUser.setEmail(mEtEmail.getText().toString());
+                mUser.setUsername(mEtUsername.getText().toString());
+                mUser.put(AppConstants.phone, mEtNumber.getText().toString());
+                mUser.put(AppConstants.email, mEtEmail.getText().toString());
+                mUser.put(AppConstants.description, mEtDescription.getText().toString());
+                mUser.saveInBackground(new SaveCallback() {
                     @Override
                     public void done(ParseException e) {
                         updateCurrentViews();
                         Intent data = new Intent();
-                        setResult(Constants.RELOAD_USERPROFILE_FRAGMENT_REQUEST_CODE, data);
+                        setResult(AppConstants.RELOAD_USERPROFILE_FRAGMENT_REQUEST_CODE, data);
                         finish();
                     }
                 });
@@ -129,11 +128,11 @@ public class UserSettings extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, final Intent data) {
-        if (requestCode == com.example.footprnt.Util.Constants.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+        if (requestCode == AppConstants.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == this.RESULT_OK) {
                 Bitmap takenImage = BitmapFactory.decodeFile(mPhotoFile.getAbsolutePath());
                 mIvProfileImage.setImageBitmap(takenImage);
-                File photoFile = util.getPhotoFileUri(this, Constants.photoFileName);
+                File photoFile = mAppUtil.getPhotoFileUri(this, AppConstants.photoFileName);
                 mParseFile = new ParseFile(photoFile);
             } else {
                 mParseFile = null;
@@ -147,9 +146,9 @@ public class UserSettings extends AppCompatActivity {
                 } catch (Exception e) {
                 }
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, Constants.captureImageQuality, stream);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, AppConstants.captureImageQuality, stream);
                 byte[] image = stream.toByteArray();
-                mParseFile = new ParseFile(Constants.profileImagePath, image);
+                mParseFile = new ParseFile(AppConstants.profileImagePath, image);
                 final Bitmap finalBitmap = bitmap;
                 Glide.with(this).load(finalBitmap).into(mIvProfileImage);
             } else {
@@ -163,13 +162,13 @@ public class UserSettings extends AppCompatActivity {
      */
     public void updateCurrentViews() {
         mIvProfileImage = findViewById(R.id.ivProfileImageMain);
-        if (user.getParseFile(Constants.profileImage) != null) {
-            Glide.with(this).load(user.getParseFile(Constants.profileImage).getUrl()).into(mIvProfileImage);
+        if (mUser.getParseFile(AppConstants.profileImage) != null) {
+            Glide.with(this).load(mUser.getParseFile(AppConstants.profileImage).getUrl()).into(mIvProfileImage);
         }
-        mEtUsername.setText(user.getUsername());
-        mEtDescription.setText(user.getString("description"));
-        mEtNumber.setText(String.format("%s", user.get(Constants.phone)));
-        mEtEmail.setText(String.format("%s", user.get(Constants.email)));
+        mEtUsername.setText(mUser.getUsername());
+        mEtDescription.setText(mUser.getString(AppConstants.description));
+        mEtNumber.setText(String.format("%s", mUser.get(AppConstants.phone)));
+        mEtEmail.setText(String.format("%s", mUser.get(AppConstants.email)));
     }
 
     /**

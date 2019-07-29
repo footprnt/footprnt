@@ -58,7 +58,8 @@ import com.example.footprnt.Map.Util.MapUtil;
 import com.example.footprnt.Models.MarkerDetails;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.R;
-import com.example.footprnt.Util.Util;
+import com.example.footprnt.Util.AppConstants;
+import com.example.footprnt.Util.AppUtil;
 import com.example.footprnt.ViewPagerAdapter;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapsInitializer;
@@ -96,7 +97,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     // Map variables
     private GoogleMap mMap;
     private SupportMapFragment mMapFrag;
-    private Util mHelper;
+    private AppUtil mHelper;
     private boolean mJumpToCurrentLocation = false;
     private Location mLocation;
     private LatLng mTappedLocation;
@@ -218,12 +219,12 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, final Intent data) {
-        if (requestCode == com.example.footprnt.Util.Constants.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+        if (requestCode == AppConstants.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == getActivity().RESULT_OK) {
                 Bitmap takenImage = BitmapFactory.decodeFile(mPhotoFile.getAbsolutePath());
                 mImage.setVisibility(View.VISIBLE);
                 mImage.setImageBitmap(takenImage);
-                File photoFile = mHelper.getPhotoFileUri(getContext(), com.example.footprnt.Util.Constants.photoFileName);
+                File photoFile = mHelper.getPhotoFileUri(getContext(), AppConstants.photoFileName);
                 mParseFile = new ParseFile(photoFile);
             } else {
                 mParseFile = null;
@@ -238,9 +239,9 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 } catch (Exception e) {
                 }
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, com.example.footprnt.Util.Constants.captureImageQuality, stream);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, AppConstants.captureImageQuality, stream);
                 byte[] image = stream.toByteArray();
-                mParseFile = new ParseFile(com.example.footprnt.Util.Constants.imagePath, image);
+                mParseFile = new ParseFile(AppConstants.imagePath, image);
                 final Bitmap finalBitmap = bitmap;
                 mImage.setVisibility(View.VISIBLE);
                 Glide.with(this).load(finalBitmap).into(mImage);
@@ -257,7 +258,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         mMapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         MapsInitializer.initialize(this.getActivity());
         mMapFrag.getMapAsync(this);
-        mHelper = new Util();
+        mHelper = new AppUtil();
         mUser = ParseUser.getCurrentUser();
         ParseACL acl = new ParseACL(); // set permissions
         acl.setPublicReadAccess(true);
@@ -323,7 +324,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         markers = new ArrayList<>();
         final MarkerDetails.Query postQuery = new MarkerDetails.Query();
         postQuery.withUser().whereEqualTo("user", mUser);
-        postQuery.withUser().whereEqualTo(com.example.footprnt.Util.Constants.user, mUser);
+        postQuery.withUser().whereEqualTo(AppConstants.user, mUser);
         postQuery.findInBackground(new FindCallback<MarkerDetails>() {
             @Override
             public void done(List<MarkerDetails> objects, ParseException e) {
@@ -431,18 +432,18 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         ivUpload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI), com.example.footprnt.Util.Constants.GET_FROM_GALLERY);
+                startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI), AppConstants.GET_FROM_GALLERY);
             }
         });
         ivCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                mPhotoFile = mHelper.getPhotoFileUri(getActivity(), com.example.footprnt.Util.Constants.photoFileName);
-                Uri fileProvider = FileProvider.getUriForFile(getActivity(), com.example.footprnt.Util.Constants.fileProvider, mPhotoFile);
+                mPhotoFile = mHelper.getPhotoFileUri(getActivity(), AppConstants.photoFileName);
+                Uri fileProvider = FileProvider.getUriForFile(getActivity(), AppConstants.fileProvider, mPhotoFile);
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
                 if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
-                    startActivityForResult(intent, com.example.footprnt.Util.Constants.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+                    startActivityForResult(intent, AppConstants.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
                 }
             }
         });

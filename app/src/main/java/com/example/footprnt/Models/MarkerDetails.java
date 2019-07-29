@@ -6,6 +6,7 @@
  */
 package com.example.footprnt.Models;
 
+import com.example.footprnt.Util.AppConstants;
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -19,23 +20,20 @@ import java.io.Serializable;
 @ParseClassName("MarkerDetails")
 public class MarkerDetails extends ParseObject implements Serializable {
 
-    private static final String KEY_USER = "user";
-    private static final String KEY_POST = "post";
-
     public ParseObject getPost() {
-        return getParseObject(KEY_POST);
+        return getParseObject(AppConstants.post);
     }
 
     public void setPost(Post post) {
-        put(KEY_POST, post);
+        put(AppConstants.post, post);
     }
 
     public ParseUser getUser() {
-        return getParseUser(KEY_USER);
+        return getParseUser(AppConstants.user);
     }
 
     public void setUser(ParseUser user) {
-        put(KEY_USER, user);
+        put(AppConstants.user, user);
     }
 
     public static class Query extends ParseQuery<MarkerDetails> {
@@ -44,7 +42,7 @@ public class MarkerDetails extends ParseObject implements Serializable {
         }
 
         public Query withUser() {
-            include(KEY_USER);
+            include(AppConstants.user);
             return this;
         }
     }

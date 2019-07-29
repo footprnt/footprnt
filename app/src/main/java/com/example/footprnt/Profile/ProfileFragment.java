@@ -26,8 +26,8 @@ import com.example.footprnt.Models.PostWrapper;
 import com.example.footprnt.Profile.Adapters.MultiViewAdapter;
 import com.example.footprnt.R;
 import com.example.footprnt.Repository.PostRepository;
-import com.example.footprnt.Util.Constants;
-import com.example.footprnt.Util.Util;
+import com.example.footprnt.Util.AppConstants;
+import com.example.footprnt.Util.AppUtil;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
@@ -41,6 +41,7 @@ import java.util.List;
  * Created by Clarisa Leu 2019
  */
 public class ProfileFragment extends Fragment {
+
     public final static String TAG = "ProfileFragment";  // tag for logging from this activity
     final ParseUser user = ParseUser.getCurrentUser();
 
@@ -58,7 +59,6 @@ public class ProfileFragment extends Fragment {
     HashMap<String, Integer> mCountries;  // Contains the countries and number of times visited by user
     HashMap<String, Integer> mContinents;  // Contains the continents and number of times visited by user
     ArrayList<HashMap<String, Integer>> mStats;  // Stats to be passed to adapter
-
 
     @Nullable
     @Override
@@ -88,28 +88,26 @@ public class ProfileFragment extends Fragment {
         return v;
     }
 
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == Constants.RELOAD_USERPROFILE_FRAGMENT_REQUEST_CODE) {
+        if (resultCode == AppConstants.RELOAD_USERPROFILE_FRAGMENT_REQUEST_CODE) {
             mMultiAdapter.notifyItemChanged(0);
         }
 
         // Delete post
-        if (resultCode == 302) {
-            int position = data.getIntExtra(Constants.position, 0);
+        if (resultCode == AppConstants.DELETE_POST_FROM_PROFILE) {
+            int position = data.getIntExtra(AppConstants.position, 0);
             mObjects.remove(position);
             mMultiAdapter.notifyItemChanged(position);
         }
         // TODO: fix so UI updates
         // Save post
-        if (resultCode == 301) {
-            int position = data.getIntExtra(Constants.position, 0);
+        if (resultCode == AppConstants.UPDATE_POST_FROM_PROFILE) {
+            int position = data.getIntExtra(AppConstants.position, 0);
             mMultiAdapter.notifyItemChanged(position);
         }
     }
-
 
     private void setUpToolbar(final View v) {
         // Log out button
@@ -139,8 +137,8 @@ public class ProfileFragment extends Fragment {
         postsQuery
                 .getTop()
                 .withUser()
-                .whereEqualTo(Constants.user, ParseUser.getCurrentUser());
-        postsQuery.addDescendingOrder(Constants.createdAt);
+                .whereEqualTo(AppConstants.user, ParseUser.getCurrentUser());
+        postsQuery.addDescendingOrder(AppConstants.createdAt);
 
         postsQuery.findInBackground(new FindCallback<Post>() {
             @Override
@@ -148,6 +146,7 @@ public class ProfileFragment extends Fragment {
                 if (e == null) {
                     for (int i = 0; i < objects.size(); i++) {
                         final Post post = objects.get(i);
+                        // Wrap post and add to repo & DB
                         postRepository.insertPost(new PostWrapper(post));
                         // Get post stats and update user stats
                         mPosts.add(post);
@@ -185,7 +184,7 @@ public class ProfileFragment extends Fragment {
                         }
                     }
                 } else {
-                    Util.logError(getContext(), TAG, "Error querying posts", e, true);
+                    AppUtil.logError(getContext(), TAG, "Error querying posts", e, true);
                 }
 
                 mStats.add(mCities);

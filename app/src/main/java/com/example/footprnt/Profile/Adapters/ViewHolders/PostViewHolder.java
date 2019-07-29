@@ -22,6 +22,7 @@ import com.example.footprnt.R;
  * @author Clarisa Leu-Rodriguez
  */
 public class PostViewHolder extends RecyclerView.ViewHolder {
+
     View mRootView;
     ImageView mIvImage;
     TextView mTvTitle;

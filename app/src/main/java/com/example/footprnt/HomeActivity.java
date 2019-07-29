@@ -21,7 +21,7 @@ import android.view.View;
 import com.example.footprnt.Discover.DiscoverFragment;
 import com.example.footprnt.Map.MapFragment;
 import com.example.footprnt.Profile.ProfileFragment;
-import com.example.footprnt.Util.Constants;
+import com.example.footprnt.Util.AppConstants;
 
 /**
  * Handles displaying three main fragments and navigation bar
@@ -46,15 +46,15 @@ public class HomeActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         // Reload the user image on the profile fragment
-        if (resultCode == Constants.RELOAD_USERPROFILE_FRAGMENT_REQUEST_CODE) {
+        if (resultCode == AppConstants.RELOAD_USERPROFILE_FRAGMENT_REQUEST_CODE) {
             mFragment3.onActivityResult(requestCode, resultCode, data);
         }
         // Delete post from profile fragment
-        if (resultCode == Constants.DELETE_POST_FROM_PROFILE) {
+        if (resultCode == AppConstants.DELETE_POST_FROM_PROFILE) {
             mFragment3.onActivityResult(requestCode, resultCode, data);
         }
         // Update post from profile fragment
-        if (resultCode == Constants.UPDATE_POST_FROM_PROFILE) {
+        if (resultCode == AppConstants.UPDATE_POST_FROM_PROFILE) {
             mFragment3.onActivityResult(requestCode, resultCode, data);
         }
     }

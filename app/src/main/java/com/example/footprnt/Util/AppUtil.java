@@ -31,8 +31,7 @@ import java.util.Locale;
  *
  * @author Clarisa Leu, Jocelyn Shen
  */
-public class Util {
-    public final String APP_TAG = "footprnt";
+public class AppUtil {
 
     /**
      * @param context
@@ -40,10 +39,10 @@ public class Util {
      * @return
      */
     public File getPhotoFileUri(Context context, String fileName) {
-        File mediaStorageDir = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), APP_TAG);
+        File mediaStorageDir = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), AppConstants.APP_TAG);
 
         if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()) {
-            Log.d(APP_TAG, "failed to create directory");
+            Log.d(AppConstants.APP_TAG, "failed to create directory");
         }
 
         File file = new File(mediaStorageDir.getPath() + File.separator + fileName);

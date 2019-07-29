@@ -6,7 +6,7 @@
  */
 package com.example.footprnt.Models;
 
-import com.example.footprnt.Util.Constants;
+import com.example.footprnt.Util.AppConstants;
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
@@ -33,7 +33,7 @@ public class Post extends ParseObject implements Serializable {
      * @return description of post
      */
     public String getDescription() {
-        return getString(Constants.description);
+        return getString(AppConstants.description);
     }
 
     /**
@@ -42,7 +42,7 @@ public class Post extends ParseObject implements Serializable {
      * @param description of post to set
      */
     public void setDescription(String description) {
-        put(Constants.description, description);
+        put(AppConstants.description, description);
     }
 
     /**
@@ -51,7 +51,7 @@ public class Post extends ParseObject implements Serializable {
      * @return title of post
      */
     public String getTitle() {
-        return getString(Constants.title);
+        return getString(AppConstants.title);
     }
 
     /**
@@ -61,7 +61,7 @@ public class Post extends ParseObject implements Serializable {
      */
     public void setTitle(String title) {
         //  this.title = title;
-        put(Constants.title, title);
+        put(AppConstants.title, title);
     }
 
     /**
@@ -70,7 +70,7 @@ public class Post extends ParseObject implements Serializable {
      * @return ParseFile image of post
      */
     public ParseFile getImage() {
-        return getParseFile(Constants.image);
+        return getParseFile(AppConstants.image);
     }
 
 
@@ -80,7 +80,7 @@ public class Post extends ParseObject implements Serializable {
      * @param image of post to set
      */
     public void setImage(ParseFile image) {
-        put(Constants.image, image);
+        put(AppConstants.image, image);
     }
 
     /**
@@ -89,7 +89,7 @@ public class Post extends ParseObject implements Serializable {
      * @return ParseUser who made post
      */
     public ParseUser getUser() {
-        return getParseUser(Constants.user);
+        return getParseUser(AppConstants.user);
     }
 
     /**
@@ -98,7 +98,7 @@ public class Post extends ParseObject implements Serializable {
      * @param user ParseUser to assign to post
      */
     public void setUser(ParseUser user) {
-        put(Constants.user, user);
+        put(AppConstants.user, user);
     }
 
     /**
@@ -107,7 +107,7 @@ public class Post extends ParseObject implements Serializable {
      * @return ParseGeoPoint with the latitude of longitude of where post was made
      */
     public ParseGeoPoint getLocation() {
-        return getParseGeoPoint(Constants.location);
+        return getParseGeoPoint(AppConstants.location);
     }
 
     /**
@@ -116,7 +116,7 @@ public class Post extends ParseObject implements Serializable {
      * @param point with the latitude of longitude of where post was made
      */
     public void setLocation(ParseGeoPoint point) {
-        put(Constants.location, point);
+        put(AppConstants.location, point);
     }
 
     /**
@@ -125,7 +125,7 @@ public class Post extends ParseObject implements Serializable {
      * @return country where post was made
      */
     public String getCountry() {
-        return getString(Constants.country);
+        return getString(AppConstants.country);
     }
 
     /**
@@ -134,7 +134,7 @@ public class Post extends ParseObject implements Serializable {
      * @param country where post was made
      */
     public void setCountry(String country) {
-        put(Constants.country, country);
+        put(AppConstants.country, country);
     }
 
     /**
@@ -143,7 +143,7 @@ public class Post extends ParseObject implements Serializable {
      * @return continent where post was made
      */
     public String getContinent() {
-        return getString(Constants.continent);
+        return getString(AppConstants.continent);
     }
 
     /**
@@ -152,7 +152,7 @@ public class Post extends ParseObject implements Serializable {
      * @param continent where post was made
      */
     public void setContinent(String continent) {
-        put(Constants.continent, continent);
+        put(AppConstants.continent, continent);
     }
 
     /**
@@ -161,7 +161,7 @@ public class Post extends ParseObject implements Serializable {
      * @return city where post was made
      */
     public String getCity() {
-        return getString(Constants.city);
+        return getString(AppConstants.city);
     }
 
     /**
@@ -170,7 +170,7 @@ public class Post extends ParseObject implements Serializable {
      * @param city where post was made
      */
     public void setCity(String city) {
-        put(Constants.city, city);
+        put(AppConstants.city, city);
     }
 
     /**
@@ -179,7 +179,7 @@ public class Post extends ParseObject implements Serializable {
      * @return JSONArray with tags of post
      */
     public JSONArray getTags() {
-        return getJSONArray(Constants.tags);
+        return getJSONArray(AppConstants.tags);
     }
 
     /**
@@ -188,7 +188,7 @@ public class Post extends ParseObject implements Serializable {
      * @param tags with tags of post
      */
     public void setTags(ArrayList<String> tags) {
-        put(Constants.tags, tags);
+        put(AppConstants.tags, tags);
     }
 
     /**
@@ -200,17 +200,17 @@ public class Post extends ParseObject implements Serializable {
         }
 
         public Query getTop() {
-            setLimit(Constants.postLimit);
+            setLimit(AppConstants.postLimit);
             return this;
         }
 
         public Query withUser() {
-            include(Constants.user);
+            include(AppConstants.user);
             return this;
         }
 
         public Query withinPoint(ParseGeoPoint pg, int distance) {
-            whereWithinMiles(Constants.location, pg, distance);
+            whereWithinMiles(AppConstants.location, pg, distance);
             return this;
         }
 

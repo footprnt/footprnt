@@ -33,6 +33,7 @@ import com.example.footprnt.Profile.EditPost;
 import com.example.footprnt.Profile.UserSettings;
 import com.example.footprnt.Profile.Util.ProfileConstants;
 import com.example.footprnt.R;
+import com.example.footprnt.Util.AppConstants;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.data.PieData;
@@ -54,12 +55,12 @@ import java.util.List;
  * @author Clarisa Leu-Rodriguez
  */
 public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
     Context mContext;
-    ArrayList<Object> items;
+    ArrayList<Object> mItems;
 
     // Identifier for objects in items and which view to load:
     private final int USER_INFO = 0, POST = 1, STAT = 2, NO_POSTS = 3;
-
 
     /**
      * Constructor for MultiViewAdapter
@@ -68,7 +69,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
      * @param items   the list of homogeneous items in the adapter
      */
     public MultiViewAdapter(Context context, ArrayList<Object> items) {
-        this.items = items;
+        this.mItems = items;
         this.mContext = context;
     }
 
@@ -79,7 +80,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
      */
     @Override
     public int getItemCount() {
-        return items.size();
+        return mItems.size();
     }
 
     /**
@@ -90,13 +91,13 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
      */
     @Override
     public int getItemViewType(int position) {
-        if (items.get(position) instanceof Post) {
+        if (mItems.get(position) instanceof Post) {
             return POST;
-        } else if (items.get(position) instanceof ParseUser) {
+        } else if (mItems.get(position) instanceof ParseUser) {
             return USER_INFO;
-        } else if (items.get(position) instanceof ArrayList) {
+        } else if (mItems.get(position) instanceof ArrayList) {
             return STAT;
-        } else if (items.get(position) instanceof String) {
+        } else if (mItems.get(position) instanceof String) {
             return NO_POSTS;
         }
         return -1;
@@ -172,52 +173,53 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
      * @param position position in adapter the POST item is
      */
     private void configurePostViewHolder(final PostViewHolder vh1, final int position) {
-        Post post = (Post) items.get(position);
-        if (post != null) {
-            vh1.getRootView().setTag(post);
-            StringBuilder sb = new StringBuilder();
-            String cityName = post.getCity();
-            if (cityName != null) {
-                sb.append(cityName + ", ");
-            }
-            String countryName = post.getCountry();
-            if (countryName != null) {
-                sb.append(countryName + ", ");
-            }
-            String continentName = post.getContinent();
-            if (continentName != null) {
-
-                sb.append(continentName);
-            }
-            vh1.getTvTitle().setText(sb);
-            vh1.getTvTitle().setTextColor(ContextCompat.getColor(mContext, R.color.grey));
-
-            SimpleTarget<Bitmap> target = new SimpleTarget<Bitmap>() {
-                @Override
-                public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                    vh1.getIvImage().setImageBitmap(resource);
-                    Palette.from(resource).generate();
-                    vh1.getTvPalette().setBackgroundColor(ContextCompat.getColor(mContext, R.color.honeydew_off_white));
+        if (position < mItems.size()) {
+            Post post = (Post) mItems.get(position);
+            if (post != null) {
+                vh1.getRootView().setTag(post);
+                StringBuilder sb = new StringBuilder();
+                String cityName = post.getCity();
+                if (cityName != null) {
+                    sb.append(cityName).append(", ");
                 }
-            };
-
-            vh1.getIvImage().setTag(target);
-            if (post.getImage() != null) {
-                Glide.with(mContext).asBitmap().load(post.getImage().getUrl()).centerCrop().into(target);
-            }
-
-            vh1.getIvImage().setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Post post2 = (Post)items.get(position);
-                    Intent it = new Intent(mContext, EditPost.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable(Post.class.getSimpleName(), post2);
-                    bundle.putSerializable("position", position);
-                    it.putExtras(bundle);
-                    ((Activity)mContext).startActivityForResult(it, 302);
+                String countryName = post.getCountry();
+                if (countryName != null) {
+                    sb.append(countryName).append(", ");
                 }
-            });
+                String continentName = post.getContinent();
+                if (continentName != null) {
+                    sb.append(continentName);
+                }
+                vh1.getTvTitle().setText(sb);
+                vh1.getTvTitle().setTextColor(ContextCompat.getColor(mContext, R.color.grey));
+
+                SimpleTarget<Bitmap> target = new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                        vh1.getIvImage().setImageBitmap(resource);
+                        Palette.from(resource).generate();
+                        vh1.getTvPalette().setBackgroundColor(ContextCompat.getColor(mContext, R.color.honeydew_off_white));
+                    }
+                };
+
+                vh1.getIvImage().setTag(target);
+                if (post.getImage() != null) {
+                    Glide.with(mContext).asBitmap().load(post.getImage().getUrl()).centerCrop().into(target);
+                }
+
+                vh1.getIvImage().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Post post2 = (Post) mItems.get(position);
+                        Intent it = new Intent(mContext, EditPost.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable(Post.class.getSimpleName(), post2);
+                        bundle.putSerializable(AppConstants.position, position);
+                        it.putExtras(bundle);
+                        ((Activity) mContext).startActivityForResult(it, AppConstants.DELETE_POST_FROM_PROFILE);
+                    }
+                });
+            }
         }
     }
 
@@ -228,29 +230,31 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
      * @param position in adapter the USER_INFO item is
      */
     private void configureUserInfoViewHolder(final UserInfoViewHolder vh2, final int position) {
-        final ParseUser user = (ParseUser)items.get(position);
-        if (user != null) {
-            if (user.getParseFile(com.example.footprnt.Util.Constants.profileImage) != null) {
-                vh2.setIvProfileImage(user.getParseFile(com.example.footprnt.Util.Constants.profileImage).getUrl(), mContext);
-            }
+        if (position < mItems.size()) {
+            final ParseUser user = (ParseUser) mItems.get(position);
+            if (user != null) {
+                if (user.getParseFile(AppConstants.profileImage) != null) {
+                    vh2.setIvProfileImage(user.getParseFile(AppConstants.profileImage).getUrl(), mContext);
+                }
 
-            user.fetchInBackground(new GetCallback<ParseObject>() {
-                @Override
-                public void done(ParseObject object, ParseException e) {
-                    if(object.getString("description")!=null) {
-                        vh2.getTvDescription().setText(object.getString("description"));
+                user.fetchInBackground(new GetCallback<ParseObject>() {
+                    @Override
+                    public void done(ParseObject object, ParseException e) {
+                        if (object.getString(AppConstants.description) != null) {
+                            vh2.getTvDescription().setText(object.getString(AppConstants.description));
+                        }
                     }
-                }
-            });
-            vh2.getTvUsername().setText("@" + user.getUsername());
+                });
+                vh2.getTvUsername().setText("@" + user.getUsername());
 
-            vh2.getTvEditProfile().setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent it = new Intent(mContext, UserSettings.class);
-                    ((Activity) mContext).startActivityForResult(it, com.example.footprnt.Util.Constants.RELOAD_USERPROFILE_FRAGMENT_REQUEST_CODE);
-                }
-            });
+                vh2.getTvEditProfile().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent it = new Intent(mContext, UserSettings.class);
+                        ((Activity) mContext).startActivityForResult(it, AppConstants.RELOAD_USERPROFILE_FRAGMENT_REQUEST_CODE);
+                    }
+                });
+            }
         }
     }
 
@@ -261,73 +265,74 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
      * @param position position in adapter the STATS item is
      */
     private void configureStatViewHolder(final StatViewHolder vh3, final int position) {
-        final ArrayList<HashMap<String, Integer>> stats = (ArrayList<HashMap<String, Integer>>) items.get(position);
-        final HashMap<String, Integer> cities = stats.get(0);
-        final HashMap<String, Integer> countries = stats.get(1);
-        final HashMap<String, Integer> continents = stats.get(2);
+        if (position < mItems.size()) {
+            final ArrayList<HashMap<String, Integer>> stats = (ArrayList<HashMap<String, Integer>>) mItems.get(position);
+            final HashMap<String, Integer> cities = stats.get(0);
+            final HashMap<String, Integer> countries = stats.get(1);
+            final HashMap<String, Integer> continents = stats.get(2);
 
-        if (cities != null && cities.size() < ProfileConstants.totalNumCities) {
-            setUpPieChart(vh3.getPieChartCity(), cities.size(), ProfileConstants.totalNumCities, "Visited Cities");
-        } else {
+            if (cities != null && cities.size() < ProfileConstants.totalNumCities) {
+                setUpPieChart(vh3.getPieChartCity(), cities.size(), ProfileConstants.totalNumCities, "Visited Cities");
+            } else {
 
-            View view = vh3.getRootView().findViewById(R.id.pieChartCity);
-            if (view != null) {
-                ViewGroup parent = (ViewGroup) view.getParent();
-                int index = parent.indexOfChild(view);
-                parent.removeView(view);
-                view = inflater.inflate(R.layout.item_visited_all_cities, parent, false);
-                parent.addView(view, index);
+                View view = vh3.getRootView().findViewById(R.id.pieChartCity);
+                if (view != null) {
+                    ViewGroup parent = (ViewGroup) view.getParent();
+                    int index = parent.indexOfChild(view);
+                    parent.removeView(view);
+                    view = inflater.inflate(R.layout.item_visited_all_cities, parent, false);
+                    parent.addView(view, index);
+                }
             }
+
+
+            if (countries != null && countries.size() < ProfileConstants.totalNumCountries) {
+                setUpPieChart(vh3.getPieChartCountry(), countries.size(), ProfileConstants.totalNumCountries, "Visited Countries");
+            } else {
+                View view = vh3.getRootView().findViewById(R.id.pieChartCountry);
+                if (view != null) {
+                    ViewGroup parent = (ViewGroup) view.getParent();
+                    int index = parent.indexOfChild(view);
+                    parent.removeView(view);
+                    view = inflater.inflate(R.layout.item_visited_all_countries, parent, false);
+                    parent.addView(view, index);
+                }
+            }
+
+            if (continents != null && continents.size() < ProfileConstants.totalNumContinents) {
+                setUpPieChart(vh3.getPieChartContinent(), continents.size(), ProfileConstants.totalNumContinents, "Visited Continents");
+            } else {
+                View view = vh3.getRootView().findViewById(R.id.pieChartContinent);
+                if (view != null) {
+                    ViewGroup parent = (ViewGroup) view.getParent();
+                    int index = parent.indexOfChild(view);
+                    parent.removeView(view);
+                    view = inflater.inflate(R.layout.item_visited_all_continents, parent, false);
+                    parent.addView(view, index);
+                }
+            }
+
+            final MediaPlayer mp = MediaPlayer.create(mContext, R.raw.pop);
+            vh3.getNextButton().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mp.start();
+                    vh3.getViewFlipper().setInAnimation(mContext, R.anim.flipin);
+                    vh3.getViewFlipper().setOutAnimation(mContext, R.anim.flipout);
+                    vh3.getViewFlipper().showNext();
+                }
+            });
+
+            vh3.getPreviousButton().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mp.start();
+                    vh3.getViewFlipper().setInAnimation(mContext, R.anim.flipin_reverse);
+                    vh3.getViewFlipper().setOutAnimation(mContext, R.anim.flipout_reverse);
+                    vh3.getViewFlipper().showPrevious();
+                }
+            });
         }
-
-
-        if (countries != null && countries.size() < ProfileConstants.totalNumCountries) {
-            setUpPieChart(vh3.getPieChartCountry(), countries.size(), ProfileConstants.totalNumCountries, "Visited Countries");
-        } else {
-            View view = vh3.getRootView().findViewById(R.id.pieChartCountry);
-            if (view != null) {
-                ViewGroup parent = (ViewGroup) view.getParent();
-                int index = parent.indexOfChild(view);
-                parent.removeView(view);
-                view = inflater.inflate(R.layout.item_visited_all_countries, parent, false);
-                parent.addView(view, index);
-            }
-        }
-
-        if (continents != null && continents.size() < ProfileConstants.totalNumContinents) {
-            setUpPieChart(vh3.getPieChartContinent(), continents.size(), ProfileConstants.totalNumContinents, "Visited Continents");
-        } else {
-            View view = vh3.getRootView().findViewById(R.id.pieChartContinent);
-            if (view != null) {
-                ViewGroup parent = (ViewGroup) view.getParent();
-                int index = parent.indexOfChild(view);
-                parent.removeView(view);
-                view = inflater.inflate(R.layout.item_visited_all_continents, parent, false);
-                parent.addView(view, index);
-            }
-        }
-
-        final MediaPlayer mp = MediaPlayer.create(mContext, R.raw.pop);
-        vh3.getNextButton().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mp.start();
-                vh3.getViewFlipper().setInAnimation(mContext, R.anim.flipin);
-                vh3.getViewFlipper().setOutAnimation(mContext, R.anim.flipout);
-                vh3.getViewFlipper().showNext();
-            }
-        });
-
-        vh3.getPreviousButton().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mp.start();
-                vh3.getViewFlipper().setInAnimation(mContext, R.anim.flipin_reverse);
-                vh3.getViewFlipper().setOutAnimation(mContext, R.anim.flipout_reverse);
-                vh3.getViewFlipper().showPrevious();
-            }
-        });
-
     }
 
     /**
@@ -337,7 +342,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
      * @param position position in adapter the no posts item is
      */
     private void configureNoPostsViewHolder(final NoPostsViewHolder vh4, final int position) {
-        vh4.getRootView().setTag(items.get(position));
+        vh4.getRootView().setTag(mItems.get(position));
     }
 
 

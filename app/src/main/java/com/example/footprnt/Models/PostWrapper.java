@@ -1,3 +1,9 @@
+/*
+ * PostWrapper.java
+ * v1.0
+ * July 2019
+ * Copyright ©2019 Footprnt Inc.
+ */
 package com.example.footprnt.Models;
 
 import android.arch.persistence.room.ColumnInfo;
@@ -8,9 +14,14 @@ import android.support.annotation.NonNull;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * PostWrapper for storing Post Objects in database.
+ * Table name is under @Entity annotation and the variables with @ColumnInfo annotation are the columns of the table
+ *
+ * @author Clarisa Leu-Rodriguez
+ */
 @Entity(tableName = "posts")
 public class PostWrapper implements Serializable {
-
     // Attributes of PostWrapper:
     @PrimaryKey
     @NonNull
@@ -69,7 +80,7 @@ public class PostWrapper implements Serializable {
         city = post.getCity();
         country = post.getCountry();
         continent = post.getContinent();
-        if(post.getImage()!=null) {
+        if (post.getImage() != null) {
             imageUrl = post.getImage().getUrl();
         } else {
             imageUrl = "";

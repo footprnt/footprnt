@@ -7,7 +7,7 @@
 package com.example.footprnt.Discover.Services;
 
 import com.example.footprnt.Discover.Models.Business;
-import com.example.footprnt.Discover.Util.Constants;
+import com.example.footprnt.Discover.Util.DiscoverConstants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,38 +18,30 @@ import java.util.ArrayList;
 
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
 /**
- * YelpService for making API calls to Yelp
+ * YelpService is a helper class for making API calls to Yelp and parsing JSON responses from Yelp
  *
- * @author Stanley Nwakamma 2019
+ * @author Stanley Nwakamma, Clarisa Leu-Rodriguez
  */
 public class YelpService {
-
     /**
-     * Finds <query> in <location><
+     * Finds <query> in <location>
      *
      * @param location location to query in
      * @param query    type of query to make
      * @param callback response from yelp
      */
     public static void findBusinesses(String location, String query, Callback callback) {
-
-
-        OkHttpClient client = new OkHttpClient.Builder()
-                .build();
-
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(Constants.YELP_BASE_URL + location + "&term=" + query).newBuilder();
-        //urlBuilder.addQueryParameter(Constants.YELP_LOCATION_QUERY_PARAMETER, location);
-        String url = urlBuilder.build().toString();
-
+        String url = DiscoverConstants.YELP_BASE_URL + location + "&term=" + query;
         Request request = new Request.Builder()
                 .url(url)
-                .header("Authorization", Constants.YELP_TOKEN)
+                .header("Authorization", DiscoverConstants.YELP_TOKEN)
+                .build();
+        OkHttpClient client = new OkHttpClient.Builder()
                 .build();
         Call call = client.newCall(request);
         call.enqueue(callback);

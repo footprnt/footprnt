@@ -14,7 +14,7 @@ import com.example.footprnt.Map.Util.MapConstants;
 import com.example.footprnt.Map.Util.PostAdapter;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.R;
-import com.example.footprnt.Util.Constants;
+import com.example.footprnt.Util.AppConstants;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
@@ -154,31 +154,31 @@ public class FeedActivity extends Activity {
                         if (item.getItemId() == R.id.culture) {
                             List<String> tags_to_check = new ArrayList();
                             tags_to_check.add(MapConstants.culture);
-                            postsQuery.whereContainsAll(Constants.tags, tags_to_check);
+                            postsQuery.whereContainsAll(AppConstants.tags, tags_to_check);
                             getPosts(postsQuery);
                         }
                         if (item.getItemId() == R.id.food) {
                             List<String> tags_to_check = new ArrayList();
                             tags_to_check.add(MapConstants.food);
-                            postsQuery.whereContainsAll(Constants.tags, tags_to_check);
+                            postsQuery.whereContainsAll(AppConstants.tags, tags_to_check);
                             getPosts(postsQuery);
                         }
                         if (item.getItemId() == R.id.travel) {
                             List<String> tags_to_check = new ArrayList();
                             tags_to_check.add(MapConstants.travel);
-                            postsQuery.whereContainsAll(Constants.tags, tags_to_check);
+                            postsQuery.whereContainsAll(AppConstants.tags, tags_to_check);
                             getPosts(postsQuery);
                         }
                         if (item.getItemId() == R.id.fashion) {
                             List<String> tags_to_check = new ArrayList();
                             tags_to_check.add(MapConstants.fashion);
-                            postsQuery.whereContainsAll(Constants.tags, tags_to_check);
+                            postsQuery.whereContainsAll(AppConstants.tags, tags_to_check);
                             getPosts(postsQuery);
                         }
                         if (item.getItemId() == R.id.nature) {
                             List<String> tags_to_check = new ArrayList();
                             tags_to_check.add(MapConstants.nature);
-                            postsQuery.whereContainsAll(Constants.tags, tags_to_check);
+                            postsQuery.whereContainsAll(AppConstants.tags, tags_to_check);
                             getPosts(postsQuery);
                         }
                         return true;
