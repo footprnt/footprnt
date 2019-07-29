@@ -6,7 +6,6 @@
  */
 package com.example.footprnt.Dao;
 
-import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
@@ -27,8 +26,8 @@ public interface PostDaoAccess {
     Long insertPost(PostWrapper post);
 
     @Query("SELECT * FROM posts")
-    LiveData<List<PostWrapper>> fetchAllPosts();
+    List<PostWrapper> fetchAllPosts();
 
     @Query("SELECT * FROM posts WHERE objectId =:objectId")
-    LiveData<PostWrapper> getPost(String objectId);
+    PostWrapper getPost(String objectId);
 }

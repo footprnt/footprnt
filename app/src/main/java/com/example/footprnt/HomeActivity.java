@@ -43,7 +43,7 @@ public class HomeActivity extends AppCompatActivity {
     BottomNavigationView mNavView;
     MenuItem mPrevMenuItem;
 
-    final PostRepository mPostRepository = new PostRepository(getApplicationContext());
+    PostRepository mPostRepository;
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -73,6 +73,7 @@ public class HomeActivity extends AppCompatActivity {
         mViewPager = findViewById(R.id.viewpager);
         mShadow = findViewById(R.id.shadow);
         mNavView = findViewById(R.id.nav_view);
+        mPostRepository = new PostRepository(getApplicationContext());
 
         final MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.pop_two);
         mNavView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {

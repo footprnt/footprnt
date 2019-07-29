@@ -7,7 +7,6 @@
 package com.example.footprnt.Repository;
 
 import android.annotation.SuppressLint;
-import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.os.AsyncTask;
@@ -55,12 +54,12 @@ public class PostRepository {
      *
      * @return all posts
      */
-    public LiveData<List<PostWrapper>> getPosts() {
+    public List<PostWrapper> getPosts() {
         return postDatabase.daoAccess().fetchAllPosts();
     }
 
 
-    public LiveData<PostWrapper> getPost(String objectId) {
+    public PostWrapper getPost(String objectId) {
         return postDatabase.daoAccess().getPost(objectId);
     }
 }
