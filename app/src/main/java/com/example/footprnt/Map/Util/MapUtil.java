@@ -164,6 +164,7 @@ public class MapUtil {
         if(post.getImage()!=null) {
             String imgUrl = post.getImage().getUrl();
             Glide.with(context).load(imgUrl).into(holder.ivPicture);
+            holder.ivPicture.setVisibility(View.VISIBLE);
         } else {
             holder.ivPicture.setVisibility(View.GONE);
         }
