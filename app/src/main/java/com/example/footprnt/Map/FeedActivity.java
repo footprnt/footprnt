@@ -67,7 +67,7 @@ public class FeedActivity extends Activity {
         mNoPosts = findViewById(R.id.noPosts);
         mNoPosts.setVisibility(View.INVISIBLE);
         getPosts(postsQuery);
-        mMenu = findViewById(R.id.dropdown);
+        mMenu = findViewById(R.id.cancel);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mPostsView.setLayoutManager(layoutManager);
         mPostsView.setAdapter(mPostAdapter);

@@ -8,6 +8,7 @@ package com.example.footprnt.Profile;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -40,8 +41,8 @@ public class EditPost extends AppCompatActivity {
     EditText mEtDescription;
     EditText mEtTitle;
     EditText mEtLocation;
-    Button mBtnDelete;
-    Button mBtnSave;
+    FloatingActionButton mBtnDelete;
+    FloatingActionButton mBtnSave;
     Post mPost;
     AppUtil mAppUtil = new AppUtil();
 
@@ -62,8 +63,8 @@ public class EditPost extends AppCompatActivity {
         mEtDescription = findViewById(R.id.etDescription);
         mEtTitle = findViewById(R.id.etTitle);
         mEtLocation = findViewById(R.id.etLocation);
-        mBtnDelete = findViewById(R.id.btnDelete);
-        mBtnSave = findViewById(R.id.btnSave);
+        mBtnDelete = findViewById(R.id.cancel);
+        mBtnSave = findViewById(R.id.save);
 
         setViews();
 
@@ -145,6 +146,8 @@ public class EditPost extends AppCompatActivity {
         mEtLocation.setText(sb);
         if (mPost.getImage() != null) {
             Glide.with(this).load(mPost.getImage().getUrl()).into(mIvPicture);
+        } else {
+            mIvPicture.setVisibility(View.GONE);
         }
     }
 }
