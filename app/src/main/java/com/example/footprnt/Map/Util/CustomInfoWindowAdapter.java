@@ -46,7 +46,6 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter{
         final ImageView image = v.findViewById(R.id.imageMarker);
         if (marker.getSnippet().length() > 0){
             image.setVisibility(View.VISIBLE);
-            System.out.println(marker.getSnippet());
             Glide.with(mContext).load(marker.getSnippet()).placeholder(R.drawable.ic_add_photo).listener(new RequestListener<Drawable>() {
                 @Override
                 public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {

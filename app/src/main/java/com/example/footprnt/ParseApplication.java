@@ -10,7 +10,6 @@ import android.app.Application;
 
 import com.example.footprnt.Models.MarkerDetails;
 import com.example.footprnt.Models.Post;
-import com.example.footprnt.Util.Constants;
 import com.parse.Parse;
 import com.parse.ParseObject;
 
@@ -31,9 +30,9 @@ public class ParseApplication extends Application {
         ParseObject.registerSubclass(MarkerDetails.class);
 
         final Parse.Configuration configuration = new Parse.Configuration.Builder(this)
-                .applicationId(Constants.applicationId)
-                .clientKey(Constants.clientKey)
-                .server(Constants.server)
+                .applicationId(getResources().getString(R.string.application_id))
+                .clientKey(getResources().getString(R.string.client_key))
+                .server(getResources().getString(R.string.server))
                 .build();
 
         Parse.initialize(configuration);
