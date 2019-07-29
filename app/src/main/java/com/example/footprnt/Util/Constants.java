@@ -22,6 +22,9 @@ public class Constants {
     public static String user = "user";
     public static String objectId = "objectId";
 
+    // For passing data between fragments
+    public static final String PREFERENCES = "MyPrefs" ;
+
     // For camera:
     public static String photoFileName = "photo.jpg";
     public static String fileProvider = "com.example.fileprovider";

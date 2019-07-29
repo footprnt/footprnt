@@ -19,6 +19,7 @@ import com.example.footprnt.Discover.Models.Business;
 import com.example.footprnt.Discover.Services.YelpService;
 import com.example.footprnt.Discover.Util.Constants;
 import com.example.footprnt.R;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -50,6 +51,7 @@ public class DiscoverFragment extends Fragment {
     ArrayList<Business> mHotels;
     ArrayList<Business> mClubs;
     final YelpService yelpService = new YelpService();
+    private LatLng mLocation;
 
 
     @Override
@@ -153,5 +155,9 @@ public class DiscoverFragment extends Fragment {
 
         return view;
 
+    }
+
+    public void setDataFromMapFragment(LatLng latLng){
+        mLocation = latLng;
     }
 }
