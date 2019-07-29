@@ -14,14 +14,16 @@
 
         <ImageView
             android:id="@+id/ivBusinessImage"
-            android:layout_width="298dp"
+            android:layout_width="200dp"
             android:layout_height="0dp"
             android:scaleType="centerCrop"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="H,1:1"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
 
         <View
             android:layout_width="0dp"
@@ -46,11 +48,12 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
+            android:fontFamily="@font/montserrat"
             android:text="Business Name"
             android:textAppearance="@style/TextAppearance.AppCompat.Headline"
             android:textColor="#FFFFFFFF"
-            android:textSize="30sp"
-            android:textStyle="bold|italic"
+            android:textSize="14sp"
+            android:textStyle="bold"
             android:typeface="serif"
             app:layout_constraintBottom_toTopOf="@+id/tvBusinessCategory"
             app:layout_constraintEnd_toEndOf="parent"
@@ -63,11 +66,11 @@
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
+            android:fontFamily="@font/roboto"
             android:text="Business category"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textColor="#B3FFFFFF"
-            android:textSize="18sp"
-            android:textStyle="bold|italic"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
             app:layout_constraintBottom_toTopOf="@+id/action_button_1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -105,6 +108,7 @@
             android:layout_marginEnd="5dp"
             android:layout_marginRight="5dp"
             android:layout_marginBottom="4dp"
+            android:fontFamily="@font/roboto"
             android:text="Rating"
             android:textColor="@color/honeydew_off_white"
             android:textSize="18sp"

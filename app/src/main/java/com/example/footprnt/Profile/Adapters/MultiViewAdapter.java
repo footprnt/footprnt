@@ -10,6 +10,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -35,12 +37,12 @@ import com.example.footprnt.Profile.UserSettings;
 import com.example.footprnt.Profile.Util.ProfileConstants;
 import com.example.footprnt.R;
 import com.example.footprnt.Util.AppConstants;
+import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.utils.ColorTemplate;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -256,7 +258,6 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                         vh1.getIvImage().setImageBitmap(resource);
                         Palette.from(resource).generate();
-                        vh1.getTvPalette().setBackgroundColor(ContextCompat.getColor(mContext, R.color.honeydew_off_white));
                     }
                 };
 
@@ -415,14 +416,28 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private void setUpPieChart(PieChart pieChart, int visited, int total, String title) {
         List<PieEntry> pieEntries = new ArrayList<>();
         pieEntries.add(new PieEntry(visited, title));
-        pieEntries.add(new PieEntry(total - visited));
+        pieEntries.add(new PieEntry(total - visited, "Unvisited"));
         PieDataSet pieDataSet = new PieDataSet(pieEntries, "");
-        pieDataSet.setColors(ColorTemplate.LIBERTY_COLORS);
+        int[] CUSTOM_COLORS = {
+                Color.rgb(125, 187, 201), Color.rgb(64, 89, 128), Color.rgb(217, 184, 162),
+                Color.rgb(191, 134, 134), Color.rgb(179, 48, 80)
+        };
+        pieDataSet.setColors(CUSTOM_COLORS);
         PieData pieData = new PieData(pieDataSet);
+        pieData.setValueTextSize(18);
+        int color = ContextCompat.getColor(mContext, R.color.white);
+        pieData.setValueTextColor(color);
+        Paint p1 = pieChart.getPaint(Chart.PAINT_HOLE);
+        int color_primary = ContextCompat.getColor(mContext, R.color.colorPrimary);
+        pieChart.setDrawHoleEnabled(true);
+        pieChart.setHoleColor(color_primary);
         pieChart.setData(pieData);
-        pieChart.setDescription(new Description());
+        Description d = new Description();
+        d.setText("");
+        pieChart.setDescription(d);
         pieChart.setDrawCenterText(true);
         pieChart.animateY(1000);
+        pieChart.getLegend().setEnabled(false);
         pieChart.invalidate();
     }
 }

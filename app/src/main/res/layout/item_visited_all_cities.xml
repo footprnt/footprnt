@@ -18,10 +18,10 @@
 
         <View
             android:id="@+id/vPalette"
-            android:transitionName="palette"
-            android:background="@color/honeydew_off_white"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimary"
+            android:transitionName="palette" />
 
         <TextView
             android:id="@+id/textView2"
@@ -36,7 +36,7 @@
             android:height="100dp"
             android:gravity="center"
             android:text="CONGRATS! YOU'VE VISITED ALL OF THE CITIES IN THE WORLD!"
-            android:textColor="@color/grey"
+            android:textColor="#FFFFFF"
             android:textSize="20dp"
             android:textStyle="bold"
             card_view:layout_constraintBottom_toBottomOf="parent"

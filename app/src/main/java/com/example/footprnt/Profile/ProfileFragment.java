@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.example.footprnt.HomeActivity;
 import com.example.footprnt.LoginActivity;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.Models.PostWrapper;
@@ -46,14 +47,13 @@ public class ProfileFragment extends Fragment {
     public final static String TAG = "ProfileFragment";  // tag for logging from this activity
     final ParseUser user = ParseUser.getCurrentUser();
 
+    PostRepository mPostRepository = ((HomeActivity)(getActivity())).getPostRepository();
+
     // For post feed:
     ArrayList<Object> mObjects;
     ArrayList<Post> mPosts;
     RecyclerView mLayout;
     MultiViewAdapter mMultiAdapter;
-
-    // For Room persistence implementation:
-    PostRepository postRepository;
 
     // For stats view:
     HashMap<String, Integer> mCities;  // Contains the cities and number of times visited by user
@@ -66,7 +66,7 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_profile, container, false);
 
-        postRepository = new PostRepository(getActivity().getApplicationContext());
+
         setUpToolbar(v);
 
         // Populate stat maps and get posts
@@ -135,7 +135,7 @@ public class ProfileFragment extends Fragment {
     }
 
     private boolean updatePostList() {
-        LiveData<List<PostWrapper>> data = postRepository.getPosts();
+        LiveData<List<PostWrapper>> data = mPostRepository.getPosts();
         List<PostWrapper> list = data.getValue();
         if(list!=null) {
             for (PostWrapper p : list) {
@@ -165,10 +165,11 @@ public class ProfileFragment extends Fragment {
                         final Post post = objects.get(i);
                         // Wrap post and add to repo & DB
                         final PostWrapper postWrapper = new PostWrapper(post);
-                        LiveData<PostWrapper> ptest = postRepository.getPost(postWrapper.objectId);
+                        LiveData<PostWrapper> ptest = mPostRepository.getPost(postWrapper.objectId);
                         if(ptest.getValue()==null) {
-                            postRepository.insertPost(new PostWrapper(post));
+                            mPostRepository.insertPost(new PostWrapper(post));
                         }
+
                         // Get post stats and update user stats
                         mPosts.add(post);
                         // Fill HashMaps and handle null values
