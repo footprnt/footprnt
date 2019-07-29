@@ -695,9 +695,9 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
             mMenuItemsAdded = true;
             FilterMenu menu = new FilterMenu.Builder(getContext())
                     .addItem(R.drawable.ic_pencil_white)
-                    .addItem(R.drawable.ic_world_white)
+                    .addItem(R.drawable.ic_post_current_location)
                     .addItem(R.drawable.ic_rocket_white)
-                    .addItem(R.drawable.ic_new_post)
+                    .addItem(R.drawable.ic_feed)
                     .attach(mFilterMenuLayout)
                     .withListener(menuChangeListener)
                     .build();

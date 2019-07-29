@@ -31,7 +31,7 @@ public class MapConstants {
     public static BitmapDescriptor DEFAULT_MARKER = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
 
     // Filter menu items
-    public static String MENU_ITEMS[] = {"Create", "View", "Discover", "Current"};
+    public static String MENU_ITEMS[] = {"Create", "Current", "Discover", "View"};
     public static String CREATE = "Create";
     public static String VIEW = "View";
     public static String DISCOVER = "Discover";
