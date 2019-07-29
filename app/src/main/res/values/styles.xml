@@ -43,7 +43,8 @@
         <item name="android:windowIsFloating">true</item>
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowNoTitle">true</item>
-        <item name="android:windowBackground">@android:color/white</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowCloseOnTouchOutside">true</item>
     </style>
 
