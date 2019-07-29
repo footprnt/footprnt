@@ -12,7 +12,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -145,6 +144,7 @@ public class EditPost extends AppCompatActivity {
 
         mEtLocation.setText(sb);
         if (mPost.getImage() != null) {
+            mIvPicture.setVisibility(View.VISIBLE);
             Glide.with(this).load(mPost.getImage().getUrl()).into(mIvPicture);
         } else {
             mIvPicture.setVisibility(View.GONE);
