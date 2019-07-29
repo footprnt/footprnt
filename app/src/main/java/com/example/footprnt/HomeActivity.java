@@ -69,7 +69,6 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 mp.start();
-                Fragment fragment;
                 switch (menuItem.getItemId()) {
                     case R.id.navigation_home:
                         viewPager.setCurrentItem(0);
