@@ -13,7 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.footprnt.Util.Constants;
+import com.example.footprnt.Util.AppConstants;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 
@@ -52,7 +52,7 @@ public class SignUpActivity extends AppCompatActivity {
             public void onClick(View v) {
                 ParseUser user = new ParseUser();
                 user.setUsername(mUsernameInput.getText().toString());
-                user.put("description", mDescription.getText().toString());
+                user.put(AppConstants.description, mDescription.getText().toString());
                 if (mPasswordInput.getText().toString().equals(mPasswordConfirm.getText().toString())) {
                     user.setPassword(mPasswordInput.getText().toString());
 
@@ -66,7 +66,7 @@ public class SignUpActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Please enter a valid email", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                user.put(Constants.phone, mPhoneInput.getText().toString());
+                user.put(AppConstants.phone, mPhoneInput.getText().toString());
                 user.signUpInBackground(new SignUpCallback() {
                     @Override
                     public void done(com.parse.ParseException e) {

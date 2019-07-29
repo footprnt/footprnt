@@ -17,6 +17,7 @@ import com.example.footprnt.R;
  * @author Clarisa Leu-Rodriguez
  */
 public class NoPostsViewHolder extends RecyclerView.ViewHolder {
+
     View mRootView;
     View mVPalette;
 

@@ -21,7 +21,7 @@ import android.view.View;
 import com.example.footprnt.Discover.DiscoverFragment;
 import com.example.footprnt.Map.MapFragment;
 import com.example.footprnt.Profile.ProfileFragment;
-import com.example.footprnt.Util.Constants;
+import com.example.footprnt.Util.AppConstants;
 
 /**
  * Handles displaying three main fragments and navigation bar
@@ -33,25 +33,28 @@ import com.example.footprnt.Util.Constants;
 public class HomeActivity extends AppCompatActivity {
 
     final FragmentManager mFragmentManager = getSupportFragmentManager();
-    BottomNavigationView navView;
+
     View mShadow;
     Fragment mFragment1;
     Fragment mFragment2;
     Fragment mFragment3;
-    ViewPager viewPager;
+    ViewPager mViewPager;
+    BottomNavigationView mNavView;
     MenuItem mPrevMenuItem;
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         // Reload the user image on the profile fragment
-        if (resultCode == Constants.RELOAD_USERPROFILE_FRAGMENT_REQUEST_CODE) {
+        if (resultCode == AppConstants.RELOAD_USERPROFILE_FRAGMENT_REQUEST_CODE) {
             mFragment3.onActivityResult(requestCode, resultCode, data);
         }
-        if(resultCode == 302){
+        // Delete post from profile fragment
+        if (resultCode == AppConstants.DELETE_POST_FROM_PROFILE) {
             mFragment3.onActivityResult(requestCode, resultCode, data);
         }
-        if(resultCode == 301){
+        // Update post from profile fragment
+        if (resultCode == AppConstants.UPDATE_POST_FROM_PROFILE) {
             mFragment3.onActivityResult(requestCode, resultCode, data);
         }
     }
@@ -60,41 +63,38 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        mViewPager = findViewById(R.id.viewpager);
         mShadow = findViewById(R.id.shadow);
 
-        navView = findViewById(R.id.nav_view);
+        mNavView = findViewById(R.id.nav_view);
+
         final MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.pop_two);
-        navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+        mNavView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                mp.start();
-                Fragment fragment;
+                mp.start();  // Play sound anytime user switches page from bottom nav
                 switch (menuItem.getItemId()) {
                     case R.id.navigation_home:
-                        viewPager.setCurrentItem(0);
+                        mViewPager.setCurrentItem(0);
                         break;
                     case R.id.navigation_dashboard:
-                        viewPager.setCurrentItem(1);
+                        mViewPager.setCurrentItem(1);
                         break;
                     case R.id.navigation_notifications:
-                        viewPager.setCurrentItem(2);
+                        mViewPager.setCurrentItem(2);
                         break;
                     default:
-                        viewPager.setCurrentItem(0);
+                        mViewPager.setCurrentItem(0);
                         break;
-
                 }
                 return true;
             }
         });
-        navView.setSelectedItemId(R.id.navigation_home);
+        mNavView.setSelectedItemId(R.id.navigation_home);
 
-
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
             }
 
             @Override
@@ -102,10 +102,10 @@ public class HomeActivity extends AppCompatActivity {
                 if (mPrevMenuItem != null) {
                     mPrevMenuItem.setChecked(false);
                 } else {
-                    navView.getMenu().getItem(0).setChecked(false);
+                    mNavView.getMenu().getItem(0).setChecked(false);
                 }
-                navView.getMenu().getItem(position).setChecked(true);
-                mPrevMenuItem = navView.getMenu().getItem(position);
+                mNavView.getMenu().getItem(position).setChecked(true);
+                mPrevMenuItem = mNavView.getMenu().getItem(position);
             }
 
             @Override
@@ -113,12 +113,7 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        setupViewPager(viewPager);
-    }
-
-    public void hideBottomNav(){
-        mShadow.setVisibility(View.INVISIBLE);
-        navView.setVisibility(View.INVISIBLE);
+        setupViewPager(mViewPager);
     }
 
 
@@ -126,12 +121,24 @@ public class HomeActivity extends AppCompatActivity {
     public void onBackPressed() {
     }
 
-    public void showBottomNav(){
-        mShadow.setVisibility(View.VISIBLE);
-        navView.setVisibility(View.VISIBLE);
-
+    /**
+     * Hides bottom nav bar
+     */
+    public void hideBottomNav() {
+        mShadow.setVisibility(View.INVISIBLE);
+        mNavView.setVisibility(View.INVISIBLE);
     }
 
+    public void showBottomNav() {
+        mShadow.setVisibility(View.VISIBLE);
+        mNavView.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Set up view pager for home activity to switch between fragments on swipe
+     *
+     * @param viewPager
+     */
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(mFragmentManager);
         mFragment1 = new MapFragment();

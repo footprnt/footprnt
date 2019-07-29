@@ -1,11 +1,12 @@
 /*
- * Post.java
+ * this.java
  * v1.0
  * July 2019
  * Copyright ©2019 Footprnt Inc.
  */
 package com.example.footprnt.Models;
 
+import com.example.footprnt.Util.AppConstants;
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
@@ -17,7 +18,6 @@ import org.json.JSONArray;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * Custom Post Model Class
@@ -26,15 +26,6 @@ import java.util.Date;
  */
 @ParseClassName("Post")
 public class Post extends ParseObject implements Serializable {
-    public static final String KEY_DESCRIPTION = "description";
-    public static final String KEY_IMAGE = "image";
-    public static final String KEY_USER = "user";
-    public static final String KEY_LOCATION = "location";
-    public static final String KEY_TITLE = "title";
-    public static final String KEY_COUNTRY = "country";
-    public static final String KEY_CITY = "city";
-    public static final String KEY_CONTINENT = "continent";
-    public static final String KEY_TAGS = "tags";
 
     /**
      * Getter for the description of post
@@ -42,7 +33,7 @@ public class Post extends ParseObject implements Serializable {
      * @return description of post
      */
     public String getDescription() {
-        return getString(KEY_DESCRIPTION);
+        return getString(AppConstants.description);
     }
 
     /**
@@ -51,7 +42,7 @@ public class Post extends ParseObject implements Serializable {
      * @param description of post to set
      */
     public void setDescription(String description) {
-        put(KEY_DESCRIPTION, description);
+        put(AppConstants.description, description);
     }
 
     /**
@@ -60,7 +51,7 @@ public class Post extends ParseObject implements Serializable {
      * @return title of post
      */
     public String getTitle() {
-        return getString(KEY_TITLE);
+        return getString(AppConstants.title);
     }
 
     /**
@@ -69,7 +60,8 @@ public class Post extends ParseObject implements Serializable {
      * @param title of post to set
      */
     public void setTitle(String title) {
-        put(KEY_TITLE, title);
+        //  this.title = title;
+        put(AppConstants.title, title);
     }
 
     /**
@@ -78,8 +70,9 @@ public class Post extends ParseObject implements Serializable {
      * @return ParseFile image of post
      */
     public ParseFile getImage() {
-        return getParseFile(KEY_IMAGE);
+        return getParseFile(AppConstants.image);
     }
+
 
     /**
      * Setter for the image of post
@@ -87,7 +80,7 @@ public class Post extends ParseObject implements Serializable {
      * @param image of post to set
      */
     public void setImage(ParseFile image) {
-        put(KEY_IMAGE, image);
+        put(AppConstants.image, image);
     }
 
     /**
@@ -96,7 +89,7 @@ public class Post extends ParseObject implements Serializable {
      * @return ParseUser who made post
      */
     public ParseUser getUser() {
-        return getParseUser(KEY_USER);
+        return getParseUser(AppConstants.user);
     }
 
     /**
@@ -105,7 +98,7 @@ public class Post extends ParseObject implements Serializable {
      * @param user ParseUser to assign to post
      */
     public void setUser(ParseUser user) {
-        put(KEY_USER, user);
+        put(AppConstants.user, user);
     }
 
     /**
@@ -114,7 +107,7 @@ public class Post extends ParseObject implements Serializable {
      * @return ParseGeoPoint with the latitude of longitude of where post was made
      */
     public ParseGeoPoint getLocation() {
-        return getParseGeoPoint(KEY_LOCATION);
+        return getParseGeoPoint(AppConstants.location);
     }
 
     /**
@@ -123,7 +116,7 @@ public class Post extends ParseObject implements Serializable {
      * @param point with the latitude of longitude of where post was made
      */
     public void setLocation(ParseGeoPoint point) {
-        put(KEY_LOCATION, point);
+        put(AppConstants.location, point);
     }
 
     /**
@@ -132,7 +125,7 @@ public class Post extends ParseObject implements Serializable {
      * @return country where post was made
      */
     public String getCountry() {
-        return getString(KEY_COUNTRY);
+        return getString(AppConstants.country);
     }
 
     /**
@@ -141,7 +134,7 @@ public class Post extends ParseObject implements Serializable {
      * @param country where post was made
      */
     public void setCountry(String country) {
-        put(KEY_COUNTRY, country);
+        put(AppConstants.country, country);
     }
 
     /**
@@ -150,7 +143,7 @@ public class Post extends ParseObject implements Serializable {
      * @return continent where post was made
      */
     public String getContinent() {
-        return getString(KEY_CONTINENT);
+        return getString(AppConstants.continent);
     }
 
     /**
@@ -159,7 +152,7 @@ public class Post extends ParseObject implements Serializable {
      * @param continent where post was made
      */
     public void setContinent(String continent) {
-        put(KEY_CONTINENT, continent);
+        put(AppConstants.continent, continent);
     }
 
     /**
@@ -168,7 +161,7 @@ public class Post extends ParseObject implements Serializable {
      * @return city where post was made
      */
     public String getCity() {
-        return getString(KEY_CITY);
+        return getString(AppConstants.city);
     }
 
     /**
@@ -177,7 +170,7 @@ public class Post extends ParseObject implements Serializable {
      * @param city where post was made
      */
     public void setCity(String city) {
-        put(KEY_CITY, city);
+        put(AppConstants.city, city);
     }
 
     /**
@@ -186,7 +179,7 @@ public class Post extends ParseObject implements Serializable {
      * @return JSONArray with tags of post
      */
     public JSONArray getTags() {
-        return getJSONArray(KEY_TAGS);
+        return getJSONArray(AppConstants.tags);
     }
 
     /**
@@ -195,17 +188,7 @@ public class Post extends ParseObject implements Serializable {
      * @param tags with tags of post
      */
     public void setTags(ArrayList<String> tags) {
-        put(KEY_TAGS, tags);
-    }
-
-    /**
-     * Getter for date the post was created at
-     *
-     * @return date post was created at
-     */
-    @Override
-    public Date getCreatedAt() {
-        return super.getCreatedAt();
+        put(AppConstants.tags, tags);
     }
 
     /**
@@ -217,21 +200,21 @@ public class Post extends ParseObject implements Serializable {
         }
 
         public Query getTop() {
-            setLimit(20);
+            setLimit(AppConstants.postLimit);
             return this;
         }
 
         public Query withUser() {
-            include(KEY_USER);
+            include(AppConstants.user);
             return this;
         }
 
         public Query withinPoint(ParseGeoPoint pg, int distance) {
-            whereWithinMiles(KEY_LOCATION, pg, distance);
+            whereWithinMiles(AppConstants.location, pg, distance);
             return this;
         }
 
-        public Query withTag(String tag, ArrayList<String> tags){
+        public Query withTag(String tag, ArrayList<String> tags) {
             whereContainedIn(tag, tags);
             return this;
         }

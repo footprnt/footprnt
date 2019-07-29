@@ -9,10 +9,16 @@ package com.example.footprnt.Util;
 import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
 import android.os.Environment;
 import android.text.format.DateUtils;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.io.File;
@@ -22,22 +28,21 @@ import java.util.Locale;
 
 /**
  * Utility functions used throughout application
+ *
  * @author Clarisa Leu, Jocelyn Shen
  */
-public class Util {
-    public final String APP_TAG = "footprnt";
+public class AppUtil {
 
     /**
-     *
      * @param context
      * @param fileName
      * @return
      */
     public File getPhotoFileUri(Context context, String fileName) {
-        File mediaStorageDir = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), APP_TAG);
+        File mediaStorageDir = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), AppConstants.APP_TAG);
 
         if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()) {
-            Log.d(APP_TAG, "failed to create directory");
+            Log.d(AppConstants.APP_TAG, "failed to create directory");
         }
 
         File file = new File(mediaStorageDir.getPath() + File.separator + fileName);
@@ -45,7 +50,6 @@ public class Util {
     }
 
     /**
-     *
      * @param context
      * @param point
      * @return
@@ -72,7 +76,19 @@ public class Util {
     }
 
     /**
+     * @param map
+     * @param location
+     */
+    public static void centreMapOnLocation(GoogleMap map, Location location) {
+        LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());
+        BitmapDescriptor defaultMarker =
+                BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
+        map.animateCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 12));
+    }
+
+    /**
      * Gets the relative date of post
+     *
      * @param rawJsonDate raw data from parse object
      * @return relative time ago
      */
@@ -91,4 +107,19 @@ public class Util {
         return relativeDate;
     }
 
+    /**
+     * Helper method to handle errors, log them, and alert user
+     *
+     * @param context   context of where error is
+     * @param TAG       filter for logcat
+     * @param message   message to displace
+     * @param error     error that occurred
+     * @param alertUser alert the user or not
+     */
+    public static void logError(Context context, String TAG, String message, Throwable error, boolean alertUser) {
+        Log.e(TAG, message, error);
+        if (alertUser) {
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+        }
+    }
 }

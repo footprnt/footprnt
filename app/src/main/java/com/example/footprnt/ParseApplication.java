@@ -21,6 +21,7 @@ import com.parse.ParseObject;
  * @since 2019-07-22
  */
 public class ParseApplication extends Application {
+
     @Override
     public void onCreate() {
         super.onCreate();

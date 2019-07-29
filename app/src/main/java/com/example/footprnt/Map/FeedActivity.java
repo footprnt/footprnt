@@ -14,6 +14,7 @@ import com.example.footprnt.Map.Util.MapConstants;
 import com.example.footprnt.Map.Util.PostAdapter;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.R;
+import com.example.footprnt.Util.AppConstants;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
@@ -51,7 +52,8 @@ public class FeedActivity extends Activity {
     /**
      * Initializes all variables
      */
-    private void initialization(){
+    private void initialization() {
+        // TODO: put lat/long in app constants
         mLat = getIntent().getExtras().getDouble("latitude");
         mLong = getIntent().getExtras().getDouble("longitude");
         mPosts = new ArrayList<>();
@@ -86,7 +88,7 @@ public class FeedActivity extends Activity {
                         mPosts.add(post);
                         mPostAdapter.notifyItemInserted(mPosts.size() - 1);
                     }
-                    if (mPosts.size() == 0){
+                    if (mPosts.size() == 0) {
                         mNoPosts.setVisibility(View.VISIBLE);
                     } else {
                         mNoPosts.setVisibility(View.INVISIBLE);
@@ -102,7 +104,7 @@ public class FeedActivity extends Activity {
     /**
      * Handles swipe refresh action
      */
-    public void handleSwipeRefresh(){
+    public void handleSwipeRefresh() {
         mSwipeContainer = findViewById(R.id.swipeContainer);
         mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -134,7 +136,7 @@ public class FeedActivity extends Activity {
     /**
      * Handles applying tags and filter menu action
      */
-    public void handleMenuAction(){
+    public void handleMenuAction() {
         mMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -147,38 +149,37 @@ public class FeedActivity extends Activity {
                                 .getTop()
                                 .withUser()
                                 .withinPoint(new ParseGeoPoint(mLat, mLong), MapConstants.POST_RADIUS);
-                        if (item.getItemId() == R.id.all){
-                            List<String> tags_to_check = new ArrayList();
+                        if (item.getItemId() == R.id.all) {
                             getPosts(postsQuery);
                         }
-                        if (item.getItemId() == R.id.culture){
+                        if (item.getItemId() == R.id.culture) {
                             List<String> tags_to_check = new ArrayList();
                             tags_to_check.add(MapConstants.culture);
-                            postsQuery.whereContainsAll(Post.KEY_TAGS, tags_to_check);
+                            postsQuery.whereContainsAll(AppConstants.tags, tags_to_check);
                             getPosts(postsQuery);
                         }
-                        if (item.getItemId() == R.id.food){
+                        if (item.getItemId() == R.id.food) {
                             List<String> tags_to_check = new ArrayList();
                             tags_to_check.add(MapConstants.food);
-                            postsQuery.whereContainsAll(Post.KEY_TAGS, tags_to_check);
+                            postsQuery.whereContainsAll(AppConstants.tags, tags_to_check);
                             getPosts(postsQuery);
                         }
-                        if (item.getItemId() == R.id.travel){
+                        if (item.getItemId() == R.id.travel) {
                             List<String> tags_to_check = new ArrayList();
                             tags_to_check.add(MapConstants.travel);
-                            postsQuery.whereContainsAll(Post.KEY_TAGS, tags_to_check);
+                            postsQuery.whereContainsAll(AppConstants.tags, tags_to_check);
                             getPosts(postsQuery);
                         }
-                        if (item.getItemId() == R.id.fashion){
+                        if (item.getItemId() == R.id.fashion) {
                             List<String> tags_to_check = new ArrayList();
                             tags_to_check.add(MapConstants.fashion);
-                            postsQuery.whereContainsAll(Post.KEY_TAGS, tags_to_check);
+                            postsQuery.whereContainsAll(AppConstants.tags, tags_to_check);
                             getPosts(postsQuery);
                         }
-                        if (item.getItemId() == R.id.nature){
+                        if (item.getItemId() == R.id.nature) {
                             List<String> tags_to_check = new ArrayList();
                             tags_to_check.add(MapConstants.nature);
-                            postsQuery.whereContainsAll(Post.KEY_TAGS, tags_to_check);
+                            postsQuery.whereContainsAll(AppConstants.tags, tags_to_check);
                             getPosts(postsQuery);
                         }
                         return true;

@@ -23,7 +23,8 @@ import java.util.ArrayList;
 
 /**
  * Adapts Businesss to the recyclerview
- * @author  Stanley Nwakamma 2019
+ *
+ * @author Stanley Nwakamma 2019
  */
 public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHolder> {
     private ArrayList<Business> mBusinesses;
@@ -33,7 +34,6 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
         mBusinesses = businesses;
         mContext = context;
     }
-
 
     @NonNull
     @Override
@@ -47,7 +47,6 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
     public void onBindViewHolder(ListAdapter.BusinessViewHolder holder, int position) {
         holder.bindBusiness(mBusinesses.get(position));
     }
-
 
     @Override
     public int getItemCount() {

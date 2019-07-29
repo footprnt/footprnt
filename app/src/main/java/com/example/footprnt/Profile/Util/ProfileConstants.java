@@ -12,8 +12,15 @@ package com.example.footprnt.Profile.Util;
  * @author Clarisa Leu-Rodriguez
  */
 public class ProfileConstants {
+
+    // For the width/height ratio of pop up window for Post Detail:
+    public static final double widthRatio = .8;
+    public static final double heightRatio = 0.9;
+
     // The total number of cities, countries, and continents in the world:
     public static final int totalNumCities = 4416;
     public static final int totalNumCountries = 195;
     public static final int totalNumContinents = 7;
+
+
 }

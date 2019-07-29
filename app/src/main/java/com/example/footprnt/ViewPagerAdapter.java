@@ -1,3 +1,9 @@
+/*
+ * ViewPagerAdapter.java
+ * v1.0
+ * July 2019
+ * Copyright ©2019 Footprnt Inc.
+ */
 package com.example.footprnt;
 
 import android.support.v4.app.Fragment;
@@ -7,7 +13,12 @@ import android.support.v4.app.FragmentPagerAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * ViewPagerAdapter to swipe between fragments
+ * @author Clarisa Leu-Rodriguez
+ */
 public class ViewPagerAdapter extends FragmentPagerAdapter {
+
     private final List<Fragment> mFragmentList = new ArrayList<>();
 
     public ViewPagerAdapter(FragmentManager manager) {

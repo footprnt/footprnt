@@ -1,9 +1,16 @@
+/*
+ * Business.java
+ * v1.0
+ * July 2019
+ * Copyright ©2019 Footprnt Inc.
+ */
 package com.example.footprnt.Discover.Models;
 
 import java.util.ArrayList;
 
 /**
  * Business Model for Discover Fragment
+ *
  * @author Stanley Nwakamma
  */
 public class Business {
@@ -12,10 +19,10 @@ public class Business {
     private String website;
     private double rating;
     private String imageUrl;
-    private ArrayList<String> address = new ArrayList<>();
+    private ArrayList<String> address;
     private double latitude;
     private double longitude;
-    private ArrayList<String> categories = new ArrayList<>();
+    private ArrayList<String> categories;
 
     public Business(String name, String phone, String website,
                     double rating, String imageUrl, ArrayList<String> address,
@@ -40,14 +47,14 @@ public class Business {
     }
 
     public String getWebsite() {
-        return  website;
+        return website;
     }
 
     public double getRating() {
         return rating;
     }
 
-    public String getImageUrl(){
+    public String getImageUrl() {
         return imageUrl;
     }
 
