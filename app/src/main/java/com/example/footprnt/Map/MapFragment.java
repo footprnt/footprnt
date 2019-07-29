@@ -673,10 +673,11 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                     createFeed();
                 }
                 else if (MapConstants.MENU_ITEMS[position] == MapConstants.DISCOVER) {
+                    //TODO
                     ViewPager viewPager = (ViewPager) getActivity().findViewById(R.id.viewpager);
                     viewPager.setCurrentItem(1);
                     Fragment viewPagerAdapter = ((ViewPagerAdapter) viewPager.getAdapter()).getItem(1);
-                    ((DiscoverFragment) viewPagerAdapter).setDataFromMapFragment(mTappedLocation);
+                    ((DiscoverFragment) viewPagerAdapter).setDataFromMapFragment(latLng);
                 }
                 else if (MapConstants.MENU_ITEMS[position] == MapConstants.CURRENT) {
                     if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
