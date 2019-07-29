@@ -20,4 +20,6 @@
     <color name="whitesmoke_off_white">#F5F5F5</color>
     <color name="ghostwhite_off_white">#F0F8FF</color>
     <color name="snow_off_white">#FFFAFA</color>
+    <color name = "aqua">#003B46</color>
+    <color name = "seafoam">#C4DFE6</color>
 </resources>
