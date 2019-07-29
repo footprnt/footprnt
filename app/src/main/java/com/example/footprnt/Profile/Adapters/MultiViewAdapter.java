@@ -124,6 +124,8 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         switch (viewType) {
             case POST:
                 View v1 = inflater.inflate(R.layout.item_post_card, viewGroup, false);
+                v1.findViewById(R.id.tvText).setVisibility(View.INVISIBLE);
+                v1.findViewById(R.id.title).setVisibility(View.INVISIBLE);
                 viewHolder = new PostViewHolder(v1);
                 break;
             case USER_INFO:
@@ -263,10 +265,44 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                 vh1.getIvImage().setTag(target);
                 if (post.getImage() != null) {
+                    vh1.getTvDescription().setVisibility(View.INVISIBLE);
+                    vh1.getIvImage().setVisibility(View.VISIBLE);
+                    vh1.getPostTitle().setVisibility(View.INVISIBLE);
                     Glide.with(mContext).asBitmap().load(post.getImage().getUrl()).centerCrop().into(target);
+                } else {
+                    vh1.getIvImage().setVisibility(View.INVISIBLE);
+                    vh1.getTvDescription().setText(post.getDescription());
+                    vh1.getPostTitle().setText(post.getTitle());
+                    vh1.getPostTitle().setVisibility(View.VISIBLE);
+                    vh1.getTvDescription().setVisibility(View.VISIBLE);
                 }
 
                 vh1.getIvImage().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Post post2 = (Post) mItems.get(position);
+                        Intent it = new Intent(mContext, EditPost.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable(Post.class.getSimpleName(), post2);
+                        bundle.putSerializable(AppConstants.position, position);
+                        it.putExtras(bundle);
+                        ((Activity) mContext).startActivityForResult(it, AppConstants.DELETE_POST_FROM_PROFILE);
+                    }
+                });
+                vh1.getTvDescription().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Post post2 = (Post) mItems.get(position);
+                        Intent it = new Intent(mContext, EditPost.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable(Post.class.getSimpleName(), post2);
+                        bundle.putSerializable(Post.class.getSimpleName(), post2);
+                        bundle.putSerializable(AppConstants.position, position);
+                        it.putExtras(bundle);
+                        ((Activity) mContext).startActivityForResult(it, AppConstants.DELETE_POST_FROM_PROFILE);
+                    }
+                });
+                vh1.getPostTitle().setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Post post2 = (Post) mItems.get(position);

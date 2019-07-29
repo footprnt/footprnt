@@ -455,7 +455,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
      * @param temp temporary marker for UI purposes
      */
     private void handlePostButtons(final LatLng point, final Marker temp){
-        ImageView sendPost = mAlertDialog.findViewById(R.id.dropdown);
+        ImageView sendPost = mAlertDialog.findViewById(R.id.cancel);
         ImageView cancelPost = mAlertDialog.findViewById(R.id.cancelPost);
         sendPost.setOnClickListener(new View.OnClickListener() {
             @Override

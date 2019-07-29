@@ -27,6 +27,8 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
     ImageView mIvImage;
     TextView mTvTitle;
     View mVPalette;
+    TextView mTvText;
+    TextView title;
 
     /**
      * Getter for the root view of the post view holder
@@ -64,6 +66,10 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         return mVPalette;
     }
 
+    public TextView getTvDescription(){ return mTvText;}
+
+    public TextView getPostTitle(){ return title;}
+
     /**
      * Constructor for PostViewHolder
      *
@@ -75,10 +81,21 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         mIvImage = itemView.findViewById(R.id.ivImage);
         mTvTitle = itemView.findViewById(R.id.tvTitle);
         mVPalette = itemView.findViewById(R.id.vPalette);
+        title = itemView.findViewById(R.id.title);
+        mTvText = itemView.findViewById(R.id.tvText);
 
         // Set on click listener to launch detailed post view
         // TODO: fix this
         itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Post contact = (Post) v.getTag();
+                if (contact != null) {
+                    Intent i = new Intent(v.getContext(), EditPost.class);
+                }
+            }
+        });
+        mTvText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final Post contact = (Post) v.getTag();
