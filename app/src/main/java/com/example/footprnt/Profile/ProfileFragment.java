@@ -22,7 +22,6 @@ import android.widget.ImageView;
 
 import com.example.footprnt.LoginActivity;
 import com.example.footprnt.Models.Post;
-import com.example.footprnt.Models.PostWrapper;
 import com.example.footprnt.Profile.Adapters.MultiViewAdapter;
 import com.example.footprnt.R;
 import com.example.footprnt.Repository.PostRepository;
@@ -64,7 +63,7 @@ public class ProfileFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_profile, container, false);
-        postRepository = new PostRepository(getActivity().getApplicationContext());
+        //postRepository = new PostRepository(getActivity().getApplicationContext());
         setUpToolbar(v);
 
         // Populate stat maps and get posts
@@ -147,7 +146,7 @@ public class ProfileFragment extends Fragment {
                     for (int i = 0; i < objects.size(); i++) {
                         final Post post = objects.get(i);
                         // Wrap post and add to repo & DB
-                        postRepository.insertPost(new PostWrapper(post));
+                       // postRepository.insertPost(new PostWrapper(post));
                         // Get post stats and update user stats
                         mPosts.add(post);
                         // Fill HashMaps and handle null values
