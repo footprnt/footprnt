@@ -60,8 +60,8 @@
                 android:id="@+id/tvUsername"
                 android:layout_width="125dp"
                 android:layout_height="24dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginLeft="16dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginRight="8dp"
@@ -75,7 +75,7 @@
 
             <TextView
                 android:id="@+id/tvDescription"
-                android:layout_width="207dp"
+                android:layout_width="0dp"
                 android:layout_height="66dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginLeft="8dp"
