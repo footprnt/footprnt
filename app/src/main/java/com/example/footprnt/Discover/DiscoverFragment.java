@@ -7,8 +7,6 @@
 package com.example.footprnt.Discover;
 
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,6 +19,7 @@ import com.example.footprnt.Discover.Models.Business;
 import com.example.footprnt.Discover.Services.YelpService;
 import com.example.footprnt.Discover.Util.Constants;
 import com.example.footprnt.R;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,8 +27,6 @@ import java.util.ArrayList;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
-
-import static com.example.footprnt.Discover.Services.YelpService.findBusinesses;
 
 
 /**
@@ -55,15 +52,11 @@ public class DiscoverFragment extends Fragment {
     ArrayList<Business> mHotels;
     ArrayList<Business> mClubs;
     final YelpService yelpService = new YelpService();
+    private LatLng mLocation;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.fragment_discover, parent, false);
         rvRestaurants = view.findViewById(R.id.rvRestaurants);
         rvMuseums = view.findViewById(R.id.rvMuseums);
@@ -75,21 +68,17 @@ public class DiscoverFragment extends Fragment {
         mMuseums = new ArrayList<>();
         mHotels = new ArrayList<>();
         mClubs = new ArrayList<>();
-
-        // TODO: Get businesses by current location, or ask user to select a location.
-
-        findBusinesses("Sunnyvale", Constants.RESTAURANT, new Callback() {
+        // TODO: fill with current location
+        yelpService.findBusinesses("Sunnyvale", Constants.RESTAURANT, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
             }
 
-            private final Handler mHandler = new Handler(Looper.getMainLooper());
-
             @Override
             public void onResponse(Call call, Response response) {
                 mRestaurants = yelpService.processResults(response);
-                mHandler.post(new Runnable() {
+                getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
@@ -101,18 +90,16 @@ public class DiscoverFragment extends Fragment {
             }
         });
 
-        findBusinesses("Sunnyvale", Constants.MUSEUM, new Callback() {
+        yelpService.findBusinesses("Sunnyvale", Constants.MUSEUM, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
             }
 
-            private final Handler mHandler = new Handler(Looper.getMainLooper());
-
             @Override
             public void onResponse(Call call, Response response) {
                 mMuseums = yelpService.processResults(response);
-                mHandler.post(new Runnable() {
+                getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
@@ -124,18 +111,16 @@ public class DiscoverFragment extends Fragment {
             }
         });
 
-        findBusinesses("Sunnyvale", Constants.HOTEL, new Callback() {
+        yelpService.findBusinesses("Sunnyvale", Constants.HOTEL, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
             }
 
-            private final Handler mHandler = new Handler(Looper.getMainLooper());
-
             @Override
             public void onResponse(Call call, Response response) {
                 mHotels = yelpService.processResults(response);
-                mHandler.post(new Runnable() {
+                getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
@@ -147,18 +132,16 @@ public class DiscoverFragment extends Fragment {
             }
         });
 
-        findBusinesses("Sunnyvale", Constants.CLUB, new Callback() {
+        yelpService.findBusinesses("Sunnyvale", Constants.CLUB, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
             }
 
-            private final Handler mHandler = new Handler(Looper.getMainLooper());
-
             @Override
             public void onResponse(Call call, Response response) {
                 mClubs = yelpService.processResults(response);
-                mHandler.post(new Runnable() {
+                getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
@@ -173,5 +156,9 @@ public class DiscoverFragment extends Fragment {
 
         return view;
 
+    }
+
+    public void setDataFromMapFragment(LatLng latLng){
+        mLocation = latLng;
     }
 }

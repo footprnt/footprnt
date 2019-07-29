@@ -81,7 +81,7 @@ android {
         implementation "android.arch.persistence.room:common:$arch_version"
         implementation "android.arch.lifecycle:livedata:$arch_version"
         implementation "android.arch.lifecycle:extensions:$arch_version"
-        implementation 'com.linroid.filtermenu:library:0.2.3@aar'
     }
 }
+
 

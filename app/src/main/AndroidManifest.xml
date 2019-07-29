@@ -25,8 +25,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ForgotPassword"
-            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".ForgotPassword"
+            android:screenOrientation="portrait" />
 
         <activity android:name=".Map.PostDetailActivity"
             android:screenOrientation="portrait"/>

@@ -34,13 +34,13 @@ public class HomeActivity extends AppCompatActivity {
 
     final FragmentManager mFragmentManager = getSupportFragmentManager();
 
+    View mShadow;
     Fragment mFragment1;
     Fragment mFragment2;
     Fragment mFragment3;
-    ViewPager viewPager;
-    MenuItem prevMenuItem;
-    BottomNavigationView navView;
-    View shadow;
+    ViewPager mViewPager;
+    BottomNavigationView mNavView;
+    MenuItem mPrevMenuItem;
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -63,49 +63,49 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        viewPager = findViewById(R.id.viewpager);
-        shadow = findViewById(R.id.shadow);
-        navView = findViewById(R.id.nav_view);
+        mViewPager = findViewById(R.id.viewpager);
+        mShadow = findViewById(R.id.shadow);
+
+        mNavView = findViewById(R.id.nav_view);
 
         final MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.pop_two);
-        navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+        mNavView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 mp.start();  // Play sound anytime user switches page from bottom nav
-
                 switch (menuItem.getItemId()) {
                     case R.id.navigation_home:
-                        viewPager.setCurrentItem(0);
+                        mViewPager.setCurrentItem(0);
                         break;
                     case R.id.navigation_dashboard:
-                        viewPager.setCurrentItem(1);
+                        mViewPager.setCurrentItem(1);
                         break;
                     case R.id.navigation_notifications:
-                        viewPager.setCurrentItem(2);
+                        mViewPager.setCurrentItem(2);
                         break;
                     default:
-                        viewPager.setCurrentItem(0);
+                        mViewPager.setCurrentItem(0);
                         break;
                 }
                 return true;
             }
         });
-        navView.setSelectedItemId(R.id.navigation_home);
+        mNavView.setSelectedItemId(R.id.navigation_home);
 
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
             }
 
             @Override
             public void onPageSelected(int position) {
-                if (prevMenuItem != null) {
-                    prevMenuItem.setChecked(false);
+                if (mPrevMenuItem != null) {
+                    mPrevMenuItem.setChecked(false);
                 } else {
-                    navView.getMenu().getItem(0).setChecked(false);
+                    mNavView.getMenu().getItem(0).setChecked(false);
                 }
-                navView.getMenu().getItem(position).setChecked(true);
-                prevMenuItem = navView.getMenu().getItem(position);
+                mNavView.getMenu().getItem(position).setChecked(true);
+                mPrevMenuItem = mNavView.getMenu().getItem(position);
             }
 
             @Override
@@ -113,8 +113,9 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        setupViewPager(viewPager);
+        setupViewPager(mViewPager);
     }
+
 
     @Override
     public void onBackPressed() {
@@ -124,14 +125,13 @@ public class HomeActivity extends AppCompatActivity {
      * Hides bottom nav bar
      */
     public void hideBottomNav() {
-        shadow.setVisibility(View.INVISIBLE);
-        navView.setVisibility(View.INVISIBLE);
+        mShadow.setVisibility(View.INVISIBLE);
+        mNavView.setVisibility(View.INVISIBLE);
     }
 
-
     public void showBottomNav() {
-        shadow.setVisibility(View.VISIBLE);
-        navView.setVisibility(View.VISIBLE);
+        mShadow.setVisibility(View.VISIBLE);
+        mNavView.setVisibility(View.VISIBLE);
     }
 
     /**

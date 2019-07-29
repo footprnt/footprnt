@@ -12,10 +12,6 @@ package com.example.footprnt.Util;
  * @author Clarisa Leu
  */
 public class Constants {
-    // For ParseApplication:
-    public static final String applicationId = "explor";
-    public static final String clientKey = "System.out.footprnt";
-    public static final String server = "http://footprnt.herokuapp.com/parse";
 
     // For getting attributes in database:
     public static String profileImage = "profileImg";
@@ -37,6 +33,9 @@ public class Constants {
     // For getting extras for intents:
     public static String post = "Post";
     public static String position = "Position";
+
+    // For passing data between fragments
+    public static final String PREFERENCES = "MyPrefs" ;
 
     // For camera:
     public static String photoFileName = "photo.jpg";
