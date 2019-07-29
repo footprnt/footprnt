@@ -9,7 +9,7 @@ package com.example.footprnt.Discover.Util;
 /**
  * DiscoverConstants used in Discover Fragment
  *
- * @author Stanley Nwakamma
+ * @author Stanley Nwakamma, Clarisa Leu-Rodriguez
  */
 public class DiscoverConstants {
     public static final String YELP_TOKEN = "Bearer k34xmk0G2uUZnaKukdwytk36ALUe0dtxY38bZcZjovZnmHuSW4VjJ1UPy0DimPsw7pOdYscHus84r9l8YoopJo-68O9iVN0LYjf7W6KFD3RrrUeSo0BodpAWZv85XXYx";

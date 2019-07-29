@@ -306,21 +306,24 @@ public class MapUtil {
      * @param md marker detail
      */
     public static Marker createMarker(GoogleMap mMap, MarkerDetails md) throws com.parse.ParseException {
-        Post post = (Post) md.getPost();
-        double latitude = (post.fetchIfNeeded().getParseGeoPoint("location")).getLatitude();
-        double longitude = (post.fetchIfNeeded().getParseGeoPoint("location")).getLongitude();
-        String title = (post.fetchIfNeeded().getString("title"));
-        ParseFile image = post.fetchIfNeeded().getParseFile("image");
-        String imageUrl = "";
-        if (image != null) {
-            imageUrl = image.getUrl();
+        if(md.getPost()!=null) {
+            Post post = (Post) md.getPost();
+            double latitude = (post.fetchIfNeeded().getParseGeoPoint("location")).getLatitude();
+            double longitude = (post.fetchIfNeeded().getParseGeoPoint("location")).getLongitude();
+            String title = (post.fetchIfNeeded().getString("title"));
+            ParseFile image = post.fetchIfNeeded().getParseFile("image");
+            String imageUrl = "";
+            if (image != null) {
+                imageUrl = image.getUrl();
+            }
+            Marker m = mMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(latitude, longitude))
+                    .title(title)
+                    .snippet(imageUrl)
+                    .icon(MapConstants.DEFAULT_MARKER));
+            return m;
         }
-        Marker m = mMap.addMarker(new MarkerOptions()
-                .position(new LatLng(latitude, longitude))
-                .title(title)
-                .snippet(imageUrl)
-                .icon(MapConstants.DEFAULT_MARKER));
-        return m;
+        return null;
     }
 
     /**

@@ -99,6 +99,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable(Post.class.getSimpleName(), post);
                 intent.putExtras(bundle);
+                // TODO: put req code in app util
                 ((Activity) mContext).startActivityForResult(intent, 20);
             }
         }

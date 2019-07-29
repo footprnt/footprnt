@@ -53,6 +53,7 @@ public class FeedActivity extends Activity {
      * Initializes all variables
      */
     private void initialization() {
+        // TODO: put lat/long in app constants
         mLat = getIntent().getExtras().getDouble("latitude");
         mLong = getIntent().getExtras().getDouble("longitude");
         mPosts = new ArrayList<>();
