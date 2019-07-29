@@ -1,10 +1,4 @@
-/*
- * PostAdapter.java
- * v1.0
- * July 2019
- * Copyright ©2019 Footprnt Inc.
- */
-package com.example.footprnt.Map;
+package com.example.footprnt.Map.Util;
 
 import android.app.Activity;
 import android.content.Context;
@@ -20,7 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.footprnt.Map.Util.MapUtil;
+import com.example.footprnt.Map.PostDetailActivity;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.R;
 

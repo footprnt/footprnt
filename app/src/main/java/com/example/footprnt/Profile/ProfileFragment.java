@@ -22,6 +22,7 @@ import android.widget.ImageView;
 
 import com.example.footprnt.LoginActivity;
 import com.example.footprnt.Models.Post;
+import com.example.footprnt.Models.PostWrapper;
 import com.example.footprnt.Profile.Adapters.MultiViewAdapter;
 import com.example.footprnt.R;
 import com.example.footprnt.Repository.PostRepository;
@@ -147,6 +148,7 @@ public class ProfileFragment extends Fragment {
                 if (e == null) {
                     for (int i = 0; i < objects.size(); i++) {
                         final Post post = objects.get(i);
+                        postRepository.insertPost(new PostWrapper(post));
                         // Get post stats and update user stats
                         mPosts.add(post);
                         // Fill HashMaps and handle null values

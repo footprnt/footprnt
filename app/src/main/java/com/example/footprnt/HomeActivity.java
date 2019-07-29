@@ -63,7 +63,6 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
         viewPager = findViewById(R.id.viewpager);
         shadow = findViewById(R.id.shadow);
         navView = findViewById(R.id.nav_view);
@@ -73,6 +72,7 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 mp.start();  // Play sound anytime user switches page from bottom nav
+
                 switch (menuItem.getItemId()) {
                     case R.id.navigation_home:
                         viewPager.setCurrentItem(0);

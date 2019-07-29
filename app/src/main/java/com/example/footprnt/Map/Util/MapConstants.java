@@ -1,12 +1,8 @@
-/*
- * MapConstants.java
- * v1.0
- * July 2019
- * Copyright ©2019 Footprnt Inc.
- */
 package com.example.footprnt.Map.Util;
 
 import com.example.footprnt.R;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 
 /**
  * Contains all constants for map fragment
@@ -17,6 +13,7 @@ import com.example.footprnt.R;
  */
 public class MapConstants {
 
+    // Tags properties
     public static String culture = "culture";
     public static String food = "food";
     public static String fashion = "fashion";
@@ -25,17 +22,18 @@ public class MapConstants {
     public static int POST_RADIUS = 5;
 
     // Map Styles:
-    public static String map_style = "map_style";
-    public static int style_aubergine = R.raw.style_json_aubergine;
-    public static int style_darkmode = R.raw.style_json_darkmode;
-    public static int style_silver = R.raw.style_json_silver;
-    public static int style_retro = R.raw.style_json_retro;
-    public static int style_basic = R.raw.style_json_basic;
+    public static String MAP_STYLE = "map_style";
+    public static int STYLE_AUBERGINE = R.raw.style_json_aubergine;
+    public static int STYLE_DARKMODE = R.raw.style_json_darkmode;
+    public static int STYLE_SILVER = R.raw.style_json_silver;
+    public static int STYLE_RETRO = R.raw.style_json_retro;
+    public static int STYLE_BASIC = R.raw.style_json_basic;
+    public static BitmapDescriptor DEFAULT_MARKER = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
 
-    public static String menuItems[] = {"Create", "View", "Discover", "Current"};
+    // Filter menu items
+    public static String MENU_ITEMS[] = {"Create", "View", "Discover", "Current"};
     public static String CREATE = "Create";
     public static String VIEW = "View";
     public static String DISCOVER = "Discover";
     public static String CURRENT = "Current";
-
 }
