@@ -664,13 +664,13 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 if (MapConstants.MENU_ITEMS[position] == MapConstants.CREATE) {
                     createPostDialog(mTappedLocation);
                 }
-                if (MapConstants.MENU_ITEMS[position] == MapConstants.VIEW) {
+                else if (MapConstants.MENU_ITEMS[position] == MapConstants.VIEW) {
                     createFeed();
                 }
-                if (MapConstants.MENU_ITEMS[position] == MapConstants.DISCOVER) {
+                else if (MapConstants.MENU_ITEMS[position] == MapConstants.DISCOVER) {
                     //TODO
                 }
-                if (MapConstants.MENU_ITEMS[position] == MapConstants.CURRENT) {
+                else if (MapConstants.MENU_ITEMS[position] == MapConstants.CURRENT) {
                     if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                         Location location = mMap.getMyLocation();
                         LatLng currLocation = new LatLng(location.getLatitude(), location.getLongitude());

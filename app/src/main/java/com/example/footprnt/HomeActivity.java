@@ -33,13 +33,13 @@ import com.example.footprnt.Util.Constants;
 public class HomeActivity extends AppCompatActivity {
 
     final FragmentManager mFragmentManager = getSupportFragmentManager();
-BottomNavigationView navView;
- View shaddow;
+    BottomNavigationView navView;
+    View mShadow;
     Fragment mFragment1;
     Fragment mFragment2;
     Fragment mFragment3;
     ViewPager viewPager;
-    MenuItem prevMenuItem;
+    MenuItem mPrevMenuItem;
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -61,7 +61,7 @@ BottomNavigationView navView;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         viewPager = (ViewPager) findViewById(R.id.viewpager);
-        shaddow = findViewById(R.id.shadow);
+        mShadow = findViewById(R.id.shadow);
 
         navView = findViewById(R.id.nav_view);
         final MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.pop_two);
@@ -99,13 +99,13 @@ BottomNavigationView navView;
 
             @Override
             public void onPageSelected(int position) {
-                if (prevMenuItem != null) {
-                    prevMenuItem.setChecked(false);
+                if (mPrevMenuItem != null) {
+                    mPrevMenuItem.setChecked(false);
                 } else {
                     navView.getMenu().getItem(0).setChecked(false);
                 }
                 navView.getMenu().getItem(position).setChecked(true);
-                prevMenuItem = navView.getMenu().getItem(position);
+                mPrevMenuItem = navView.getMenu().getItem(position);
             }
 
             @Override
@@ -118,7 +118,7 @@ BottomNavigationView navView;
     }
 
     public void hideBottomNav(){
-        shaddow.setVisibility(View.INVISIBLE);
+        mShadow.setVisibility(View.INVISIBLE);
         navView.setVisibility(View.INVISIBLE);
     }
 
@@ -128,7 +128,7 @@ BottomNavigationView navView;
     }
 
     public void showBottomNav(){
-        shaddow.setVisibility(View.VISIBLE);
+        mShadow.setVisibility(View.VISIBLE);
         navView.setVisibility(View.VISIBLE);
 
     }
