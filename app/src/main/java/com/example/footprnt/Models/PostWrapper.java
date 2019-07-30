@@ -22,6 +22,7 @@ import java.util.Date;
  */
 @Entity(tableName = "posts")
 public class PostWrapper implements Serializable {
+
     // Attributes of PostWrapper:
     @PrimaryKey
     @NonNull
@@ -71,7 +72,7 @@ public class PostWrapper implements Serializable {
      * @param post - post to wrap
      */
     public PostWrapper(Post post) {
-        objectId = post.getObjectId() ;
+        objectId = post.getObjectId();
         updatedAt = post.getUpdatedAt();
         createdAt = post.getCreatedAt();
         description = post.getDescription();

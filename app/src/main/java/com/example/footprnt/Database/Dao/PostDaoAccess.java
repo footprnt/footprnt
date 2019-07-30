@@ -24,11 +24,11 @@ import java.util.List;
 @Dao
 public interface PostDaoAccess {
     @Insert
-    Long insertPost(PostWrapper post);
-
-    @Query("SELECT * FROM posts ORDER BY createdAt desc")
+    void insertPost(PostWrapper post);
+// ORDER BY createdAt desc
+    @Query("SELECT * FROM posts")
     LiveData<List<PostWrapper>> fetchAllPosts();
 
-    @Query("SELECT * FROM posts WHERE objectId =:objectId")
+    @Query("SELECT * FROM posts WHERE objectId=:objectId")
     LiveData<PostWrapper> getPost(String objectId);
 }

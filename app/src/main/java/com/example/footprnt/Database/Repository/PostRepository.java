@@ -26,6 +26,7 @@ import java.util.List;
 public class PostRepository {
 
     public PostDatabase postDatabase;
+    public LiveData<List<PostWrapper>> mPostWrappers;
 
     public PostRepository(Context context) {
         postDatabase = PostDatabase.getPostDatabase(context);
@@ -46,7 +47,7 @@ public class PostRepository {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
-                if(postDatabase.daoAccess().getPost(post.getObjectId())==null) {
+                if (postDatabase.daoAccess().getPost(post.getObjectId()) == null) {
                     postDatabase.daoAccess().insertPost(post);
                 }
                 return null;
@@ -60,10 +61,20 @@ public class PostRepository {
      * @return all posts
      */
     public LiveData<List<PostWrapper>> getPosts() {
-        return postDatabase.daoAccess().fetchAllPosts();
+        if(mPostWrappers==null){
+            mPostWrappers = postDatabase.daoAccess().fetchAllPosts();
+        }
+        return mPostWrappers;
     }
 
 
+
+    /**
+     * Get post with objectId
+     *
+     * @param objectId
+     * @return post with objectId
+     */
     public LiveData<PostWrapper> getPost(String objectId) {
         return postDatabase.daoAccess().getPost(objectId);
     }

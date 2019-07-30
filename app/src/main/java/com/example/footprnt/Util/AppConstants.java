@@ -13,7 +13,7 @@ package com.example.footprnt.Util;
  */
 public class AppConstants {
     // For Database:
-    public static String POST_DB_NAME = "db_posts";
+    public static final String POST_DB_NAME = "db_posts";
 
     // For getting attributes in database:
     public static String profileImage = "profileImg";

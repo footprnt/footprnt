@@ -21,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.example.footprnt.Database.PostDatabase;
 import com.example.footprnt.Database.Repository.PostRepository;
@@ -89,13 +90,34 @@ public class ProfileFragment extends Fragment {
 
         // Get posts from DB or Network
         // If the data base size is null - try to get posts on first try
-        PostDatabase postDatabase = mPostRepository.getPostDatabase();
-        if (postDatabase.daoAccess().fetchAllPosts().getValue()==null) {
-            getPosts();
-        } else {
-            // Otherwise - load the posts from the database
-            getPostsDB();
-        }
+        final LiveData<List<PostWrapper>> postsWrappers = mPostRepository.getPosts();
+        postsWrappers.observe(this, new Observer<List<PostWrapper>>() {
+            @Override
+            public void onChanged(@Nullable List<PostWrapper> postWrappers) {
+                if(postWrappers == null || postWrappers.size() == 0) {
+                    Toast.makeText(getContext(), "HIIIII", Toast.LENGTH_LONG).show();
+                    getPosts();
+                } else {
+                    Toast.makeText(getContext(), "falsk;fjal;skjflakjII", Toast.LENGTH_LONG).show();
+
+                    mPostWrappers.clear();
+                    for (PostWrapper post : postWrappers) {
+                        mPostWrappers.add(post);
+                    }
+                    if(mPostWrappers.size()>0 && mPostWrappers!=null) {
+                        mObjects.addAll(mPostWrappers);
+                        mMultiAdapter.notifyDataSetChanged();
+                    }
+                }
+            }
+        });
+
+//        if (postDatabase.daoAccess().fetchAllPosts().getValue() == null) {
+//            getPosts();
+//        } else {
+//            // Otherwise - load the posts from the database
+//            getPostsDB();
+//        }
 
 
         // For post feed view:
@@ -179,6 +201,7 @@ public class ProfileFragment extends Fragment {
        // List<PostWrapper> posts = mPostRepository.getPosts().getValue();
     }
 
+
     /**
      * Helper method to get posts from parse as well as populate stat maps
      */
@@ -198,12 +221,30 @@ public class ProfileFragment extends Fragment {
                     for (int i = 0; i < objects.size(); i++) {
                         final Post post = objects.get(i);
                         // Wrap post and add to repo & DB if not already done
-                        final PostWrapper postWrapper = new PostWrapper(post);
-                        LiveData<PostWrapper> postWrap = mPostRepository.getPost(postWrapper.getObjectId());
-                        PostWrapper postWrapperCompare = postWrap.getValue();
-                        if (postWrapperCompare == null) {
-                            mPostRepository.insertPost(new PostWrapper(post));
-                        }
+                        //final PostWrapper postWrapper = new PostWrapper(post);
+                      // LiveData<PostWrapper> postWrap = mPostRepository.getPost(postWrapper.getObjectId());
+                       // PostWrapper postWrapperCompare = postWrap.getValue();
+                        //if (postWrapperCompare == null) {
+
+//                        getActivity().runOnUiThread(
+//                                new Runnable() {
+//                                    @Override
+//                                    public void run() {
+//                                        System.out.println("-----");
+//                                        if (mPostRepository.getPosts() != null && mPostRepository.getPosts().getValue() != null) {
+//                                            for (PostWrapper p : mPostRepository.getPosts().getValue()) {
+//                                                System.out.println("Index - " + p.getObjectId());
+//                                            }
+//                                        }
+//                                        System.out.println("-----");
+//                                        System.out.println("Contains - " + mPostRepository.getPost(post.getObjectId()));
+//                                        System.out.println("-----");
+//                                    }
+//                                }
+//                        );
+
+                        mPostRepository.insertPost(new PostWrapper(post));
+                      //  }
 
                         // Get post stats and update user stats
                         mPosts.add(post);
