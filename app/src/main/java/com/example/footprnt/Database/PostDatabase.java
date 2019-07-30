@@ -7,9 +7,9 @@
 package com.example.footprnt.Database;
 
 
-import android.arch.persistence.room.Database;
-import android.arch.persistence.room.RoomDatabase;
-import android.arch.persistence.room.TypeConverters;
+import androidx.room.Database;
+import androidx.room.RoomDatabase;
+import androidx.room.TypeConverters;
 
 import com.example.footprnt.Dao.PostDaoAccess;
 import com.example.footprnt.Models.PostWrapper;
