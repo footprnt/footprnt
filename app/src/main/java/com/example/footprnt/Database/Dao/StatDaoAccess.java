@@ -1,17 +1,16 @@
 /*
- * PostDaoAccess.java
+ * StatDaoAccess.java
  * v1.0
  * July 2019
  * Copyright ©2019 Footprnt Inc.
  */
-package com.example.footprnt.Dao;
+package com.example.footprnt.Database.Dao;
 
-import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
 
-import com.example.footprnt.Models.PostWrapper;
+import com.example.footprnt.Database.Models.Stat;
 
 import java.util.List;
 
@@ -22,10 +21,13 @@ import java.util.List;
  * @author Clarisa Leu-Rodriguez
  */
 @Dao
-public interface PostDaoAccess {
+public interface StatDaoAccess {
     @Insert
-    Long insertPost(PostWrapper post);
+    void insertStat(Stat stat);
 
-    @Query("SELECT * FROM posts")
-    LiveData<List<PostWrapper>> fetchAllPosts();
+    @Query("SELECT * FROM stats")
+    List<Stat> fetchAllStats();
+
+    @Query("SELECT * FROM stats WHERE objectId=:objectId")
+    Stat getStat(String objectId);
 }

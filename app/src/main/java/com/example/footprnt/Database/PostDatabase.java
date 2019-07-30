@@ -6,13 +6,16 @@
  */
 package com.example.footprnt.Database;
 
+import android.content.Context;
 
 import androidx.room.Database;
+import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 
-import com.example.footprnt.Dao.PostDaoAccess;
-import com.example.footprnt.Models.PostWrapper;
+import com.example.footprnt.Database.Dao.PostDaoAccess;
+import com.example.footprnt.Database.Models.PostWrapper;
+import com.example.footprnt.Util.AppConstants;
 import com.example.footprnt.Util.Converters;
 
 
@@ -27,5 +30,26 @@ import com.example.footprnt.Util.Converters;
 @TypeConverters({Converters.class})
 public abstract class PostDatabase extends RoomDatabase {
 
+    private static PostDatabase INSTANCE;
+
     public abstract PostDaoAccess daoAccess();
+
+    public static PostDatabase getPostDatabase(final Context context) {
+        if (INSTANCE == null) {
+            synchronized (PostDatabase.class) {
+                if (INSTANCE == null) {
+                    INSTANCE = Room.databaseBuilder(context,
+                            PostDatabase.class, AppConstants.POST_DB_NAME)
+                            .allowMainThreadQueries()
+                            .build();
+                }
+            }
+        }
+        return INSTANCE;
+    }
+
+
+    public static void destroyInstance() {
+        INSTANCE = null;
+    }
 }

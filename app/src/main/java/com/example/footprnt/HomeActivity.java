@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
 
+import com.example.footprnt.Database.PostDatabase;
 import com.example.footprnt.Discover.DiscoverFragment;
 import com.example.footprnt.Map.MapFragment;
 import com.example.footprnt.Profile.ProfileFragment;
@@ -60,13 +61,19 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        PostDatabase.destroyInstance();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         mViewPager = findViewById(R.id.viewpager);
         mShadow = findViewById(R.id.shadow);
-
         mNavView = findViewById(R.id.nav_view);
 
         final MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.pop_two);
