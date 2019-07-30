@@ -14,11 +14,11 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 public class MapConstants {
 
     // Tags properties
-    public static String culture = "culture";
-    public static String food = "food";
-    public static String fashion = "fashion";
-    public static String travel = "travel";
-    public static String nature = "nature";
+    public static String CULTURE = "culture";
+    public static String FOOD = "food";
+    public static String FASHION = "fashion";
+    public static String TRAVEL = "travel";
+    public static String NATURE = "nature";
     public static int POST_RADIUS = 5;
 
     // Map Styles:
@@ -31,9 +31,10 @@ public class MapConstants {
     public static BitmapDescriptor DEFAULT_MARKER = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
 
     // Filter menu items
-    public static String MENU_ITEMS[] = {"Create", "Current", "Discover", "View"};
+    public static String MENU_ITEMS[] = {"Create", "Current", "Discover", "View", "Street"};
     public static String CREATE = "Create";
     public static String VIEW = "View";
     public static String DISCOVER = "Discover";
     public static String CURRENT = "Current";
+    public static String STREET = "Street";
 }
