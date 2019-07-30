@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -136,7 +135,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     private FilterMenuLayout mFilterMenuLayout;
     private Switch mSwitch;
     private boolean mMenuItemsAdded;
-    private SharedPreferences mSharedPreferences;
 
     // Sound variables
     private MediaPlayer mSwipe;
@@ -676,7 +674,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                     createFeed();
                 }
                 else if (MapConstants.MENU_ITEMS[position] == MapConstants.DISCOVER) {
-                    //TODO
                     ViewPager viewPager = (ViewPager) getActivity().findViewById(R.id.viewpager);
                     viewPager.setCurrentItem(1);
                     Fragment viewPagerAdapter = ((ViewPagerAdapter) viewPager.getAdapter()).getItem(1);
@@ -688,6 +685,12 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                         LatLng currLocation = new LatLng(location.getLatitude(), location.getLongitude());
                         createPostDialog(currLocation);
                     }
+                }
+                else if (MapConstants.MENU_ITEMS[position] == MapConstants.STREET){
+                    Intent i = new Intent(getActivity(), StreetViewActivity.class);
+                    i.putExtra("latitude", latLng.latitude);
+                    i.putExtra("longitude", latLng.longitude);
+                    startActivityForResult(i, 20);
                 }
             }
             @Override
@@ -710,6 +713,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                     .addItem(R.drawable.ic_post_current_location)
                     .addItem(R.drawable.ic_rocket_white)
                     .addItem(R.drawable.ic_feed)
+                    .addItem(R.drawable.ic_street)
                     .attach(mFilterMenuLayout)
                     .withListener(menuChangeListener)
                     .build();
