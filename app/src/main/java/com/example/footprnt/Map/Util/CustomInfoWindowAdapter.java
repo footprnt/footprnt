@@ -31,7 +31,7 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter{
     private Context mContext;
     private Handler mHandler;
 
-    public CustomInfoWindowAdapter(Context context){
+    public CustomInfoWindowAdapter(Context context) {
         mContext = context;
         mWindow = LayoutInflater.from(context).inflate(R.layout.image_marker, null);
     }
@@ -42,9 +42,9 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter{
      * @param marker marker clicked on by user
      * @param v view
      */
-    public void getPostObject(final Marker marker, final View v){
+    public void getPostObject(final Marker marker, final View v) {
         final ImageView image = v.findViewById(R.id.imageMarker);
-        if (marker.getSnippet().length() > 0){
+        if (marker.getSnippet().length() > 0) {
             image.setVisibility(View.VISIBLE);
             Glide.with(mContext).load(marker.getSnippet()).placeholder(R.drawable.ic_add_photo).listener(new RequestListener<Drawable>() {
                 @Override
@@ -74,7 +74,7 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter{
         }
         String title = marker.getTitle();
         TextView tvTitle = v.findViewById(R.id.title);
-        if (title != null && title.length() > 0){
+        if (title != null && title.length() > 0) {
             tvTitle.setText(title);
         } else {
             tvTitle.setVisibility(View.INVISIBLE);
@@ -91,7 +91,7 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter{
         try {
             mHandler = new Handler();
             getPostObject(marker, mWindow);
-        } catch (Exception e){}
+        } catch (Exception e) {}
         return mWindow;
     }
 }

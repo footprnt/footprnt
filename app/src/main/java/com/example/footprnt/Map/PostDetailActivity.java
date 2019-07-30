@@ -5,8 +5,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.example.footprnt.Map.Util.MapUtil;
 import com.example.footprnt.Map.Util.PostAdapter;
+import com.example.footprnt.Map.Util.UiUtil;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.R;
 
@@ -33,7 +33,7 @@ public class PostDetailActivity extends AppCompatActivity {
             }
         });
         PostAdapter.ViewHolder vh = new PostAdapter.ViewHolder(findViewById(R.id.constraintlayout));
-        MapUtil.setPostText(post, vh, this);
-        MapUtil.setPostImages(post, vh, this);
+        UiUtil.setPostText(post, vh, this);
+        UiUtil.setPostImages(post, vh, this);
     }
 }

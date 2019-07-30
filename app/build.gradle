@@ -87,6 +87,3 @@ android {
         implementation "android.arch.lifecycle:extensions:$arch_version"
     }
 }
-
-
-
