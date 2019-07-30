@@ -14,11 +14,11 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 public class MapConstants {
 
     // Tags properties
-    public static String culture = "culture";
-    public static String food = "food";
-    public static String fashion = "fashion";
-    public static String travel = "travel";
-    public static String nature = "nature";
+    public static String CULTURE = "culture";
+    public static String FOOD = "food";
+    public static String FASHION = "fashion";
+    public static String TRAVEL = "travel";
+    public static String NATURE = "nature";
     public static int POST_RADIUS = 5;
 
     // Map Styles:

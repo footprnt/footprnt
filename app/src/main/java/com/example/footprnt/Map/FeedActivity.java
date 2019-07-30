@@ -154,31 +154,31 @@ public class FeedActivity extends Activity {
                         }
                         if (item.getItemId() == R.id.culture) {
                             List<String> tags_to_check = new ArrayList();
-                            tags_to_check.add(MapConstants.culture);
+                            tags_to_check.add(MapConstants.CULTURE);
                             postsQuery.whereContainsAll(AppConstants.tags, tags_to_check);
                             getPosts(postsQuery);
                         }
                         if (item.getItemId() == R.id.food) {
                             List<String> tags_to_check = new ArrayList();
-                            tags_to_check.add(MapConstants.food);
+                            tags_to_check.add(MapConstants.FOOD);
                             postsQuery.whereContainsAll(AppConstants.tags, tags_to_check);
                             getPosts(postsQuery);
                         }
                         if (item.getItemId() == R.id.travel) {
                             List<String> tags_to_check = new ArrayList();
-                            tags_to_check.add(MapConstants.travel);
+                            tags_to_check.add(MapConstants.TRAVEL);
                             postsQuery.whereContainsAll(AppConstants.tags, tags_to_check);
                             getPosts(postsQuery);
                         }
                         if (item.getItemId() == R.id.fashion) {
                             List<String> tags_to_check = new ArrayList();
-                            tags_to_check.add(MapConstants.fashion);
+                            tags_to_check.add(MapConstants.FASHION);
                             postsQuery.whereContainsAll(AppConstants.tags, tags_to_check);
                             getPosts(postsQuery);
                         }
                         if (item.getItemId() == R.id.nature) {
                             List<String> tags_to_check = new ArrayList();
-                            tags_to_check.add(MapConstants.nature);
+                            tags_to_check.add(MapConstants.NATURE);
                             postsQuery.whereContainsAll(AppConstants.tags, tags_to_check);
                             getPosts(postsQuery);
                         }
