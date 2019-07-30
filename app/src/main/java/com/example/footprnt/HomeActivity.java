@@ -21,7 +21,6 @@ import android.view.View;
 import com.example.footprnt.Discover.DiscoverFragment;
 import com.example.footprnt.Map.MapFragment;
 import com.example.footprnt.Profile.ProfileFragment;
-import com.example.footprnt.Repository.PostRepository;
 import com.example.footprnt.Util.AppConstants;
 
 /**
@@ -43,8 +42,6 @@ public class HomeActivity extends AppCompatActivity {
     BottomNavigationView mNavView;
     MenuItem mPrevMenuItem;
 
-    PostRepository mPostRepository;
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -62,9 +59,6 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
-    public PostRepository getPostRepository(){
-        return mPostRepository;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +67,6 @@ public class HomeActivity extends AppCompatActivity {
         mViewPager = findViewById(R.id.viewpager);
         mShadow = findViewById(R.id.shadow);
         mNavView = findViewById(R.id.nav_view);
-        mPostRepository = new PostRepository(getApplicationContext());
 
         final MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.pop_two);
         mNavView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {

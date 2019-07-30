@@ -6,8 +6,9 @@
  */
 package com.example.footprnt.Profile;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,12 +22,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.example.footprnt.Database.PostDatabase;
+import com.example.footprnt.Database.Repository.PostRepository;
 import com.example.footprnt.LoginActivity;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.Models.PostWrapper;
 import com.example.footprnt.Profile.Adapters.MultiViewAdapter;
 import com.example.footprnt.R;
-import com.example.footprnt.Repository.PostRepository;
 import com.example.footprnt.Util.AppConstants;
 import com.example.footprnt.Util.AppUtil;
 import com.parse.FindCallback;
@@ -43,7 +45,7 @@ import java.util.List;
  */
 public class ProfileFragment extends Fragment {
 
-    public final static String TAG = "ProfileFragment";  // tag for logging from this activity
+    public final static String TAG = ProfileFragment.class.getName();  // tag for logging from this activity
     final ParseUser user = ParseUser.getCurrentUser();
 
     // For database:
@@ -52,6 +54,7 @@ public class ProfileFragment extends Fragment {
     // For post feed:
     ArrayList<Object> mObjects;
     ArrayList<Post> mPosts;
+    ArrayList<PostWrapper> mPostWrappers;
     RecyclerView mLayout;
     MultiViewAdapter mMultiAdapter;
 
@@ -61,12 +64,17 @@ public class ProfileFragment extends Fragment {
     HashMap<String, Integer> mContinents;  // Contains the continents and number of times visited by user
     ArrayList<HashMap<String, Integer>> mStats;  // Stats to be passed to adapter
 
+
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_profile, container, false);
         mLayout = v.findViewById(R.id.rvPosts);
 
+        // For database:
+        mPostWrappers = new ArrayList<>();
         mPostRepository = new PostRepository(getActivity().getApplicationContext());
 
         setUpToolbar(v);
@@ -80,10 +88,15 @@ public class ProfileFragment extends Fragment {
         mStats = new ArrayList<>();
 
         // Get posts from DB or Network
-        // TODO: fix
-        //if(!updatePostList()) {
-        getPosts();
-        //}
+        // If the data base size is null - try to get posts on first try
+        PostDatabase postDatabase = mPostRepository.getPostDatabase();
+        if (postDatabase.daoAccess().fetchAllPosts().getValue()==null) {
+            getPosts();
+        } else {
+            // Otherwise - load the posts from the database
+            getPostsDB();
+        }
+
 
         // For post feed view:
         mMultiAdapter = new MultiViewAdapter(getContext(), mObjects);
@@ -91,6 +104,12 @@ public class ProfileFragment extends Fragment {
         mLayout.setAdapter(mMultiAdapter);
 
         return v;
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        PostDatabase.destroyInstance();
     }
 
     @Override
@@ -135,30 +154,29 @@ public class ProfileFragment extends Fragment {
         });
     }
 
-    // TODO: fix this so when there is no network connection then you load the posts
-    private boolean updatePostList() {
-        final boolean[] res = {false};
-        AsyncTask.execute(new Runnable() {
+    /**
+     * Method to load the posts from the data base vs network
+     */
+    private void getPostsDB() {
+        mPostWrappers.clear();
+        mPostRepository.getPosts().observe(getActivity(), new Observer<List<PostWrapper>>() {
             @Override
-            public void run() {
-                List<PostWrapper> postWrappers = mPostRepository.getPosts();
-                if (postWrappers != null) {
-                    for (PostWrapper p : postWrappers) {
-                        mObjects.add(p);
-                    }
-                    if (mMultiAdapter == null) {
-                        View v = getLayoutInflater().inflate(R.layout.fragment_profile, (ViewGroup) getActivity().getWindow().getDecorView().findViewById(android.R.id.content), false);
-                        mLayout = v.findViewById(R.id.rvPosts);
-                        mMultiAdapter = new MultiViewAdapter(getContext(), mObjects);
-                        mLayout.setLayoutManager(new LinearLayoutManager(getContext()));
-                        mLayout.setAdapter(mMultiAdapter);
-                    }
-
-                    res[0] = true;
+            public void onChanged(@Nullable List<PostWrapper> postWrappers) {
+                for (PostWrapper post : postWrappers) {
+                    mPostWrappers.add(post);
                 }
+                if(mPostWrappers.size()>0 && mPostWrappers!=null) {
+                    mObjects.addAll(mPostWrappers);
+                    mMultiAdapter.notifyDataSetChanged();
+                }
+//                } else {
+//                    // Handle case if user has no posts yet
+//                    mObjects.add("No posts!");
+//                    mMultiAdapter.notifyDataSetChanged();
+//                }
             }
         });
-        return res[0];
+       // List<PostWrapper> posts = mPostRepository.getPosts().getValue();
     }
 
     /**
@@ -181,7 +199,8 @@ public class ProfileFragment extends Fragment {
                         final Post post = objects.get(i);
                         // Wrap post and add to repo & DB if not already done
                         final PostWrapper postWrapper = new PostWrapper(post);
-                        PostWrapper postWrapperCompare = mPostRepository.getPost(postWrapper.objectId);
+                        LiveData<PostWrapper> postWrap = mPostRepository.getPost(postWrapper.getObjectId());
+                        PostWrapper postWrapperCompare = postWrap.getValue();
                         if (postWrapperCompare == null) {
                             mPostRepository.insertPost(new PostWrapper(post));
                         }

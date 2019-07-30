@@ -4,16 +4,15 @@
  * July 2019
  * Copyright ©2019 Footprnt Inc.
  */
-package com.example.footprnt.Repository;
+package com.example.footprnt.Database.Repository;
 
 import android.annotation.SuppressLint;
-import android.arch.persistence.room.Room;
+import android.arch.lifecycle.LiveData;
 import android.content.Context;
 import android.os.AsyncTask;
 
 import com.example.footprnt.Database.PostDatabase;
 import com.example.footprnt.Models.PostWrapper;
-import com.example.footprnt.Util.AppConstants;
 
 import java.util.List;
 
@@ -29,9 +28,13 @@ public class PostRepository {
     public PostDatabase postDatabase;
 
     public PostRepository(Context context) {
-        postDatabase = Room.databaseBuilder(context, PostDatabase.class, AppConstants.POST_DB_NAME).build();
+        postDatabase = PostDatabase.getPostDatabase(context);
     }
 
+
+    public PostDatabase getPostDatabase() {
+        return postDatabase;
+    }
 
     /**
      * Insert post into database
@@ -54,12 +57,12 @@ public class PostRepository {
      *
      * @return all posts
      */
-    public List<PostWrapper> getPosts() {
+    public LiveData<List<PostWrapper>> getPosts() {
         return postDatabase.daoAccess().fetchAllPosts();
     }
 
 
-    public PostWrapper getPost(String objectId) {
+    public LiveData<PostWrapper> getPost(String objectId) {
         return postDatabase.daoAccess().getPost(objectId);
     }
 }
