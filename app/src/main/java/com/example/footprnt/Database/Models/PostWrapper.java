@@ -60,6 +60,9 @@ public class PostWrapper implements Serializable {
     @ColumnInfo(name = "username")
     public String username;
 
+    @ColumnInfo(name = "title")
+    public String title;
+
 
     /**
      * Default Constructor
@@ -89,6 +92,15 @@ public class PostWrapper implements Serializable {
             imageUrl = "";
         }
         username = post.getUser().getUsername();
+        title = post.getTitle();
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getObjectId() {

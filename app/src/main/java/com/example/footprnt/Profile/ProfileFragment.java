@@ -6,10 +6,7 @@
  */
 package com.example.footprnt.Profile;
 
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -26,7 +23,6 @@ import android.widget.ImageView;
 import com.example.footprnt.Database.Models.PostWrapper;
 import com.example.footprnt.Database.PostDatabase;
 import com.example.footprnt.Database.Repository.PostRepository;
-import com.example.footprnt.Database.Repository.StatRepository;
 import com.example.footprnt.LoginActivity;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.Profile.Adapters.MultiViewAdapter;
@@ -49,10 +45,11 @@ public class ProfileFragment extends Fragment {
 
     public final static String TAG = ProfileFragment.class.getName();  // tag for logging from this activity
     final ParseUser mUser = ParseUser.getCurrentUser();
+    final AppUtil mUtil = new AppUtil();
 
     // For database:
     PostRepository mPostRepository;
-    StatRepository mStatRepository;
+    List<PostWrapper> mPostWrapperDB;
 
     // For post feed:
     ArrayList<Object> mObjects;
@@ -75,14 +72,12 @@ public class ProfileFragment extends Fragment {
         mLayout = v.findViewById(R.id.rvPosts);
 
         // For database:
-        mPostWrappers = new ArrayList<>();
         mPostRepository = new PostRepository(getActivity().getApplicationContext());
-        mStatRepository = new StatRepository(getActivity().getApplicationContext());
-
-        setUpToolbar(v);
+        mPostWrapperDB = mPostRepository.getPosts();
 
         // Populate stat maps and get posts
         mObjects = new ArrayList<>();
+        mPostWrappers = new ArrayList<>();
         mCities = new HashMap<>();
         mCountries = new HashMap<>();
         mContinents = new HashMap<>();
@@ -90,18 +85,13 @@ public class ProfileFragment extends Fragment {
         mStats = new ArrayList<>();
 
         // Get posts from DB or Network
-        // If the data base size is null - try to get posts on first try
-
-        final List<PostWrapper> postWrappers = mPostRepository.getPosts();
-        System.out.println(postWrappers.size());
-        if (haveNetworkConnection()) {
+        if (mUtil.haveNetworkConnection(getActivity())) {
+            setUpToolbar(v);
             getPosts();
-            System.out.println(mPostRepository.getPosts().size());
         } else {
             for (PostWrapper p : mPostRepository.getPosts()) {
                 mPostWrappers.add(p);
             }
-           // mObjects.add(mUser);
             mObjects.addAll(mPostWrappers);
         }
 
@@ -119,22 +109,6 @@ public class ProfileFragment extends Fragment {
         PostDatabase.destroyInstance();
     }
 
-    private boolean haveNetworkConnection() {
-        boolean haveConnectedWifi = false;
-        boolean haveConnectedMobile = false;
-
-        ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo[] netInfo = cm.getAllNetworkInfo();
-        for (NetworkInfo ni : netInfo) {
-            if (ni.getTypeName().equalsIgnoreCase("WIFI"))
-                if (ni.isConnected())
-                    haveConnectedWifi = true;
-            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
-                if (ni.isConnected())
-                    haveConnectedMobile = true;
-        }
-        return haveConnectedWifi || haveConnectedMobile;
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -198,7 +172,7 @@ public class ProfileFragment extends Fragment {
                     for (int i = 0; i < objects.size(); i++) {
                         final Post post = objects.get(i);
                         mPostRepository.insertPost(new PostWrapper(post));
-                       // mStatRepository.insertStat(new Stat());
+                        // mStatRepository.insertStat(new Stat());
                         // Get post stats and update user stats
                         mPosts.add(post);
                         // Fill HashMaps and handle null values

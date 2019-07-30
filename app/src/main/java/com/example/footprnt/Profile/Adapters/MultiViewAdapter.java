@@ -180,8 +180,8 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
     }
 
-    private void configureStatDBViewHolder(final StatViewHolder vh6, final int position){
-      //  if (position < mItems.size()) {
+    private void configureStatDBViewHolder(final StatViewHolder vh6, final int position) {
+        //  if (position < mItems.size()) {
 //            final ArrayList<HashMap<String, Integer>> stats = (ArrayList<HashMap<String, Integer>>) mItems.get(position);
 //            final HashMap<String, Integer> cities = stats.get(0);
 //            final HashMap<String, Integer> countries = stats.get(1);
@@ -277,27 +277,27 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                         vh5.getIvImage().setImageBitmap(resource);
                         Palette.from(resource).generate();
-                        vh5.getTvPalette().setBackgroundColor(ContextCompat.getColor(mContext, R.color.honeydew_off_white));
                     }
                 };
 
+                vh5.getRootView().setClickable(false);
+
                 vh5.getIvImage().setTag(target);
+                if (postWrapper.imageUrl.length() > 0) {
+                    vh5.getTvDescription().setVisibility(View.INVISIBLE);
+                    vh5.getIvImage().setVisibility(View.VISIBLE);
+                    vh5.getPostTitle().setVisibility(View.INVISIBLE);
+                    Glide.with(mContext).asBitmap().load(postWrapper.imageUrl).centerCrop().into(target);
+                } else {
+                    vh5.getIvImage().setVisibility(View.INVISIBLE);
+                    vh5.getTvDescription().setText(postWrapper.getDescription());
+                    vh5.getPostTitle().setText(postWrapper.getTitle());
+                    vh5.getPostTitle().setVisibility(View.VISIBLE);
+                    vh5.getTvDescription().setVisibility(View.VISIBLE);
+                }
                 if (postWrapper.getImageUrl().length() > 0) {
                     Glide.with(mContext).asBitmap().load(postWrapper.getImageUrl()).centerCrop().into(target);
                 }
-
-                vh5.getIvImage().setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Post post2 = (Post) mItems.get(position);
-                        Intent it = new Intent(mContext, EditPost.class);
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable(Post.class.getSimpleName(), post2);
-                        bundle.putSerializable(AppConstants.position, position);
-                        it.putExtras(bundle);
-                        ((Activity) mContext).startActivityForResult(it, AppConstants.DELETE_POST_FROM_PROFILE);
-                    }
-                });
             }
         }
     }
@@ -352,43 +352,20 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     vh1.getTvDescription().setVisibility(View.VISIBLE);
                 }
 
-                vh1.getIvImage().setOnClickListener(new View.OnClickListener() {
+                vh1.getRootView().setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Post post2 = (Post) mItems.get(position);
+                        Post p = (Post) mItems.get(position);
                         Intent it = new Intent(mContext, EditPost.class);
                         Bundle bundle = new Bundle();
-                        bundle.putSerializable(Post.class.getSimpleName(), post2);
+                        bundle.putSerializable(Post.class.getSimpleName(), p);
                         bundle.putSerializable(AppConstants.position, position);
                         it.putExtras(bundle);
                         ((Activity) mContext).startActivityForResult(it, AppConstants.DELETE_POST_FROM_PROFILE);
                     }
                 });
-                vh1.getTvDescription().setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Post post2 = (Post) mItems.get(position);
-                        Intent it = new Intent(mContext, EditPost.class);
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable(Post.class.getSimpleName(), post2);
-                        bundle.putSerializable(Post.class.getSimpleName(), post2);
-                        bundle.putSerializable(AppConstants.position, position);
-                        it.putExtras(bundle);
-                        ((Activity) mContext).startActivityForResult(it, AppConstants.DELETE_POST_FROM_PROFILE);
-                    }
-                });
-                vh1.getPostTitle().setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Post post2 = (Post) mItems.get(position);
-                        Intent it = new Intent(mContext, EditPost.class);
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable(Post.class.getSimpleName(), post2);
-                        bundle.putSerializable(AppConstants.position, position);
-                        it.putExtras(bundle);
-                        ((Activity) mContext).startActivityForResult(it, AppConstants.DELETE_POST_FROM_PROFILE);
-                    }
-                });
+
+
             }
         }
     }
