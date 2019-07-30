@@ -4,14 +4,13 @@
  * July 2019
  * Copyright ©2019 Footprnt Inc.
  */
-package com.example.footprnt.Dao;
+package com.example.footprnt.Database.Dao;
 
-import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 
-import com.example.footprnt.Models.PostWrapper;
+import com.example.footprnt.Database.Models.PostWrapper;
 
 import java.util.List;
 
@@ -24,8 +23,11 @@ import java.util.List;
 @Dao
 public interface PostDaoAccess {
     @Insert
-    Long insertPost(PostWrapper post);
+    void insertPost(PostWrapper post);
 
-    @Query("SELECT * FROM posts")
-    LiveData<List<PostWrapper>> fetchAllPosts();
+    @Query("SELECT * FROM posts ORDER BY createdAt desc")
+    List<PostWrapper> fetchAllPosts();
+
+    @Query("SELECT * FROM posts WHERE objectId=:objectId")
+    PostWrapper getPost(String objectId);
 }

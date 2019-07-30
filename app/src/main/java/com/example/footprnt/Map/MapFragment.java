@@ -268,7 +268,11 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         mMarkerDetails = new ArrayList<>();
         markers = new ArrayList<>();
         mInfoAdapter = new CustomInfoWindowAdapter(getContext());
-        mMapStyle = mUser.getInt(MapConstants.MAP_STYLE);
+        if(mUser.getInt(MapConstants.MAP_STYLE)!=0) {
+            mMapStyle = mUser.getInt(MapConstants.MAP_STYLE);
+        } else {
+            mMapStyle = MapConstants.STYLE_AUBERGINE;
+        }
         mMenuItemsAdded = false;
     }
 

@@ -4,16 +4,14 @@
  * July 2019
  * Copyright ©2019 Footprnt Inc.
  */
-package com.example.footprnt.Repository;
+package com.example.footprnt.Database.Repository;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.persistence.room.Room;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
 
 import com.example.footprnt.Database.PostDatabase;
-import com.example.footprnt.Models.PostWrapper;
-import com.example.footprnt.Util.AppConstants;
+import com.example.footprnt.Database.Models.PostWrapper;
 
 import java.util.List;
 
@@ -27,9 +25,15 @@ import java.util.List;
 public class PostRepository {
 
     public PostDatabase postDatabase;
+    public List<PostWrapper> mPostWrappers;
 
     public PostRepository(Context context) {
-        postDatabase = Room.databaseBuilder(context, PostDatabase.class, AppConstants.POST_DB_NAME).build();
+        postDatabase = PostDatabase.getPostDatabase(context);
+    }
+
+
+    public PostDatabase getPostDatabase() {
+        return postDatabase;
     }
 
     /**
@@ -37,11 +41,14 @@ public class PostRepository {
      *
      * @param post
      */
+    @SuppressLint("StaticFieldLeak")
     public void insertPost(final PostWrapper post) {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
-                postDatabase.daoAccess().insertPost(post);
+                if (postDatabase.daoAccess().getPost(post.getObjectId()) == null) {
+                    postDatabase.daoAccess().insertPost(post);
+                }
                 return null;
             }
         }.execute();
@@ -52,7 +59,22 @@ public class PostRepository {
      *
      * @return all posts
      */
-    public LiveData<List<PostWrapper>> getPosts() {
-        return postDatabase.daoAccess().fetchAllPosts();
+    public List<PostWrapper> getPosts() {
+        if(mPostWrappers==null){
+            mPostWrappers = postDatabase.daoAccess().fetchAllPosts();
+        }
+        return mPostWrappers;
+    }
+
+
+
+    /**
+     * Get post with objectId
+     *
+     * @param objectId
+     * @return post with objectId
+     */
+    public PostWrapper getPost(String objectId) {
+        return postDatabase.daoAccess().getPost(objectId);
     }
 }

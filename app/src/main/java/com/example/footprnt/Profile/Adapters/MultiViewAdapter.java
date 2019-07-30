@@ -26,6 +26,7 @@ import android.view.ViewGroup;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.example.footprnt.Database.Models.PostWrapper;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.Profile.Adapters.ViewHolders.NoPostsViewHolder;
 import com.example.footprnt.Profile.Adapters.ViewHolders.PostViewHolder;
@@ -62,7 +63,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     ArrayList<Object> mItems;
 
     // Identifier for objects in items and which view to load:
-    private final int USER_INFO = 0, POST = 1, STAT = 2, NO_POSTS = 3;
+    private final int USER_INFO = 0, POST = 1, STAT = 2, NO_POSTS = 3, POST_WRAPPER = 4, STAT_DB = 5;
 
     /**
      * Constructor for MultiViewAdapter
@@ -99,6 +100,8 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             return USER_INFO;
         } else if (mItems.get(position) instanceof ArrayList) {
             return STAT;
+        } else if (mItems.get(position) instanceof PostWrapper) {
+            return POST_WRAPPER;
         } else if (mItems.get(position) instanceof String) {
             return NO_POSTS;
         }
@@ -137,6 +140,10 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 View v4 = inflater.inflate(R.layout.item_no_posts, viewGroup, false);
                 viewHolder = new NoPostsViewHolder(v4);
                 break;
+            case POST_WRAPPER:
+                View v5 = inflater.inflate(R.layout.item_post_card, viewGroup, false);
+                viewHolder = new PostViewHolder(v5);
+                break;
         }
         return viewHolder;
     }
@@ -167,8 +174,69 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             case NO_POSTS:
                 NoPostsViewHolder vh4 = (NoPostsViewHolder) viewHolder;
                 configureNoPostsViewHolder(vh4, position);
+                break;
+            case POST_WRAPPER:
+                PostViewHolder vh5 = (PostViewHolder) viewHolder;
+                configurePostWrapperViewHolder(vh5, position);
+                break;
         }
     }
+
+    private void configureStatDBViewHolder(final StatViewHolder vh6, final int position) {
+        // TODO: implement later
+    }
+
+    private void configurePostWrapperViewHolder(final PostViewHolder vh5, final int position) {
+        if (position < mItems.size()) {
+            PostWrapper postWrapper = (PostWrapper) mItems.get(position);
+            if (postWrapper != null) {
+                vh5.getRootView().setTag(postWrapper);
+                StringBuilder sb = new StringBuilder();
+                String cityName = postWrapper.getCity();
+                if (cityName != null) {
+                    sb.append(cityName).append(", ");
+                }
+                String countryName = postWrapper.getCountry();
+                if (countryName != null) {
+                    sb.append(countryName).append(", ");
+                }
+                String continentName = postWrapper.getContinent();
+                if (continentName != null) {
+                    sb.append(continentName);
+                }
+                vh5.getTvTitle().setText(sb);
+                vh5.getTvTitle().setTextColor(ContextCompat.getColor(mContext, R.color.grey));
+
+                SimpleTarget<Bitmap> target = new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                        vh5.getIvImage().setImageBitmap(resource);
+                        Palette.from(resource).generate();
+                    }
+                };
+
+                vh5.getRootView().setClickable(false);
+
+                vh5.getIvImage().setTag(target);
+                if (postWrapper.imageUrl.length() > 0) {
+                    vh5.getTvDescription().setVisibility(View.INVISIBLE);
+                    vh5.getIvImage().setVisibility(View.VISIBLE);
+                    vh5.getPostTitle().setVisibility(View.INVISIBLE);
+                    Glide.with(mContext).asBitmap().load(postWrapper.imageUrl).centerCrop().into(target);
+                } else {
+                    vh5.getIvImage().setVisibility(View.INVISIBLE);
+                    vh5.getTvDescription().setText(postWrapper.getDescription());
+                    vh5.getPostTitle().setText(postWrapper.getTitle());
+                    vh5.getPostTitle().setVisibility(View.VISIBLE);
+                    vh5.getTvDescription().setVisibility(View.VISIBLE);
+                }
+                if (postWrapper.getImageUrl().length() > 0) {
+                    Glide.with(mContext).asBitmap().load(postWrapper.getImageUrl()).centerCrop().into(target);
+                }
+            }
+        }
+    }
+
 
     /**
      * Method to configure the post view holder
@@ -219,43 +287,20 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     vh1.getTvDescription().setVisibility(View.VISIBLE);
                 }
 
-                vh1.getIvImage().setOnClickListener(new View.OnClickListener() {
+                vh1.getRootView().setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Post post2 = (Post) mItems.get(position);
+                        Post p = (Post) mItems.get(position);
                         Intent it = new Intent(mContext, EditPost.class);
                         Bundle bundle = new Bundle();
-                        bundle.putSerializable(Post.class.getSimpleName(), post2);
+                        bundle.putSerializable(Post.class.getSimpleName(), p);
                         bundle.putSerializable(AppConstants.position, position);
                         it.putExtras(bundle);
                         ((Activity) mContext).startActivityForResult(it, AppConstants.DELETE_POST_FROM_PROFILE);
                     }
                 });
-                vh1.getTvDescription().setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Post post2 = (Post) mItems.get(position);
-                        Intent it = new Intent(mContext, EditPost.class);
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable(Post.class.getSimpleName(), post2);
-                        bundle.putSerializable(Post.class.getSimpleName(), post2);
-                        bundle.putSerializable(AppConstants.position, position);
-                        it.putExtras(bundle);
-                        ((Activity) mContext).startActivityForResult(it, AppConstants.DELETE_POST_FROM_PROFILE);
-                    }
-                });
-                vh1.getPostTitle().setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Post post2 = (Post) mItems.get(position);
-                        Intent it = new Intent(mContext, EditPost.class);
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable(Post.class.getSimpleName(), post2);
-                        bundle.putSerializable(AppConstants.position, position);
-                        it.putExtras(bundle);
-                        ((Activity) mContext).startActivityForResult(it, AppConstants.DELETE_POST_FROM_PROFILE);
-                    }
-                });
+
+
             }
         }
     }
