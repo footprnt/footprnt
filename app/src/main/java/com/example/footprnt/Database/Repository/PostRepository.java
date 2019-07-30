@@ -46,7 +46,9 @@ public class PostRepository {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
-                postDatabase.daoAccess().insertPost(post);
+                if(postDatabase.daoAccess().getPost(post.getObjectId())==null) {
+                    postDatabase.daoAccess().insertPost(post);
+                }
                 return null;
             }
         }.execute();

@@ -107,8 +107,8 @@ public class ProfileFragment extends Fragment {
     }
 
     @Override
-    public void onDestroy(){
-        super.onDestroy();
+    public void onDestroyView(){
+        super.onDestroyView();
         PostDatabase.destroyInstance();
     }
 
