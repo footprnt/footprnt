@@ -323,7 +323,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         mMarkerDetails = new ArrayList<>();
         markers = new ArrayList<>();
         final MarkerDetails.Query postQuery = new MarkerDetails.Query();
-        postQuery.withUser().whereEqualTo("user", mUser);
         postQuery.withUser().whereEqualTo(AppConstants.user, mUser);
         postQuery.findInBackground(new FindCallback<MarkerDetails>() {
             @Override
@@ -385,8 +384,8 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 .withTransparency(0.6f);
         mMapRipple.startRippleMapAnimation();      //in onMapReadyCallBack
         Intent i = new Intent(getActivity(), FeedActivity.class);
-        i.putExtra("latitude", mTappedLocation.latitude);
-        i.putExtra("longitude", mTappedLocation.longitude);
+        i.putExtra(MapConstants.LATITUDE, mTappedLocation.latitude);
+        i.putExtra(MapConstants.LONGITUDE, mTappedLocation.longitude);
         startActivity(i);
     }
 
@@ -688,8 +687,8 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 }
                 else if (MapConstants.MENU_ITEMS[position] == MapConstants.STREET){
                     Intent i = new Intent(getActivity(), StreetViewActivity.class);
-                    i.putExtra("latitude", latLng.latitude);
-                    i.putExtra("longitude", latLng.longitude);
+                    i.putExtra(MapConstants.LATITUDE, latLng.latitude);
+                    i.putExtra(MapConstants.LONGITUDE, latLng.longitude);
                     startActivityForResult(i, 20);
                 }
             }

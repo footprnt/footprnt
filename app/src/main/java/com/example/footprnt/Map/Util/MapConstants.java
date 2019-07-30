@@ -13,6 +13,9 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
  */
 public class MapConstants {
 
+    // Map properties
+    public static String CONTINENTS = "continents.json";
+
     // Tags properties
     public static String CULTURE = "culture";
     public static String FOOD = "food";
@@ -37,4 +40,8 @@ public class MapConstants {
     public static String DISCOVER = "Discover";
     public static String CURRENT = "Current";
     public static String STREET = "Street";
+
+    // Intent variables
+    public static String LATITUDE = "latitude";
+    public static String LONGITUDE = "longitude";
 }
