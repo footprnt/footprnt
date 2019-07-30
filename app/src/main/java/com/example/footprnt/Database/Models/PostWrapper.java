@@ -4,12 +4,14 @@
  * July 2019
  * Copyright ©2019 Footprnt Inc.
  */
-package com.example.footprnt.Models;
+package com.example.footprnt.Database.Models;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
+
+import com.example.footprnt.Models.Post;
 
 import java.io.Serializable;
 import java.util.Date;

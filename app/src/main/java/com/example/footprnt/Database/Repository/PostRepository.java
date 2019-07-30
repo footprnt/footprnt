@@ -7,12 +7,11 @@
 package com.example.footprnt.Database.Repository;
 
 import android.annotation.SuppressLint;
-import android.arch.lifecycle.LiveData;
 import android.content.Context;
 import android.os.AsyncTask;
 
 import com.example.footprnt.Database.PostDatabase;
-import com.example.footprnt.Models.PostWrapper;
+import com.example.footprnt.Database.Models.PostWrapper;
 
 import java.util.List;
 
@@ -26,7 +25,7 @@ import java.util.List;
 public class PostRepository {
 
     public PostDatabase postDatabase;
-    public LiveData<List<PostWrapper>> mPostWrappers;
+    public List<PostWrapper> mPostWrappers;
 
     public PostRepository(Context context) {
         postDatabase = PostDatabase.getPostDatabase(context);
@@ -60,7 +59,7 @@ public class PostRepository {
      *
      * @return all posts
      */
-    public LiveData<List<PostWrapper>> getPosts() {
+    public List<PostWrapper> getPosts() {
         if(mPostWrappers==null){
             mPostWrappers = postDatabase.daoAccess().fetchAllPosts();
         }
@@ -75,7 +74,7 @@ public class PostRepository {
      * @param objectId
      * @return post with objectId
      */
-    public LiveData<PostWrapper> getPost(String objectId) {
+    public PostWrapper getPost(String objectId) {
         return postDatabase.daoAccess().getPost(objectId);
     }
 }

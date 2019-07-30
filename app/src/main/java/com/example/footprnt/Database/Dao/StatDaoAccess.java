@@ -1,5 +1,5 @@
 /*
- * PostDaoAccess.java
+ * StatDaoAccess.java
  * v1.0
  * July 2019
  * Copyright ©2019 Footprnt Inc.
@@ -10,7 +10,7 @@ import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 
-import com.example.footprnt.Database.Models.PostWrapper;
+import com.example.footprnt.Database.Models.Stat;
 
 import java.util.List;
 
@@ -21,13 +21,13 @@ import java.util.List;
  * @author Clarisa Leu-Rodriguez
  */
 @Dao
-public interface PostDaoAccess {
+public interface StatDaoAccess {
     @Insert
-    void insertPost(PostWrapper post);
+    void insertStat(Stat stat);
 
-    @Query("SELECT * FROM posts ORDER BY createdAt desc")
-    List<PostWrapper> fetchAllPosts();
+    @Query("SELECT * FROM stats")
+    List<Stat> fetchAllStats();
 
-    @Query("SELECT * FROM posts WHERE objectId=:objectId")
-    PostWrapper getPost(String objectId);
+    @Query("SELECT * FROM stats WHERE objectId=:objectId")
+    Stat getStat(String objectId);
 }

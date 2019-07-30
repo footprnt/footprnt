@@ -26,8 +26,8 @@ import android.view.ViewGroup;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.example.footprnt.Database.Models.PostWrapper;
 import com.example.footprnt.Models.Post;
-import com.example.footprnt.Models.PostWrapper;
 import com.example.footprnt.Profile.Adapters.ViewHolders.NoPostsViewHolder;
 import com.example.footprnt.Profile.Adapters.ViewHolders.PostViewHolder;
 import com.example.footprnt.Profile.Adapters.ViewHolders.StatViewHolder;
@@ -63,7 +63,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     ArrayList<Object> mItems;
 
     // Identifier for objects in items and which view to load:
-    private final int USER_INFO = 0, POST = 1, STAT = 2, NO_POSTS = 3, POST_WRAPPER = 4;
+    private final int USER_INFO = 0, POST = 1, STAT = 2, NO_POSTS = 3, POST_WRAPPER = 4, STAT_DB = 5;
 
     /**
      * Constructor for MultiViewAdapter
@@ -140,6 +140,10 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 View v4 = inflater.inflate(R.layout.item_no_posts, viewGroup, false);
                 viewHolder = new NoPostsViewHolder(v4);
                 break;
+            case POST_WRAPPER:
+                View v5 = inflater.inflate(R.layout.item_post_card, viewGroup, false);
+                viewHolder = new PostViewHolder(v5);
+                break;
         }
         return viewHolder;
     }
@@ -174,6 +178,77 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 PostViewHolder vh5 = (PostViewHolder) viewHolder;
                 configurePostWrapperViewHolder(vh5, position);
         }
+    }
+
+    private void configureStatDBViewHolder(final StatViewHolder vh6, final int position){
+      //  if (position < mItems.size()) {
+//            final ArrayList<HashMap<String, Integer>> stats = (ArrayList<HashMap<String, Integer>>) mItems.get(position);
+//            final HashMap<String, Integer> cities = stats.get(0);
+//            final HashMap<String, Integer> countries = stats.get(1);
+//            final HashMap<String, Integer> continents = stats.get(2);
+//
+//            if (cities != null && cities.size() < ProfileConstants.totalNumCities) {
+//                setUpPieChart(vh3.getPieChartCity(), cities.size(), ProfileConstants.totalNumCities, "Visited Cities");
+//            } else {
+//
+//                View view = vh3.getRootView().findViewById(R.id.pieChartCity);
+//                if (view != null) {
+//                    ViewGroup parent = (ViewGroup) view.getParent();
+//                    int index = parent.indexOfChild(view);
+//                    parent.removeView(view);
+//                    view = inflater.inflate(R.layout.item_visited_all_cities, parent, false);
+//                    parent.addView(view, index);
+//                }
+//            }
+//
+//
+//            if (countries != null && countries.size() < ProfileConstants.totalNumCountries) {
+//                setUpPieChart(vh3.getPieChartCountry(), countries.size(), ProfileConstants.totalNumCountries, "Visited Countries");
+//            } else {
+//                View view = vh3.getRootView().findViewById(R.id.pieChartCountry);
+//                if (view != null) {
+//                    ViewGroup parent = (ViewGroup) view.getParent();
+//                    int index = parent.indexOfChild(view);
+//                    parent.removeView(view);
+//                    view = inflater.inflate(R.layout.item_visited_all_countries, parent, false);
+//                    parent.addView(view, index);
+//                }
+//            }
+//
+//            if (continents != null && continents.size() < ProfileConstants.totalNumContinents) {
+//                setUpPieChart(vh3.getPieChartContinent(), continents.size(), ProfileConstants.totalNumContinents, "Visited Continents");
+//            } else {
+//                View view = vh3.getRootView().findViewById(R.id.pieChartContinent);
+//                if (view != null) {
+//                    ViewGroup parent = (ViewGroup) view.getParent();
+//                    int index = parent.indexOfChild(view);
+//                    parent.removeView(view);
+//                    view = inflater.inflate(R.layout.item_visited_all_continents, parent, false);
+//                    parent.addView(view, index);
+//                }
+//            }
+//
+//            final MediaPlayer mp = MediaPlayer.create(mContext, R.raw.pop);
+//            vh3.getNextButton().setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    mp.start();
+//                    vh3.getViewFlipper().setInAnimation(mContext, R.anim.flipin);
+//                    vh3.getViewFlipper().setOutAnimation(mContext, R.anim.flipout);
+//                    vh3.getViewFlipper().showNext();
+//                }
+//            });
+//
+//            vh3.getPreviousButton().setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    mp.start();
+//                    vh3.getViewFlipper().setInAnimation(mContext, R.anim.flipin_reverse);
+//                    vh3.getViewFlipper().setOutAnimation(mContext, R.anim.flipout_reverse);
+//                    vh3.getViewFlipper().showPrevious();
+//                }
+//            });
+//        }
     }
 
     private void configurePostWrapperViewHolder(final PostViewHolder vh5, final int position) {

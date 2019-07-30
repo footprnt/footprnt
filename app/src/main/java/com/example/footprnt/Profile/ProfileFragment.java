@@ -6,9 +6,10 @@
  */
 package com.example.footprnt.Profile;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Observer;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,13 +22,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
+import com.example.footprnt.Database.Models.PostWrapper;
 import com.example.footprnt.Database.PostDatabase;
 import com.example.footprnt.Database.Repository.PostRepository;
+import com.example.footprnt.Database.Repository.StatRepository;
 import com.example.footprnt.LoginActivity;
 import com.example.footprnt.Models.Post;
-import com.example.footprnt.Models.PostWrapper;
 import com.example.footprnt.Profile.Adapters.MultiViewAdapter;
 import com.example.footprnt.R;
 import com.example.footprnt.Util.AppConstants;
@@ -47,10 +48,11 @@ import java.util.List;
 public class ProfileFragment extends Fragment {
 
     public final static String TAG = ProfileFragment.class.getName();  // tag for logging from this activity
-    final ParseUser user = ParseUser.getCurrentUser();
+    final ParseUser mUser = ParseUser.getCurrentUser();
 
     // For database:
     PostRepository mPostRepository;
+    StatRepository mStatRepository;
 
     // For post feed:
     ArrayList<Object> mObjects;
@@ -63,9 +65,7 @@ public class ProfileFragment extends Fragment {
     HashMap<String, Integer> mCities;  // Contains the cities and number of times visited by user
     HashMap<String, Integer> mCountries;  // Contains the countries and number of times visited by user
     HashMap<String, Integer> mContinents;  // Contains the continents and number of times visited by user
-    ArrayList<HashMap<String, Integer>> mStats;  // Stats to be passed to adapter
-
-
+    ArrayList<HashMap<String, Integer>> mStats;  // Stat to be passed to adapter
 
 
     @Nullable
@@ -77,6 +77,7 @@ public class ProfileFragment extends Fragment {
         // For database:
         mPostWrappers = new ArrayList<>();
         mPostRepository = new PostRepository(getActivity().getApplicationContext());
+        mStatRepository = new StatRepository(getActivity().getApplicationContext());
 
         setUpToolbar(v);
 
@@ -90,35 +91,19 @@ public class ProfileFragment extends Fragment {
 
         // Get posts from DB or Network
         // If the data base size is null - try to get posts on first try
-        final LiveData<List<PostWrapper>> postsWrappers = mPostRepository.getPosts();
-        postsWrappers.observe(this, new Observer<List<PostWrapper>>() {
-            @Override
-            public void onChanged(@Nullable List<PostWrapper> postWrappers) {
-                if(postWrappers == null || postWrappers.size() == 0) {
-                    Toast.makeText(getContext(), "HIIIII", Toast.LENGTH_LONG).show();
-                    getPosts();
-                } else {
-                    Toast.makeText(getContext(), "falsk;fjal;skjflakjII", Toast.LENGTH_LONG).show();
 
-                    mPostWrappers.clear();
-                    for (PostWrapper post : postWrappers) {
-                        mPostWrappers.add(post);
-                    }
-                    if(mPostWrappers.size()>0 && mPostWrappers!=null) {
-                        mObjects.addAll(mPostWrappers);
-                        mMultiAdapter.notifyDataSetChanged();
-                    }
-                }
+        final List<PostWrapper> postWrappers = mPostRepository.getPosts();
+        System.out.println(postWrappers.size());
+        if (haveNetworkConnection()) {
+            getPosts();
+            System.out.println(mPostRepository.getPosts().size());
+        } else {
+            for (PostWrapper p : mPostRepository.getPosts()) {
+                mPostWrappers.add(p);
             }
-        });
-
-//        if (postDatabase.daoAccess().fetchAllPosts().getValue() == null) {
-//            getPosts();
-//        } else {
-//            // Otherwise - load the posts from the database
-//            getPostsDB();
-//        }
-
+           // mObjects.add(mUser);
+            mObjects.addAll(mPostWrappers);
+        }
 
         // For post feed view:
         mMultiAdapter = new MultiViewAdapter(getContext(), mObjects);
@@ -129,9 +114,26 @@ public class ProfileFragment extends Fragment {
     }
 
     @Override
-    public void onDestroyView(){
+    public void onDestroyView() {
         super.onDestroyView();
         PostDatabase.destroyInstance();
+    }
+
+    private boolean haveNetworkConnection() {
+        boolean haveConnectedWifi = false;
+        boolean haveConnectedMobile = false;
+
+        ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo[] netInfo = cm.getAllNetworkInfo();
+        for (NetworkInfo ni : netInfo) {
+            if (ni.getTypeName().equalsIgnoreCase("WIFI"))
+                if (ni.isConnected())
+                    haveConnectedWifi = true;
+            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+                if (ni.isConnected())
+                    haveConnectedMobile = true;
+        }
+        return haveConnectedWifi || haveConnectedMobile;
     }
 
     @Override
@@ -176,31 +178,6 @@ public class ProfileFragment extends Fragment {
         });
     }
 
-    /**
-     * Method to load the posts from the data base vs network
-     */
-    private void getPostsDB() {
-        mPostWrappers.clear();
-        mPostRepository.getPosts().observe(getActivity(), new Observer<List<PostWrapper>>() {
-            @Override
-            public void onChanged(@Nullable List<PostWrapper> postWrappers) {
-                for (PostWrapper post : postWrappers) {
-                    mPostWrappers.add(post);
-                }
-                if(mPostWrappers.size()>0 && mPostWrappers!=null) {
-                    mObjects.addAll(mPostWrappers);
-                    mMultiAdapter.notifyDataSetChanged();
-                }
-//                } else {
-//                    // Handle case if user has no posts yet
-//                    mObjects.add("No posts!");
-//                    mMultiAdapter.notifyDataSetChanged();
-//                }
-            }
-        });
-       // List<PostWrapper> posts = mPostRepository.getPosts().getValue();
-    }
-
 
     /**
      * Helper method to get posts from parse as well as populate stat maps
@@ -220,32 +197,8 @@ public class ProfileFragment extends Fragment {
                 if (e == null) {
                     for (int i = 0; i < objects.size(); i++) {
                         final Post post = objects.get(i);
-                        // Wrap post and add to repo & DB if not already done
-                        //final PostWrapper postWrapper = new PostWrapper(post);
-                      // LiveData<PostWrapper> postWrap = mPostRepository.getPost(postWrapper.getObjectId());
-                       // PostWrapper postWrapperCompare = postWrap.getValue();
-                        //if (postWrapperCompare == null) {
-
-//                        getActivity().runOnUiThread(
-//                                new Runnable() {
-//                                    @Override
-//                                    public void run() {
-//                                        System.out.println("-----");
-//                                        if (mPostRepository.getPosts() != null && mPostRepository.getPosts().getValue() != null) {
-//                                            for (PostWrapper p : mPostRepository.getPosts().getValue()) {
-//                                                System.out.println("Index - " + p.getObjectId());
-//                                            }
-//                                        }
-//                                        System.out.println("-----");
-//                                        System.out.println("Contains - " + mPostRepository.getPost(post.getObjectId()));
-//                                        System.out.println("-----");
-//                                    }
-//                                }
-//                        );
-
                         mPostRepository.insertPost(new PostWrapper(post));
-                      //  }
-
+                       // mStatRepository.insertStat(new Stat());
                         // Get post stats and update user stats
                         mPosts.add(post);
                         // Fill HashMaps and handle null values
@@ -285,7 +238,7 @@ public class ProfileFragment extends Fragment {
                     AppUtil.logError(getContext(), TAG, "Error querying posts", e, true);
                 }
 
-                mObjects.add(user);
+                mObjects.add(mUser);
                 mStats.add(mCities);
                 mStats.add(mCountries);
                 mStats.add(mContinents);
