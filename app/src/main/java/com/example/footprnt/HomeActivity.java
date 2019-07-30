@@ -18,6 +18,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.example.footprnt.Database.PostDatabase;
 import com.example.footprnt.Discover.DiscoverFragment;
 import com.example.footprnt.Map.MapFragment;
 import com.example.footprnt.Profile.ProfileFragment;
@@ -59,6 +60,12 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        PostDatabase.destroyInstance();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

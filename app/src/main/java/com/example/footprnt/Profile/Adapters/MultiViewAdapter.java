@@ -174,9 +174,11 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             case NO_POSTS:
                 NoPostsViewHolder vh4 = (NoPostsViewHolder) viewHolder;
                 configureNoPostsViewHolder(vh4, position);
+                break;
             case POST_WRAPPER:
                 PostViewHolder vh5 = (PostViewHolder) viewHolder;
                 configurePostWrapperViewHolder(vh5, position);
+                break;
         }
     }
 

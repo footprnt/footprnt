@@ -21,7 +21,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.example.footprnt.Database.Models.PostWrapper;
-import com.example.footprnt.Database.PostDatabase;
 import com.example.footprnt.Database.Repository.PostRepository;
 import com.example.footprnt.LoginActivity;
 import com.example.footprnt.Models.Post;
@@ -89,10 +88,14 @@ public class ProfileFragment extends Fragment {
             setUpToolbar(v);
             getPosts();
         } else {
-            for (PostWrapper p : mPostRepository.getPosts()) {
-                mPostWrappers.add(p);
+            if(mPostRepository.getPosts().size()==0){
+                mObjects.add("No Posts!");
+            } else {
+                for (PostWrapper p : mPostRepository.getPosts()) {
+                    mPostWrappers.add(p);
+                }
+                mObjects.addAll(mPostWrappers);
             }
-            mObjects.addAll(mPostWrappers);
         }
 
         // For post feed view:
@@ -101,12 +104,6 @@ public class ProfileFragment extends Fragment {
         mLayout.setAdapter(mMultiAdapter);
 
         return v;
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        PostDatabase.destroyInstance();
     }
 
 
