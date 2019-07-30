@@ -53,8 +53,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         final Post post = mPosts.get(position);
-        MapUtil.setPostText(post, holder, mContext);
-        MapUtil.setPostImages(post, holder, mContext);
+        UiUtil.setPostText(post, holder, mContext);
+        UiUtil.setPostImages(post, holder, mContext);
         holder.tvTitle.setTypeface(montserrat); // type specific to feed
         holder.iv5.setImageResource(R.drawable.ic_map); // image specific to feed
     }
