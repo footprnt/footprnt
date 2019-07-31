@@ -5,13 +5,12 @@
  * Copyright ©2019 Footprnt Inc.
  */
 package com.example.footprnt.Database.Repository;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import com.example.footprnt.Database.PostDatabase;
 import com.example.footprnt.Database.Models.PostWrapper;
+import com.example.footprnt.Database.PostDatabase;
 
 import java.util.List;
 

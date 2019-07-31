@@ -30,7 +30,6 @@ import okhttp3.Response;
 public class YelpService {
     /**
      * Finds <query> in <location>
-     *
      * @param location location to query in
      * @param query    type of query to make
      * @param callback response from yelp
