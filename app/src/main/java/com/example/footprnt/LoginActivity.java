@@ -16,9 +16,17 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.footprnt.Util.AppConstants;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
+
+import java.util.Arrays;
 
 /**
  * Handles all login activity
@@ -34,6 +42,8 @@ public class LoginActivity extends AppCompatActivity {
     private TextView mForgotPassword;
     private Button mLoginBtn;
     private Button mSignUpBtn;
+    private LoginButton mFacebookLoginBtn;
+    private CallbackManager mCallbackManager = CallbackManager.Factory.create();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +55,9 @@ public class LoginActivity extends AppCompatActivity {
         mPasswordInput = findViewById(R.id.password);
         mLoginBtn = findViewById(R.id.btn_login);
         mSignUpBtn = findViewById(R.id.btn_signup);
+        mFacebookLoginBtn = findViewById(R.id.btn_fb_login);
+        mFacebookLoginBtn.setReadPermissions(Arrays.asList(AppConstants.email));
+
 
         ParseUser currentUser = ParseUser.getCurrentUser();
         if (currentUser != null) {
@@ -52,6 +65,7 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(intent);
         }
 
+        // TODO: implement
         mForgotPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -76,10 +90,30 @@ public class LoginActivity extends AppCompatActivity {
                 startActivityForResult(intent, AppConstants.SIGN_UP_ACTIVITY_REQUEST_CODE);
             }
         });
+
+        LoginManager.getInstance().registerCallback(mCallbackManager,
+                new FacebookCallback<LoginResult>() {
+                    @Override
+                    public void onSuccess(LoginResult loginResult) {
+                        final Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                        startActivity(intent);
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        // TODO: implement
+                    }
+
+                    @Override
+                    public void onError(FacebookException exception) {
+                        // TODO: implement
+                    }
+                });
     }
 
     /**
      * Attempt Parse login
+     *
      * @param username username of user attempting login
      * @param password password of user attempting login
      */
@@ -93,5 +127,11 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        mCallbackManager.onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }
