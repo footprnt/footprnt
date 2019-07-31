@@ -36,6 +36,7 @@ public class YelpService {
      */
     public static void findBusinesses(String location, String query, Callback callback) {
         String url = DiscoverConstants.YELP_BASE_URL + location + "&term=" + query;
+        // todo set limit
         Request request = new Request.Builder()
                 .url(url)
                 .header("Authorization", DiscoverConstants.YELP_TOKEN)
