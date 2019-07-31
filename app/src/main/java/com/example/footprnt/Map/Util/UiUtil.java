@@ -2,9 +2,10 @@ package com.example.footprnt.Map.Util;
 
 import android.app.Activity;
 import android.content.Context;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import android.text.format.DateUtils;
 import android.view.View;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -114,7 +115,11 @@ public class UiUtil {
             holder.tvTitle.setVisibility(View.GONE);
         }
         // set user
-        holder.tvUser.setText(post.getUser().getUsername());
+        if (privacy) {
+            holder.tvUser.setText("Anonymous User");
+        } else {
+            holder.tvUser.setText(post.getUser().getUsername());
+        }
         // set date
         String dateText = getPostDateText(post);
         holder.tvTimePosted.setText(dateText);
@@ -147,7 +152,7 @@ public class UiUtil {
         } else {
             holder.ivPicture.setVisibility(View.GONE);
         }
-        if (post.getUser().getParseFile("profileImg") != null) {
+        if (post.getUser().getParseFile("profileImg") != null && !privacy) {
             String userImgUrl = post.getUser().getParseFile("profileImg").getUrl();
             Glide.with(context).load(userImgUrl).apply(RequestOptions.circleCropTransform()).into(holder.ivUserPicture);
         } else {
