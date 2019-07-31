@@ -39,13 +39,10 @@ public class ParseApplication extends Application {
                 .build();
 
         Parse.initialize(configuration);
+
         // For connecting with Facebook:
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
         ParseFacebookUtils.initialize(this);
-
-
     }
-
-
 }

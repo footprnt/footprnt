@@ -8,16 +8,15 @@ package com.example.footprnt;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.footprnt.Util.AppConstants;
-import com.facebook.CallbackManager;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
@@ -41,7 +40,7 @@ public class LoginActivity extends AppCompatActivity {
     private Button mLoginBtn;
     private Button mSignUpBtn;
     private Button mFacebookLoginBtn;
-    private CallbackManager mCallbackManager = CallbackManager.Factory.create();
+    private final List<String> permissions = Arrays.asList(AppConstants.PUBLIC_PROFILE, AppConstants.email);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +53,6 @@ public class LoginActivity extends AppCompatActivity {
         mLoginBtn = findViewById(R.id.btn_login);
         mSignUpBtn = findViewById(R.id.btn_signup);
         mFacebookLoginBtn = findViewById(R.id.btn_fb_login);
-        final List<String> permissions = Arrays.asList("public_profile", "email");
 
         ParseUser currentUser = ParseUser.getCurrentUser();
         if (currentUser != null) {
@@ -88,26 +86,34 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        mFacebookLoginBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loginFB();
+            }
+        });
+    }
 
-
-
-                ParseFacebookUtils.logInWithReadPermissionsInBackground(this, permissions, new LogInCallback() {
-                    @Override
-                    public void done(ParseUser user, ParseException err) {
-                        if (user == null) {
-                            Log.d("MyApp", "Uh oh. The user cancelled the Facebook login.");
-                        } else if (user.isNew()) {
-                            final Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                            startActivity(intent);
-                            Log.d("MyApp", "User signed up and logged in through Facebook!");
-                        } else {
-                            final Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                            startActivity(intent);
-                            Log.d("MyApp", "User logged in through Facebook!");
-                        }
-                    }
-                });
-
+    /**
+     * Helper method to login/connect with Facebook
+     */
+    private void loginFB() {
+        ParseFacebookUtils.logInWithReadPermissionsInBackground(this, permissions, new LogInCallback() {
+            @Override
+            public void done(ParseUser user, ParseException err) {
+                if (user == null) {
+                    Toast.makeText(getApplicationContext(), "Error logging in with Facebook", Toast.LENGTH_LONG).show();
+                } else if (user.isNew()) {
+                    final Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                    startActivity(intent);
+                    Toast.makeText(getApplicationContext(), "Success", Toast.LENGTH_LONG).show();
+                } else {
+                    final Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                    startActivity(intent);
+                    Toast.makeText(getApplicationContext(), "Success", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
     }
 
     /**
