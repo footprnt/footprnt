@@ -21,7 +21,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.example.footprnt.Database.Models.PostWrapper;
+import com.example.footprnt.Database.Models.StatWrapper;
+import com.example.footprnt.Database.Models.UserWrapper;
+import com.example.footprnt.Database.PostDatabase;
 import com.example.footprnt.Database.Repository.PostRepository;
+import com.example.footprnt.Database.Repository.StatRepository;
+import com.example.footprnt.Database.Repository.UserRepository;
+import com.example.footprnt.Database.StatDatabase;
+import com.example.footprnt.Database.UserDatabase;
 import com.example.footprnt.LoginActivity;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.Profile.Adapters.MultiViewAdapter;
@@ -48,6 +55,10 @@ public class ProfileFragment extends Fragment {
 
     // For database:
     PostRepository mPostRepository;
+    UserRepository mUserRepository;
+    StatRepository mStatRepository;
+    UserWrapper mUserWrapper;
+    StatWrapper mStatWrapper;
     List<PostWrapper> mPostWrapperDB;
 
     // For post feed:
@@ -61,7 +72,7 @@ public class ProfileFragment extends Fragment {
     HashMap<String, Integer> mCities;  // Contains the cities and number of times visited by user
     HashMap<String, Integer> mCountries;  // Contains the countries and number of times visited by user
     HashMap<String, Integer> mContinents;  // Contains the continents and number of times visited by user
-    ArrayList<HashMap<String, Integer>> mStats;  // Stat to be passed to adapter
+    ArrayList<HashMap<String, Integer>> mStats;  // StatWrapper to be passed to adapter
 
 
     @Nullable
@@ -70,9 +81,7 @@ public class ProfileFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_profile, container, false);
         mLayout = v.findViewById(R.id.rvPosts);
 
-        // For database:
-        mPostRepository = new PostRepository(getActivity().getApplicationContext());
-        mPostWrapperDB = mPostRepository.getPosts();
+        setUpDB();
 
         // Populate stat maps and get posts
         mObjects = new ArrayList<>();
@@ -85,10 +94,22 @@ public class ProfileFragment extends Fragment {
 
         // Get posts from DB or Network
         if (mUtil.haveNetworkConnection(getActivity())) {
+            StatDatabase.getStatDatabase(getContext()).clearAllTables();
+            PostDatabase.getPostDatabase(getContext()).clearAllTables();
+            UserDatabase.getUserDatabase(getContext()).clearAllTables();
             setUpToolbar(v);
             getPosts();
         } else {
-            if(mPostRepository.getPosts().size()==0){
+            // Add User
+            if (mUserWrapper != null) {
+                mObjects.add(mUserWrapper);
+            }
+            // Add Stats
+            if(mStatWrapper!=null){
+                mObjects.add(mStatWrapper);
+            }
+            // Add posts of no posts
+            if (mPostRepository.getPosts().size() == 0) {
                 mObjects.add("No Posts!");
             } else {
                 for (PostWrapper p : mPostRepository.getPosts()) {
@@ -106,6 +127,18 @@ public class ProfileFragment extends Fragment {
         return v;
     }
 
+    /**
+     * Helper method to set up database
+     */
+    private void setUpDB(){
+        mPostRepository = new PostRepository(getActivity().getApplicationContext());
+        mPostWrapperDB = mPostRepository.getPosts();
+        mUserRepository = new UserRepository(getActivity().getApplicationContext());
+        mUserRepository.insertUser(new UserWrapper(ParseUser.getCurrentUser()));
+        mUserWrapper = mUserRepository.getUser();
+        mStatRepository = new StatRepository(getActivity().getApplicationContext());
+        mStatWrapper = mStatRepository.getStats();
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -118,6 +151,7 @@ public class ProfileFragment extends Fragment {
         if (resultCode == AppConstants.DELETE_POST_FROM_PROFILE) {
             int position = data.getIntExtra(AppConstants.position, 0);
             mObjects.remove(position);
+            mMultiAdapter.notifyItemRemoved(position);
             mMultiAdapter.notifyItemChanged(position);
         }
         // TODO: fix so UI updates
@@ -138,6 +172,10 @@ public class ProfileFragment extends Fragment {
                 popup.getMenuInflater().inflate(R.menu.popup_menu, popup.getMenu());
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     public boolean onMenuItemClick(MenuItem item) {
+                        // Destory instances of DB's on logout
+                        StatDatabase.getStatDatabase(getContext()).clearAllTables();
+                        PostDatabase.getPostDatabase(getContext()).clearAllTables();
+                        UserDatabase.getUserDatabase(getContext()).clearAllTables();
                         ParseUser.logOut();
                         Intent intent = new Intent(getActivity(), LoginActivity.class);
                         startActivity(intent);
@@ -169,7 +207,7 @@ public class ProfileFragment extends Fragment {
                     for (int i = 0; i < objects.size(); i++) {
                         final Post post = objects.get(i);
                         mPostRepository.insertPost(new PostWrapper(post));
-                        // mStatRepository.insertStat(new Stat());
+                        // mStatRepository.insertStat(new StatWrapper());
                         // Get post stats and update user stats
                         mPosts.add(post);
                         // Fill HashMaps and handle null values
@@ -214,6 +252,7 @@ public class ProfileFragment extends Fragment {
                 mStats.add(mCountries);
                 mStats.add(mContinents);
                 mObjects.add(mStats);
+                mStatRepository.insertStat(new StatWrapper(mStats, mUser));
                 mMultiAdapter.notifyDataSetChanged();
 
                 if (mPosts.size() > 0 && mPosts != null) {

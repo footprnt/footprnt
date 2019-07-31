@@ -16,7 +16,7 @@ import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 
 import com.example.footprnt.Database.Dao.StatDaoAccess;
-import com.example.footprnt.Database.Models.Stat;
+import com.example.footprnt.Database.Models.StatWrapper;
 import com.example.footprnt.Util.AppConstants;
 import com.example.footprnt.Util.Converters;
 
@@ -28,7 +28,7 @@ import com.example.footprnt.Util.Converters;
  * @author Clarisa Leu-Rodriguez
  */
 
-@Database(entities = {Stat.class}, version = 1, exportSchema = false)
+@Database(entities = {StatWrapper.class}, version = 1, exportSchema = false)
 @TypeConverters({Converters.class})
 public abstract class StatDatabase extends RoomDatabase {
 
@@ -48,5 +48,10 @@ public abstract class StatDatabase extends RoomDatabase {
             }
         }
         return INSTANCE;
+    }
+
+
+    public static void destroyInstance() {
+        INSTANCE = null;
     }
 }

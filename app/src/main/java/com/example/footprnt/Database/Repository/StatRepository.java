@@ -11,10 +11,8 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import com.example.footprnt.Database.Models.Stat;
+import com.example.footprnt.Database.Models.StatWrapper;
 import com.example.footprnt.Database.StatDatabase;
-
-import java.util.List;
 
 /**
  * Repository to mediate between the domain and data mapping layers, acting like an in-memory domain object
@@ -26,12 +24,11 @@ import java.util.List;
 public class StatRepository {
 
     public StatDatabase mStatDatabase;
-    public List<Stat> mStats;
+    public StatWrapper mStats;
 
     public StatRepository(Context context) {
         mStatDatabase = StatDatabase.getStatDatabase(context);
     }
-
 
     public StatDatabase getStatsDatabase() {
         return mStatDatabase;
@@ -43,11 +40,11 @@ public class StatRepository {
      * @param stat
      */
     @SuppressLint("StaticFieldLeak")
-    public void insertStat(final Stat stat) {
+    public void insertStat(final StatWrapper stat) {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
-                if (mStatDatabase.daoAccess().getStat(stat.getObjectId()) == null) {
+                if (mStatDatabase.daoAccess().getStat(stat.getUsername()) == null) {
                     mStatDatabase.daoAccess().insertStat(stat);
                 }
                 return null;
@@ -60,11 +57,21 @@ public class StatRepository {
      *
      * @return all posts
      */
-    public List<Stat> getStats() {
+    public StatWrapper getStats() {
         if(mStats==null){
             mStats = mStatDatabase.daoAccess().fetchAllStats();
         }
         return mStats;
+    }
+
+    /**
+     * Get stat in DB with username
+     *
+     * @param username
+     * @return stat with associated user
+     */
+    public StatWrapper getStat(String username) {
+        return mStatDatabase.daoAccess().getStat(username);
     }
 
 }

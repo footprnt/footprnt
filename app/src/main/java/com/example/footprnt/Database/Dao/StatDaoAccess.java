@@ -10,9 +10,7 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
 
-import com.example.footprnt.Database.Models.Stat;
-
-import java.util.List;
+import com.example.footprnt.Database.Models.StatWrapper;
 
 /**
  * This is an interface which acts is an intermediary between the user and the database.
@@ -23,11 +21,11 @@ import java.util.List;
 @Dao
 public interface StatDaoAccess {
     @Insert
-    void insertStat(Stat stat);
+    void insertStat(StatWrapper stat);
 
     @Query("SELECT * FROM stats")
-    List<Stat> fetchAllStats();
+    StatWrapper fetchAllStats();
 
-    @Query("SELECT * FROM stats WHERE objectId=:objectId")
-    Stat getStat(String objectId);
+    @Query("SELECT * FROM stats WHERE username=:username")
+    StatWrapper getStat(String username);
 }
