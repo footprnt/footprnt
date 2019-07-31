@@ -12,6 +12,7 @@ import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
 import com.example.footprnt.Util.AppConstants;
+import com.parse.ParseFile;
 import com.parse.ParseUser;
 
 import java.io.Serializable;
@@ -42,9 +43,9 @@ public class UserWrapper implements Serializable {
         } else {
             this.description = "";
         }
-        String imageUrl = user.getParseFile(AppConstants.profileImage).getUrl();
-        if (imageUrl != null) {
-            this.profileImg = imageUrl;
+        ParseFile image = user.getParseFile(AppConstants.profileImage);
+        if (image != null) {
+            this.profileImg = image.getUrl();
         } else {
             this.profileImg = "";
         }

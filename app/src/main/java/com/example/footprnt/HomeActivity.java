@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.example.footprnt.Database.PostDatabase;
+import com.example.footprnt.Database.StatDatabase;
 import com.example.footprnt.Database.UserDatabase;
 import com.example.footprnt.Discover.DiscoverFragment;
 import com.example.footprnt.Map.MapFragment;
@@ -67,6 +68,7 @@ public class HomeActivity extends AppCompatActivity {
         super.onDestroy();
         PostDatabase.destroyInstance();
         UserDatabase.destroyInstance();
+        StatDatabase.destroyInstance();
     }
 
     @Override

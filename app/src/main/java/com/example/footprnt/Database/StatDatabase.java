@@ -48,4 +48,9 @@ public abstract class StatDatabase extends RoomDatabase {
         }
         return INSTANCE;
     }
+
+
+    public static void destroyInstance() {
+        INSTANCE = null;
+    }
 }

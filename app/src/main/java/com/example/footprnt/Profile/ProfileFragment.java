@@ -23,9 +23,12 @@ import android.widget.ImageView;
 import com.example.footprnt.Database.Models.PostWrapper;
 import com.example.footprnt.Database.Models.StatWrapper;
 import com.example.footprnt.Database.Models.UserWrapper;
+import com.example.footprnt.Database.PostDatabase;
 import com.example.footprnt.Database.Repository.PostRepository;
 import com.example.footprnt.Database.Repository.StatRepository;
 import com.example.footprnt.Database.Repository.UserRepository;
+import com.example.footprnt.Database.StatDatabase;
+import com.example.footprnt.Database.UserDatabase;
 import com.example.footprnt.LoginActivity;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.Profile.Adapters.MultiViewAdapter;
@@ -91,6 +94,9 @@ public class ProfileFragment extends Fragment {
 
         // Get posts from DB or Network
         if (mUtil.haveNetworkConnection(getActivity())) {
+            StatDatabase.getStatDatabase(getContext()).clearAllTables();
+            PostDatabase.getPostDatabase(getContext()).clearAllTables();
+            UserDatabase.getUserDatabase(getContext()).clearAllTables();
             setUpToolbar(v);
             getPosts();
         } else {
@@ -145,6 +151,7 @@ public class ProfileFragment extends Fragment {
         if (resultCode == AppConstants.DELETE_POST_FROM_PROFILE) {
             int position = data.getIntExtra(AppConstants.position, 0);
             mObjects.remove(position);
+            mMultiAdapter.notifyItemRemoved(position);
             mMultiAdapter.notifyItemChanged(position);
         }
         // TODO: fix so UI updates
@@ -165,6 +172,10 @@ public class ProfileFragment extends Fragment {
                 popup.getMenuInflater().inflate(R.menu.popup_menu, popup.getMenu());
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     public boolean onMenuItemClick(MenuItem item) {
+                        // Destory instances of DB's on logout
+                        StatDatabase.getStatDatabase(getContext()).clearAllTables();
+                        PostDatabase.getPostDatabase(getContext()).clearAllTables();
+                        UserDatabase.getUserDatabase(getContext()).clearAllTables();
                         ParseUser.logOut();
                         Intent intent = new Intent(getActivity(), LoginActivity.class);
                         startActivity(intent);
