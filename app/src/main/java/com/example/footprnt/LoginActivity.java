@@ -8,6 +8,7 @@ package com.example.footprnt;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,16 +18,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.footprnt.Util.AppConstants;
 import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.login.LoginManager;
-import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
+import com.parse.facebook.ParseFacebookUtils;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Handles all login activity
@@ -42,7 +40,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextView mForgotPassword;
     private Button mLoginBtn;
     private Button mSignUpBtn;
-    private LoginButton mFacebookLoginBtn;
+    private Button mFacebookLoginBtn;
     private CallbackManager mCallbackManager = CallbackManager.Factory.create();
 
     @Override
@@ -56,8 +54,7 @@ public class LoginActivity extends AppCompatActivity {
         mLoginBtn = findViewById(R.id.btn_login);
         mSignUpBtn = findViewById(R.id.btn_signup);
         mFacebookLoginBtn = findViewById(R.id.btn_fb_login);
-        mFacebookLoginBtn.setReadPermissions(Arrays.asList(AppConstants.email));
-
+        final List<String> permissions = Arrays.asList("public_profile", "email");
 
         ParseUser currentUser = ParseUser.getCurrentUser();
         if (currentUser != null) {
@@ -91,24 +88,26 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        LoginManager.getInstance().registerCallback(mCallbackManager,
-                new FacebookCallback<LoginResult>() {
-                    @Override
-                    public void onSuccess(LoginResult loginResult) {
-                        final Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                        startActivity(intent);
-                    }
 
-                    @Override
-                    public void onCancel() {
-                        // TODO: implement
-                    }
 
+
+                ParseFacebookUtils.logInWithReadPermissionsInBackground(this, permissions, new LogInCallback() {
                     @Override
-                    public void onError(FacebookException exception) {
-                        // TODO: implement
+                    public void done(ParseUser user, ParseException err) {
+                        if (user == null) {
+                            Log.d("MyApp", "Uh oh. The user cancelled the Facebook login.");
+                        } else if (user.isNew()) {
+                            final Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                            startActivity(intent);
+                            Log.d("MyApp", "User signed up and logged in through Facebook!");
+                        } else {
+                            final Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                            startActivity(intent);
+                            Log.d("MyApp", "User logged in through Facebook!");
+                        }
                     }
                 });
+
     }
 
     /**
@@ -131,7 +130,7 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        mCallbackManager.onActivityResult(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
+        ParseFacebookUtils.onActivityResult(requestCode, resultCode, data);
     }
 }

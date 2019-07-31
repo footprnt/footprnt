@@ -86,6 +86,7 @@ android {
         implementation "android.arch.lifecycle:livedata:$arch_version"
         implementation "android.arch.lifecycle:extensions:$arch_version"
         // For Facebook Login
-        implementation 'com.facebook.android:facebook-android-sdk:[5,6)'
+        implementation 'com.facebook.android:facebook-android-sdk:5.2.0'
+        implementation 'com.github.parse-community:ParseFacebookUtils-Android:1.14.0'
     }
 }

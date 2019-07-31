@@ -83,11 +83,11 @@
         android:text="New User?"
         android:textColor="#FFFFFF"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/fb_login"
+        app:layout_constraintBottom_toTopOf="@+id/btn_fb_login"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <com.facebook.login.widget.LoginButton
+    <Button
         android:id="@+id/btn_fb_login"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
