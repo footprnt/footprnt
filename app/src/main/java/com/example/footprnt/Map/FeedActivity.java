@@ -54,8 +54,8 @@ public class FeedActivity extends Activity {
      */
     private void initialization() {
         // TODO: put lat/long in app constants
-        mLat = getIntent().getExtras().getDouble("latitude");
-        mLong = getIntent().getExtras().getDouble("longitude");
+        mLat = getIntent().getExtras().getDouble(MapConstants.LATITUDE);
+        mLong = getIntent().getExtras().getDouble(MapConstants.LONGITUDE);
         mPosts = new ArrayList<>();
         final Post.Query postsQuery = new Post.Query();
         postsQuery

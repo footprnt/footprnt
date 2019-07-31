@@ -98,7 +98,7 @@ public class UiUtil {
      * @param holder  holder to display text into
      * @param context current context of post
      */
-    public static void setPostText(Post post, PostAdapter.ViewHolder holder, Context context) {
+    public static void setPostText(Post post, PostAdapter.ViewHolder holder, Context context, boolean privacy) {
         // set description
         String description = post.getDescription();
         if (description.length() > 0) {
@@ -139,7 +139,7 @@ public class UiUtil {
      * @param holder  holder to display images into
      * @param context current context of post
      */
-    public static void setPostImages(Post post, PostAdapter.ViewHolder holder, Context context) {
+    public static void setPostImages(Post post, PostAdapter.ViewHolder holder, Context context, boolean privacy) {
         if(post.getImage()!=null) {
             String imgUrl = post.getImage().getUrl();
             Glide.with(context).load(imgUrl).into(holder.ivPicture);

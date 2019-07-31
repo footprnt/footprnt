@@ -30,6 +30,7 @@ public class AppConstants {
     public static final String city = "city";
     public static final String continent = "continent";
     public static final String tags = "tags";
+    public static final String privacy = "private";
     public static final int postLimit = 20;
 
     // For getting extras for intents:
@@ -56,5 +57,9 @@ public class AppConstants {
 
     // For Logcat:
     public static final String APP_TAG = "footprnt";
+
+    // For settings
+    public static final String LOGOUT = "Logout";
+    public static final String PRIVACY = "Make anonymous";
 
 }

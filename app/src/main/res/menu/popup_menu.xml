@@ -3,4 +3,9 @@
     <item
         android:id="@+id/logout"
         android:title="Logout"/>
+    <item
+        android:id="@+id/privacy"
+        android:title="Make anonymous"
+        android:checkable="true"
+        />
 </menu>
