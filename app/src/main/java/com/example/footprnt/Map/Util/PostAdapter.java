@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.example.footprnt.Map.PostDetailActivity;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.R;
+import com.example.footprnt.Util.AppConstants;
 
 import java.util.ArrayList;
 
@@ -53,8 +54,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         final Post post = mPosts.get(position);
-        UiUtil.setPostText(post, holder, mContext);
-        UiUtil.setPostImages(post, holder, mContext);
+        boolean privacy = (boolean) post.getUser().get(AppConstants.privacy);
+        UiUtil.setPostText(post, holder, mContext, privacy);
+        UiUtil.setPostImages(post, holder, mContext, privacy);
         holder.tvTitle.setTypeface(montserrat); // type specific to feed
         holder.iv5.setImageResource(R.drawable.ic_map); // image specific to feed
     }
