@@ -14,11 +14,11 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.graphics.Palette;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.palette.graphics.Palette;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +26,9 @@ import android.view.ViewGroup;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.example.footprnt.Database.Models.PostWrapper;
+import com.example.footprnt.Database.Models.StatWrapper;
+import com.example.footprnt.Database.Models.UserWrapper;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.Profile.Adapters.ViewHolders.NoPostsViewHolder;
 import com.example.footprnt.Profile.Adapters.ViewHolders.PostViewHolder;
@@ -60,9 +63,11 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     Context mContext;
     ArrayList<Object> mItems;
+    LayoutInflater mInflater;
+
 
     // Identifier for objects in items and which view to load:
-    private final int USER_INFO = 0, POST = 1, STAT = 2, NO_POSTS = 3;
+    private final int USER_INFO = 0, POST = 1, STAT = 2, NO_POSTS = 3, POST_WRAPPER = 4, USER_WRAPPER = 5, STAT_WRAPPER = 6;
 
     /**
      * Constructor for MultiViewAdapter
@@ -99,13 +104,17 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             return USER_INFO;
         } else if (mItems.get(position) instanceof ArrayList) {
             return STAT;
+        } else if (mItems.get(position) instanceof PostWrapper) {
+            return POST_WRAPPER;
         } else if (mItems.get(position) instanceof String) {
             return NO_POSTS;
+        } else if (mItems.get(position) instanceof UserWrapper) {
+            return USER_WRAPPER;
+        } else if (mItems.get(position) instanceof StatWrapper) {
+            return STAT_WRAPPER;
         }
         return -1;
     }
-
-    LayoutInflater inflater;
 
     /**
      * Creates different RecyclerView.ViewHolder objects based on the item view type.
@@ -117,26 +126,37 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         RecyclerView.ViewHolder viewHolder = null;
-        inflater = LayoutInflater.from(viewGroup.getContext());
+        mInflater = LayoutInflater.from(viewGroup.getContext());
         switch (viewType) {
             case POST:
-                View v1 = inflater.inflate(R.layout.item_post_card, viewGroup, false);
+                View v1 = mInflater.inflate(R.layout.item_post_card, viewGroup, false);
                 v1.findViewById(R.id.tvText).setVisibility(View.INVISIBLE);
                 v1.findViewById(R.id.title).setVisibility(View.INVISIBLE);
                 viewHolder = new PostViewHolder(v1);
                 break;
             case USER_INFO:
-                View v2 = inflater.inflate(R.layout.item_user_information, viewGroup, false);
+                View v2 = mInflater.inflate(R.layout.item_user_information, viewGroup, false);
                 viewHolder = new UserInfoViewHolder(v2);
                 break;
             case STAT:
-                View v3 = inflater.inflate(R.layout.item_user_stats, viewGroup, false);
+                View v3 = mInflater.inflate(R.layout.item_user_stats, viewGroup, false);
                 viewHolder = new StatViewHolder(v3);
                 break;
             case NO_POSTS:
-                View v4 = inflater.inflate(R.layout.item_no_posts, viewGroup, false);
+                View v4 = mInflater.inflate(R.layout.item_no_posts, viewGroup, false);
                 viewHolder = new NoPostsViewHolder(v4);
                 break;
+            case POST_WRAPPER:
+                View v5 = mInflater.inflate(R.layout.item_post_card, viewGroup, false);
+                viewHolder = new PostViewHolder(v5);
+                break;
+            case USER_WRAPPER:
+                View v6 = mInflater.inflate(R.layout.item_user_information, viewGroup, false);
+                viewHolder = new UserInfoViewHolder(v6);
+                break;
+            case STAT_WRAPPER:
+                View v7 = mInflater.inflate(R.layout.item_user_stats, viewGroup, false);
+                viewHolder = new StatViewHolder(v7);
         }
         return viewHolder;
     }
@@ -167,8 +187,152 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             case NO_POSTS:
                 NoPostsViewHolder vh4 = (NoPostsViewHolder) viewHolder;
                 configureNoPostsViewHolder(vh4, position);
+                break;
+            case POST_WRAPPER:
+                PostViewHolder vh5 = (PostViewHolder) viewHolder;
+                configurePostWrapperViewHolder(vh5, position);
+                break;
+            case USER_WRAPPER:
+                UserInfoViewHolder vh6 = (UserInfoViewHolder) viewHolder;
+                configureUserWrapperViewHolder(vh6, position);
+                break;
+            case STAT_WRAPPER:
+                StatViewHolder vh7 = (StatViewHolder) viewHolder;
+                configureStatWrapperViewHolder(vh7, position);
         }
     }
+
+    private void configureUserWrapperViewHolder(final UserInfoViewHolder vh6, final int position) {
+        if (position < mItems.size()) {
+            UserWrapper userWrapper = (UserWrapper) mItems.get(position);
+            if (userWrapper != null) {
+                if (userWrapper.getProfileImg().length() > 0) {
+                    vh6.setIvProfileImage(userWrapper.getProfileImg(), mContext);
+                }
+                if (userWrapper.getDescription().length() > 0) {
+                    vh6.getTvDescription().setText(userWrapper.getDescription());
+                }
+                vh6.getTvUsername().setText("@" + userWrapper.getUsername());
+                vh6.getTvEditProfile().setVisibility(View.INVISIBLE);
+
+            }
+        }
+    }
+
+    private void configureStatWrapperViewHolder(final StatViewHolder vh7, final int position) {
+        if (position < mItems.size()) {
+            StatWrapper statWrapper = (StatWrapper) mItems.get(position);
+            if (statWrapper.getCityVisited() < ProfileConstants.totalNumCities) {
+                setUpPieChart(vh7.getPieChartCity(), statWrapper.getCityVisited(), ProfileConstants.totalNumCities, "Visited Cities");
+            } else {
+                View view = vh7.getRootView().findViewById(R.id.pieChartCity);
+                if (view != null) {
+                    ViewGroup parent = (ViewGroup) view.getParent();
+                    int index = parent.indexOfChild(view);
+                    parent.removeView(view);
+                    view = mInflater.inflate(R.layout.item_visited_all_cities, parent, false);
+                    parent.addView(view, index);
+                }
+            }
+            if (statWrapper.getCountryVisited() < ProfileConstants.totalNumCountries) {
+                setUpPieChart(vh7.getPieChartCountry(), statWrapper.getCountryVisited(), ProfileConstants.totalNumCountries, "Visited Countries");
+            } else {
+                View view = vh7.getRootView().findViewById(R.id.pieChartCountry);
+                if (view != null) {
+                    ViewGroup parent = (ViewGroup) view.getParent();
+                    int index = parent.indexOfChild(view);
+                    parent.removeView(view);
+                    view = mInflater.inflate(R.layout.item_visited_all_countries, parent, false);
+                    parent.addView(view, index);
+                }
+            }
+            if (statWrapper.getContinentVisited() < ProfileConstants.totalNumContinents) {
+                setUpPieChart(vh7.getPieChartContinent(), statWrapper.getContinentVisited(), ProfileConstants.totalNumContinents, "Visited Continents");
+            } else {
+                View view = vh7.getRootView().findViewById(R.id.pieChartContinent);
+                if (view != null) {
+                    ViewGroup parent = (ViewGroup) view.getParent();
+                    int index = parent.indexOfChild(view);
+                    parent.removeView(view);
+                    view = mInflater.inflate(R.layout.item_visited_all_continents, parent, false);
+                    parent.addView(view, index);
+                }
+            }
+            final MediaPlayer mp = MediaPlayer.create(mContext, R.raw.pop);
+            vh7.getNextButton().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mp.start();
+                    vh7.getViewFlipper().setInAnimation(mContext, R.anim.flipin);
+                    vh7.getViewFlipper().setOutAnimation(mContext, R.anim.flipout);
+                    vh7.getViewFlipper().showNext();
+                }
+            });
+
+            vh7.getPreviousButton().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mp.start();
+                    vh7.getViewFlipper().setInAnimation(mContext, R.anim.flipin_reverse);
+                    vh7.getViewFlipper().setOutAnimation(mContext, R.anim.flipout_reverse);
+                    vh7.getViewFlipper().showPrevious();
+                }
+            });
+        }
+    }
+
+
+    private void configurePostWrapperViewHolder(final PostViewHolder vh5, final int position) {
+        if (position < mItems.size()) {
+            PostWrapper postWrapper = (PostWrapper) mItems.get(position);
+            if (postWrapper != null) {
+                vh5.getRootView().setTag(postWrapper);
+                StringBuilder sb = new StringBuilder();
+                String cityName = postWrapper.getCity();
+                if (cityName != null) {
+                    sb.append(cityName).append(", ");
+                }
+                String countryName = postWrapper.getCountry();
+                if (countryName != null) {
+                    sb.append(countryName).append(", ");
+                }
+                String continentName = postWrapper.getContinent();
+                if (continentName != null) {
+                    sb.append(continentName);
+                }
+                vh5.getTvTitle().setText(sb);
+                vh5.getTvTitle().setTextColor(ContextCompat.getColor(mContext, R.color.grey));
+
+                SimpleTarget<Bitmap> target = new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                        vh5.getIvImage().setImageBitmap(resource);
+                        Palette.from(resource).generate();
+                    }
+                };
+
+                vh5.getRootView().setClickable(false);
+
+                vh5.getIvImage().setTag(target);
+                if (postWrapper.imageUrl.length() > 0) {
+                    vh5.getTvDescription().setVisibility(View.INVISIBLE);
+                    vh5.getIvImage().setVisibility(View.VISIBLE);
+                    vh5.getPostTitle().setVisibility(View.INVISIBLE);
+                    Glide.with(mContext).asBitmap().load(postWrapper.imageUrl).centerCrop().into(target);
+                } else {
+                    vh5.getIvImage().setVisibility(View.INVISIBLE);
+                    vh5.getTvDescription().setText(postWrapper.getDescription());
+                    vh5.getPostTitle().setText(postWrapper.getTitle());
+                    vh5.getPostTitle().setVisibility(View.VISIBLE);
+                    vh5.getTvDescription().setVisibility(View.VISIBLE);
+                }
+                if (postWrapper.getImageUrl().length() > 0) {
+                    Glide.with(mContext).asBitmap().load(postWrapper.getImageUrl()).centerCrop().into(target);
+                }
+            }
+        }
+    }
+
 
     /**
      * Method to configure the post view holder
@@ -219,43 +383,20 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     vh1.getTvDescription().setVisibility(View.VISIBLE);
                 }
 
-                vh1.getIvImage().setOnClickListener(new View.OnClickListener() {
+                vh1.getRootView().setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Post post2 = (Post) mItems.get(position);
+                        Post p = (Post) mItems.get(position);
                         Intent it = new Intent(mContext, EditPost.class);
                         Bundle bundle = new Bundle();
-                        bundle.putSerializable(Post.class.getSimpleName(), post2);
+                        bundle.putSerializable(Post.class.getSimpleName(), p);
                         bundle.putSerializable(AppConstants.position, position);
                         it.putExtras(bundle);
                         ((Activity) mContext).startActivityForResult(it, AppConstants.DELETE_POST_FROM_PROFILE);
                     }
                 });
-                vh1.getTvDescription().setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Post post2 = (Post) mItems.get(position);
-                        Intent it = new Intent(mContext, EditPost.class);
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable(Post.class.getSimpleName(), post2);
-                        bundle.putSerializable(Post.class.getSimpleName(), post2);
-                        bundle.putSerializable(AppConstants.position, position);
-                        it.putExtras(bundle);
-                        ((Activity) mContext).startActivityForResult(it, AppConstants.DELETE_POST_FROM_PROFILE);
-                    }
-                });
-                vh1.getPostTitle().setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Post post2 = (Post) mItems.get(position);
-                        Intent it = new Intent(mContext, EditPost.class);
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable(Post.class.getSimpleName(), post2);
-                        bundle.putSerializable(AppConstants.position, position);
-                        it.putExtras(bundle);
-                        ((Activity) mContext).startActivityForResult(it, AppConstants.DELETE_POST_FROM_PROFILE);
-                    }
-                });
+
+
             }
         }
     }
@@ -317,7 +458,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     ViewGroup parent = (ViewGroup) view.getParent();
                     int index = parent.indexOfChild(view);
                     parent.removeView(view);
-                    view = inflater.inflate(R.layout.item_visited_all_cities, parent, false);
+                    view = mInflater.inflate(R.layout.item_visited_all_cities, parent, false);
                     parent.addView(view, index);
                 }
             }
@@ -331,7 +472,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     ViewGroup parent = (ViewGroup) view.getParent();
                     int index = parent.indexOfChild(view);
                     parent.removeView(view);
-                    view = inflater.inflate(R.layout.item_visited_all_countries, parent, false);
+                    view = mInflater.inflate(R.layout.item_visited_all_countries, parent, false);
                     parent.addView(view, index);
                 }
             }
@@ -344,7 +485,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     ViewGroup parent = (ViewGroup) view.getParent();
                     int index = parent.indexOfChild(view);
                     parent.removeView(view);
-                    view = inflater.inflate(R.layout.item_visited_all_continents, parent, false);
+                    view = mInflater.inflate(R.layout.item_visited_all_continents, parent, false);
                     parent.addView(view, index);
                 }
             }

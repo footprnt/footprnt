@@ -2,7 +2,7 @@ package com.example.footprnt.Map.Util;
 
 import android.app.Activity;
 import android.content.Context;
-import android.support.constraint.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import android.text.format.DateUtils;
 import android.view.View;
 

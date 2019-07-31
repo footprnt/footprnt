@@ -7,13 +7,14 @@
 package com.example.footprnt.Discover.Adapters;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.footprnt.Discover.Models.Business;
 import com.example.footprnt.R;
@@ -74,7 +75,11 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
             tvBusinessName.setText(business.getName());
             tvBusinessCategory.setText(business.getCategories().get(0));
             tvBusinessRating.setText(String.format("Rating: %s/5", business.getRating()));
-            Picasso.with(mContext).load(business.getImageUrl()).into(ivBusinessImage);
+            if (business.getImageUrl() == null || business.getImageUrl().length() == 0){
+                Picasso.with(mContext).load("https://pyzikscott.files.wordpress.com/2016/03/yelp-placeholder.png?w=584");
+            } else {
+                Picasso.with(mContext).load(business.getImageUrl()).into(ivBusinessImage);
+            }
         }
     }
 }

@@ -8,23 +8,31 @@ package com.example.footprnt.Profile;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.PopupMenu;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.appcompat.widget.PopupMenu;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.example.footprnt.Database.Models.PostWrapper;
+import com.example.footprnt.Database.Models.StatWrapper;
+import com.example.footprnt.Database.Models.UserWrapper;
+import com.example.footprnt.Database.PostDatabase;
+import com.example.footprnt.Database.Repository.PostRepository;
+import com.example.footprnt.Database.Repository.StatRepository;
+import com.example.footprnt.Database.Repository.UserRepository;
+import com.example.footprnt.Database.StatDatabase;
+import com.example.footprnt.Database.UserDatabase;
 import com.example.footprnt.LoginActivity;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.Profile.Adapters.MultiViewAdapter;
 import com.example.footprnt.R;
-import com.example.footprnt.Repository.PostRepository;
 import com.example.footprnt.Util.AppConstants;
 import com.example.footprnt.Util.AppUtil;
 import com.parse.FindCallback;
@@ -41,51 +49,96 @@ import java.util.List;
  */
 public class ProfileFragment extends Fragment {
 
-    public final static String TAG = "ProfileFragment";  // tag for logging from this activity
-    final ParseUser user = ParseUser.getCurrentUser();
     private boolean isPrivate;
+    public final static String TAG = ProfileFragment.class.getName();  // tag for logging from this activity
+    final ParseUser mUser = ParseUser.getCurrentUser();
+    final AppUtil mUtil = new AppUtil();
+
+    // For database:
+    PostRepository mPostRepository;
+    UserRepository mUserRepository;
+    StatRepository mStatRepository;
+    UserWrapper mUserWrapper;
+    StatWrapper mStatWrapper;
+    List<PostWrapper> mPostWrapperDB;
 
     // For post feed:
     ArrayList<Object> mObjects;
     ArrayList<Post> mPosts;
+    ArrayList<PostWrapper> mPostWrappers;
     RecyclerView mLayout;
     MultiViewAdapter mMultiAdapter;
-
-    // For Room persistence implementation:
-    PostRepository postRepository;
 
     // For stats view:
     HashMap<String, Integer> mCities;  // Contains the cities and number of times visited by user
     HashMap<String, Integer> mCountries;  // Contains the countries and number of times visited by user
     HashMap<String, Integer> mContinents;  // Contains the continents and number of times visited by user
-    ArrayList<HashMap<String, Integer>> mStats;  // Stats to be passed to adapter
+    ArrayList<HashMap<String, Integer>> mStats;  // StatWrapper to be passed to adapter
+
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_profile, container, false);
-        //postRepository = new PostRepository(getActivity().getApplicationContext());
-        setUpToolbar(v);
+        mLayout = v.findViewById(R.id.rvPosts);
+
+        setUpDB();
 
         // Populate stat maps and get posts
         mObjects = new ArrayList<>();
+        mPostWrappers = new ArrayList<>();
         mCities = new HashMap<>();
         mCountries = new HashMap<>();
         mContinents = new HashMap<>();
         mPosts = new ArrayList<>();
         mStats = new ArrayList<>();
 
-        // Get posts
-        getPosts();
-        mObjects.add(user);
+        // Get posts from DB or Network
+        if (mUtil.haveNetworkConnection(getActivity())) {
+            StatDatabase.getStatDatabase(getContext()).clearAllTables();
+            PostDatabase.getPostDatabase(getContext()).clearAllTables();
+            UserDatabase.getUserDatabase(getContext()).clearAllTables();
+            setUpToolbar(v);
+            getPosts();
+        } else {
+            // Add User
+            if (mUserWrapper != null) {
+                mObjects.add(mUserWrapper);
+            }
+            // Add Stats
+            if(mStatWrapper!=null){
+                mObjects.add(mStatWrapper);
+            }
+            // Add posts of no posts
+            if (mPostRepository.getPosts().size() == 0) {
+                mObjects.add("No Posts!");
+            } else {
+                for (PostWrapper p : mPostRepository.getPosts()) {
+                    mPostWrappers.add(p);
+                }
+                mObjects.addAll(mPostWrappers);
+            }
+        }
 
         // For post feed view:
         mMultiAdapter = new MultiViewAdapter(getContext(), mObjects);
-        mLayout = v.findViewById(R.id.rvPosts);
         mLayout.setLayoutManager(new LinearLayoutManager(getContext()));
         mLayout.setAdapter(mMultiAdapter);
 
         return v;
+    }
+
+    /**
+     * Helper method to set up database
+     */
+    private void setUpDB(){
+        mPostRepository = new PostRepository(getActivity().getApplicationContext());
+        mPostWrapperDB = mPostRepository.getPosts();
+        mUserRepository = new UserRepository(getActivity().getApplicationContext());
+        mUserRepository.insertUser(new UserWrapper(ParseUser.getCurrentUser()));
+        mUserWrapper = mUserRepository.getUser();
+        mStatRepository = new StatRepository(getActivity().getApplicationContext());
+        mStatWrapper = mStatRepository.getStats();
     }
 
     @Override
@@ -99,6 +152,7 @@ public class ProfileFragment extends Fragment {
         if (resultCode == AppConstants.DELETE_POST_FROM_PROFILE) {
             int position = data.getIntExtra(AppConstants.position, 0);
             mObjects.remove(position);
+            mMultiAdapter.notifyItemRemoved(position);
             mMultiAdapter.notifyItemChanged(position);
         }
         // TODO: fix so UI updates
@@ -126,6 +180,10 @@ public class ProfileFragment extends Fragment {
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     public boolean onMenuItemClick(MenuItem item) {
                         if (item.getItemId() == R.id.logout){
+                            // Destory instances of DB's on logout
+                            StatDatabase.getStatDatabase(getContext()).clearAllTables();
+                            PostDatabase.getPostDatabase(getContext()).clearAllTables();
+                            UserDatabase.getUserDatabase(getContext()).clearAllTables();
                             ParseUser.logOut();
                             Intent intent = new Intent(getActivity(), LoginActivity.class);
                             startActivity(intent);
@@ -149,7 +207,10 @@ public class ProfileFragment extends Fragment {
         });
     }
 
-    // Get posts
+
+    /**
+     * Helper method to get posts from parse as well as populate stat maps
+     */
     private void getPosts() {
         final Post.Query postsQuery = new Post.Query();
         // Only add current user's posts
@@ -165,8 +226,8 @@ public class ProfileFragment extends Fragment {
                 if (e == null) {
                     for (int i = 0; i < objects.size(); i++) {
                         final Post post = objects.get(i);
-                        // Wrap post and add to repo & DB
-                       // postRepository.insertPost(new PostWrapper(post));
+                        mPostRepository.insertPost(new PostWrapper(post));
+                        // mStatRepository.insertStat(new StatWrapper());
                         // Get post stats and update user stats
                         mPosts.add(post);
                         // Fill HashMaps and handle null values
@@ -206,10 +267,12 @@ public class ProfileFragment extends Fragment {
                     AppUtil.logError(getContext(), TAG, "Error querying posts", e, true);
                 }
 
+                mObjects.add(mUser);
                 mStats.add(mCities);
                 mStats.add(mCountries);
                 mStats.add(mContinents);
                 mObjects.add(mStats);
+                mStatRepository.insertStat(new StatWrapper(mStats, mUser));
                 mMultiAdapter.notifyDataSetChanged();
 
                 if (mPosts.size() > 0 && mPosts != null) {
@@ -220,6 +283,7 @@ public class ProfileFragment extends Fragment {
                     mObjects.add("No posts!");
                     mMultiAdapter.notifyDataSetChanged();
                 }
+
             }
         });
     }

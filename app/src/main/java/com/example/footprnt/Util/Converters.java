@@ -6,7 +6,7 @@
  */
 package com.example.footprnt.Util;
 
-import android.arch.persistence.room.TypeConverter;
+import androidx.room.TypeConverter;
 
 import java.text.DateFormat;
 import java.text.ParseException;

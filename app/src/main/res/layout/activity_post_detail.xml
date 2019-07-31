@@ -10,13 +10,13 @@
     android:orientation="vertical"
     android:padding="0dp">
 
-    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/constraintlayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".Map.PostDetailActivity">
 
-        <android.support.v7.widget.Toolbar
+        <androidx.appcompat.widget.Toolbar
             android:id="@+id/topNav3"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
@@ -199,5 +199,5 @@
             app:srcCompat="@android:color/black" />
 
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

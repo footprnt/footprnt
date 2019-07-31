@@ -30,13 +30,13 @@ import okhttp3.Response;
 public class YelpService {
     /**
      * Finds <query> in <location>
-     *
      * @param location location to query in
      * @param query    type of query to make
      * @param callback response from yelp
      */
     public static void findBusinesses(String location, String query, Callback callback) {
         String url = DiscoverConstants.YELP_BASE_URL + location + "&term=" + query;
+        // todo set limit
         Request request = new Request.Builder()
                 .url(url)
                 .header("Authorization", DiscoverConstants.YELP_TOKEN)

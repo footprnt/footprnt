@@ -4,12 +4,14 @@
  * July 2019
  * Copyright ©2019 Footprnt Inc.
  */
-package com.example.footprnt.Models;
+package com.example.footprnt.Database.Models;
 
-import android.arch.persistence.room.ColumnInfo;
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.PrimaryKey;
-import android.support.annotation.NonNull;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+import androidx.annotation.NonNull;
+
+import com.example.footprnt.Models.Post;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -22,6 +24,7 @@ import java.util.Date;
  */
 @Entity(tableName = "posts")
 public class PostWrapper implements Serializable {
+
     // Attributes of PostWrapper:
     @PrimaryKey
     @NonNull
@@ -57,6 +60,9 @@ public class PostWrapper implements Serializable {
     @ColumnInfo(name = "username")
     public String username;
 
+    @ColumnInfo(name = "title")
+    public String title;
+
 
     /**
      * Default Constructor
@@ -86,6 +92,15 @@ public class PostWrapper implements Serializable {
             imageUrl = "";
         }
         username = post.getUser().getUsername();
+        title = post.getTitle();
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getObjectId() {
