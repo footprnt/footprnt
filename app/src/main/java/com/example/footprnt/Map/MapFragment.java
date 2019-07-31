@@ -17,17 +17,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
-import androidx.viewpager.widget.ViewPager;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.PopupMenu;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.view.KeyEvent;
@@ -45,6 +34,18 @@ import android.widget.Scroller;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.PopupMenu;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.viewpager.widget.ViewPager;
 
 import com.arsy.maps_library.MapRipple;
 import com.bumptech.glide.Glide;
@@ -663,7 +664,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
      * Configures on map long press filter menu animation and sound
      * @param latLng location to launch create post or view feed
      */
-    private void configureFilterMenu(final LatLng latLng) {
+    private void configureFilterMenu(LatLng latLng) {
         final Marker m = mMap.addMarker(new MarkerOptions().position(latLng).icon(MapConstants.DEFAULT_MARKER));
         mBubble.start();
         mFilterMenuLayout.setVisibility(View.VISIBLE);
@@ -680,7 +681,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                     ViewPager viewPager = (ViewPager) getActivity().findViewById(R.id.viewpager);
                     viewPager.setCurrentItem(1);
                     Fragment viewPagerAdapter = ((ViewPagerAdapter) viewPager.getAdapter()).getItem(1);
-                    ((DiscoverFragment) viewPagerAdapter).setDataFromMapFragment(latLng);
+                    ((DiscoverFragment) viewPagerAdapter).setDataFromMapFragment(mTappedLocation);
                 }
                 else if (MapConstants.MENU_ITEMS[position] == MapConstants.CURRENT) {
                     if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -691,8 +692,8 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 }
                 else if (MapConstants.MENU_ITEMS[position] == MapConstants.STREET){
                     Intent i = new Intent(getActivity(), StreetViewActivity.class);
-                    i.putExtra(MapConstants.LATITUDE, latLng.latitude);
-                    i.putExtra(MapConstants.LONGITUDE, latLng.longitude);
+                    i.putExtra(MapConstants.LATITUDE, mTappedLocation.latitude);
+                    i.putExtra(MapConstants.LONGITUDE, mTappedLocation.longitude);
                     startActivityForResult(i, 20);
                 }
             }
