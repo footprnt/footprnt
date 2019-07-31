@@ -15,6 +15,7 @@ public class AppConstants {
     // For Database:
     public static final String POST_DB_NAME = "db_posts";
     public static final String STATS_DB_NAME = "db_stats";
+    public static final String USER_DB_NAME = "db_user";
 
     // For getting attributes in database:
     public static String profileImage = "profileImg";
