@@ -85,5 +85,7 @@ android {
         implementation "android.arch.persistence.room:common:$arch_version"
         implementation "android.arch.lifecycle:livedata:$arch_version"
         implementation "android.arch.lifecycle:extensions:$arch_version"
+        // For Facebook Login
+        implementation 'com.facebook.android:facebook-android-sdk:[5,6)'
     }
 }
