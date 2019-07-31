@@ -44,4 +44,8 @@ public class MapConstants {
     // Intent variables
     public static String LATITUDE = "latitude";
     public static String LONGITUDE = "longitude";
+
+    // Privacy settings
+    public static String PLACEHOLDER_IMAGE = "http://via.placeholder.com/300.png";
+    public static String ANONYMOUS = "Anonymous User";
 }

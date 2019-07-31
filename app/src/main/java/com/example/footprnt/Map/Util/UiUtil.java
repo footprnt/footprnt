@@ -116,7 +116,7 @@ public class UiUtil {
         }
         // set user
         if (privacy) {
-            holder.tvUser.setText("Anonymous User");
+            holder.tvUser.setText(MapConstants.ANONYMOUS);
         } else {
             holder.tvUser.setText(post.getUser().getUsername());
         }
@@ -156,7 +156,7 @@ public class UiUtil {
             String userImgUrl = post.getUser().getParseFile("profileImg").getUrl();
             Glide.with(context).load(userImgUrl).apply(RequestOptions.circleCropTransform()).into(holder.ivUserPicture);
         } else {
-            Glide.with(context).load("http://via.placeholder.com/300.png").apply(RequestOptions.circleCropTransform()).into(holder.ivUserPicture);
+            Glide.with(context).load(MapConstants.PLACEHOLDER_IMAGE).apply(RequestOptions.circleCropTransform()).into(holder.ivUserPicture);
         }
     }
 
