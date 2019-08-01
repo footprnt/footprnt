@@ -63,7 +63,6 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
-
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -103,7 +102,6 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
         mNavView.setSelectedItemId(R.id.navigation_home);
-
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -124,23 +122,24 @@ public class HomeActivity extends AppCompatActivity {
             public void onPageScrollStateChanged(int state) {
             }
         });
-
         setupViewPager(mViewPager);
     }
-
 
     @Override
     public void onBackPressed() {
     }
 
     /**
-     * Hides bottom nav bar
+     * Helper method to hide bottom nav bar
      */
     public void hideBottomNav() {
         mShadow.setVisibility(View.INVISIBLE);
         mNavView.setVisibility(View.INVISIBLE);
     }
 
+    /**
+     * Helper method to show bottom nav bar
+     */
     public void showBottomNav() {
         mShadow.setVisibility(View.VISIBLE);
         mNavView.setVisibility(View.VISIBLE);

@@ -9,7 +9,6 @@ package com.example.footprnt.Util;
 import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
-import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Environment;
@@ -17,10 +16,6 @@ import android.text.format.DateUtils;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.io.File;
@@ -79,9 +74,10 @@ public class AppUtil {
 
     /**
      * Helper function to get the photo file uri
+     *
      * @param context
      * @param fileName
-     * @return
+     * @return photo file Uri
      */
     public static File getPhotoFileUri(Context context, String fileName) {
         File mediaStorageDir = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), AppConstants.APP_TAG);
@@ -95,9 +91,11 @@ public class AppUtil {
     }
 
     /**
+     * Helper function to get address from point
+     *
      * @param context
-     * @param point
-     * @return
+     * @param point   with latitude and longitude
+     * @return address
      */
     public static String getAddress(Context context, LatLng point) {
         try {
@@ -118,17 +116,6 @@ public class AppUtil {
             return null;
         }
         return null;
-    }
-
-    /**
-     * @param map
-     * @param location
-     */
-    public static void centreMapOnLocation(GoogleMap map, Location location) {
-        LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());
-        BitmapDescriptor defaultMarker =
-                BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
-        map.animateCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 12));
     }
 
     /**

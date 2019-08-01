@@ -137,6 +137,9 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Helper method to set up connecting with Facebook
+     */
     private void setUpFacebookLogin() {
         mFacebookLoginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -163,6 +166,10 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Helper method to handle valid user signing up with Facebook
+     * @param user
+     */
     private void handleFacebookUser(final ParseUser user) {
         if (user.isNew()) {
             GraphRequest request = GraphRequest.newMeRequest(AccessToken.getCurrentAccessToken(),

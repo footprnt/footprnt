@@ -131,12 +131,9 @@ public class SignUpActivity extends AppCompatActivity {
         return res[0];
     }
 
-
     private ParseQuery<ParseUser> getUserByUsername(String username) {
         ParseQuery<ParseUser> query = ParseUser.getQuery();
         query.whereEqualTo("username", username);
         return query;
     }
-
-
 }

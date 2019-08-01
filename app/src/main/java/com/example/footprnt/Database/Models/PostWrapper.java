@@ -63,12 +63,10 @@ public class PostWrapper implements Serializable {
     @ColumnInfo(name = "title")
     public String title;
 
-
     /**
      * Default Constructor
      */
     public PostWrapper() {
-
     }
 
     /**
