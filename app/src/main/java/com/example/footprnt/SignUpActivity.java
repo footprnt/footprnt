@@ -6,11 +6,16 @@
  */
 package com.example.footprnt;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -53,40 +58,44 @@ public class SignUpActivity extends AppCompatActivity {
         mSubmitNewUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ParseUser user = new ParseUser();
-                String newUsername = mUsernameInput.getText().toString();
-                if (userNameDoesNotExist(newUsername)) {
-                    user.setUsername(mUsernameInput.getText().toString());
-                } else {
-                    Toast.makeText(SignUpActivity.this, "Username already exists", Toast.LENGTH_LONG).show();
-                    return;
-                }
-                user.put(AppConstants.description, mDescription.getText().toString());
-                if (mPasswordInput.getText().toString().equals(mPasswordConfirm.getText().toString())) {
-                    user.setPassword(mPasswordInput.getText().toString());
-                } else {
-                    Toast.makeText(SignUpActivity.this, "Passwords must match", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                String newEmail = mEmailInput.getText().toString();
-                if (AppUtil.isValidEmail(newEmail)) {
-                    user.setEmail(newEmail);
-                } else {
-                    Toast.makeText(SignUpActivity.this, "Please enter a valid email", Toast.LENGTH_SHORT).show();
-                    return;
-                }
+                signup();
+            }
+        });
+    }
 
-                user.put(AppConstants.phone, mPhoneInput.getText().toString());
-                user.signUpInBackground(new SignUpCallback() {
-                    @Override
-                    public void done(com.parse.ParseException e) {
-                        if (e == null) {
-                            finish();
-                        } else {
-                            e.printStackTrace();
-                        }
-                    }
-                });
+    public void signup(){
+        ParseUser user = new ParseUser();
+        String newUsername = mUsernameInput.getText().toString();
+        if (userNameDoesNotExist(newUsername)) {
+            user.setUsername(mUsernameInput.getText().toString());
+        } else {
+            Toast.makeText(SignUpActivity.this, "Username already exists", Toast.LENGTH_LONG).show();
+            return;
+        }
+        user.put(AppConstants.description, mDescription.getText().toString());
+        if (mPasswordInput.getText().toString().equals(mPasswordConfirm.getText().toString())) {
+            user.setPassword(mPasswordInput.getText().toString());
+        } else {
+            Toast.makeText(SignUpActivity.this, "Passwords must match", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        String newEmail = mEmailInput.getText().toString();
+        if (AppUtil.isValidEmail(newEmail)) {
+            user.setEmail(newEmail);
+        } else {
+            Toast.makeText(SignUpActivity.this, "Please enter a valid email", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        user.put(AppConstants.phone, mPhoneInput.getText().toString());
+        user.signUpInBackground(new SignUpCallback() {
+            @Override
+            public void done(com.parse.ParseException e) {
+                if (e == null) {
+                    finish();
+                } else {
+                    e.printStackTrace();
+                }
             }
         });
     }
@@ -101,6 +110,17 @@ public class SignUpActivity extends AppCompatActivity {
         mEmailInput = findViewById(R.id.email);
         mSubmitNewUser = findViewById(R.id.btnReset);
         mPasswordConfirm = findViewById(R.id.etConfirmEmail);
+        mPasswordInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    signup();
+                }
+                InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
+                return false;
+            }
+        });
         mDescription = findViewById(R.id.etDescription);
     }
 

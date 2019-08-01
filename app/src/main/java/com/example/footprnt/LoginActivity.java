@@ -6,13 +6,17 @@
  */
 package com.example.footprnt;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -114,6 +118,19 @@ public class LoginActivity extends AppCompatActivity {
         mUsernameInput = findViewById(R.id.username);
         mForgotPassword = findViewById(R.id.forgotPassword);
         mPasswordInput = findViewById(R.id.password);
+        mPasswordInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    final String username = mUsernameInput.getText().toString();
+                    final String password = mPasswordInput.getText().toString();
+                    login(username, password);
+                }
+                InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
+                return false;
+            }
+        });
         mLoginBtn = findViewById(R.id.btn_login);
         mSignUpBtn = findViewById(R.id.btn_signup);
         mFacebookLoginBtn = findViewById(R.id.btn_fb_login);
