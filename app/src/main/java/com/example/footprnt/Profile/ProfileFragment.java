@@ -171,7 +171,16 @@ public class ProfileFragment extends Fragment {
         settings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                isPrivate = (boolean) ParseUser.getCurrentUser().get("private");
+                Object privacySetting = ParseUser.getCurrentUser().get("private");
+                if (privacySetting == null) {
+                    isPrivate = false;
+                } else {
+                    if ((Boolean) privacySetting == true){
+                        isPrivate = true;
+                    } else {
+                        isPrivate = false;
+                    }
+                }
                 PopupMenu popup = new PopupMenu(getActivity(), settings);
                 popup.getMenuInflater().inflate(R.menu.popup_menu, popup.getMenu());
                 if (isPrivate) {

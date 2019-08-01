@@ -23,4 +23,5 @@
     <string name="post_incomplete">You must have title and snippet</string>
     <string name="facebook_app_id">340294903574165</string>
     <string name="fb_login_protocol_scheme">fb340294903574165</string>
+    <string name = "photo_error">Invalid media type</string>
 </resources>
