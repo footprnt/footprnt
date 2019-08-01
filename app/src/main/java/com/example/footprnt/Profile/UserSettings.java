@@ -14,12 +14,14 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import androidx.core.content.FileProvider;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 
 import com.bumptech.glide.Glide;
 import com.example.footprnt.R;
@@ -128,32 +130,36 @@ public class UserSettings extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, final Intent data) {
-        if (requestCode == AppConstants.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
-            if (resultCode == this.RESULT_OK) {
-                Bitmap takenImage = BitmapFactory.decodeFile(mPhotoFile.getAbsolutePath());
-                mIvProfileImage.setImageBitmap(takenImage);
-                File photoFile = mAppUtil.getPhotoFileUri(this, AppConstants.photoFileName);
-                mParseFile = new ParseFile(photoFile);
-            } else {
-                mParseFile = null;
-            }
-        } else {
-            if (resultCode == this.RESULT_OK) {
-                Bitmap bitmap = null;
-                Uri selectedImage = data.getData();
-                try {
-                    bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
-                } catch (Exception e) {
+        try {
+            if (requestCode == AppConstants.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+                if (resultCode == this.RESULT_OK) {
+                    Bitmap takenImage = BitmapFactory.decodeFile(mPhotoFile.getAbsolutePath());
+                    mIvProfileImage.setImageBitmap(takenImage);
+                    File photoFile = mAppUtil.getPhotoFileUri(this, AppConstants.photoFileName);
+                    mParseFile = new ParseFile(photoFile);
+                } else {
+                    mParseFile = null;
                 }
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, AppConstants.captureImageQuality, stream);
-                byte[] image = stream.toByteArray();
-                mParseFile = new ParseFile(AppConstants.profileImagePath, image);
-                final Bitmap finalBitmap = bitmap;
-                Glide.with(this).load(finalBitmap).into(mIvProfileImage);
             } else {
-                mParseFile = null;
+                if (resultCode == this.RESULT_OK) {
+                    Bitmap bitmap = null;
+                    Uri selectedImage = data.getData();
+                    try {
+                        bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
+                    } catch (Exception e) {
+                    }
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, AppConstants.captureImageQuality, stream);
+                    byte[] image = stream.toByteArray();
+                    mParseFile = new ParseFile(AppConstants.profileImagePath, image);
+                    final Bitmap finalBitmap = bitmap;
+                    Glide.with(this).load(finalBitmap).into(mIvProfileImage);
+                } else {
+                    mParseFile = null;
+                }
             }
+        } catch (Exception e){
+            Toast.makeText(this, R.string.photo_error, Toast.LENGTH_LONG).show();
         }
     }
 

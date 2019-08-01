@@ -11,6 +11,7 @@ import com.example.footprnt.Map.Util.UiUtil;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.R;
 import com.example.footprnt.Util.AppConstants;
+import com.parse.ParseUser;
 
 /**
  * Displays extended details of a post
@@ -27,7 +28,17 @@ public class PostDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_post_detail);
         Bundle bundle = getIntent().getExtras();
         final Post post = (Post) bundle.getSerializable(Post.class.getSimpleName());
-        boolean privacy = (boolean) post.getUser().get(AppConstants.privacy);
+        Boolean privacy;
+        Object privacySetting = ParseUser.getCurrentUser().get(AppConstants.privacy);
+        if (privacySetting == null) {
+            privacy = false;
+        } else {
+            if ((Boolean) privacySetting == true){
+                privacy = true;
+            } else {
+                privacy = false;
+            }
+        }
         ImageView mIvBackArrow = findViewById(R.id.ivBack2);
         mIvBackArrow.setOnClickListener(new View.OnClickListener() {
             @Override
