@@ -7,13 +7,18 @@
 package com.example.footprnt.Discover.Adapters;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.footprnt.Discover.Models.Business;
@@ -38,9 +43,12 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
 
     @NonNull
     @Override
-    public ListAdapter.BusinessViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_business, parent, false);
-        BusinessViewHolder viewHolder = new BusinessViewHolder(view);
+    public BusinessViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        CardView card = (CardView) LayoutInflater.from(parent.getContext()).inflate(R.layout.item_business, parent, false);
+        card.setCardBackgroundColor(Color.parseColor("#050505"));
+        card.setMaxCardElevation(0);
+        card.setRadius(30);
+        BusinessViewHolder viewHolder = new BusinessViewHolder(card);
         return viewHolder;
     }
 
@@ -55,6 +63,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
     }
 
     public static class BusinessViewHolder extends RecyclerView.ViewHolder {
+        public View cardView;
         ImageView ivBusinessImage;
         TextView tvBusinessName;
         TextView tvBusinessCategory;
@@ -62,16 +71,34 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
 
         private Context mContext;
 
-        public BusinessViewHolder(View itemView) {
+        public BusinessViewHolder(final View itemView) {
             super(itemView);
+            cardView = itemView;
             mContext = itemView.getContext();
             ivBusinessImage = itemView.findViewById(R.id.ivBusinessImage);
             tvBusinessName = itemView.findViewById(R.id.tvBusinessName);
             tvBusinessCategory = itemView.findViewById(R.id.tvBusinessCategory);
             tvBusinessRating = itemView.findViewById(R.id.tvBusinessRating);
+            cardView.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    // item clicked
+                    Business business = (Business) v.getTag();
+    /*                int position = getAdapterPosition();*/
+                    final View popupView = LayoutInflater.from(mContext).inflate(R.layout.fragment_business_details, null);
+                    final PopupWindow popupWindow = new PopupWindow(popupView, WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
+                    popupWindow.showAtLocation(itemView, Gravity.CENTER, 0, 50);
+                    ivBusinessImage = popupView.findViewById(R.id.ivBusinessImage);
+                    tvBusinessName = popupView.findViewById(R.id.tvBusinessName);
+                    tvBusinessCategory = popupView.findViewById(R.id.tvBusinessCategory);
+                    tvBusinessRating = popupView.findViewById(R.id.tvBusinessRating);
+                    bindBusiness(business);
+                }
+            });
         }
 
         public void bindBusiness(Business business) {
+            cardView.setTag(business);
             tvBusinessName.setText(business.getName());
             tvBusinessCategory.setText(business.getCategories().get(0));
             tvBusinessRating.setText(String.format("Rating: %s/5", business.getRating()));
