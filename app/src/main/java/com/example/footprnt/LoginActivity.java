@@ -7,23 +7,38 @@
 package com.example.footprnt;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.StrictMode;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.footprnt.Util.AppConstants;
+import com.facebook.AccessToken;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.Profile;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 import com.parse.facebook.ParseFacebookUtils;
 
-import java.util.Arrays;
-import java.util.List;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 
 /**
  * Handles all login activity
@@ -34,19 +49,26 @@ import java.util.List;
  */
 public class LoginActivity extends AppCompatActivity {
 
+    private final String TAG = LoginActivity.class.getSimpleName();
     private EditText mUsernameInput;
     private EditText mPasswordInput;
     private TextView mForgotPassword;
     private Button mLoginBtn;
     private Button mSignUpBtn;
     private Button mFacebookLoginBtn;
-    private final List<String> permissions = Arrays.asList(AppConstants.PUBLIC_PROFILE, AppConstants.email);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // For querying on main thread
+        if (android.os.Build.VERSION.SDK_INT > 9) {
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+        }
+
+        // Set views
         mUsernameInput = findViewById(R.id.username);
         mForgotPassword = findViewById(R.id.forgotPassword);
         mPasswordInput = findViewById(R.id.password);
@@ -54,13 +76,14 @@ public class LoginActivity extends AppCompatActivity {
         mSignUpBtn = findViewById(R.id.btn_signup);
         mFacebookLoginBtn = findViewById(R.id.btn_fb_login);
 
+        // Persisted login
         ParseUser currentUser = ParseUser.getCurrentUser();
         if (currentUser != null) {
             final Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
             startActivity(intent);
         }
 
-        // TODO: implement
+        // TODO: implement forgot password
         mForgotPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -86,34 +109,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        mFacebookLoginBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loginFB();
-            }
-        });
-    }
-
-    /**
-     * Helper method to login/connect with Facebook
-     */
-    private void loginFB() {
-        ParseFacebookUtils.logInWithReadPermissionsInBackground(this, permissions, new LogInCallback() {
-            @Override
-            public void done(ParseUser user, ParseException err) {
-                if (user == null) {
-                    Toast.makeText(getApplicationContext(), "Error logging in with Facebook", Toast.LENGTH_LONG).show();
-                } else if (user.isNew()) {
-                    final Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                    startActivity(intent);
-                    Toast.makeText(getApplicationContext(), "Success", Toast.LENGTH_LONG).show();
-                } else {
-                    final Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                    startActivity(intent);
-                    Toast.makeText(getApplicationContext(), "Success", Toast.LENGTH_LONG).show();
-                }
-            }
-        });
+        setUpFacebookLogin();
     }
 
     /**
@@ -134,9 +130,85 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    private void setUpFacebookLogin() {
+        mFacebookLoginBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ArrayList<String> permissions = new ArrayList();
+                permissions.add(AppConstants.email);
+                permissions.add(AppConstants.PUBLIC_PROFILE);
+                ParseFacebookUtils.logInWithReadPermissionsInBackground(LoginActivity.this,
+                        permissions, new LogInCallback() {
+                            @Override
+                            public void done(ParseUser user, ParseException err) {
+                                if (err != null) {
+                                    Log.d(TAG, "Error occurred" + err.toString());
+                                    err.printStackTrace();
+                                } else if (user == null) {
+                                    Log.d(TAG, "User cancelled the Facebook login.");
+                                } else {
+                                    handleFacebookUser(user);
+                                }
+                            }
+                        }
+                );
+            }
+        });
+    }
+
+    private void handleFacebookUser(final ParseUser user) {
+        if (user.isNew()) {
+            GraphRequest request = GraphRequest.newMeRequest(AccessToken.getCurrentAccessToken(),
+                    new GraphRequest.GraphJSONObjectCallback() {
+                        @Override
+                        public void onCompleted(JSONObject object, GraphResponse response) {
+                            try {
+                                // Set up new Facebook user
+                                user.put(AppConstants.username, String.valueOf(object.getString(AppConstants.name)));
+                                // TODO: set description?
+                                user.put(AppConstants.description,"");
+                                URL picUrl = new URL(String.format("https://graph.facebook.com/%s/picture?type=large", Profile.getCurrentProfile().getId()));
+                                Bitmap bitmap = BitmapFactory.decodeStream(picUrl.openConnection().getInputStream());
+                                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                                bitmap.compress(Bitmap.CompressFormat.JPEG, AppConstants.captureImageQuality, byteArrayOutputStream);
+                                byte[] imageByte = byteArrayOutputStream.toByteArray();
+                                ParseFile parseFile = new ParseFile(AppConstants.profileImagePathJPEG, imageByte);
+                                // Save Facebook profile to DB
+                                if (parseFile != null) {
+                                    user.put(AppConstants.profileImage, parseFile);
+                                }
+                                user.saveInBackground(new SaveCallback() {
+                                    @Override
+                                    public void done(ParseException e) {
+                                        Intent it = new Intent(LoginActivity.this,
+                                                HomeActivity.class);
+                                        startActivity(it);
+                                    }
+                                });
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            } catch (MalformedURLException e) {
+                                e.printStackTrace();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                    });
+            request.executeAsync();
+        } else {
+            // Returning user - go to Map
+            startActivity(new Intent(LoginActivity.this,
+                    HomeActivity.class));
+        }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        // Required for making Facebook login work
         ParseFacebookUtils.onActivityResult(requestCode, resultCode, data);
     }
 }
+
+

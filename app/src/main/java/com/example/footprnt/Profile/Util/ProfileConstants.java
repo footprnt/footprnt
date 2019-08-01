@@ -22,5 +22,6 @@ public class ProfileConstants {
     public static final int totalNumCountries = 195;
     public static final int totalNumContinents = 7;
 
-
+    // For no posts object to add to adapter:
+    public static final String noPosts = "No Posts!";
 }

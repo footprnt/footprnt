@@ -30,6 +30,8 @@ public class AppConstants {
     public static String objectId = "objectId";
     public static String description = "description";
     public static final String location = "location";
+    public static final String username = "username";
+    public static final String name = "name";
     public static final String title = "title";
     public static final String country = "country";
     public static final String city = "city";
@@ -49,6 +51,7 @@ public class AppConstants {
     public static String photoFileName = "photo.jpg";
     public static String fileProvider = "com.example.fileprovider";
     public static String profileImagePath = "profPic.jpg";  // Used in taking new profile picture
+    public static String profileImagePathJPEG = "profPic.jpeg";
     public static String imagePath = "image.jpg";  // User in posting a new image
     public static int captureImageQuality = 100;
 
