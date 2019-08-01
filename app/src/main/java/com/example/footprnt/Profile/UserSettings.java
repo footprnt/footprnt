@@ -42,7 +42,6 @@ import java.io.File;
  */
 public class UserSettings extends AppCompatActivity {
 
-    AppUtil mAppUtil = new AppUtil();
     File mPhotoFile;
     ParseFile mParseFile;
     final ParseUser mUser = ParseUser.getCurrentUser();
@@ -50,7 +49,6 @@ public class UserSettings extends AppCompatActivity {
     TextView mTvEditPhoto;
     ImageView mIvBackArrow;
     ImageView mIvSave;
-    TextView mChangePassword;
     EditText mEtUsername;
     EditText mEtNumber;
     EditText mEtEmail;
@@ -82,7 +80,7 @@ public class UserSettings extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         // Take Photo
                         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        mPhotoFile = mAppUtil.getPhotoFileUri(UserSettings.this, AppConstants.photoFileName);
+                        mPhotoFile = AppUtil.getPhotoFileUri(UserSettings.this, AppConstants.photoFileName);
                         Uri fileProvider = FileProvider.getUriForFile(UserSettings.this, AppConstants.fileProvider, mPhotoFile);
                         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
                         if (intent.resolveActivity(UserSettings.this.getPackageManager()) != null) {
@@ -102,7 +100,6 @@ public class UserSettings extends AppCompatActivity {
                 finish();
             }
         });
-
         mIvSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -134,7 +131,7 @@ public class UserSettings extends AppCompatActivity {
                 if (resultCode == this.RESULT_OK) {
                     Bitmap takenImage = BitmapFactory.decodeFile(mPhotoFile.getAbsolutePath());
                     mIvProfileImage.setImageBitmap(takenImage);
-                    File photoFile = mAppUtil.getPhotoFileUri(this, AppConstants.photoFileName);
+                    File photoFile = AppUtil.getPhotoFileUri(this, AppConstants.photoFileName);
                     mParseFile = new ParseFile(photoFile);
                 } else {
                     mParseFile = null;

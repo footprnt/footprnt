@@ -132,5 +132,4 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
             }
         });
     }
-
 }

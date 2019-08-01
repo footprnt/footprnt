@@ -1,5 +1,5 @@
 /*
- * MapUtil.java
+ * AppUtil.java
  * v1.0
  * July 2019
  * Copyright ©2019 Footprnt Inc.
@@ -78,11 +78,12 @@ public class AppUtil {
     }
 
     /**
+     * Helper function to get the photo file uri
      * @param context
      * @param fileName
      * @return
      */
-    public File getPhotoFileUri(Context context, String fileName) {
+    public static File getPhotoFileUri(Context context, String fileName) {
         File mediaStorageDir = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), AppConstants.APP_TAG);
 
         if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()) {

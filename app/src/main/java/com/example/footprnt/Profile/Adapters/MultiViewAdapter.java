@@ -465,7 +465,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             vh6.getProgressBar().setVisibility(View.INVISIBLE);
         }
     }
-    
+
     /**
      * Method to configure the StatWrapper ViewHolder (Stat Object from DB)
      *
