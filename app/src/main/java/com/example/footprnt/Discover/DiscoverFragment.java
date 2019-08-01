@@ -21,6 +21,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.footprnt.Discover.Adapters.ListAdapter;
 import com.example.footprnt.Discover.Models.Business;
@@ -49,7 +50,8 @@ import static android.content.Context.LOCATION_SERVICE;
  * @version 1.0
  */
 public class DiscoverFragment extends Fragment implements LocationListener {
-    public static final String TAG = DiscoverFragment.class.getSimpleName();
+        public static final String TAG = DiscoverFragment.class.getSimpleName();
+    private SwipeRefreshLayout mSwipeContainer;
     RecyclerView rvRestaurants;
     RecyclerView rvMuseums;
     RecyclerView rvHotels;
@@ -69,6 +71,7 @@ public class DiscoverFragment extends Fragment implements LocationListener {
     private ArrayList<ListAdapter> arrAdapters;
     private ArrayList<ArrayList<Business>> arrBusinesses;
     private Location mCurrLocation;
+    private Location myLocation;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
@@ -81,17 +84,30 @@ public class DiscoverFragment extends Fragment implements LocationListener {
         arrRecyclerViews = new ArrayList<>();
         arrAdapters = new ArrayList<>();
         arrBusinesses = new ArrayList<>();
-
-        // Fill up lists with query
         mRestaurants = new ArrayList<>();
         mMuseums = new ArrayList<>();
         mHotels = new ArrayList<>();
         mClubs = new ArrayList<>();
-        prepareArrayLists();
-        populateView();
+        mSwipeContainer = view.findViewById(R.id.swipeContainer2);
+        mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                RefreshBusinesses();
+            }
+        });
+        mSwipeContainer.setColorSchemeResources(R.color.refresh_progress_1,
+                R.color.refresh_progress_2,
+                R.color.refresh_progress_3,
+                R.color.refresh_progress_4,
+                R.color.refresh_progress_5);
         return view;
     }
-
+    public void RefreshBusinesses() {
+        arrAdapters.clear();
+        prepareArrayLists();
+        populateView();
+        mSwipeContainer.setRefreshing(false);
+    }
     public void populateView() {
         for (int i = 0; i < arrQueries.size(); i++) {
             final int finalI = i;
@@ -104,19 +120,18 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                     LocationManager locationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
                     Criteria criteria = new Criteria();
                     Location currLocation = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
-                    if (currLocation != null){
+                    if (currLocation != null) {
                         address = AppUtil.getAddress(getContext(), new LatLng(currLocation.getLatitude(), currLocation.getLongitude()));
                     } else {
                         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5, this);
-                        // TODO: fix this - just added because app crash
-                        if(mCurrLocation!=null) {
+                        if (mCurrLocation != null) {
                             address = AppUtil.getAddress(getContext(), new LatLng(mCurrLocation.getLatitude(), mCurrLocation.getLongitude()));
+
                         } else {
-                            address = "Scottsdale";
+                            address = "1 Hacker WayMenlo Park, CA 94025";
                         }
                     }
-                }
-                else {
+                } else {
                     Toast.makeText(getContext(), "No location permission", Toast.LENGTH_LONG).show();
                     address = null;
                 }
@@ -127,7 +142,6 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                     public void onFailure(Call call, IOException e) {
                         e.printStackTrace();
                     }
-
                     @Override
                     public void onResponse(Call call, Response response) {
                         ArrayList<Business> arrTemp = yelpService.processResults(response);
@@ -144,7 +158,6 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                                 arrRecyclerViews.get(finalI).setAdapter(arrAdapters.get(finalI));
                             }
                         });
-
                     }
                 });
             }
@@ -189,4 +202,5 @@ public class DiscoverFragment extends Fragment implements LocationListener {
     public void onProviderDisabled(String provider) {
         // not implemented
     }
+
 }
