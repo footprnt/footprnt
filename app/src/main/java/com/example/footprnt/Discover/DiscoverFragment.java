@@ -84,6 +84,7 @@ public class DiscoverFragment extends Fragment implements LocationListener {
     private Location mCurrLocation;
     private EditText mSearchText;
     FragmentActivity myContext;
+    private TextView mAddress;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
@@ -93,6 +94,7 @@ public class DiscoverFragment extends Fragment implements LocationListener {
         rvHotels = view.findViewById(R.id.rvHotels);
         rvClubs = view.findViewById(R.id.rvClubs);
         mSearchText = view.findViewById(R.id.searchText);
+        mAddress = view.findViewById(R.id.address);
         handleSearch();
         arrQueries = new ArrayList<>();
         arrRecyclerViews = new ArrayList<>();
@@ -152,6 +154,7 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                 }
             }
             if (address != null) {
+                mAddress.setText(address);
                 yelpService.findBusinesses(address, arrQueries.get(i), new Callback() {
                     @Override
                     public void onFailure(Call call, IOException e) {
