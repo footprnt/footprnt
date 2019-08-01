@@ -252,8 +252,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 }
             }
         } catch (Exception e){
-            Toast.makeText(getContext(), "Invalid media type", Toast.LENGTH_LONG).show();
-
+            Toast.makeText(getContext(), R.string.photo_error, Toast.LENGTH_LONG).show();
         }
     }
 
