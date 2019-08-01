@@ -8,13 +8,13 @@ package com.example.footprnt.Profile;
 
 import android.content.Intent;
 import android.os.Bundle;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import androidx.appcompat.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.example.footprnt.Models.Post;
@@ -22,6 +22,7 @@ import com.example.footprnt.Profile.Util.ProfileConstants;
 import com.example.footprnt.R;
 import com.example.footprnt.Util.AppConstants;
 import com.example.footprnt.Util.AppUtil;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -43,7 +44,6 @@ public class EditPost extends AppCompatActivity {
     FloatingActionButton mBtnDelete;
     FloatingActionButton mBtnSave;
     Post mPost;
-    AppUtil mAppUtil = new AppUtil();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +75,6 @@ public class EditPost extends AppCompatActivity {
         getWindow().setLayout((int) (width * ProfileConstants.widthRatio), (int) (height * ProfileConstants.heightRatio));
 
         // Delete post
-        // TODO: fix so it updates UI
         mBtnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -97,10 +96,8 @@ public class EditPost extends AppCompatActivity {
                         }
                     }
                 });
-
             }
         });
-
         mBtnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -115,21 +112,18 @@ public class EditPost extends AppCompatActivity {
                         finish();
                     }
                 });
-
             }
         });
-
     }
 
     /**
      * Helper method to set the views on the edit post page
      */
     private void setViews() {
-        String date = mAppUtil.getRelativeTimeAgo(mPost.getCreatedAt().toString());
+        String date = AppUtil.getRelativeTimeAgo(mPost.getCreatedAt().toString());
         mTvDate.setText(date);
         mEtTitle.setText(mPost.getTitle());
         mEtDescription.setText(mPost.getDescription());
-
         // Check for null values for either city, country, or continent
         StringBuilder sb = new StringBuilder();
         if (mPost.getCity() != null) {
@@ -141,7 +135,6 @@ public class EditPost extends AppCompatActivity {
         if (mPost.getContinent() != null) {
             sb.append(mPost.getContinent());
         }
-
         mEtLocation.setText(sb);
         if (mPost.getImage() != null) {
             mIvPicture.setVisibility(View.VISIBLE);

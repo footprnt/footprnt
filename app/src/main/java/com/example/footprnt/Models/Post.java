@@ -60,7 +60,6 @@ public class Post extends ParseObject implements Serializable {
      * @param title of post to set
      */
     public void setTitle(String title) {
-        //  this.title = title;
         put(AppConstants.title, title);
     }
 

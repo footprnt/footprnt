@@ -90,7 +90,7 @@
             android:text="time posted"
             android:textSize="10sp"
             card_view:layout_constraintBottom_toBottomOf="@+id/tvUser"
-            card_view:layout_constraintStart_toEndOf="@+id/textView3"
+            card_view:layout_constraintStart_toEndOf="@+id/tvNumber"
             card_view:layout_constraintTop_toTopOf="@+id/tvUser" />
 
         <TextView
@@ -151,7 +151,7 @@
             card_view:srcCompat="@drawable/ic_map" />
 
         <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/tvNumber"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"

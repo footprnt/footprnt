@@ -14,14 +14,15 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.palette.graphics.Palette;
 import androidx.recyclerview.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
@@ -57,14 +58,13 @@ import java.util.List;
 /**
  * Custom adapter to handle the multiple views on the profile page fragment
  *
- * @author Clarisa Leu-Rodriguez
+ * @author Clarisa Leu-Rodriguez, Jocelyn Shen
  */
 public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     Context mContext;
     ArrayList<Object> mItems;
     LayoutInflater mInflater;
-
 
     // Identifier for objects in items and which view to load:
     private final int USER_INFO = 0, POST = 1, STAT = 2, NO_POSTS = 3, POST_WRAPPER = 4, USER_WRAPPER = 5, STAT_WRAPPER = 6;
@@ -167,7 +167,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
      * and also sets up some private fields to be used by RecyclerView.
      *
      * @param viewHolder The type of RecyclerView.ViewHolder to populate
-     * @param position   Item position in the viewgroup.
+     * @param position   Item position in the ViewGroup.
      */
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
@@ -199,11 +199,258 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             case STAT_WRAPPER:
                 StatViewHolder vh7 = (StatViewHolder) viewHolder;
                 configureStatWrapperViewHolder(vh7, position);
+                break;
         }
     }
 
+    /**
+     * Method to configure the post view holder
+     *
+     * @param vh1      view holder to configure
+     * @param position position in adapter the POST item is
+     */
+    private void configurePostViewHolder(final PostViewHolder vh1, final int position) {
+        if (position < mItems.size()) {
+            vh1.getProgressBar().setVisibility(View.VISIBLE);
+            Post post = (Post) mItems.get(position);
+            if (post != null) {
+                vh1.getRootView().setTag(post);
+                StringBuilder sb = new StringBuilder();
+                String cityName = post.getCity();
+                if (cityName != null) {
+                    sb.append(cityName).append(", ");
+                }
+                String countryName = post.getCountry();
+                if (countryName != null) {
+                    sb.append(countryName).append(", ");
+                }
+                String continentName = post.getContinent();
+                if (continentName != null) {
+                    sb.append(continentName);
+                }
+                vh1.getTvTitle().setText(sb);
+                vh1.getTvTitle().setTextColor(ContextCompat.getColor(mContext, R.color.grey));
+                SimpleTarget<Bitmap> target = new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                        vh1.getIvImage().setImageBitmap(resource);
+                        Palette.from(resource).generate();
+                    }
+                };
+                vh1.getIvImage().setTag(target);
+                if (post.getImage() != null) {
+                    vh1.getTvDescription().setVisibility(View.INVISIBLE);
+                    vh1.getIvImage().setVisibility(View.VISIBLE);
+                    vh1.getPostTitle().setVisibility(View.INVISIBLE);
+                    Glide.with(mContext).asBitmap().load(post.getImage().getUrl()).centerCrop().into(target);
+                } else {
+                    vh1.getIvImage().setVisibility(View.INVISIBLE);
+                    vh1.getTvDescription().setText(post.getDescription());
+                    vh1.getPostTitle().setText(post.getTitle());
+                    vh1.getPostTitle().setVisibility(View.VISIBLE);
+                    vh1.getTvDescription().setVisibility(View.VISIBLE);
+                }
+                vh1.getRootView().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Post p = (Post) mItems.get(position);
+                        Intent it = new Intent(mContext, EditPost.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable(Post.class.getSimpleName(), p);
+                        bundle.putSerializable(AppConstants.position, position);
+                        it.putExtras(bundle);
+                        ((Activity) mContext).startActivityForResult(it, AppConstants.DELETE_POST_FROM_PROFILE);
+                    }
+                });
+            }
+            vh1.getProgressBar().setVisibility(View.INVISIBLE);
+        }
+    }
+
+    /**
+     * Method to configure the user information view holder
+     *
+     * @param vh2      view holder to configure
+     * @param position in adapter the USER_INFO item is
+     */
+    private void configureUserInfoViewHolder(final UserInfoViewHolder vh2, final int position) {
+        if (position < mItems.size()) {
+            vh2.getProgressBar().setVisibility(View.VISIBLE);
+            final ParseUser user = (ParseUser) mItems.get(position);
+            if (user != null) {
+                if (user.getParseFile(AppConstants.profileImage) != null) {
+                    vh2.setIvProfileImage(user.getParseFile(AppConstants.profileImage).getUrl(), mContext);
+                }
+                user.fetchInBackground(new GetCallback<ParseObject>() {
+                    @Override
+                    public void done(ParseObject object, ParseException e) {
+                        if (object.getString(AppConstants.description) != null) {
+                            vh2.getTvDescription().setText(object.getString(AppConstants.description));
+                        }
+                    }
+                });
+                vh2.getTvUsername().setText("@" + user.getUsername());
+                vh2.getTvEditProfile().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent it = new Intent(mContext, UserSettings.class);
+                        ((Activity) mContext).startActivityForResult(it, AppConstants.RELOAD_USERPROFILE_FRAGMENT_REQUEST_CODE);
+                    }
+                });
+            }
+            vh2.getProgressBar().setVisibility(View.INVISIBLE);
+        }
+    }
+
+    /**
+     * Method to configure the user statistics view holder
+     *
+     * @param vh3      view holder to configure
+     * @param position position in adapter the STATS item is
+     */
+    private void configureStatViewHolder(final StatViewHolder vh3, final int position) {
+        if (position < mItems.size()) {
+            vh3.getProgressBar().setVisibility(View.VISIBLE);
+            final ArrayList<HashMap<String, Integer>> stats = (ArrayList<HashMap<String, Integer>>) mItems.get(position);
+            final HashMap<String, Integer> cities = stats.get(0);
+            final HashMap<String, Integer> countries = stats.get(1);
+            final HashMap<String, Integer> continents = stats.get(2);
+            if (cities != null && cities.size() < ProfileConstants.totalNumCities) {
+                setUpPieChart(vh3.getPieChartCity(), cities.size(), ProfileConstants.totalNumCities, "Visited Cities");
+            } else {
+                View view = vh3.getRootView().findViewById(R.id.pieChartCity);
+                if (view != null) {
+                    ViewGroup parent = (ViewGroup) view.getParent();
+                    int index = parent.indexOfChild(view);
+                    parent.removeView(view);
+                    view = mInflater.inflate(R.layout.item_visited_all_cities, parent, false);
+                    parent.addView(view, index);
+                }
+            }
+            if (countries != null && countries.size() < ProfileConstants.totalNumCountries) {
+                setUpPieChart(vh3.getPieChartCountry(), countries.size(), ProfileConstants.totalNumCountries, "Visited Countries");
+            } else {
+                View view = vh3.getRootView().findViewById(R.id.pieChartCountry);
+                if (view != null) {
+                    ViewGroup parent = (ViewGroup) view.getParent();
+                    int index = parent.indexOfChild(view);
+                    parent.removeView(view);
+                    view = mInflater.inflate(R.layout.item_visited_all_countries, parent, false);
+                    parent.addView(view, index);
+                }
+            }
+            if (continents != null && continents.size() < ProfileConstants.totalNumContinents) {
+                setUpPieChart(vh3.getPieChartContinent(), continents.size(), ProfileConstants.totalNumContinents, "Visited Continents");
+            } else {
+                View view = vh3.getRootView().findViewById(R.id.pieChartContinent);
+                if (view != null) {
+                    ViewGroup parent = (ViewGroup) view.getParent();
+                    int index = parent.indexOfChild(view);
+                    parent.removeView(view);
+                    view = mInflater.inflate(R.layout.item_visited_all_continents, parent, false);
+                    parent.addView(view, index);
+                }
+            }
+            final MediaPlayer mp = MediaPlayer.create(mContext, R.raw.pop);
+            vh3.getNextButton().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mp.start();
+                    vh3.getViewFlipper().setInAnimation(mContext, R.anim.flipin);
+                    vh3.getViewFlipper().setOutAnimation(mContext, R.anim.flipout);
+                    vh3.getViewFlipper().showNext();
+                }
+            });
+            vh3.getPreviousButton().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mp.start();
+                    vh3.getViewFlipper().setInAnimation(mContext, R.anim.flipin_reverse);
+                    vh3.getViewFlipper().setOutAnimation(mContext, R.anim.flipout_reverse);
+                    vh3.getViewFlipper().showPrevious();
+                }
+            });
+            // TODO: put adventures complete number here
+            vh3.getAdventureNumber().setText("FIX ME");
+            vh3.getProgressBar().setVisibility(View.INVISIBLE);
+        }
+    }
+
+    /**
+     * Method to configure the no posts view holder
+     *
+     * @param vh4      view holder to configure
+     * @param position position in adapter the NO_POSTS item is
+     */
+    private void configureNoPostsViewHolder(final NoPostsViewHolder vh4, final int position) {
+        vh4.getRootView().setTag(mItems.get(position));
+    }
+
+    /**
+     * Method to configure the Post Wrapper View Holder (Post from DB)
+     *
+     * @param vh5      PostViewHolder to configure
+     * @param position position in adapter where the POST_WRAPPER item is
+     */
+    private void configurePostWrapperViewHolder(final PostViewHolder vh5, final int position) {
+        if (position < mItems.size()) {
+            vh5.getProgressBar().setVisibility(View.VISIBLE);
+            PostWrapper postWrapper = (PostWrapper) mItems.get(position);
+            if (postWrapper != null) {
+                vh5.getRootView().setTag(postWrapper);
+                StringBuilder sb = new StringBuilder();
+                String cityName = postWrapper.getCity();
+                if (cityName != null) {
+                    sb.append(cityName).append(", ");
+                }
+                String countryName = postWrapper.getCountry();
+                if (countryName != null) {
+                    sb.append(countryName).append(", ");
+                }
+                String continentName = postWrapper.getContinent();
+                if (continentName != null) {
+                    sb.append(continentName);
+                }
+                vh5.getTvTitle().setText(sb);
+                vh5.getTvTitle().setTextColor(ContextCompat.getColor(mContext, R.color.grey));
+                SimpleTarget<Bitmap> target = new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                        vh5.getIvImage().setImageBitmap(resource);
+                        Palette.from(resource).generate();
+                    }
+                };
+                vh5.getRootView().setClickable(false);
+                vh5.getIvImage().setTag(target);
+                if (postWrapper.imageUrl.length() > 0) {
+                    vh5.getTvDescription().setVisibility(View.INVISIBLE);
+                    vh5.getIvImage().setVisibility(View.VISIBLE);
+                    vh5.getPostTitle().setVisibility(View.INVISIBLE);
+                    Glide.with(mContext).asBitmap().load(postWrapper.imageUrl).centerCrop().into(target);
+                } else {
+                    vh5.getIvImage().setVisibility(View.INVISIBLE);
+                    vh5.getTvDescription().setText(postWrapper.getDescription());
+                    vh5.getPostTitle().setText(postWrapper.getTitle());
+                    vh5.getPostTitle().setVisibility(View.VISIBLE);
+                    vh5.getTvDescription().setVisibility(View.VISIBLE);
+                }
+                if (postWrapper.getImageUrl().length() > 0) {
+                    Glide.with(mContext).asBitmap().load(postWrapper.getImageUrl()).centerCrop().into(target);
+                }
+            }
+            vh5.getProgressBar().setVisibility(View.INVISIBLE);
+        }
+    }
+
+    /**
+     * Method to configure the UserWrapper ViewHolder (User object from DB)
+     *
+     * @param vh6      UserInfoViewHolder to configure
+     * @param position position in adapter where the USER_WRAPPER is
+     */
     private void configureUserWrapperViewHolder(final UserInfoViewHolder vh6, final int position) {
         if (position < mItems.size()) {
+            vh6.getProgressBar().setVisibility(View.VISIBLE);
             UserWrapper userWrapper = (UserWrapper) mItems.get(position);
             if (userWrapper != null) {
                 if (userWrapper.getProfileImg().length() > 0) {
@@ -214,13 +461,20 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 }
                 vh6.getTvUsername().setText("@" + userWrapper.getUsername());
                 vh6.getTvEditProfile().setVisibility(View.INVISIBLE);
-
             }
+            vh6.getProgressBar().setVisibility(View.INVISIBLE);
         }
     }
 
+    /**
+     * Method to configure the StatWrapper ViewHolder (Stat Object from DB)
+     *
+     * @param vh7      StatViewHolder to configure
+     * @param position position in adapter where the STAT_WRAPPER item is
+     */
     private void configureStatWrapperViewHolder(final StatViewHolder vh7, final int position) {
         if (position < mItems.size()) {
+            vh7.getProgressBar().setVisibility(View.VISIBLE);
             StatWrapper statWrapper = (StatWrapper) mItems.get(position);
             if (statWrapper.getCityVisited() < ProfileConstants.totalNumCities) {
                 setUpPieChart(vh7.getPieChartCity(), statWrapper.getCityVisited(), ProfileConstants.totalNumCities, "Visited Cities");
@@ -268,7 +522,6 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     vh7.getViewFlipper().showNext();
                 }
             });
-
             vh7.getPreviousButton().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -278,251 +531,11 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     vh7.getViewFlipper().showPrevious();
                 }
             });
+            // TODO: put adventures complete number here
+            vh7.getAdventureNumber().setText("FIX ME");
+            vh7.getProgressBar().setVisibility(View.INVISIBLE);
         }
     }
-
-
-    private void configurePostWrapperViewHolder(final PostViewHolder vh5, final int position) {
-        if (position < mItems.size()) {
-            PostWrapper postWrapper = (PostWrapper) mItems.get(position);
-            if (postWrapper != null) {
-                vh5.getRootView().setTag(postWrapper);
-                StringBuilder sb = new StringBuilder();
-                String cityName = postWrapper.getCity();
-                if (cityName != null) {
-                    sb.append(cityName).append(", ");
-                }
-                String countryName = postWrapper.getCountry();
-                if (countryName != null) {
-                    sb.append(countryName).append(", ");
-                }
-                String continentName = postWrapper.getContinent();
-                if (continentName != null) {
-                    sb.append(continentName);
-                }
-                vh5.getTvTitle().setText(sb);
-                vh5.getTvTitle().setTextColor(ContextCompat.getColor(mContext, R.color.grey));
-
-                SimpleTarget<Bitmap> target = new SimpleTarget<Bitmap>() {
-                    @Override
-                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                        vh5.getIvImage().setImageBitmap(resource);
-                        Palette.from(resource).generate();
-                    }
-                };
-
-                vh5.getRootView().setClickable(false);
-
-                vh5.getIvImage().setTag(target);
-                if (postWrapper.imageUrl.length() > 0) {
-                    vh5.getTvDescription().setVisibility(View.INVISIBLE);
-                    vh5.getIvImage().setVisibility(View.VISIBLE);
-                    vh5.getPostTitle().setVisibility(View.INVISIBLE);
-                    Glide.with(mContext).asBitmap().load(postWrapper.imageUrl).centerCrop().into(target);
-                } else {
-                    vh5.getIvImage().setVisibility(View.INVISIBLE);
-                    vh5.getTvDescription().setText(postWrapper.getDescription());
-                    vh5.getPostTitle().setText(postWrapper.getTitle());
-                    vh5.getPostTitle().setVisibility(View.VISIBLE);
-                    vh5.getTvDescription().setVisibility(View.VISIBLE);
-                }
-                if (postWrapper.getImageUrl().length() > 0) {
-                    Glide.with(mContext).asBitmap().load(postWrapper.getImageUrl()).centerCrop().into(target);
-                }
-            }
-        }
-    }
-
-
-    /**
-     * Method to configure the post view holder
-     *
-     * @param vh1      view holder to configure
-     * @param position position in adapter the POST item is
-     */
-    private void configurePostViewHolder(final PostViewHolder vh1, final int position) {
-        if (position < mItems.size()) {
-            Post post = (Post) mItems.get(position);
-            if (post != null) {
-                vh1.getRootView().setTag(post);
-                StringBuilder sb = new StringBuilder();
-                String cityName = post.getCity();
-                if (cityName != null) {
-                    sb.append(cityName).append(", ");
-                }
-                String countryName = post.getCountry();
-                if (countryName != null) {
-                    sb.append(countryName).append(", ");
-                }
-                String continentName = post.getContinent();
-                if (continentName != null) {
-                    sb.append(continentName);
-                }
-                vh1.getTvTitle().setText(sb);
-                vh1.getTvTitle().setTextColor(ContextCompat.getColor(mContext, R.color.grey));
-
-                SimpleTarget<Bitmap> target = new SimpleTarget<Bitmap>() {
-                    @Override
-                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                        vh1.getIvImage().setImageBitmap(resource);
-                        Palette.from(resource).generate();
-                    }
-                };
-
-                vh1.getIvImage().setTag(target);
-                if (post.getImage() != null) {
-                    vh1.getTvDescription().setVisibility(View.INVISIBLE);
-                    vh1.getIvImage().setVisibility(View.VISIBLE);
-                    vh1.getPostTitle().setVisibility(View.INVISIBLE);
-                    Glide.with(mContext).asBitmap().load(post.getImage().getUrl()).centerCrop().into(target);
-                } else {
-                    vh1.getIvImage().setVisibility(View.INVISIBLE);
-                    vh1.getTvDescription().setText(post.getDescription());
-                    vh1.getPostTitle().setText(post.getTitle());
-                    vh1.getPostTitle().setVisibility(View.VISIBLE);
-                    vh1.getTvDescription().setVisibility(View.VISIBLE);
-                }
-
-                vh1.getRootView().setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Post p = (Post) mItems.get(position);
-                        Intent it = new Intent(mContext, EditPost.class);
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable(Post.class.getSimpleName(), p);
-                        bundle.putSerializable(AppConstants.position, position);
-                        it.putExtras(bundle);
-                        ((Activity) mContext).startActivityForResult(it, AppConstants.DELETE_POST_FROM_PROFILE);
-                    }
-                });
-
-
-            }
-        }
-    }
-
-    /**
-     * Method to configure the user information view holder
-     *
-     * @param vh2      view holder to configure
-     * @param position in adapter the USER_INFO item is
-     */
-    private void configureUserInfoViewHolder(final UserInfoViewHolder vh2, final int position) {
-        if (position < mItems.size()) {
-            final ParseUser user = (ParseUser) mItems.get(position);
-            if (user != null) {
-                if (user.getParseFile(AppConstants.profileImage) != null) {
-                    vh2.setIvProfileImage(user.getParseFile(AppConstants.profileImage).getUrl(), mContext);
-                }
-
-                user.fetchInBackground(new GetCallback<ParseObject>() {
-                    @Override
-                    public void done(ParseObject object, ParseException e) {
-                        if (object.getString(AppConstants.description) != null) {
-                            vh2.getTvDescription().setText(object.getString(AppConstants.description));
-                        }
-                    }
-                });
-                vh2.getTvUsername().setText("@" + user.getUsername());
-
-                vh2.getTvEditProfile().setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent it = new Intent(mContext, UserSettings.class);
-                        ((Activity) mContext).startActivityForResult(it, AppConstants.RELOAD_USERPROFILE_FRAGMENT_REQUEST_CODE);
-                    }
-                });
-            }
-        }
-    }
-
-    /**
-     * Method to configure the user statistics view holder
-     *
-     * @param vh3      view holder to configure
-     * @param position position in adapter the STATS item is
-     */
-    private void configureStatViewHolder(final StatViewHolder vh3, final int position) {
-        if (position < mItems.size()) {
-            final ArrayList<HashMap<String, Integer>> stats = (ArrayList<HashMap<String, Integer>>) mItems.get(position);
-            final HashMap<String, Integer> cities = stats.get(0);
-            final HashMap<String, Integer> countries = stats.get(1);
-            final HashMap<String, Integer> continents = stats.get(2);
-
-            if (cities != null && cities.size() < ProfileConstants.totalNumCities) {
-                setUpPieChart(vh3.getPieChartCity(), cities.size(), ProfileConstants.totalNumCities, "Visited Cities");
-            } else {
-
-                View view = vh3.getRootView().findViewById(R.id.pieChartCity);
-                if (view != null) {
-                    ViewGroup parent = (ViewGroup) view.getParent();
-                    int index = parent.indexOfChild(view);
-                    parent.removeView(view);
-                    view = mInflater.inflate(R.layout.item_visited_all_cities, parent, false);
-                    parent.addView(view, index);
-                }
-            }
-
-
-            if (countries != null && countries.size() < ProfileConstants.totalNumCountries) {
-                setUpPieChart(vh3.getPieChartCountry(), countries.size(), ProfileConstants.totalNumCountries, "Visited Countries");
-            } else {
-                View view = vh3.getRootView().findViewById(R.id.pieChartCountry);
-                if (view != null) {
-                    ViewGroup parent = (ViewGroup) view.getParent();
-                    int index = parent.indexOfChild(view);
-                    parent.removeView(view);
-                    view = mInflater.inflate(R.layout.item_visited_all_countries, parent, false);
-                    parent.addView(view, index);
-                }
-            }
-
-            if (continents != null && continents.size() < ProfileConstants.totalNumContinents) {
-                setUpPieChart(vh3.getPieChartContinent(), continents.size(), ProfileConstants.totalNumContinents, "Visited Continents");
-            } else {
-                View view = vh3.getRootView().findViewById(R.id.pieChartContinent);
-                if (view != null) {
-                    ViewGroup parent = (ViewGroup) view.getParent();
-                    int index = parent.indexOfChild(view);
-                    parent.removeView(view);
-                    view = mInflater.inflate(R.layout.item_visited_all_continents, parent, false);
-                    parent.addView(view, index);
-                }
-            }
-
-            final MediaPlayer mp = MediaPlayer.create(mContext, R.raw.pop);
-            vh3.getNextButton().setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mp.start();
-                    vh3.getViewFlipper().setInAnimation(mContext, R.anim.flipin);
-                    vh3.getViewFlipper().setOutAnimation(mContext, R.anim.flipout);
-                    vh3.getViewFlipper().showNext();
-                }
-            });
-
-            vh3.getPreviousButton().setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mp.start();
-                    vh3.getViewFlipper().setInAnimation(mContext, R.anim.flipin_reverse);
-                    vh3.getViewFlipper().setOutAnimation(mContext, R.anim.flipout_reverse);
-                    vh3.getViewFlipper().showPrevious();
-                }
-            });
-        }
-    }
-
-    /**
-     * Method to configure the no posts view holder
-     *
-     * @param vh4      view holder to configure
-     * @param position position in adapter the no posts item is
-     */
-    private void configureNoPostsViewHolder(final NoPostsViewHolder vh4, final int position) {
-        vh4.getRootView().setTag(mItems.get(position));
-    }
-
 
     /**
      * Helper method to set up the user statistic pie chart

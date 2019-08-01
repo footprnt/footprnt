@@ -62,19 +62,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // For querying on main thread
-        if (android.os.Build.VERSION.SDK_INT > 9) {
-            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-            StrictMode.setThreadPolicy(policy);
-        }
-
-        // Set views
-        mUsernameInput = findViewById(R.id.username);
-        mForgotPassword = findViewById(R.id.forgotPassword);
-        mPasswordInput = findViewById(R.id.password);
-        mLoginBtn = findViewById(R.id.btn_login);
-        mSignUpBtn = findViewById(R.id.btn_signup);
-        mFacebookLoginBtn = findViewById(R.id.btn_fb_login);
+        initialization();
 
         // Persisted login
         ParseUser currentUser = ParseUser.getCurrentUser();
@@ -113,6 +101,25 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     /**
+     * Helper method for initialization
+     */
+    private void initialization() {
+        // For querying on main thread
+        if (android.os.Build.VERSION.SDK_INT > 9) {
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+        }
+
+        // Set views
+        mUsernameInput = findViewById(R.id.username);
+        mForgotPassword = findViewById(R.id.forgotPassword);
+        mPasswordInput = findViewById(R.id.password);
+        mLoginBtn = findViewById(R.id.btn_login);
+        mSignUpBtn = findViewById(R.id.btn_signup);
+        mFacebookLoginBtn = findViewById(R.id.btn_fb_login);
+    }
+
+    /**
      * Attempt Parse login
      *
      * @param username username of user attempting login
@@ -130,6 +137,9 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Helper method to set up connecting with Facebook
+     */
     private void setUpFacebookLogin() {
         mFacebookLoginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -156,6 +166,10 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Helper method to handle valid user signing up with Facebook
+     * @param user
+     */
     private void handleFacebookUser(final ParseUser user) {
         if (user.isNew()) {
             GraphRequest request = GraphRequest.newMeRequest(AccessToken.getCurrentAccessToken(),
@@ -166,7 +180,7 @@ public class LoginActivity extends AppCompatActivity {
                                 // Set up new Facebook user
                                 user.put(AppConstants.username, String.valueOf(object.getString(AppConstants.name)));
                                 // TODO: set description?
-                                user.put(AppConstants.description,"");
+                                //user.put(AppConstants.description,"");
                                 URL picUrl = new URL(String.format("https://graph.facebook.com/%s/picture?type=large", Profile.getCurrentProfile().getId()));
                                 Bitmap bitmap = BitmapFactory.decodeStream(picUrl.openConnection().getInputStream());
                                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();

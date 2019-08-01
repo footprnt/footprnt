@@ -19,12 +19,14 @@ import com.parse.ParseUser;
 import java.io.Serializable;
 
 /**
- * Model class for database
+ * UserWrapper for storing ParseUser object in database.
+ * Table name is under @Entity annotation and the variables with @ColumnInfo annotation are the columns of the table
  *
  * @author Clarisa Leu-Rodriguez
  */
 @Entity(tableName = "user")
 public class UserWrapper implements Serializable {
+
     @PrimaryKey
     @NonNull
     public String username;
