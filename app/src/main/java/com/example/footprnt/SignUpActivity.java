@@ -16,6 +16,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.footprnt.Util.AppConstants;
+import com.example.footprnt.Util.AppUtil;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
@@ -47,33 +48,34 @@ public class SignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
-        mUsernameInput = findViewById(R.id.new_username);
-        mPasswordInput = findViewById(R.id.new_password);
-        mPhoneInput = findViewById(R.id.phone_number);
-        mEmailInput = findViewById(R.id.email);
-        mSubmitNewUser = findViewById(R.id.btnReset);
-        mPasswordConfirm = findViewById(R.id.etConfirmEmail);
-        mDescription = findViewById(R.id.etDescription);
+        initializeViews();
 
         mSubmitNewUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ParseUser user = new ParseUser();
-                user.setUsername(mUsernameInput.getText().toString());
+                String newUsername = mUsernameInput.getText().toString();
+                if (userNameDoesNotExist(newUsername)) {
+                    user.setUsername(mUsernameInput.getText().toString());
+                } else {
+                    Toast.makeText(SignUpActivity.this, "Username already exists", Toast.LENGTH_LONG).show();
+                    return;
+                }
                 user.put(AppConstants.description, mDescription.getText().toString());
                 if (mPasswordInput.getText().toString().equals(mPasswordConfirm.getText().toString())) {
                     user.setPassword(mPasswordInput.getText().toString());
+                } else {
+                    Toast.makeText(SignUpActivity.this, "Passwords must match", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                String newEmail = mEmailInput.getText().toString();
+                if (AppUtil.isValidEmail(newEmail)) {
+                    user.setEmail(newEmail);
+                } else {
+                    Toast.makeText(SignUpActivity.this, "Please enter a valid email", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
-                } else {
-                    Toast.makeText(getApplicationContext(), "Passwords must match", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (mEmailInput.getText().toString().contains(".")) {
-                    user.setEmail(mEmailInput.getText().toString());
-                } else {
-                    Toast.makeText(getApplicationContext(), "Please enter a valid email", Toast.LENGTH_SHORT).show();
-                    return;
-                }
                 user.put(AppConstants.phone, mPhoneInput.getText().toString());
                 user.signUpInBackground(new SignUpCallback() {
                     @Override
@@ -81,7 +83,6 @@ public class SignUpActivity extends AppCompatActivity {
                         if (e == null) {
                             finish();
                         } else {
-                            Toast.makeText(getApplicationContext(), "Failed to create account, please try again.", Toast.LENGTH_SHORT).show();
                             e.printStackTrace();
                         }
                     }
@@ -90,9 +91,22 @@ public class SignUpActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Helper method to initialize views
+     */
+    private void initializeViews() {
+        mUsernameInput = findViewById(R.id.new_username);
+        mPasswordInput = findViewById(R.id.new_password);
+        mPhoneInput = findViewById(R.id.phone_number);
+        mEmailInput = findViewById(R.id.email);
+        mSubmitNewUser = findViewById(R.id.btnReset);
+        mPasswordConfirm = findViewById(R.id.etConfirmEmail);
+        mDescription = findViewById(R.id.etDescription);
+    }
 
     /**
      * Helper method to see if user name exists already in Parse DB
+     *
      * @param username to query
      * @return true is username doesn't exist, false if it does
      */
@@ -102,11 +116,11 @@ public class SignUpActivity extends AppCompatActivity {
         query.findInBackground(new FindCallback<ParseUser>() {
             @Override
             public void done(List<ParseUser> objects, ParseException e) {
-                if(e != null) {
+                if (e != null) {
                     Log.d(TAG, "error querying for username");
                     e.printStackTrace();
                     res[0] = false;
-                } else if (objects.size() != 0){
+                } else if (objects.size() != 0) {
                     Toast.makeText(SignUpActivity.this, "Username taken", Toast.LENGTH_LONG).show();
                     res[0] = false;
                 } else {
@@ -123,5 +137,6 @@ public class SignUpActivity extends AppCompatActivity {
         query.whereEqualTo("username", username);
         return query;
     }
+
 
 }

@@ -166,7 +166,7 @@ public class LoginActivity extends AppCompatActivity {
                                 // Set up new Facebook user
                                 user.put(AppConstants.username, String.valueOf(object.getString(AppConstants.name)));
                                 // TODO: set description?
-                                user.put(AppConstants.description,"");
+                                //user.put(AppConstants.description,"");
                                 URL picUrl = new URL(String.format("https://graph.facebook.com/%s/picture?type=large", Profile.getCurrentProfile().getId()));
                                 Bitmap bitmap = BitmapFactory.decodeStream(picUrl.openConnection().getInputStream());
                                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();

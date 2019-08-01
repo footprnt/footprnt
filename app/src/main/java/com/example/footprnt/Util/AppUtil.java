@@ -27,6 +27,7 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 /**
  * Utility functions used throughout application
@@ -58,6 +59,23 @@ public class AppUtil {
         return haveConnectedWifi || haveConnectedMobile;
     }
 
+    /**
+     * Helper method to check if valid email
+     *
+     * @param email
+     * @return true if valid email, false otherwise
+     */
+    public static boolean isValidEmail(String email) {
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\." +
+                "[a-zA-Z0-9_+&*-]+)*@" +
+                "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
+                "A-Z]{2,7}$";
+
+        Pattern pat = Pattern.compile(emailRegex);
+        if (email == null)
+            return false;
+        return pat.matcher(email).matches();
+    }
 
     /**
      * @param context
