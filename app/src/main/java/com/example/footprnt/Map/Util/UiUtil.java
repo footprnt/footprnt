@@ -2,9 +2,10 @@ package com.example.footprnt.Map.Util;
 
 import android.app.Activity;
 import android.content.Context;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import android.text.format.DateUtils;
 import android.view.View;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -98,7 +99,7 @@ public class UiUtil {
      * @param holder  holder to display text into
      * @param context current context of post
      */
-    public static void setPostText(Post post, PostAdapter.ViewHolder holder, Context context) {
+    public static void setPostText(Post post, PostAdapter.ViewHolder holder, Context context, boolean privacy) {
         // set description
         String description = post.getDescription();
         if (description.length() > 0) {
@@ -114,7 +115,11 @@ public class UiUtil {
             holder.tvTitle.setVisibility(View.GONE);
         }
         // set user
-        holder.tvUser.setText(post.getUser().getUsername());
+        if (privacy) {
+            holder.tvUser.setText(MapConstants.ANONYMOUS);
+        } else {
+            holder.tvUser.setText(post.getUser().getUsername());
+        }
         // set date
         String dateText = getPostDateText(post);
         holder.tvTimePosted.setText(dateText);
@@ -139,7 +144,7 @@ public class UiUtil {
      * @param holder  holder to display images into
      * @param context current context of post
      */
-    public static void setPostImages(Post post, PostAdapter.ViewHolder holder, Context context) {
+    public static void setPostImages(Post post, PostAdapter.ViewHolder holder, Context context, boolean privacy) {
         if(post.getImage()!=null) {
             String imgUrl = post.getImage().getUrl();
             Glide.with(context).load(imgUrl).into(holder.ivPicture);
@@ -147,11 +152,11 @@ public class UiUtil {
         } else {
             holder.ivPicture.setVisibility(View.GONE);
         }
-        if (post.getUser().getParseFile("profileImg") != null) {
+        if (post.getUser().getParseFile("profileImg") != null && !privacy) {
             String userImgUrl = post.getUser().getParseFile("profileImg").getUrl();
             Glide.with(context).load(userImgUrl).apply(RequestOptions.circleCropTransform()).into(holder.ivUserPicture);
         } else {
-            Glide.with(context).load("http://via.placeholder.com/300.png").apply(RequestOptions.circleCropTransform()).into(holder.ivUserPicture);
+            Glide.with(context).load(MapConstants.PLACEHOLDER_IMAGE).apply(RequestOptions.circleCropTransform()).into(holder.ivUserPicture);
         }
     }
 

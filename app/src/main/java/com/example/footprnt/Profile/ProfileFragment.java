@@ -51,6 +51,7 @@ import java.util.List;
  */
 public class ProfileFragment extends Fragment {
 
+    private boolean isPrivate;
     public final static String TAG = ProfileFragment.class.getName();  // tag for logging from this activity
     final ParseUser mUser = ParseUser.getCurrentUser();
     final AppUtil mUtil = new AppUtil();
@@ -170,17 +171,36 @@ public class ProfileFragment extends Fragment {
         settings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                isPrivate = (boolean) ParseUser.getCurrentUser().get("private");
                 PopupMenu popup = new PopupMenu(getActivity(), settings);
                 popup.getMenuInflater().inflate(R.menu.popup_menu, popup.getMenu());
+                if (isPrivate) {
+                    popup.getMenu().getItem(1).setChecked(true);
+                } else {
+                    popup.getMenu().getItem(1).setChecked(false);
+                }
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     public boolean onMenuItemClick(MenuItem item) {
-                        // Destory instances of DB's on logout
-                        StatDatabase.getStatDatabase(getContext()).clearAllTables();
-                        PostDatabase.getPostDatabase(getContext()).clearAllTables();
-                        UserDatabase.getUserDatabase(getContext()).clearAllTables();
-                        ParseUser.logOut();
-                        Intent intent = new Intent(getActivity(), LoginActivity.class);
-                        startActivity(intent);
+                        if (item.getItemId() == R.id.logout){
+                            // Destory instances of DB's on logout
+                            StatDatabase.getStatDatabase(getContext()).clearAllTables();
+                            PostDatabase.getPostDatabase(getContext()).clearAllTables();
+                            UserDatabase.getUserDatabase(getContext()).clearAllTables();
+                            ParseUser.logOut();
+                            Intent intent = new Intent(getActivity(), LoginActivity.class);
+                            startActivity(intent);
+                        } else {
+                            System.out.println(isPrivate);
+                            if (isPrivate) {
+                                item.setChecked(false);
+                                ParseUser.getCurrentUser().put(AppConstants.privacy, false);
+                                ParseUser.getCurrentUser().saveInBackground();
+                            } else {
+                                item.setChecked(true);
+                                ParseUser.getCurrentUser().put(AppConstants.privacy, true);
+                                ParseUser.getCurrentUser().saveInBackground();
+                            }
+                        }
                         return true;
                     }
                 });

@@ -90,3 +90,7 @@ android {
         implementation 'com.github.parse-community:ParseFacebookUtils-Android:1.14.0'
     }
 }
+
+dependencies {
+    implementation 'androidx.annotation:annotation:1.1.0'
+}

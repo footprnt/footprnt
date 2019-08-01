@@ -80,7 +80,7 @@ public class AppUtil {
      * @param point
      * @return
      */
-    public String getAddress(Context context, LatLng point) {
+    public static String getAddress(Context context, LatLng point) {
         try {
             Geocoder geo = new Geocoder(context, Locale.getDefault());
             List<Address> addresses = geo.getFromLocation(point.latitude, point.longitude, 1);
