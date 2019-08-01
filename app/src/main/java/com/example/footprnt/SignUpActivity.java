@@ -7,6 +7,7 @@
 package com.example.footprnt;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,8 +16,13 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.footprnt.Util.AppConstants;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
+
+import java.util.List;
 
 /**
  * Handles all sign up activities
@@ -27,6 +33,7 @@ import com.parse.SignUpCallback;
  */
 public class SignUpActivity extends AppCompatActivity {
 
+    private final String TAG = SignUpActivity.class.getSimpleName();
     private EditText mUsernameInput;
     private EditText mPasswordInput;
     private EditText mPasswordConfirm;
@@ -82,4 +89,39 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
     }
+
+
+    /**
+     * Helper method to see if user name exists already in Parse DB
+     * @param username to query
+     * @return true is username doesn't exist, false if it does
+     */
+    private boolean userNameDoesNotExist(final String username) {
+        final boolean[] res = {true};
+        ParseQuery<ParseUser> query = getUserByUsername(username);
+        query.findInBackground(new FindCallback<ParseUser>() {
+            @Override
+            public void done(List<ParseUser> objects, ParseException e) {
+                if(e != null) {
+                    Log.d(TAG, "error querying for username");
+                    e.printStackTrace();
+                    res[0] = false;
+                } else if (objects.size() != 0){
+                    Toast.makeText(SignUpActivity.this, "Username taken", Toast.LENGTH_LONG).show();
+                    res[0] = false;
+                } else {
+                    res[0] = true;
+                }
+            }
+        });
+        return res[0];
+    }
+
+
+    private ParseQuery<ParseUser> getUserByUsername(String username) {
+        ParseQuery<ParseUser> query = ParseUser.getQuery();
+        query.whereEqualTo("username", username);
+        return query;
+    }
+
 }

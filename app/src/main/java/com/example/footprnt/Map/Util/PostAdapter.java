@@ -19,6 +19,7 @@ import com.example.footprnt.Map.PostDetailActivity;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.R;
 import com.example.footprnt.Util.AppConstants;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 
@@ -55,7 +56,17 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         final Post post = mPosts.get(position);
-        boolean privacy = (boolean) post.getUser().get(AppConstants.privacy);
+        Boolean privacy;
+        Object privacySetting = ParseUser.getCurrentUser().get(AppConstants.privacy);
+        if (privacySetting == null) {
+            privacy = false;
+        } else {
+            if ((Boolean) privacySetting == true){
+                privacy = true;
+            } else {
+                privacy = false;
+            }
+        }
         UiUtil.setPostText(post, holder, mContext, privacy);
         UiUtil.setPostImages(post, holder, mContext, privacy);
         holder.tvTitle.setTypeface(montserrat); // type specific to feed
