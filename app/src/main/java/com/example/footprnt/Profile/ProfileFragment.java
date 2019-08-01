@@ -108,7 +108,7 @@ public class ProfileFragment extends Fragment {
                 mObjects.add(mUserWrapper);
             }
             // Add Stats
-            if(mStatWrapper!=null){
+            if (mStatWrapper != null) {
                 mObjects.add(mStatWrapper);
             }
             // Add posts of no posts
@@ -133,7 +133,7 @@ public class ProfileFragment extends Fragment {
     /**
      * Helper method to set up database
      */
-    private void setUpDB(){
+    private void setUpDB() {
         mPostRepository = new PostRepository(getActivity().getApplicationContext());
         mPostWrapperDB = mPostRepository.getPosts();
         mUserRepository = new UserRepository(getActivity().getApplicationContext());
@@ -150,11 +150,12 @@ public class ProfileFragment extends Fragment {
             mMultiAdapter.notifyItemChanged(0);
         }
 
+        // TODO: fix so the stat chart updates if user removes unique city, continent, or country (i.e. decrement)
         // Delete post
         if (resultCode == AppConstants.DELETE_POST_FROM_PROFILE) {
             int position = data.getIntExtra(AppConstants.position, 0);
             // Case where user deletes only post:
-            if(mObjects.size()==3){
+            if (mObjects.size() == 3) {
                 mObjects.remove(position);
                 mMultiAdapter.notifyItemRemoved(position);
                 mObjects.add(ProfileConstants.noPosts);
@@ -184,7 +185,7 @@ public class ProfileFragment extends Fragment {
                 if (privacySetting == null) {
                     isPrivate = false;
                 } else {
-                    if ((Boolean) privacySetting == true){
+                    if ((Boolean) privacySetting == true) {
                         isPrivate = true;
                     } else {
                         isPrivate = false;
@@ -199,7 +200,7 @@ public class ProfileFragment extends Fragment {
                 }
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     public boolean onMenuItemClick(MenuItem item) {
-                        if (item.getItemId() == R.id.logout){
+                        if (item.getItemId() == R.id.logout) {
                             // Destory instances of DB's on logout
                             StatDatabase.getStatDatabase(getContext()).clearAllTables();
                             PostDatabase.getPostDatabase(getContext()).clearAllTables();

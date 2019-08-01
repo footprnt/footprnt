@@ -6,9 +6,11 @@
  */
 package com.example.footprnt.Profile.Adapters.ViewHolders;
 
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.ViewFlipper;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.footprnt.R;
 import com.github.mikephil.charting.charts.PieChart;
@@ -27,6 +29,7 @@ public class StatViewHolder extends RecyclerView.ViewHolder {
     View mRootView;
     PieChart mPieChartCountry;
     PieChart mPieChartContinent;
+    TextView mAdventureNumber;
 
     /**
      * Getter for the ViewFlipper to switch between pie charts
@@ -82,8 +85,22 @@ public class StatViewHolder extends RecyclerView.ViewHolder {
         return mPreviousView;
     }
 
-    public View getRootView (){
+    /**
+     * Getter for root view
+     *
+     * @return root view
+     */
+    public View getRootView() {
         return mRootView;
+    }
+
+    /**
+     * Getter for adventure number
+     *
+     * @return adventure number text view
+     */
+    public TextView getAdventureNumber() {
+        return mAdventureNumber;
     }
 
     /**
@@ -96,10 +113,10 @@ public class StatViewHolder extends RecyclerView.ViewHolder {
         mRootView = v;
         mViewFlipper = v.findViewById(R.id.viewFlipper);
         mNextView = v.findViewById(R.id.next);
+        mAdventureNumber = v.findViewById(R.id.tvNumber);
         mPreviousView = v.findViewById(R.id.prev);
         mPieChartCity = v.findViewById(R.id.pieChartCity);
         mPieChartCountry = v.findViewById(R.id.pieChartCountry);
         mPieChartContinent = v.findViewById(R.id.pieChartContinent);
     }
-
 }

@@ -14,14 +14,15 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.palette.graphics.Palette;
 import androidx.recyclerview.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
@@ -278,6 +279,9 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     vh7.getViewFlipper().showPrevious();
                 }
             });
+
+            // TODO: put adventures complete number here
+            vh7.getAdventureNumber().setText("FIX ME");
         }
     }
 
@@ -510,6 +514,9 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     vh3.getViewFlipper().showPrevious();
                 }
             });
+
+            // TODO: put adventures complete number here
+            vh3.getAdventureNumber().setText("FIX ME");
         }
     }
 

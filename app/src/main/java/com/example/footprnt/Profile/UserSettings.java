@@ -109,7 +109,6 @@ public class UserSettings extends AppCompatActivity {
                 if (mParseFile != null) {
                     mUser.put(AppConstants.profileImage, mParseFile);
                 }
-
                 mUser.setEmail(mEtEmail.getText().toString());
                 mUser.setUsername(mEtUsername.getText().toString());
                 mUser.put(AppConstants.phone, mEtNumber.getText().toString());
