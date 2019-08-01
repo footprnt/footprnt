@@ -86,9 +86,9 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
                     Business business = (Business) v.getTag();
     /*                int position = getAdapterPosition();*/
                     final View popupView = LayoutInflater.from(mContext).inflate(R.layout.fragment_business_details, null);
-                    final PopupWindow popupWindow = new PopupWindow(popupView, WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
+                    final PopupWindow popupWindow = new PopupWindow(popupView, WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
                     popupWindow.setOutsideTouchable(true);
-                    popupWindow.showAtLocation(itemView, Gravity.CENTER, 0, 50);
+                    popupWindow.showAtLocation(itemView, Gravity.CENTER, 0, 0);
                     ivBusinessImage = popupView.findViewById(R.id.ivBusinessImage);
                     tvBusinessName = popupView.findViewById(R.id.tvBusinessName);
                     tvBusinessCategory = popupView.findViewById(R.id.tvBusinessCategory);
