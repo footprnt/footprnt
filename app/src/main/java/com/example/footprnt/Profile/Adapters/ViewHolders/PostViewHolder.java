@@ -7,10 +7,12 @@
 package com.example.footprnt.Profile.Adapters.ViewHolders;
 
 import android.content.Intent;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.Profile.EditPost;
@@ -28,7 +30,8 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
     TextView mTvTitle;
     View mVPalette;
     TextView mTvText;
-    TextView title;
+    TextView mTitle;
+    ProgressBar mProgressBar;
 
     /**
      * Getter for the root view of the post view holder
@@ -66,9 +69,32 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         return mVPalette;
     }
 
-    public TextView getTvDescription(){ return mTvText;}
+    /**
+     * Getter for post description
+     *
+     * @return Post description
+     */
+    public TextView getTvDescription() {
+        return mTvText;
+    }
 
-    public TextView getPostTitle(){ return title;}
+    /**
+     * Getter for post title
+     *
+     * @return Post title
+     */
+    public TextView getPostTitle() {
+        return mTitle;
+    }
+
+    /**
+     * Getter for progress bar
+     *
+     * @return ProgressBar
+     */
+    public ProgressBar getProgressBar() {
+        return mProgressBar;
+    }
 
     /**
      * Constructor for PostViewHolder
@@ -81,8 +107,9 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         mIvImage = itemView.findViewById(R.id.ivImage);
         mTvTitle = itemView.findViewById(R.id.tvTitle);
         mVPalette = itemView.findViewById(R.id.vPalette);
-        title = itemView.findViewById(R.id.title);
+        mTitle = itemView.findViewById(R.id.title);
         mTvText = itemView.findViewById(R.id.tvText);
+        mProgressBar = itemView.findViewById(R.id.progressBar);
 
         // Set on click listener to launch detailed post view
         // TODO: fix this
