@@ -108,6 +108,7 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                         address = AppUtil.getAddress(getContext(), new LatLng(currLocation.getLatitude(), currLocation.getLongitude()));
                     } else {
                         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5, this);
+                        // TODO: fix this - just added because app crash
                         if(mCurrLocation!=null) {
                             address = AppUtil.getAddress(getContext(), new LatLng(mCurrLocation.getLatitude(), mCurrLocation.getLongitude()));
                         } else {

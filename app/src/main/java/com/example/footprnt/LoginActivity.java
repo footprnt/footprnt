@@ -62,19 +62,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // For querying on main thread
-        if (android.os.Build.VERSION.SDK_INT > 9) {
-            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-            StrictMode.setThreadPolicy(policy);
-        }
-
-        // Set views
-        mUsernameInput = findViewById(R.id.username);
-        mForgotPassword = findViewById(R.id.forgotPassword);
-        mPasswordInput = findViewById(R.id.password);
-        mLoginBtn = findViewById(R.id.btn_login);
-        mSignUpBtn = findViewById(R.id.btn_signup);
-        mFacebookLoginBtn = findViewById(R.id.btn_fb_login);
+        initialization();
 
         // Persisted login
         ParseUser currentUser = ParseUser.getCurrentUser();
@@ -110,6 +98,25 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         setUpFacebookLogin();
+    }
+
+    /**
+     * Helper method for initialization
+     */
+    private void initialization() {
+        // For querying on main thread
+        if (android.os.Build.VERSION.SDK_INT > 9) {
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+        }
+
+        // Set views
+        mUsernameInput = findViewById(R.id.username);
+        mForgotPassword = findViewById(R.id.forgotPassword);
+        mPasswordInput = findViewById(R.id.password);
+        mLoginBtn = findViewById(R.id.btn_login);
+        mSignUpBtn = findViewById(R.id.btn_signup);
+        mFacebookLoginBtn = findViewById(R.id.btn_fb_login);
     }
 
     /**

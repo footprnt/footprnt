@@ -153,9 +153,18 @@ public class ProfileFragment extends Fragment {
         // Delete post
         if (resultCode == AppConstants.DELETE_POST_FROM_PROFILE) {
             int position = data.getIntExtra(AppConstants.position, 0);
-            mObjects.remove(position);
-            mMultiAdapter.notifyItemRemoved(position);
-            mMultiAdapter.notifyItemChanged(position);
+            // Case where user deletes only post:
+            if(mObjects.size()==3){
+                mObjects.remove(position);
+                mMultiAdapter.notifyItemRemoved(position);
+                mObjects.add(ProfileConstants.noPosts);
+                mMultiAdapter.notifyItemInserted(position);
+                mMultiAdapter.notifyItemChanged(position);
+            } else {
+                mObjects.remove(position);
+                mMultiAdapter.notifyItemRemoved(position);
+                mMultiAdapter.notifyItemChanged(position);
+            }
         }
         // TODO: fix so UI updates
         // Save post
