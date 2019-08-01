@@ -1,5 +1,5 @@
 /*
- * MapConstants.java
+ * AppConstants.java
  * v1.0
  * July 2019
  * Copyright ©2019 Footprnt Inc.
@@ -12,6 +12,7 @@ package com.example.footprnt.Util;
  * @author Clarisa Leu, Jocelyn Shen, Stanley
  */
 public class AppConstants {
+
     // For Database:
     public static final String POST_DB_NAME = "db_posts";
     public static final String STATS_DB_NAME = "db_stats";
@@ -69,5 +70,4 @@ public class AppConstants {
     // For settings
     public static final String LOGOUT = "Logout";
     public static final String PRIVACY = "Make anonymous";
-
 }

@@ -1,5 +1,5 @@
 /*
- * MapUtil.java
+ * AppUtil.java
  * v1.0
  * July 2019
  * Copyright ©2019 Footprnt Inc.
@@ -9,7 +9,6 @@ package com.example.footprnt.Util;
 import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
-import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Environment;
@@ -17,16 +16,13 @@ import android.text.format.DateUtils;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 /**
  * Utility functions used throughout application
@@ -58,13 +54,32 @@ public class AppUtil {
         return haveConnectedWifi || haveConnectedMobile;
     }
 
+    /**
+     * Helper method to check if valid email
+     *
+     * @param email
+     * @return true if valid email, false otherwise
+     */
+    public static boolean isValidEmail(String email) {
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\." +
+                "[a-zA-Z0-9_+&*-]+)*@" +
+                "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
+                "A-Z]{2,7}$";
+
+        Pattern pat = Pattern.compile(emailRegex);
+        if (email == null)
+            return false;
+        return pat.matcher(email).matches();
+    }
 
     /**
+     * Helper function to get the photo file uri
+     *
      * @param context
      * @param fileName
-     * @return
+     * @return photo file Uri
      */
-    public File getPhotoFileUri(Context context, String fileName) {
+    public static File getPhotoFileUri(Context context, String fileName) {
         File mediaStorageDir = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), AppConstants.APP_TAG);
 
         if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()) {
@@ -76,9 +91,11 @@ public class AppUtil {
     }
 
     /**
+     * Helper function to get address from point
+     *
      * @param context
-     * @param point
-     * @return
+     * @param point   with latitude and longitude
+     * @return address
      */
     public static String getAddress(Context context, LatLng point) {
         try {
@@ -99,17 +116,6 @@ public class AppUtil {
             return null;
         }
         return null;
-    }
-
-    /**
-     * @param map
-     * @param location
-     */
-    public static void centreMapOnLocation(GoogleMap map, Location location) {
-        LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());
-        BitmapDescriptor defaultMarker =
-                BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
-        map.animateCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 12));
     }
 
     /**

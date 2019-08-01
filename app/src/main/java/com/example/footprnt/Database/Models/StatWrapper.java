@@ -18,6 +18,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * StatWrapper for storing stat objects in database.
+ * Table name is under @Entity annotation and the variables with @ColumnInfo annotation are the columns of the table
+ *
+ * @author Clarisa Leu-Rodriguez
+ */
 @Entity(tableName = "stats")
 public class StatWrapper implements Serializable {
 
@@ -31,7 +37,8 @@ public class StatWrapper implements Serializable {
     @ColumnInfo(name = "continentVisited")
     public int continentVisited;
 
-    public StatWrapper(){}
+    public StatWrapper() {
+    }
 
     public StatWrapper(ArrayList<HashMap<String, Integer>> statList, ParseUser user) {
         username = user.getUsername();

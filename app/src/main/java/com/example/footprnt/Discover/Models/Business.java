@@ -13,6 +13,7 @@ import java.util.ArrayList;
  *
  * @author Stanley Nwakamma
  */
+
 public class Business {
     private String name;
     private String phone;
