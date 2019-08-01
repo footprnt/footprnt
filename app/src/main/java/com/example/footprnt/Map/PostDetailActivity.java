@@ -27,7 +27,7 @@ public class PostDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_post_detail);
         Bundle bundle = getIntent().getExtras();
         final Post post = (Post) bundle.getSerializable(Post.class.getSimpleName());
-        boolean privacy = (boolean) post.getUser().get(AppConstants.privacy);
+        Boolean privacy = (Boolean) post.getUser().get(AppConstants.privacy);
         ImageView mIvBackArrow = findViewById(R.id.ivBack2);
         mIvBackArrow.setOnClickListener(new View.OnClickListener() {
             @Override

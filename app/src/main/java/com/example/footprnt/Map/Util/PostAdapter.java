@@ -5,14 +5,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.core.content.res.ResourcesCompat;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.footprnt.Map.PostDetailActivity;
 import com.example.footprnt.Models.Post;
@@ -54,7 +55,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         final Post post = mPosts.get(position);
-        boolean privacy = (boolean) post.getUser().get(AppConstants.privacy);
+        Boolean privacy = (Boolean) post.getUser().get(AppConstants.privacy);
         UiUtil.setPostText(post, holder, mContext, privacy);
         UiUtil.setPostImages(post, holder, mContext, privacy);
         holder.tvTitle.setTypeface(montserrat); // type specific to feed
