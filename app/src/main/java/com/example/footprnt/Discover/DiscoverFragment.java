@@ -88,6 +88,8 @@ public class DiscoverFragment extends Fragment implements LocationListener {
         mMuseums = new ArrayList<>();
         mHotels = new ArrayList<>();
         mClubs = new ArrayList<>();
+        prepareArrayLists();
+        populateView();
         mSwipeContainer = view.findViewById(R.id.swipeContainer2);
         mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
