@@ -47,14 +47,16 @@ import java.util.List;
 
 /**
  * Fragment for profile page
- * Created by Clarisa Leu 2019
+ *
+ * @author Clarisa Leu, Jocelyn Shen
  */
 public class ProfileFragment extends Fragment {
 
-    private boolean isPrivate;
-    public final static String TAG = ProfileFragment.class.getName();  // tag for logging from this activity
+    public final static String TAG = ProfileFragment.class.getName();
     final ParseUser mUser = ParseUser.getCurrentUser();
-    final AppUtil mUtil = new AppUtil();
+
+    // For anonymous user:
+    private boolean mIsPrivate;
 
     // For database:
     PostRepository mPostRepository;
@@ -77,13 +79,11 @@ public class ProfileFragment extends Fragment {
     HashMap<String, Integer> mContinents;  // Contains the continents and number of times visited by user
     ArrayList<HashMap<String, Integer>> mStats;  // StatWrapper to be passed to adapter
 
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_profile, container, false);
         mLayout = v.findViewById(R.id.rvPosts);
-
         setUpDB();
 
         // Populate stat maps and get posts
@@ -96,7 +96,7 @@ public class ProfileFragment extends Fragment {
         mStats = new ArrayList<>();
 
         // Get posts from DB or Network
-        if (mUtil.haveNetworkConnection(getActivity())) {
+        if (AppUtil.haveNetworkConnection(getActivity())) {
             StatDatabase.getStatDatabase(getContext()).clearAllTables();
             PostDatabase.getPostDatabase(getContext()).clearAllTables();
             UserDatabase.getUserDatabase(getContext()).clearAllTables();
@@ -108,7 +108,7 @@ public class ProfileFragment extends Fragment {
                 mObjects.add(mUserWrapper);
             }
             // Add Stats
-            if(mStatWrapper!=null){
+            if (mStatWrapper != null) {
                 mObjects.add(mStatWrapper);
             }
             // Add posts of no posts
@@ -121,19 +121,17 @@ public class ProfileFragment extends Fragment {
                 mObjects.addAll(mPostWrappers);
             }
         }
-
         // For post feed view:
         mMultiAdapter = new MultiViewAdapter(getContext(), mObjects);
         mLayout.setLayoutManager(new LinearLayoutManager(getContext()));
         mLayout.setAdapter(mMultiAdapter);
-
         return v;
     }
 
     /**
      * Helper method to set up database
      */
-    private void setUpDB(){
+    private void setUpDB() {
         mPostRepository = new PostRepository(getActivity().getApplicationContext());
         mPostWrapperDB = mPostRepository.getPosts();
         mUserRepository = new UserRepository(getActivity().getApplicationContext());
@@ -149,13 +147,22 @@ public class ProfileFragment extends Fragment {
         if (resultCode == AppConstants.RELOAD_USERPROFILE_FRAGMENT_REQUEST_CODE) {
             mMultiAdapter.notifyItemChanged(0);
         }
-
+        // TODO: fix so the stat chart updates if user removes unique city, continent, or country (i.e. decrement)
         // Delete post
         if (resultCode == AppConstants.DELETE_POST_FROM_PROFILE) {
             int position = data.getIntExtra(AppConstants.position, 0);
-            mObjects.remove(position);
-            mMultiAdapter.notifyItemRemoved(position);
-            mMultiAdapter.notifyItemChanged(position);
+            // Case where user deletes only post:
+            if (mObjects.size() == 3) {
+                mObjects.remove(position);
+                mMultiAdapter.notifyItemRemoved(position);
+                mObjects.add(ProfileConstants.noPosts);
+                mMultiAdapter.notifyItemInserted(position);
+                mMultiAdapter.notifyItemChanged(position);
+            } else {
+                mObjects.remove(position);
+                mMultiAdapter.notifyItemRemoved(position);
+                mMultiAdapter.notifyItemChanged(position);
+            }
         }
         // TODO: fix so UI updates
         // Save post
@@ -165,6 +172,11 @@ public class ProfileFragment extends Fragment {
         }
     }
 
+    /**
+     * Helper method to set up the toolbar
+     *
+     * @param v this view
+     */
     private void setUpToolbar(final View v) {
         // Log out button
         final ImageView settings = v.findViewById(R.id.settings);
@@ -173,25 +185,25 @@ public class ProfileFragment extends Fragment {
             public void onClick(View v) {
                 Object privacySetting = ParseUser.getCurrentUser().get("private");
                 if (privacySetting == null) {
-                    isPrivate = false;
+                    mIsPrivate = false;
                 } else {
-                    if ((Boolean) privacySetting == true){
-                        isPrivate = true;
+                    if ((Boolean) privacySetting == true) {
+                        mIsPrivate = true;
                     } else {
-                        isPrivate = false;
+                        mIsPrivate = false;
                     }
                 }
                 PopupMenu popup = new PopupMenu(getActivity(), settings);
                 popup.getMenuInflater().inflate(R.menu.popup_menu, popup.getMenu());
-                if (isPrivate) {
+                if (mIsPrivate) {
                     popup.getMenu().getItem(1).setChecked(true);
                 } else {
                     popup.getMenu().getItem(1).setChecked(false);
                 }
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     public boolean onMenuItemClick(MenuItem item) {
-                        if (item.getItemId() == R.id.logout){
-                            // Destory instances of DB's on logout
+                        if (item.getItemId() == R.id.logout) {
+                            // Destroy instances of DB's on logout
                             StatDatabase.getStatDatabase(getContext()).clearAllTables();
                             PostDatabase.getPostDatabase(getContext()).clearAllTables();
                             UserDatabase.getUserDatabase(getContext()).clearAllTables();
@@ -199,8 +211,7 @@ public class ProfileFragment extends Fragment {
                             Intent intent = new Intent(getActivity(), LoginActivity.class);
                             startActivity(intent);
                         } else {
-                            System.out.println(isPrivate);
-                            if (isPrivate) {
+                            if (mIsPrivate) {
                                 item.setChecked(false);
                                 ParseUser.getCurrentUser().put(AppConstants.privacy, false);
                                 ParseUser.getCurrentUser().saveInBackground();
@@ -218,7 +229,6 @@ public class ProfileFragment extends Fragment {
         });
     }
 
-
     /**
      * Helper method to get posts from parse as well as populate stat maps
      */
@@ -230,7 +240,6 @@ public class ProfileFragment extends Fragment {
                 .withUser()
                 .whereEqualTo(AppConstants.user, ParseUser.getCurrentUser());
         postsQuery.addDescendingOrder(AppConstants.createdAt);
-
         postsQuery.findInBackground(new FindCallback<Post>() {
             @Override
             public void done(List<Post> objects, ParseException e) {
@@ -238,7 +247,6 @@ public class ProfileFragment extends Fragment {
                     for (int i = 0; i < objects.size(); i++) {
                         final Post post = objects.get(i);
                         mPostRepository.insertPost(new PostWrapper(post));
-
                         // Get post stats and update user stats
                         mPosts.add(post);
                         // Fill HashMaps and handle null values
@@ -253,7 +261,6 @@ public class ProfileFragment extends Fragment {
                                 mCities.put(city, mCities.get(city) + 1);
                             }
                         }
-
                         // Countries
                         if (post.getCountry() != null) {
                             String country = post.getCountry();
@@ -263,7 +270,6 @@ public class ProfileFragment extends Fragment {
                                 mCountries.put(country, mCountries.get(country) + 1);
                             }
                         }
-
                         // Continents
                         if (post.getContinent() != null) {
                             String continent = post.getContinent();
@@ -277,7 +283,6 @@ public class ProfileFragment extends Fragment {
                 } else {
                     AppUtil.logError(getContext(), TAG, "Error querying posts", e, true);
                 }
-
                 mObjects.add(mUser);
                 mStats.add(mCities);
                 mStats.add(mCountries);
@@ -285,7 +290,6 @@ public class ProfileFragment extends Fragment {
                 mObjects.add(mStats);
                 mStatRepository.insertStat(new StatWrapper(mStats, mUser));
                 mMultiAdapter.notifyDataSetChanged();
-
                 if (mPosts.size() > 0 && mPosts != null) {
                     mObjects.addAll(mPosts);
                     mMultiAdapter.notifyDataSetChanged();
@@ -294,7 +298,6 @@ public class ProfileFragment extends Fragment {
                     mObjects.add(ProfileConstants.noPosts);
                     mMultiAdapter.notifyDataSetChanged();
                 }
-
             }
         });
     }

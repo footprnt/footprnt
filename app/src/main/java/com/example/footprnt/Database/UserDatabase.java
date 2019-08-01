@@ -17,7 +17,6 @@ import androidx.room.TypeConverters;
 import com.example.footprnt.Database.Dao.UserDaoAccess;
 import com.example.footprnt.Database.Models.UserWrapper;
 import com.example.footprnt.Util.AppConstants;
-import com.example.footprnt.Util.Converters;
 
 
 /**

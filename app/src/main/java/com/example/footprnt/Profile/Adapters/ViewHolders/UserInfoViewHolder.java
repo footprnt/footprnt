@@ -7,9 +7,11 @@
 package com.example.footprnt.Profile.Adapters.ViewHolders;
 
 import android.content.Context;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.footprnt.R;
@@ -27,6 +29,7 @@ public class UserInfoViewHolder extends RecyclerView.ViewHolder {
     TextView mTvEditProfile;
     TextView mUsername;
     TextView mDescription;
+    ProgressBar mProgressBar;
 
     /**
      * Setter for the profile image on profile page
@@ -73,6 +76,15 @@ public class UserInfoViewHolder extends RecyclerView.ViewHolder {
 
 
     /**
+     * Getter for progress bar
+     *
+     * @return ProgressBar
+     */
+    public ProgressBar getProgressBar() {
+        return mProgressBar;
+    }
+
+    /**
      * Constructor for UserInfoViewHolder
      *
      * @param v view to define and describe meta data for
@@ -83,5 +95,6 @@ public class UserInfoViewHolder extends RecyclerView.ViewHolder {
         mTvEditProfile = v.findViewById(R.id.tvEditProfile);
         mDescription = v.findViewById(R.id.tvDescription);
         mUsername = v.findViewById(R.id.tvUsername);
+        mProgressBar = v.findViewById(R.id.progressBar);
     }
 }

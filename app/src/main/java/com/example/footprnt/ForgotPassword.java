@@ -7,11 +7,12 @@
 package com.example.footprnt;
 
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.parse.ParseException;
 import com.parse.ParseUser;
@@ -29,7 +30,6 @@ public class ForgotPassword extends AppCompatActivity {
     EditText mConfirmEmail;
 
     // TODO: Forgot password doesn't work
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,13 +57,10 @@ public class ForgotPassword extends AppCompatActivity {
                                     }
                                 }
                             });
-
                 } else {
                     Toast.makeText(getApplicationContext(), "Emails must match", Toast.LENGTH_LONG).show();
                 }
-
             }
         });
-
     }
 }
