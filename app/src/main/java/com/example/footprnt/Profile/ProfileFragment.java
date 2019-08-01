@@ -8,17 +8,18 @@ package com.example.footprnt.Profile;
 
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.appcompat.widget.PopupMenu;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.PopupMenu;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.footprnt.Database.Models.PostWrapper;
 import com.example.footprnt.Database.Models.StatWrapper;
@@ -32,6 +33,7 @@ import com.example.footprnt.Database.UserDatabase;
 import com.example.footprnt.LoginActivity;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.Profile.Adapters.MultiViewAdapter;
+import com.example.footprnt.Profile.Util.ProfileConstants;
 import com.example.footprnt.R;
 import com.example.footprnt.Util.AppConstants;
 import com.example.footprnt.Util.AppUtil;
@@ -110,7 +112,7 @@ public class ProfileFragment extends Fragment {
             }
             // Add posts of no posts
             if (mPostRepository.getPosts().size() == 0) {
-                mObjects.add("No Posts!");
+                mObjects.add(ProfileConstants.noPosts);
             } else {
                 for (PostWrapper p : mPostRepository.getPosts()) {
                     mPostWrappers.add(p);
@@ -207,7 +209,7 @@ public class ProfileFragment extends Fragment {
                     for (int i = 0; i < objects.size(); i++) {
                         final Post post = objects.get(i);
                         mPostRepository.insertPost(new PostWrapper(post));
-                        // mStatRepository.insertStat(new StatWrapper());
+
                         // Get post stats and update user stats
                         mPosts.add(post);
                         // Fill HashMaps and handle null values
@@ -260,7 +262,7 @@ public class ProfileFragment extends Fragment {
                     mMultiAdapter.notifyDataSetChanged();
                 } else {
                     // Handle case if user has no posts yet
-                    mObjects.add("No posts!");
+                    mObjects.add(ProfileConstants.noPosts);
                     mMultiAdapter.notifyDataSetChanged();
                 }
 
