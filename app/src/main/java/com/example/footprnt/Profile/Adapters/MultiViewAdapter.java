@@ -131,7 +131,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             case POST:
                 View v1 = mInflater.inflate(R.layout.item_post_card, viewGroup, false);
                 v1.findViewById(R.id.tvText).setVisibility(View.INVISIBLE);
-                v1.findViewById(R.id.title).setVisibility(View.INVISIBLE);
+                v1.findViewById(R.id.eventTitle).setVisibility(View.INVISIBLE);
                 viewHolder = new PostViewHolder(v1);
                 break;
             case USER_INFO:
