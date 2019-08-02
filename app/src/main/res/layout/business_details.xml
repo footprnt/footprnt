@@ -70,20 +70,6 @@
             app:layout_constraintTop_toBottomOf="@+id/tvBusinessName" />
 
         <TextView
-            android:id="@+id/tvBusinessRating"
-            android:layout_width="wrap_content"
-            android:layout_height="23dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginBottom="8dp"
-            android:fontFamily="@font/roboto"
-            android:text="Rating"
-            android:textColor="@color/honeydew_off_white"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="@+id/view3"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <TextView
             android:id="@+id/tvBusinessAddress"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -131,6 +117,17 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvBusinessAddress"
             app:srcCompat="@drawable/ic_call" />
+
+        <RatingBar
+            android:id="@+id/rating"
+            style="@android:style/Widget.Holo.RatingBar.Indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/view3"
+            app:layout_constraintEnd_toEndOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

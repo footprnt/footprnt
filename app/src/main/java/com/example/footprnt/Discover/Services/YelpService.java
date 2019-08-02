@@ -66,7 +66,6 @@ public class YelpService {
             String jsonData = response.body().string();
             JSONObject yelpJSON = new JSONObject(jsonData);
             JSONArray eventsJSON = yelpJSON.getJSONArray("events");
-            System.out.println(eventsJSON);
             for (int i = 0; i < eventsJSON.length(); i++) {
                 JSONObject eventJSONObject = eventsJSON.getJSONObject(i);
                 String name = eventJSONObject.getString("name");

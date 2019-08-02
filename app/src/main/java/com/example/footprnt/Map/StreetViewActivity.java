@@ -26,7 +26,6 @@ public class StreetViewActivity extends FragmentActivity implements OnStreetView
         super.onCreate(savedInstanceState);
         Double lat = getIntent().getExtras().getDouble(MapConstants.LATITUDE);
         Double lon = getIntent().getExtras().getDouble(MapConstants.LONGITUDE);
-        System.out.println(lat);
         mLatLng = new LatLng(lat, lon);
         setContentView(R.layout.activity_street_view);
         StreetViewPanoramaFragment streetViewPanoramaFragment =
