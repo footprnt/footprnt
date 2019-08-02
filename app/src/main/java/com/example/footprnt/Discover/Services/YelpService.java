@@ -7,6 +7,7 @@
 package com.example.footprnt.Discover.Services;
 
 import com.example.footprnt.Discover.Models.Business;
+import com.example.footprnt.Discover.Models.Event;
 import com.example.footprnt.Discover.Util.DiscoverConstants;
 
 import org.json.JSONArray;
@@ -45,6 +46,47 @@ public class YelpService {
                 .build();
         Call call = client.newCall(request);
         call.enqueue(callback);
+    }
+
+    public static void findEvents(String location, Callback callback) {
+        String url = DiscoverConstants.YELP_EVENT_BASE_URL + location + "&sort_on=time_start";
+        Request request = new Request.Builder()
+                .url(url)
+                .header("Authorization", DiscoverConstants.YELP_TOKEN)
+                .build();
+        OkHttpClient client = new OkHttpClient.Builder()
+                .build();
+        Call call = client.newCall(request);
+        call.enqueue(callback);
+    }
+
+    public ArrayList<Event> processEvents(Response response) {
+        ArrayList<Event> events = new ArrayList<>();
+        try {
+            String jsonData = response.body().string();
+            JSONObject yelpJSON = new JSONObject(jsonData);
+            JSONArray eventsJSON = yelpJSON.getJSONArray("events");
+            System.out.println(eventsJSON);
+            for (int i = 0; i < eventsJSON.length(); i++) {
+                JSONObject eventJSONObject = eventsJSON.getJSONObject(i);
+                String name = eventJSONObject.getString("name");
+                String description = eventJSONObject.getString("description");
+                String imageUrl = eventJSONObject.getString("image_url");
+                JSONObject location = eventJSONObject.getJSONObject("location");
+                String eventId = eventJSONObject.getString("id");
+                String timeStart = eventJSONObject.getString("time_start");
+                String timeEnd = eventJSONObject.getString("time_end");
+                String eventUrl = eventJSONObject.getString("event_site_url");
+                Event event = new Event(name, description, imageUrl, location, eventId, timeStart, timeEnd, eventUrl);
+                events.add(event);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+
+        }
+        return events;
     }
 
     /**

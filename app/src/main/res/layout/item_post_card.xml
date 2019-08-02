@@ -57,10 +57,10 @@
                 card_view:layout_constraintBottom_toBottomOf="@+id/ivImage"
                 card_view:layout_constraintEnd_toEndOf="parent"
                 card_view:layout_constraintStart_toStartOf="parent"
-                card_view:layout_constraintTop_toBottomOf="@+id/title" />
+                card_view:layout_constraintTop_toBottomOf="@+id/eventTitle" />
 
             <TextView
-                android:id="@+id/title"
+                android:id="@+id/eventTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
