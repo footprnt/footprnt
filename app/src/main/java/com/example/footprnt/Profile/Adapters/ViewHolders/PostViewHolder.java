@@ -107,7 +107,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         mIvImage = itemView.findViewById(R.id.ivImage);
         mTvTitle = itemView.findViewById(R.id.tvTitle);
         mVPalette = itemView.findViewById(R.id.vPalette);
-        mTitle = itemView.findViewById(R.id.title);
+        mTitle = itemView.findViewById(R.id.eventTitle);
         mTvText = itemView.findViewById(R.id.tvText);
         mProgressBar = itemView.findViewById(R.id.progressBar);
 

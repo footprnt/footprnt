@@ -73,7 +73,7 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter{
             image.setVisibility(View.INVISIBLE);
         }
         String title = marker.getTitle();
-        TextView tvTitle = v.findViewById(R.id.title);
+        TextView tvTitle = v.findViewById(R.id.eventTitle);
         if (title != null && title.length() > 0) {
             tvTitle.setText(title);
         } else {
