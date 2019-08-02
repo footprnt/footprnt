@@ -11,6 +11,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -19,6 +21,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -71,7 +74,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
         ImageView ivBusinessImage;
         TextView tvBusinessName;
         TextView tvBusinessCategory;
-        TextView tvBusinessRating;
+        RatingBar rating;
         TextView tvBusinessAddress;
         TextView tvBusinessPhone;
         Button btnCall;
@@ -85,7 +88,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
             ivBusinessImage = itemView.findViewById(R.id.ivBusinessImage);
             tvBusinessName = itemView.findViewById(R.id.tvBusinessName);
             tvBusinessCategory = itemView.findViewById(R.id.tvBusinessCategory);
-            tvBusinessRating = itemView.findViewById(R.id.tvBusinessRating);
+            rating = itemView.findViewById(R.id.rating);
             cardView.setOnClickListener(new View.OnClickListener(){
                 @Override
                 public void onClick(View v) {
@@ -101,7 +104,9 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
                     ivBusinessImage = mAlertDialog.findViewById(R.id.ivBusinessImage);
                     tvBusinessName = mAlertDialog.findViewById(R.id.tvBusinessName);
                     tvBusinessCategory = mAlertDialog.findViewById(R.id.tvBusinessCategory);
-                    tvBusinessRating = mAlertDialog.findViewById(R.id.tvBusinessRating);
+                    rating = mAlertDialog.findViewById(R.id.rating);
+                    LayerDrawable stars = (LayerDrawable) rating.getProgressDrawable();
+                    stars.getDrawable(2).setColorFilter(Color.parseColor("#659DBD"), PorterDuff.Mode.SRC_ATOP);
                     tvBusinessAddress = mAlertDialog.findViewById(R.id.tvBusinessAddress);
                     tvBusinessPhone = mAlertDialog.findViewById(R.id.tvBusinessPhone);
                     bindBusinessDetail(business);
@@ -113,7 +118,9 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
             cardView.setTag(business);
             tvBusinessName.setText(business.getName());
             tvBusinessCategory.setText(business.getCategories().get(0));
-            tvBusinessRating.setText(String.format("Rating: %s/5", business.getRating()));
+            rating.setRating((float) business.getRating());
+            LayerDrawable stars = (LayerDrawable) rating.getProgressDrawable();
+            stars.getDrawable(2).setColorFilter(Color.parseColor("#659DBD"), PorterDuff.Mode.SRC_ATOP);
             tvBusinessAddress.setText(business.getAddress().get(0));
             final String url = business.getWebsite();
             tvBusinessName.setOnTouchListener(new View.OnTouchListener(){
@@ -137,7 +144,9 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
             cardView.setTag(business);
             tvBusinessName.setText(business.getName());
             tvBusinessCategory.setText(business.getCategories().get(0));
-            tvBusinessRating.setText(String.format("Rating: %s/5", business.getRating()));
+            rating.setRating((float) business.getRating());
+            LayerDrawable stars = (LayerDrawable) rating.getProgressDrawable();
+            stars.getDrawable(2).setColorFilter(Color.parseColor("#659DBD"), PorterDuff.Mode.SRC_ATOP);
             if (business.getImageUrl() == null || business.getImageUrl().length() == 0){
                 Picasso.with(mContext).load("https://pyzikscott.files.wordpress.com/2016/03/yelp-placeholder.png?w=584");
             } else {
