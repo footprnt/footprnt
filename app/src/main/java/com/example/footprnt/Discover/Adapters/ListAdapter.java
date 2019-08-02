@@ -6,15 +6,19 @@
  */
 package com.example.footprnt.Discover.Adapters;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
-import android.view.Gravity;
+import android.net.Uri;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -68,6 +72,9 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
         TextView tvBusinessName;
         TextView tvBusinessCategory;
         TextView tvBusinessRating;
+        TextView tvBusinessAddress;
+        TextView tvBusinessPhone;
+        Button btnCall;
 
         private Context mContext;
 
@@ -82,23 +89,51 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
             cardView.setOnClickListener(new View.OnClickListener(){
                 @Override
                 public void onClick(View v) {
-                    // item clicked
                     Business business = (Business) v.getTag();
-    /*                int position = getAdapterPosition();*/
-                    final View popupView = LayoutInflater.from(mContext).inflate(R.layout.fragment_business_details, null);
-                    final PopupWindow popupWindow = new PopupWindow(popupView, WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
-                    popupWindow.setOutsideTouchable(true);
-                    popupWindow.showAtLocation(itemView, Gravity.CENTER, 0, 0);
-                    ivBusinessImage = popupView.findViewById(R.id.ivBusinessImage);
-                    tvBusinessName = popupView.findViewById(R.id.tvBusinessName);
-                    tvBusinessCategory = popupView.findViewById(R.id.tvBusinessCategory);
-                    tvBusinessRating = popupView.findViewById(R.id.tvBusinessRating);
-                    bindBusiness(business);
+                    final View popupView = LayoutInflater.from(mContext).inflate(R.layout.business_details, null);
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(v.getContext());
+                    alertDialogBuilder.setView(popupView);
+                    AlertDialog mAlertDialog = alertDialogBuilder.create();
+                    WindowManager.LayoutParams lp = mAlertDialog.getWindow().getAttributes();
+                    lp.dimAmount = 0f;
+                    mAlertDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+                    mAlertDialog.show();
+                    ivBusinessImage = mAlertDialog.findViewById(R.id.ivBusinessImage);
+                    tvBusinessName = mAlertDialog.findViewById(R.id.tvBusinessName);
+                    tvBusinessCategory = mAlertDialog.findViewById(R.id.tvBusinessCategory);
+                    tvBusinessRating = mAlertDialog.findViewById(R.id.tvBusinessRating);
+                    tvBusinessAddress = mAlertDialog.findViewById(R.id.tvBusinessAddress);
+                    tvBusinessPhone = mAlertDialog.findViewById(R.id.tvBusinessPhone);
+                    bindBusinessDetail(business);
                 }
             });
         }
 
-        public void bindBusiness(Business business) {
+        public void bindBusinessDetail(Business business) {
+            cardView.setTag(business);
+            tvBusinessName.setText(business.getName());
+            tvBusinessCategory.setText(business.getCategories().get(0));
+            tvBusinessRating.setText(String.format("Rating: %s/5", business.getRating()));
+            tvBusinessAddress.setText(business.getAddress().get(0));
+            final String url = business.getWebsite();
+            tvBusinessName.setOnTouchListener(new View.OnTouchListener(){
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    Intent i = new Intent(Intent.ACTION_VIEW);
+                    i.setData(Uri.parse(url));
+                    ((Activity) mContext).startActivityForResult(i, 20);
+                    return true;
+                }
+            });
+            tvBusinessPhone.setText(business.getPhone());
+            if (business.getImageUrl() == null || business.getImageUrl().length() == 0){
+                Picasso.with(mContext).load("https://pyzikscott.files.wordpress.com/2016/03/yelp-placeholder.png?w=584");
+            } else {
+                Picasso.with(mContext).load(business.getImageUrl()).into(ivBusinessImage);
+            }
+        }
+
+        public  void bindBusiness (Business business) {
             cardView.setTag(business);
             tvBusinessName.setText(business.getName());
             tvBusinessCategory.setText(business.getCategories().get(0));
