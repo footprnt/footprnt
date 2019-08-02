@@ -8,6 +8,7 @@ package com.example.footprnt.Discover;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Criteria;
@@ -15,9 +16,11 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
@@ -53,7 +56,6 @@ import java.util.List;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
-import retrofit2.http.HEAD;
 
 import static android.content.Context.LOCATION_SERVICE;
 
@@ -347,10 +349,18 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                             } else {
                                 eventTime.setVisibility(View.GONE);
                             }
-                            String yelpUrl = e.getEventUrl();
+                            final String yelpUrl = e.getEventUrl();
                             if (yelpUrl != null && yelpUrl.length() > 0){
                                 eventUrl.setVisibility(View.VISIBLE);
-                                eventUrl.setText(yelpUrl);
+                                eventUrl.setOnTouchListener(new View.OnTouchListener(){
+                                    @Override
+                                    public boolean onTouch(View v, MotionEvent event) {
+                                        Intent i = new Intent(Intent.ACTION_VIEW);
+                                        i.setData(Uri.parse(yelpUrl));
+                                        ((Activity) getContext()).startActivityForResult(i, 20);
+                                        return true;
+                                    }
+                                });
                             } else {
                                 eventUrl.setVisibility(View.GONE);
                             }

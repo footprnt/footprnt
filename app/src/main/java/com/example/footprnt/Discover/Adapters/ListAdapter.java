@@ -6,10 +6,14 @@
  */
 package com.example.footprnt.Discover.Adapters;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -69,7 +73,6 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
         TextView tvBusinessCategory;
         TextView tvBusinessRating;
         TextView tvBusinessAddress;
-        TextView tvBusinessUrl;
         TextView tvBusinessPhone;
         Button btnCall;
 
@@ -100,9 +103,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
                     tvBusinessCategory = mAlertDialog.findViewById(R.id.tvBusinessCategory);
                     tvBusinessRating = mAlertDialog.findViewById(R.id.tvBusinessRating);
                     tvBusinessAddress = mAlertDialog.findViewById(R.id.tvBusinessAddress);
-                    tvBusinessUrl = mAlertDialog.findViewById(R.id.tvBusinessUrl);
                     tvBusinessPhone = mAlertDialog.findViewById(R.id.tvBusinessPhone);
-//                    btnCall = popupView.findViewById(R.id.btnCall);
                     bindBusinessDetail(business);
                 }
             });
@@ -114,7 +115,16 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
             tvBusinessCategory.setText(business.getCategories().get(0));
             tvBusinessRating.setText(String.format("Rating: %s/5", business.getRating()));
             tvBusinessAddress.setText(business.getAddress().get(0));
-            tvBusinessUrl.setText(business.getWebsite());
+            final String url = business.getWebsite();
+            tvBusinessName.setOnTouchListener(new View.OnTouchListener(){
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    Intent i = new Intent(Intent.ACTION_VIEW);
+                    i.setData(Uri.parse(url));
+                    ((Activity) mContext).startActivityForResult(i, 20);
+                    return true;
+                }
+            });
             tvBusinessPhone.setText(business.getPhone());
             if (business.getImageUrl() == null || business.getImageUrl().length() == 0){
                 Picasso.with(mContext).load("https://pyzikscott.files.wordpress.com/2016/03/yelp-placeholder.png?w=584");

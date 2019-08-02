@@ -27,7 +27,7 @@
             android:id="@+id/view3"
             android:layout_width="0dp"
             android:layout_height="300dp"
-            android:background="#AE000000"
+            android:background="#C3000000"
             app:layout_constraintBottom_toBottomOf="@+id/ivBusinessImage"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -42,11 +42,12 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
+            android:clickable="true"
             android:fontFamily="@font/montserrat"
             android:text="Business Name"
             android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-            android:textColor="#FFFFFFFF"
-            android:textSize="36sp"
+            android:textColor="#659DBD"
+            android:textSize="30sp"
             android:textStyle="bold"
             android:typeface="serif"
             app:layout_constraintEnd_toEndOf="@id/view3"
@@ -59,7 +60,6 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
-            android:layout_marginTop="4dp"
             android:fontFamily="@font/roboto"
             android:text="Business category"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
@@ -98,35 +98,17 @@
             app:layout_constraintTop_toTopOf="@+id/imageView9" />
 
         <TextView
-            android:id="@+id/tvBusinessUrl"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp"
-            android:autoLink="web"
-            android:fontFamily="@font/roboto"
-            android:maxLines="1"
-            android:text="BusinessUrl"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textColor="#7FC7F1"
-            android:textSize="14sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvBusinessAddress" />
-
-        <TextView
             android:id="@+id/tvBusinessPhone"
             android:layout_width="132dp"
             android:layout_height="19dp"
             android:layout_marginStart="4dp"
             android:layout_marginLeft="4dp"
-            android:layout_marginTop="8dp"
             android:fontFamily="@font/montserrat"
             android:text="@string/phone_number"
             android:textColor="#FFFFFF"
             android:textSize="14sp"
             app:layout_constraintStart_toEndOf="@+id/imageView6"
-            app:layout_constraintTop_toBottomOf="@+id/tvBusinessUrl" />
+            app:layout_constraintTop_toTopOf="@+id/imageView6" />
 
         <ImageView
             android:id="@+id/imageView9"
@@ -147,7 +129,7 @@
             android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvBusinessUrl"
+            app:layout_constraintTop_toBottomOf="@+id/tvBusinessAddress"
             app:srcCompat="@drawable/ic_call" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
