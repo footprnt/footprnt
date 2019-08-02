@@ -28,27 +28,21 @@
             app:layout_constraintVertical_bias="0.0" />
 
         <View
+            android:id="@+id/view4"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="#7F000000"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/top_space" />
-
-        <Space
-            android:id="@+id/top_space"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            app:layout_constraintBottom_toTopOf="@+id/tvBusinessName"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintTop_toTopOf="@+id/guideline" />
 
         <TextView
             android:id="@+id/tvBusinessName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="32dp"
             android:layout_marginEnd="16dp"
             android:fontFamily="@font/montserrat"
             android:text="Business Name"
@@ -57,9 +51,9 @@
             android:textSize="14sp"
             android:textStyle="bold"
             android:typeface="serif"
-            app:layout_constraintBottom_toTopOf="@+id/tvBusinessCategory"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/view4" />
 
         <TextView
             android:id="@+id/tvBusinessCategory"
@@ -67,55 +61,48 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
             android:fontFamily="@font/roboto"
             android:text="Business category"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textColor="#FFFFFF"
             android:textSize="12sp"
-            app:layout_constraintBottom_toTopOf="@+id/action_button_1"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvBusinessName" />
 
-        <Button
-            android:id="@+id/action_button_1"
-            style="@style/Widget.AppCompat.Button.Borderless"
+        <!--<TextView-->
+            <!--android:id="@+id/tvBusinessRating"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="23dp"-->
+            <!--android:layout_marginEnd="5dp"-->
+            <!--android:layout_marginRight="5dp"-->
+            <!--android:layout_marginBottom="4dp"-->
+            <!--android:fontFamily="@font/roboto"-->
+            <!--android:text="Rating"-->
+            <!--android:textColor="@color/honeydew_off_white"-->
+            <!--android:textSize="18sp"-->
+            <!--app:layout_constraintBottom_toBottomOf="parent"-->
+            <!--app:layout_constraintEnd_toEndOf="parent" />-->
+        <RatingBar
+            android:id="@+id/rating"
+            style="@android:style/Widget.Holo.RatingBar.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:minWidth="0dp"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            android:textColor="#FFFFFFFF"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
+            android:isIndicator="true"
+            android:numStars="5"
+            android:stepSize="0.5"
+            app:layout_constraintBottom_toBottomOf="@+id/view4"
+            app:layout_constraintEnd_toEndOf="@+id/view4" />
 
-        <Button
-            android:id="@+id/action_button_2"
-            style="@style/Widget.AppCompat.Button.Borderless"
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:minWidth="0dp"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            android:textColor="#FFFFFFFF"
-            app:layout_constraintStart_toEndOf="@+id/action_button_1"
-            app:layout_constraintTop_toTopOf="@+id/action_button_1" />
-
-        <TextView
-            android:id="@+id/tvBusinessRating"
-            android:layout_width="wrap_content"
-            android:layout_height="23dp"
-            android:layout_marginEnd="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_marginBottom="4dp"
-            android:fontFamily="@font/roboto"
-            android:text="Rating"
-            android:textColor="@color/honeydew_off_white"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="70dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
