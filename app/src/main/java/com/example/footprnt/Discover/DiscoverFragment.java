@@ -88,20 +88,24 @@ public class DiscoverFragment extends Fragment implements LocationListener {
         mMuseums = new ArrayList<>();
         mHotels = new ArrayList<>();
         mClubs = new ArrayList<>();
-        prepareArrayLists();
-        populateView();
-        mSwipeContainer = view.findViewById(R.id.swipeContainer2);
-        mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                RefreshBusinesses();
-            }
-        });
-        mSwipeContainer.setColorSchemeResources(R.color.refresh_progress_1,
-                R.color.refresh_progress_2,
-                R.color.refresh_progress_3,
-                R.color.refresh_progress_4,
-                R.color.refresh_progress_5);
+        try {
+            prepareArrayLists();
+            populateView();
+            mSwipeContainer = view.findViewById(R.id.swipeContainer2);
+            mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    RefreshBusinesses();
+                }
+            });
+            mSwipeContainer.setColorSchemeResources(R.color.refresh_progress_1,
+                    R.color.refresh_progress_2,
+                    R.color.refresh_progress_3,
+                    R.color.refresh_progress_4,
+                    R.color.refresh_progress_5);
+        } catch (Exception e) {
+            Toast.makeText(getContext(), "No businesses here", Toast.LENGTH_LONG).show();
+        }
         return view;
     }
     public void RefreshBusinesses() {
@@ -172,7 +176,11 @@ public class DiscoverFragment extends Fragment implements LocationListener {
      */
     public void setDataFromMapFragment(LatLng latLng) {
         mLocation = latLng;
-        populateView();
+        try {
+            populateView();
+        } catch(Exception e){
+            Toast.makeText(getContext(), "No businesses here", Toast.LENGTH_LONG).show();
+        }
     }
 
     /**
@@ -204,5 +212,4 @@ public class DiscoverFragment extends Fragment implements LocationListener {
     public void onProviderDisabled(String provider) {
         // not implemented
     }
-
 }
