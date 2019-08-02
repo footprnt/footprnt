@@ -6,19 +6,29 @@
  */
 package com.example.footprnt.Discover;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.pm.PackageManager;
+import android.location.Address;
 import android.location.Criteria;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -34,6 +44,7 @@ import com.google.android.gms.maps.model.LatLng;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -71,7 +82,8 @@ public class DiscoverFragment extends Fragment implements LocationListener {
     private ArrayList<ListAdapter> arrAdapters;
     private ArrayList<ArrayList<Business>> arrBusinesses;
     private Location mCurrLocation;
-    private Location myLocation;
+    private EditText mSearchText;
+    FragmentActivity myContext;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
@@ -80,6 +92,8 @@ public class DiscoverFragment extends Fragment implements LocationListener {
         rvMuseums = view.findViewById(R.id.rvMuseums);
         rvHotels = view.findViewById(R.id.rvHotels);
         rvClubs = view.findViewById(R.id.rvClubs);
+        mSearchText = view.findViewById(R.id.searchText);
+        handleSearch();
         arrQueries = new ArrayList<>();
         arrRecyclerViews = new ArrayList<>();
         arrAdapters = new ArrayList<>();
@@ -132,9 +146,8 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5, this);
                         if (mCurrLocation != null) {
                             address = AppUtil.getAddress(getContext(), new LatLng(mCurrLocation.getLatitude(), mCurrLocation.getLongitude()));
-
                         } else {
-                            address = "1 Hacker WayMenlo Park, CA 94025";
+                            address = "1 Hacker Way Menlo Park, CA 94025";
                         }
                     }
                 } else {
@@ -211,5 +224,41 @@ public class DiscoverFragment extends Fragment implements LocationListener {
     @Override
     public void onProviderDisabled(String provider) {
         // not implemented
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        myContext = (FragmentActivity) activity;
+        super.onAttach(activity);
+    }
+
+    public void handleSearch(){
+        mSearchText.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    String searchString = mSearchText.getText().toString();
+
+                    Geocoder geocoder = new Geocoder(getContext());
+                    List<Address> list = new ArrayList<>();
+                    try{
+                        list = geocoder.getFromLocationName(searchString, 1);
+                    } catch (IOException e) {
+
+                    }
+
+                    if (list.size() > 0) {
+                        Address address = list.get(0);
+                        mLocation = new LatLng(address.getLatitude(), address.getLongitude());
+                        populateView();
+                    } else {
+                        Toast.makeText(getContext(), "Not valid location", Toast.LENGTH_LONG).show();
+                    }
+                }
+                InputMethodManager inputManager = (InputMethodManager) myContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputManager.hideSoftInputFromWindow(myContext.getCurrentFocus().getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
+                return false;
+            }
+        });
     }
 }

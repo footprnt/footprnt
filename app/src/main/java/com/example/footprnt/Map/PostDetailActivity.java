@@ -11,7 +11,6 @@ import com.example.footprnt.Map.Util.UiUtil;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.R;
 import com.example.footprnt.Util.AppConstants;
-import com.parse.ParseUser;
 
 /**
  * Displays extended details of a post
@@ -29,7 +28,7 @@ public class PostDetailActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         final Post post = (Post) bundle.getSerializable(Post.class.getSimpleName());
         Boolean privacy;
-        Object privacySetting = ParseUser.getCurrentUser().get(AppConstants.privacy);
+        Object privacySetting = post.getUser().get(AppConstants.privacy);
         if (privacySetting == null) {
             privacy = false;
         } else {

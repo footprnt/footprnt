@@ -183,7 +183,7 @@ public class ProfileFragment extends Fragment {
         settings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Object privacySetting = ParseUser.getCurrentUser().get("private");
+                Object privacySetting = ParseUser.getCurrentUser().get(AppConstants.privacy);
                 if (privacySetting == null) {
                     mIsPrivate = false;
                 } else {

@@ -19,7 +19,6 @@ import com.example.footprnt.Map.PostDetailActivity;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.R;
 import com.example.footprnt.Util.AppConstants;
-import com.parse.ParseUser;
 
 import java.util.ArrayList;
 
@@ -57,7 +56,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         final Post post = mPosts.get(position);
         Boolean privacy;
-        Object privacySetting = ParseUser.getCurrentUser().get(AppConstants.privacy);
+        Object privacySetting = post.getUser().get(AppConstants.privacy);
         if (privacySetting == null) {
             privacy = false;
         } else {
