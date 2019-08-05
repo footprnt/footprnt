@@ -19,8 +19,10 @@ import com.example.footprnt.Models.Post;
 import com.example.footprnt.Models.SavedPost;
 import com.example.footprnt.R;
 import com.example.footprnt.Util.AppConstants;
+import com.parse.DeleteCallback;
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
@@ -37,18 +39,23 @@ import java.util.List;
 public class PostDetailActivity extends AppCompatActivity {
 
     Boolean mIsPostSaved;
+    ImageView mBookmark;
     Post mPost;
-    ParseUser mUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_detail);
+        mBookmark = findViewById(R.id.ivSave);
         Bundle bundle = getIntent().getExtras();
         mPost = (Post) bundle.getSerializable(Post.class.getSimpleName());
-        mUser = mPost.getUser();
-        Boolean privacy;
-        Object privacySetting = mPost.getUser().get(AppConstants.privacy);
+        Boolean privacy = null;
+        Object privacySetting = null;
+        try {
+            privacySetting = mPost.getUser().fetchIfNeeded().get(AppConstants.privacy);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         if (privacySetting == null) {
             privacy = false;
         } else {
@@ -67,11 +74,10 @@ public class PostDetailActivity extends AppCompatActivity {
 
         // Save Post
         checkIfSaved();
-        final ImageView mBookmark = findViewById(R.id.ivSave);
         mBookmark.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!mIsPostSaved) {
+                if (!mIsPostSaved) {
                     // Post not saved yet - save
                     SavedPost savedPost = new SavedPost();
                     savedPost.setPost(mPost);
@@ -79,17 +85,30 @@ public class PostDetailActivity extends AppCompatActivity {
                     savedPost.saveInBackground(new SaveCallback() {
                         @Override
                         public void done(ParseException e) {
+                            mIsPostSaved = true;
                             Toast.makeText(PostDetailActivity.this, "Saved Post", Toast.LENGTH_SHORT).show();
                             mBookmark.setImageResource(R.drawable.ic_save_check_filled);
                         }
                     });
-                    mIsPostSaved = true;
                 } else {
                     // Post already saved - unsaved
-                    deleteSavedPost();
-                    mIsPostSaved = false;
-                    mBookmark.setImageResource(R.drawable.ic_save_check);
-                    Toast.makeText(PostDetailActivity.this, "Unsaved Post", Toast.LENGTH_SHORT).show();
+                    ParseQuery<ParseObject> query = ParseQuery.getQuery("SavedPost");
+                    query.whereEqualTo(AppConstants.user, ParseUser.getCurrentUser()).whereEqualTo(AppConstants.post, mPost);
+                    query.findInBackground(new FindCallback<ParseObject>() {
+                        @Override
+                        public void done(List<ParseObject> objects, ParseException e) {
+                            if (e == null) {
+                                ParseObject.deleteAllInBackground(objects, new DeleteCallback() {
+                                    @Override
+                                    public void done(ParseException e) {
+                                        mIsPostSaved = false;
+                                        mBookmark.setImageResource(R.drawable.ic_save_check);
+                                        Toast.makeText(PostDetailActivity.this, "Unsaved Post", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                        }
+                    });
                 }
             }
         });
@@ -98,35 +117,21 @@ public class PostDetailActivity extends AppCompatActivity {
 
     // Check if post is already saved
     private void checkIfSaved() {
-        ParseQuery<SavedPost> query = ParseQuery.getQuery(SavedPost.class);
-        query.whereEqualTo(AppConstants.user, mUser.getObjectId());
-        query.whereEqualTo(AppConstants.post, mPost.getObjectId());
-        query.findInBackground(new FindCallback<SavedPost>() {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("SavedPost");
+        query.whereEqualTo(AppConstants.user, ParseUser.getCurrentUser()).whereEqualTo(AppConstants.post, mPost);
+        query.findInBackground(new FindCallback<ParseObject>() {
             @Override
-            public void done(List<SavedPost> objects, ParseException e) {
-                if(e==null){
-                    if(objects.size()>0){
+            public void done(List<ParseObject> objects, ParseException e) {
+                if (e == null) {
+                    if (objects.size() > 0) {
                         mIsPostSaved = true;
+                        mBookmark.setImageResource(R.drawable.ic_save_check_filled);
                     } else {
                         mIsPostSaved = false;
+                        mBookmark.setImageResource(R.drawable.ic_save_check);
                     }
                 } else {
                     Toast.makeText(PostDetailActivity.this, "Error querying saved posts", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
-
-    private void deleteSavedPost(){
-        ParseQuery<SavedPost> query = ParseQuery.getQuery(SavedPost.class);
-        query.whereEqualTo(AppConstants.user, mUser.getObjectId());
-        query.whereEqualTo(AppConstants.post, mPost.getObjectId());
-        query.findInBackground(new FindCallback<SavedPost>() {
-            @Override
-            public void done(List<SavedPost> objects, ParseException e) {
-                for(SavedPost savedPost:objects){
-                    savedPost.deleteInBackground();
-                    savedPost.saveInBackground();
                 }
             }
         });

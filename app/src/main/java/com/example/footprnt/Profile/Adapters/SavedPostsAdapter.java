@@ -34,6 +34,7 @@ import com.example.footprnt.R;
 import com.example.footprnt.Util.AppConstants;
 import com.parse.GetCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 
 import java.util.ArrayList;
@@ -67,7 +68,7 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Vi
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         holder.mProgressBar.setVisibility(View.VISIBLE);
         final SavedPost savedPost = mPosts.get(position);
         final Post post = (Post) savedPost.getPost();
@@ -100,7 +101,13 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Vi
         if (continentName != null) {
             sb.append(continentName);
         }
-        holder.mTitle.setText(post.getTitle());
+        String title = "";
+        try {
+            title = post.fetchIfNeeded().getString(AppConstants.title);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        holder.mTitle.setText(title);
         holder.mTvTitle.setText(sb);
         holder.mTitle.setTextColor(ContextCompat.getColor(mContext, R.color.grey));
         SimpleTarget<Bitmap> target = new SimpleTarget<Bitmap>() {
@@ -111,22 +118,54 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Vi
             }
         };
         holder.mIvImage.setTag(target);
-        if (post.getImage() != null) {
+        ParseFile image = null;
+        try {
+            image = post.fetchIfNeeded().getParseFile(AppConstants.profileImage);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        if (image != null) {
             holder.mTvText.setVisibility(View.INVISIBLE);
             holder.mIvImage.setVisibility(View.VISIBLE);
             holder.mTitle.setVisibility(View.INVISIBLE);
-            Glide.with(mContext).asBitmap().load(post.getImage().getUrl()).centerCrop().into(target);
+            Glide.with(mContext).asBitmap().load(image.getUrl()).centerCrop().into(target);
         } else {
             holder.mIvImage.setVisibility(View.INVISIBLE);
-            holder.mTvText.setText(post.getDescription());
-            holder.mTitle.setText(post.getTitle());
+            String description = "";
+            try {
+                description = post.fetchIfNeeded().getString(AppConstants.description);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            holder.mTvText.setText(description);
+            holder.mTitle.setText(title);
             holder.mTitle.setVisibility(View.VISIBLE);
             holder.mTvText.setVisibility(View.VISIBLE);
         }
         holder.mProgressBar.setVisibility(View.INVISIBLE);
+        // Saved Post Details
+        holder.mRootView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (position != RecyclerView.NO_POSITION) {
+                    mPosts.get(position).fetchInBackground(new GetCallback<ParseObject>() {
+                        @Override
+                        public void done(ParseObject object, ParseException e) {
+                            SavedPost savedPost = (SavedPost) object;
+                            Post post = (Post) savedPost.getPost();
+                            Intent intent = new Intent(mContext, PostDetailActivity.class);
+                            Bundle bundle = new Bundle();
+                            bundle.putSerializable(Post.class.getSimpleName(), post);
+                            intent.putExtras(bundle);
+                            ((Activity) mContext).startActivityForResult(intent, AppConstants.SAVED_POST_DETAILS_FROM_PROFILE);
+                        }
+                    });
+                }
+            }
+        });
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         View mRootView;
         ImageView mIvImage;
         TextView mTvTitle;
@@ -144,25 +183,6 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Vi
             mTitle = itemView.findViewById(R.id.eventTitle);
             mTvText = itemView.findViewById(R.id.tvText);
             mProgressBar = itemView.findViewById(R.id.progressBar);
-        }
-
-        @Override
-        public void onClick(View v) {
-            int position = getAdapterPosition();
-            if (position != RecyclerView.NO_POSITION) {
-                mPosts.get(position).fetchInBackground(new GetCallback<ParseObject>() {
-                    @Override
-                    public void done(ParseObject object, ParseException e) {
-                        Post post = (Post) object;
-                        Intent intent = new Intent(mContext, PostDetailActivity.class);
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable(Post.class.getSimpleName(), post);
-                        intent.putExtras(bundle);
-                        ((Activity) mContext).startActivityForResult(intent, AppConstants.SAVED_POST_DETAILS_FROM_PROFILE);
-                    }
-                });
-
-            }
         }
     }
 }
