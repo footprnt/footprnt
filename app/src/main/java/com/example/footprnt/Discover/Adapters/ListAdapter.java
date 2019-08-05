@@ -6,6 +6,7 @@
  */
 package com.example.footprnt.Discover.Adapters;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -51,6 +52,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
     @NonNull
     @Override
     public BusinessViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        // TODO: put radius in constants and color in resources
         CardView card = (CardView) LayoutInflater.from(parent.getContext()).inflate(R.layout.item_business, parent, false);
         card.setCardBackgroundColor(Color.parseColor("#050505"));
         card.setMaxCardElevation(0);
@@ -114,6 +116,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
             });
         }
 
+        @SuppressLint("ClickableViewAccessibility")
         public void bindBusinessDetail(Business business) {
             cardView.setTag(business);
             tvBusinessName.setText(business.getName());

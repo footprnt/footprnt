@@ -546,6 +546,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
      * @param title    the title of the pie chart
      */
     private void setUpPieChart(PieChart pieChart, int visited, int total, String title) {
+        // TODO: put custom color in constants
         List<PieEntry> pieEntries = new ArrayList<>();
         pieEntries.add(new PieEntry(visited, title));
         pieEntries.add(new PieEntry(total - visited, "Unvisited"));

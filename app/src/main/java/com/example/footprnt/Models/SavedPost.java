@@ -43,7 +43,12 @@ public class SavedPost extends ParseObject implements Serializable {
             super(SavedPost.class);
         }
 
-        public SavedPost.Query withUser() {
+        public Query getTop() {
+            setLimit(AppConstants.postLimit);
+            return this;
+        }
+
+        public Query withUser() {
             include(AppConstants.user);
             return this;
         }

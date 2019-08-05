@@ -41,5 +41,6 @@ public class SavedPosts extends AppCompatActivity {
      */
     private void getSavedPosts(){
         final SavedPost.Query query = new SavedPost.Query();
+        query.get
     }
 }
