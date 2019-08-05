@@ -27,6 +27,7 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
+        <activity android:name=".Profile.SavedPosts"></activity>
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
@@ -49,16 +50,13 @@
             </intent-filter>
         </activity>
         <activity android:name=".Map.StreetViewActivity" />
-        <activity
-            android:name=".ForgotPassword" />
-        <activity
-            android:name=".Map.PostDetailActivity"/>
+        <activity android:name=".ForgotPassword" />
+        <activity android:name=".Map.PostDetailActivity" />
         <activity
             android:name=".Profile.EditPost"
             android:label="@string/title_activity_edit_post"
             android:theme="@style/AppTheme.CustomTheme" />
-        <activity
-            android:name=".Profile.UserSettings"/>
+        <activity android:name=".Profile.UserSettings" />
         <activity
             android:name=".Map.FeedActivity"
             android:theme="@style/MyTheme" />
@@ -81,7 +79,7 @@
 
         <activity
             android:name=".SignUpActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".HomeActivity"
             android:configChanges="orientation|keyboard|keyboardHidden" />

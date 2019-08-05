@@ -32,6 +32,7 @@ import com.example.footprnt.Database.StatDatabase;
 import com.example.footprnt.Database.UserDatabase;
 import com.example.footprnt.LoginActivity;
 import com.example.footprnt.Models.Post;
+import com.example.footprnt.Models.SavedPost;
 import com.example.footprnt.Profile.Adapters.MultiViewAdapter;
 import com.example.footprnt.Profile.Util.ProfileConstants;
 import com.example.footprnt.R;
@@ -203,6 +204,7 @@ public class ProfileFragment extends Fragment {
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     public boolean onMenuItemClick(MenuItem item) {
                         if (item.getItemId() == R.id.logout) {
+                            // Logout
                             // Destroy instances of DB's on logout
                             StatDatabase.getStatDatabase(getContext()).clearAllTables();
                             PostDatabase.getPostDatabase(getContext()).clearAllTables();
@@ -210,7 +212,8 @@ public class ProfileFragment extends Fragment {
                             ParseUser.logOut();
                             Intent intent = new Intent(getActivity(), LoginActivity.class);
                             startActivity(intent);
-                        } else {
+                        } else if (item.getItemId() == R.id.privacy) {
+                            // Incognito mode
                             if (mIsPrivate) {
                                 item.setChecked(false);
                                 ParseUser.getCurrentUser().put(AppConstants.privacy, false);
@@ -220,6 +223,10 @@ public class ProfileFragment extends Fragment {
                                 ParseUser.getCurrentUser().put(AppConstants.privacy, true);
                                 ParseUser.getCurrentUser().saveInBackground();
                             }
+                        } else if (item.getItemId() == R.id.savedPosts) {
+                            // Saved Posts
+                            Intent it = new Intent(getContext(), SavedPost.class);
+                            startActivity(it);
                         }
                         return true;
                     }
