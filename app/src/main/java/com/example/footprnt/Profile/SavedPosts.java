@@ -7,12 +7,11 @@
 package com.example.footprnt.Profile;
 
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -40,7 +39,7 @@ public class SavedPosts extends AppCompatActivity {
     RecyclerView mRvSavedPosts;
     ArrayList<SavedPost> mSavedPosts;
     SavedPostsAdapter mSavedPostsAdapter;
-    LayoutInflater mInflater;
+    CardView mNoNetwork;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,30 +48,24 @@ public class SavedPosts extends AppCompatActivity {
         // Set views
         mBackButton = findViewById(R.id.ivBack);
         mRvSavedPosts = findViewById(R.id.rvSavedPosts);
+        mNoNetwork = findViewById(R.id.cvRoot);
+        mNoNetwork.setVisibility(View.INVISIBLE);
 
         // Set adapter
         mSavedPosts = new ArrayList<>();
         mSavedPostsAdapter = new SavedPostsAdapter(mSavedPosts, this);
 
         // Get saved posts
-        // TODO: implement database for saved posts
+        // TODO: implement database for saved posts ?
         if (AppUtil.haveNetworkConnection(getApplicationContext())) {
             getSavedPosts();
             mRvSavedPosts.setLayoutManager(new LinearLayoutManager(this));
             mRvSavedPosts.setAdapter(mSavedPostsAdapter);
         } else {
             // Display no network connection message
-            // TODO: fix
-            View view = mRvSavedPosts;
-            if (view != null) {
-                ViewGroup parent = (ViewGroup) view.getParent();
-                int index = parent.indexOfChild(view);
-                parent.removeView(view);
-                view = mInflater.inflate(R.layout.item_no_network_connection_profile, parent, false);
-                parent.addView(view, index);
-            }
+            mRvSavedPosts.setVisibility(View.INVISIBLE);
+            mNoNetwork.setVisibility(View.VISIBLE);
         }
-
         mBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -82,7 +75,7 @@ public class SavedPosts extends AppCompatActivity {
     }
 
     /**
-     * Helper method to query saved posts
+     * Helper method to query saved posts from Parse
      */
     private void getSavedPosts() {
         final SavedPost.Query query = new SavedPost.Query();

@@ -195,56 +195,54 @@ public class LoginActivity extends AppCompatActivity {
      * @param user
      */
     private void handleFacebookUser(final ParseUser user) {
-        if (user.isNew()) {
-            GraphRequest request = GraphRequest.newMeRequest(AccessToken.getCurrentAccessToken(),
-                    new GraphRequest.GraphJSONObjectCallback() {
-                        @Override
-                        public void onCompleted(JSONObject object, GraphResponse response) {
-                            try {
-                                // Set up new Facebook user
-                                user.put(AppConstants.username, String.valueOf(object.getString(AppConstants.name)));
-                                user.put(AppConstants.description,"");  // Set description as empty for now
-                                user.put(AppConstants.phone, "");  // Set phone as empty for now
-                                user.put(AppConstants.privacy, false);  // Set incognito mode as false for now
-                                String email = object.getString("email");
-                                if(email!=null) {
-                                    user.put(AppConstants.email, email);
-                                } else {
-                                    user.put(AppConstants.email, "");
-                                }
-                                URL picUrl = new URL(String.format("https://graph.facebook.com/%s/picture?type=large", Profile.getCurrentProfile().getId()));
-                                Bitmap bitmap = BitmapFactory.decodeStream(picUrl.openConnection().getInputStream());
-                                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                                bitmap.compress(Bitmap.CompressFormat.JPEG, AppConstants.captureImageQuality, byteArrayOutputStream);
-                                byte[] imageByte = byteArrayOutputStream.toByteArray();
-                                ParseFile parseFile = new ParseFile(AppConstants.profileImagePathJPEG, imageByte);
-                                // Save Facebook profile to DB
-                                if (parseFile != null) {
-                                    user.put(AppConstants.profileImage, parseFile);
-                                }
-                                user.saveInBackground(new SaveCallback() {
-                                    @Override
-                                    public void done(ParseException e) {
-                                        Intent it = new Intent(LoginActivity.this,
-                                                HomeActivity.class);
-                                        startActivity(it);
+        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+        if(accessToken!=null) {
+            if (user.isNew()) {
+                GraphRequest request = GraphRequest.newMeRequest(accessToken,
+                        new GraphRequest.GraphJSONObjectCallback() {
+                            @Override
+                            public void onCompleted(JSONObject object, GraphResponse response) {
+                                try {
+                                    // Set up new Facebook user
+                                    user.put(AppConstants.username, String.valueOf(object.getString(AppConstants.name)));
+                                    user.put(AppConstants.description, "");  // Set description as empty for now
+                                    user.put(AppConstants.phone, "");  // Set phone as empty for now
+                                    user.put(AppConstants.privacy, false);  // Set incognito mode as false for now
+                                    user.put(AppConstants.email, "");  // Set user email as empty for now
+                                    URL picUrl = new URL(String.format("https://graph.facebook.com/%s/picture?type=large", Profile.getCurrentProfile().getId()));
+                                    Bitmap bitmap = BitmapFactory.decodeStream(picUrl.openConnection().getInputStream());
+                                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                                    bitmap.compress(Bitmap.CompressFormat.JPEG, AppConstants.captureImageQuality, byteArrayOutputStream);
+                                    byte[] imageByte = byteArrayOutputStream.toByteArray();
+                                    ParseFile parseFile = new ParseFile(AppConstants.profileImagePathJPEG, imageByte);
+                                    // Save Facebook profile to DB
+                                    if (parseFile != null) {
+                                        user.put(AppConstants.profileImage, parseFile);
                                     }
-                                });
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            } catch (MalformedURLException e) {
-                                e.printStackTrace();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+                                    user.saveInBackground(new SaveCallback() {
+                                        @Override
+                                        public void done(ParseException e) {
+                                            Intent it = new Intent(LoginActivity.this,
+                                                    HomeActivity.class);
+                                            startActivity(it);
+                                        }
+                                    });
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                } catch (MalformedURLException e) {
+                                    e.printStackTrace();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
 
-                        }
-                    });
-            request.executeAsync();
-        } else {
-            // Returning user - go to Map
-            startActivity(new Intent(LoginActivity.this,
-                    HomeActivity.class));
+                            }
+                        });
+                request.executeAsync();
+            } else {
+                // Returning user - go to Map
+                startActivity(new Intent(LoginActivity.this,
+                        HomeActivity.class));
+            }
         }
     }
 

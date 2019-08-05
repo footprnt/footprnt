@@ -49,8 +49,8 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Vi
     static Context mContext;  // context for rendering
 
     public SavedPostsAdapter(ArrayList<SavedPost> posts, Context context) {
-        this.mPosts = posts;
-        this.mContext = context;
+        mPosts = posts;
+        mContext = context;
     }
 
     @Override
@@ -70,48 +70,59 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Vi
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         holder.mProgressBar.setVisibility(View.VISIBLE);
         final SavedPost savedPost = mPosts.get(position);
-        savedPost.getPost().fetchInBackground(new GetCallback<ParseObject>() {
+        final Post post = (Post) savedPost.getPost();
+        holder.mRootView.setTag(post);
+        StringBuilder sb = new StringBuilder();
+        String cityName = "";
+        try {
+            cityName = post.fetchIfNeeded().getString(AppConstants.city);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        if (cityName != null) {
+            sb.append(cityName).append(", ");
+        }
+        String countryName = "";
+        try {
+            countryName = post.fetchIfNeeded().getString(AppConstants.country);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        if (countryName != null) {
+            sb.append(countryName).append(", ");
+        }
+        String continentName = "";
+        try {
+            continentName = post.fetchIfNeeded().getString(AppConstants.continent);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        if (continentName != null) {
+            sb.append(continentName);
+        }
+        holder.mTitle.setText(post.getTitle());
+        holder.mTvTitle.setText(sb);
+        holder.mTitle.setTextColor(ContextCompat.getColor(mContext, R.color.grey));
+        SimpleTarget<Bitmap> target = new SimpleTarget<Bitmap>() {
             @Override
-            public void done(final ParseObject object, ParseException e) {
-                final Post post = (Post) object;
-                holder.mRootView.setTag(post);
-                StringBuilder sb = new StringBuilder();
-                String cityName = post.getString(AppConstants.city);
-                if (cityName != null) {
-                    sb.append(cityName).append(", ");
-                }
-                String countryName = post.getString(AppConstants.country);
-                if (countryName != null) {
-                    sb.append(countryName).append(", ");
-                }
-                String continentName = post.getString(AppConstants.continent);
-                if (continentName != null) {
-                    sb.append(continentName);
-                }
-                holder.mTitle.setText(post.getTitle());
-                holder.mTitle.setTextColor(ContextCompat.getColor(mContext, R.color.grey));
-                SimpleTarget<Bitmap> target = new SimpleTarget<Bitmap>() {
-                    @Override
-                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                        holder.mIvImage.setImageBitmap(resource);
-                        Palette.from(resource).generate();
-                    }
-                };
-                holder.mIvImage.setTag(target);
-                if (post.getImage() != null) {
-                    holder.mTvText.setVisibility(View.INVISIBLE);
-                    holder.mIvImage.setVisibility(View.VISIBLE);
-                    holder.mTitle.setVisibility(View.INVISIBLE);
-                    Glide.with(mContext).asBitmap().load(post.getImage().getUrl()).centerCrop().into(target);
-                } else {
-                    holder.mIvImage.setVisibility(View.INVISIBLE);
-                    holder.mTvText.setText(post.getDescription());
-                    holder.mTitle.setText(post.getTitle());
-                    holder.mTitle.setVisibility(View.VISIBLE);
-                    holder.mTvText.setVisibility(View.VISIBLE);
-                }
+            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                holder.mIvImage.setImageBitmap(resource);
+                Palette.from(resource).generate();
             }
-        });
+        };
+        holder.mIvImage.setTag(target);
+        if (post.getImage() != null) {
+            holder.mTvText.setVisibility(View.INVISIBLE);
+            holder.mIvImage.setVisibility(View.VISIBLE);
+            holder.mTitle.setVisibility(View.INVISIBLE);
+            Glide.with(mContext).asBitmap().load(post.getImage().getUrl()).centerCrop().into(target);
+        } else {
+            holder.mIvImage.setVisibility(View.INVISIBLE);
+            holder.mTvText.setText(post.getDescription());
+            holder.mTitle.setText(post.getTitle());
+            holder.mTitle.setVisibility(View.VISIBLE);
+            holder.mTvText.setVisibility(View.VISIBLE);
+        }
         holder.mProgressBar.setVisibility(View.INVISIBLE);
     }
 

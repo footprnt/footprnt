@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -84,6 +85,7 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_profile, container, false);
         mLayout = v.findViewById(R.id.rvPosts);
+        setUpToolbar(v);
         setUpDB();
 
         // Populate stat maps and get posts
@@ -100,7 +102,6 @@ public class ProfileFragment extends Fragment {
             StatDatabase.getStatDatabase(getContext()).clearAllTables();
             PostDatabase.getPostDatabase(getContext()).clearAllTables();
             UserDatabase.getUserDatabase(getContext()).clearAllTables();
-            setUpToolbar(v);
             getPosts();
         } else {
             // Add User
@@ -189,13 +190,17 @@ public class ProfileFragment extends Fragment {
                     public boolean onMenuItemClick(MenuItem item) {
                         if (item.getItemId() == R.id.logout) {
                             // Logout
-                            // Destroy instances of DB's on logout
-                            StatDatabase.getStatDatabase(getContext()).clearAllTables();
-                            PostDatabase.getPostDatabase(getContext()).clearAllTables();
-                            UserDatabase.getUserDatabase(getContext()).clearAllTables();
-                            ParseUser.logOut();
-                            Intent intent = new Intent(getActivity(), LoginActivity.class);
-                            startActivity(intent);
+                            if (AppUtil.haveNetworkConnection(getActivity().getApplicationContext())) {
+                                // Destroy instances of DB's on logout
+                                StatDatabase.getStatDatabase(getContext()).clearAllTables();
+                                PostDatabase.getPostDatabase(getContext()).clearAllTables();
+                                UserDatabase.getUserDatabase(getContext()).clearAllTables();
+                                ParseUser.logOut();
+                                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                                startActivity(intent);
+                            } else {
+                                Toast.makeText(getContext(), "No network connection, try again later", Toast.LENGTH_SHORT).show();
+                            }
                         } else if (item.getItemId() == R.id.savedPosts) {
                             // Saved Posts
                             Intent it = new Intent(getContext(), SavedPosts.class);

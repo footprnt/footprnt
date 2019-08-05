@@ -7,13 +7,12 @@
 package com.example.footprnt.Profile;
 
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -36,7 +35,7 @@ public class SavedActivities extends AppCompatActivity {
     RecyclerView mRvSavedActivities;
     ArrayList<Business> mSavedBussinesses;
     SavedActivitiesAdapter mSavedActivitiesAdapter;
-    LayoutInflater mInflater;
+    CardView mNoNetwork;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -45,6 +44,8 @@ public class SavedActivities extends AppCompatActivity {
         // Set views
         mBackButton = findViewById(R.id.ivBack);
         mRvSavedActivities = findViewById(R.id.rvSavedActivities);
+        mNoNetwork = findViewById(R.id.cvRoot);
+        mNoNetwork.setVisibility(View.INVISIBLE);
 
         // Set adapter
         mSavedBussinesses = new ArrayList<>();
@@ -59,14 +60,9 @@ public class SavedActivities extends AppCompatActivity {
         } else {
             // Display no network connection message
             // TODO: fix
-            View view = mRvSavedActivities;
-            if (view != null) {
-                ViewGroup parent = (ViewGroup) view.getParent();
-                int index = parent.indexOfChild(view);
-                parent.removeView(view);
-                view = mInflater.inflate(R.layout.item_no_network_connection_profile, parent, false);
-                parent.addView(view, index);
-            }
+            mRvSavedActivities.setVisibility(View.INVISIBLE);
+            mNoNetwork.setVisibility(View.VISIBLE);
+
         }
         mBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
