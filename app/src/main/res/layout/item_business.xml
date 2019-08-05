@@ -1,6 +1,5 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     style="@style/CardView.Light"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -70,19 +69,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvBusinessName" />
 
-        <!--<TextView-->
-        <!--android:id="@+id/tvBusinessRating"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="23dp"-->
-        <!--android:layout_marginEnd="5dp"-->
-        <!--android:layout_marginRight="5dp"-->
-        <!--android:layout_marginBottom="4dp"-->
-        <!--android:fontFamily="@font/roboto"-->
-        <!--android:text="Rating"-->
-        <!--android:textColor="@color/honeydew_off_white"-->
-        <!--android:textSize="18sp"-->
-        <!--app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--app:layout_constraintEnd_toEndOf="parent" />-->
         <RatingBar
             android:id="@+id/rating"
             style="@android:style/Widget.Holo.RatingBar.Small"
