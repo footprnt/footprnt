@@ -21,6 +21,8 @@
 
         <include layout="@layout/item_no_network_connection_profile" />
 
+        <include layout="@layout/item_no_saved_activities" />
+
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <include layout="@layout/toolbar_saved_post" />
