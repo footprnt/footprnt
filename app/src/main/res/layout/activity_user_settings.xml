@@ -200,6 +200,7 @@
         android:layout_marginBottom="24dp"
         android:text="Incognito Mode   "
         android:textColor="@color/grey"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/tvUsername"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"

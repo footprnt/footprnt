@@ -177,7 +177,6 @@ public class UserSettings extends AppCompatActivity {
         if(userPrivacy == null){
             userPrivacy = false;
             mUser.put(AppConstants.privacy, false);
-            mUser.saveInBackground();
         }
         mSwitchPrivacy.setChecked(userPrivacy);
     }

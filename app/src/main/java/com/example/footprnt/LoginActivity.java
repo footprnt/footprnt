@@ -196,8 +196,15 @@ public class LoginActivity extends AppCompatActivity {
                             try {
                                 // Set up new Facebook user
                                 user.put(AppConstants.username, String.valueOf(object.getString(AppConstants.name)));
-                                // TODO: set description?
-                                //user.put(AppConstants.description,"");
+                                user.put(AppConstants.description,"");  // Set description as empty for now
+                                user.put(AppConstants.phone, "");  // Set phone as empty for now
+                                user.put(AppConstants.privacy, false);  // Set incognito mode as false for now
+                                String email = object.getString("email");
+                                if(email!=null) {
+                                    user.put(AppConstants.email, email);
+                                } else {
+                                    user.put(AppConstants.email, "");
+                                }
                                 URL picUrl = new URL(String.format("https://graph.facebook.com/%s/picture?type=large", Profile.getCurrentProfile().getId()));
                                 Bitmap bitmap = BitmapFactory.decodeStream(picUrl.openConnection().getInputStream());
                                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
