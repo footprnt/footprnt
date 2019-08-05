@@ -1,3 +1,9 @@
+/*
+ * SavedPosts.java
+ * v1.0
+ * July 2019
+ * Copyright ©2019 Footprnt Inc.
+ */
 package com.example.footprnt.Profile;
 
 import android.os.Bundle;
@@ -21,6 +27,7 @@ import java.util.List;
 
 /**
  * Saved Posts activity
+ *
  * @author Clarisa Leu
  */
 public class SavedPosts extends AppCompatActivity {
@@ -52,7 +59,7 @@ public class SavedPosts extends AppCompatActivity {
     /**
      * Helper method to query saved posts
      */
-    private void getSavedPosts(){
+    private void getSavedPosts() {
         final SavedPost.Query query = new SavedPost.Query();
         query
                 .getTop()
@@ -61,8 +68,8 @@ public class SavedPosts extends AppCompatActivity {
         query.findInBackground(new FindCallback<SavedPost>() {
             @Override
             public void done(List<SavedPost> objects, ParseException e) {
-                if(e==null){
-                    for(int i = 0 ; i < objects.size(); i++){
+                if (e == null) {
+                    for (int i = 0; i < objects.size(); i++) {
                         final SavedPost savedPost = objects.get(i);
                         mSavedPosts.add(savedPost);
                     }
