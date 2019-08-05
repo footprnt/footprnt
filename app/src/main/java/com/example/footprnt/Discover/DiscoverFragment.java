@@ -68,7 +68,7 @@ import static android.content.Context.LOCATION_SERVICE;
  * @version 1.0
  */
 public class DiscoverFragment extends Fragment implements LocationListener {
-        public static final String TAG = DiscoverFragment.class.getSimpleName();
+    public static final String TAG = DiscoverFragment.class.getSimpleName();
     private SwipeRefreshLayout mSwipeContainer;
     RecyclerView rvRestaurants;
     RecyclerView rvMuseums;
@@ -127,27 +127,25 @@ public class DiscoverFragment extends Fragment implements LocationListener {
         mMuseums = new ArrayList<>();
         mHotels = new ArrayList<>();
         mClubs = new ArrayList<>();
-            getAddress();
-            getAdventureOfTheDay();
-            prepareArrayLists();
-            populateView();
-            mSwipeContainer = view.findViewById(R.id.swipeContainer2);
-            mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                @Override
-                public void onRefresh() {
-                    RefreshBusinesses();
-                }
-            });
-            mSwipeContainer.setColorSchemeResources(R.color.refresh_progress_1,
-                    R.color.refresh_progress_2,
-                    R.color.refresh_progress_3,
-                    R.color.refresh_progress_4,
-                    R.color.refresh_progress_5);
-        } catch (Exception e) {
-            Toast.makeText(getContext(), "No businesses here", Toast.LENGTH_LONG).show();
-        }
+        getAddress();
+        getAdventureOfTheDay();
+        prepareArrayLists();
+        populateView();
+        mSwipeContainer = view.findViewById(R.id.swipeContainer2);
+        mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                RefreshBusinesses();
+            }
+        });
+        mSwipeContainer.setColorSchemeResources(R.color.refresh_progress_1,
+                R.color.refresh_progress_2,
+                R.color.refresh_progress_3,
+                R.color.refresh_progress_4,
+                R.color.refresh_progress_5);
         return view;
     }
+
     public void RefreshBusinesses() {
         arrAdapters.clear();
         prepareArrayLists();
@@ -155,7 +153,7 @@ public class DiscoverFragment extends Fragment implements LocationListener {
         mSwipeContainer.setRefreshing(false);
     }
 
-    public void getAddress(){
+    public void getAddress() {
         if (mLocation != null) {
             address = AppUtil.getAddress(getContext(), mLocation);
         } else {
@@ -193,6 +191,7 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                     public void onFailure(Call call, IOException e) {
                         e.printStackTrace();
                     }
+
                     @Override
                     public void onResponse(Call call, Response response) {
                         final ArrayList<Business> arrTemp = yelpService.processResults(response);
@@ -207,7 +206,7 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                                 arrAdapters.remove(finalI);
                                 arrAdapters.add(finalI, arrAdapter);
                                 arrRecyclerViews.get(finalI).setAdapter(arrAdapters.get(finalI));
-                                if (arrTemp.size() == 0){
+                                if (arrTemp.size() == 0) {
                                     restaurants.setVisibility(View.GONE);
                                     museums.setVisibility(View.GONE);
                                     clubs.setVisibility(View.GONE);
@@ -224,6 +223,7 @@ public class DiscoverFragment extends Fragment implements LocationListener {
 
     /**
      * To get a query location from Map fragment
+     *
      * @param latLng The location passed from Map
      */
     public void setDataFromMapFragment(LatLng latLng) {
@@ -231,7 +231,7 @@ public class DiscoverFragment extends Fragment implements LocationListener {
         try {
             populateView();
             getAdventureOfTheDay();
-        } catch(Exception e){
+        } catch (Exception e) {
             Toast.makeText(getContext(), "No businesses here", Toast.LENGTH_LONG).show();
         }
     }
@@ -241,7 +241,8 @@ public class DiscoverFragment extends Fragment implements LocationListener {
      */
     private void prepareArrayLists() {
         arrQueries = new ArrayList<>(Arrays.asList(DiscoverConstants.RESTAURANT, DiscoverConstants.MUSEUM, DiscoverConstants.HOTEL, DiscoverConstants.CLUB));
-        arrRecyclerViews = new ArrayList<>(Arrays.asList(rvRestaurants, rvMuseums, rvHotels, rvClubs));;
+        arrRecyclerViews = new ArrayList<>(Arrays.asList(rvRestaurants, rvMuseums, rvHotels, rvClubs));
+        ;
         arrAdapters = new ArrayList<>(Arrays.asList(mAdapterRestaurants, mAdapterMuseums, mAdapterHotels, mAdapterClubs));
         arrBusinesses = new ArrayList<>(Arrays.asList(mRestaurants, mMuseums, mHotels, mClubs));
     }
@@ -272,7 +273,7 @@ public class DiscoverFragment extends Fragment implements LocationListener {
         super.onAttach(activity);
     }
 
-    public void handleSearch(){
+    public void handleSearch() {
         mSearchText.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -281,7 +282,7 @@ public class DiscoverFragment extends Fragment implements LocationListener {
 
                     Geocoder geocoder = new Geocoder(getContext());
                     List<Address> list = new ArrayList<>();
-                    try{
+                    try {
                         list = geocoder.getFromLocationName(searchString, 1);
                     } catch (IOException e) {
 
@@ -297,18 +298,19 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                     }
                 }
                 InputMethodManager inputManager = (InputMethodManager) myContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputManager.hideSoftInputFromWindow(myContext.getCurrentFocus().getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
+                inputManager.hideSoftInputFromWindow(myContext.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                 return false;
             }
         });
     }
 
-    public void getAdventureOfTheDay(){
+    public void getAdventureOfTheDay() {
         yelpService.findEvents(address, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
             }
+
             @Override
             public void onResponse(Call call, Response response) {
                 final ArrayList<Event> arrTemp = yelpService.processEvents(response);
@@ -317,38 +319,38 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                 final TextView eventDescription = getActivity().findViewById(R.id.eventDescrption);
                 final TextView eventTime = getActivity().findViewById(R.id.eventStart);
                 final TextView eventUrl = getActivity().findViewById(R.id.eventUrl);
-                if (arrTemp.size() > 0){
+                if (arrTemp.size() > 0) {
                     final Event e = arrTemp.get(0);
                     myContext.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             String imageUrl = e.getImageUrl();
-                            if (imageUrl != null && imageUrl.length() > 0){
+                            if (imageUrl != null && imageUrl.length() > 0) {
                                 eventImage.setVisibility(View.VISIBLE);
                                 try {
                                     Glide.with(myContext).load(imageUrl).apply(RequestOptions.circleCropTransform()).into(eventImage);
-                                } catch (Exception e){
+                                } catch (Exception e) {
                                     eventImage.setVisibility(View.GONE);
                                 }
                             } else {
                                 eventImage.setVisibility(View.GONE);
                             }
                             String title = e.getName();
-                            if (title != null && title.length() > 0){
+                            if (title != null && title.length() > 0) {
                                 eventTitle.setVisibility(View.VISIBLE);
                                 eventTitle.setText(title);
                             } else {
                                 eventTitle.setVisibility(View.GONE);
                             }
                             String description = e.getDescription();
-                            if (description != null && description.length() > 0){
+                            if (description != null && description.length() > 0) {
                                 eventDescription.setVisibility(View.VISIBLE);
                                 eventDescription.setText(description);
                             } else {
                                 eventDescription.setVisibility(View.GONE);
                             }
                             String time = e.getTimeStart();
-                            if (time != null && time.length() > 0){
+                            if (time != null && time.length() > 0) {
                                 eventTime.setVisibility(View.VISIBLE);
                                 String dateDisplay = time.substring(0, 10);
                                 eventTime.setText(dateDisplay);
@@ -356,9 +358,9 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                                 eventTime.setVisibility(View.GONE);
                             }
                             final String yelpUrl = e.getEventUrl();
-                            if (yelpUrl != null && yelpUrl.length() > 0){
+                            if (yelpUrl != null && yelpUrl.length() > 0) {
                                 eventUrl.setVisibility(View.VISIBLE);
-                                eventUrl.setOnTouchListener(new View.OnTouchListener(){
+                                eventUrl.setOnTouchListener(new View.OnTouchListener() {
                                     @Override
                                     public boolean onTouch(View v, MotionEvent event) {
                                         Intent i = new Intent(Intent.ACTION_VIEW);

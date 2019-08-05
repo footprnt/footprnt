@@ -56,7 +56,7 @@ public class SavedPosts extends AppCompatActivity {
         mSavedPostsAdapter = new SavedPostsAdapter(mSavedPosts, this);
 
         // Get saved posts
-        // TODO: implement database for saved posts
+        // TODO: implement database for saved posts ?
         if (AppUtil.haveNetworkConnection(getApplicationContext())) {
             getSavedPosts();
             mRvSavedPosts.setLayoutManager(new LinearLayoutManager(this));
