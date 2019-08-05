@@ -52,5 +52,9 @@ public class SavedPost extends ParseObject implements Serializable {
             include(AppConstants.user);
             return this;
         }
+        public Query withPost(){
+            include(AppConstants.post);
+            return this;
+        }
     }
 }
