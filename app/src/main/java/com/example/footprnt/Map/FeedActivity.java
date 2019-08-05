@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.appcompat.widget.PopupMenu;
@@ -40,6 +41,7 @@ public class FeedActivity extends Activity {
     private double mLong;
     private View mMenu;
     private TextView mNoPosts;
+    private ProgressBar mProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +56,6 @@ public class FeedActivity extends Activity {
      * Initializes all variables
      */
     private void initialization() {
-        // TODO: put lat/long in app constants
         mLat = getIntent().getExtras().getDouble(MapConstants.LATITUDE);
         mLong = getIntent().getExtras().getDouble(MapConstants.LONGITUDE);
         mPosts = new ArrayList<>();
@@ -80,6 +81,8 @@ public class FeedActivity extends Activity {
     private void getPosts(Post.Query postsQuery) {
         mPostAdapter.clear();
         postsQuery.addDescendingOrder("createdAt");
+        mProgressBar = findViewById(R.id.pbLoading);
+        mProgressBar.setVisibility(View.VISIBLE);
         postsQuery.findInBackground(new FindCallback<Post>() {
             @Override
             public void done(List<Post> objects, ParseException e) {
@@ -95,6 +98,7 @@ public class FeedActivity extends Activity {
                         mNoPosts.setVisibility(View.INVISIBLE);
                     }
                     mSwipeContainer.setRefreshing(false);
+                    mProgressBar.setVisibility(View.INVISIBLE);
                 } else {
                     e.printStackTrace();
                 }

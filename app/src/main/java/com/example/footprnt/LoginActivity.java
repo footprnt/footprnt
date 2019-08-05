@@ -19,6 +19,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -60,11 +61,13 @@ public class LoginActivity extends AppCompatActivity {
     private Button mLoginBtn;
     private Button mSignUpBtn;
     private Button mFacebookLoginBtn;
+    private ProgressBar mProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mProgressBar = findViewById(R.id.pbLoading);
 
         initialization();
 
@@ -143,12 +146,16 @@ public class LoginActivity extends AppCompatActivity {
      * @param password password of user attempting login
      */
     private void login(String username, String password) {
+        mProgressBar.setVisibility(View.VISIBLE);
         ParseUser.logInInBackground(username, password, new LogInCallback() {
             @Override
             public void done(ParseUser user, ParseException e) {
                 if (e == null) {
+                    mProgressBar.setVisibility(View.INVISIBLE);
                     final Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                     startActivity(intent);
+                } else {
+                    mProgressBar.setVisibility(View.INVISIBLE);
                 }
             }
         });
