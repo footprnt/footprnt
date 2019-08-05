@@ -90,6 +90,7 @@ public class SavedPosts extends AppCompatActivity {
                 .getTop()
                 .withUser()
                 .whereEqualTo(AppConstants.user, ParseUser.getCurrentUser());
+        query.addDescendingOrder(AppConstants.createdAt);
         query.findInBackground(new FindCallback<SavedPost>() {
             @Override
             public void done(List<SavedPost> objects, ParseException e) {
