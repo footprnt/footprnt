@@ -173,12 +173,12 @@ public class ProfileFragment extends Fragment {
     }
 
     /**
-     * Helper method to set up the toolbar
+     * Helper method to set up the toolbar. Toolbar functionality includes settings user as anonymous,
+     * log out, and viewing the users saved posts
      *
      * @param v this view
      */
     private void setUpToolbar(final View v) {
-        // Log out button
         final ImageView settings = v.findViewById(R.id.settings);
         settings.setOnClickListener(new View.OnClickListener() {
             @Override
