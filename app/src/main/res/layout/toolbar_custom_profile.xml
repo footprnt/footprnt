@@ -16,7 +16,7 @@
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
     <ImageView
-        android:id="@+id/imageView4"
+        android:id="@+id/ivLogo"
         android:layout_width="139dp"
         android:layout_height="35dp"
         android:layout_marginStart="16dp"
@@ -38,7 +38,7 @@
         app:srcCompat="@drawable/ic_more_vert_white" />
 
     <View
-        android:id="@+id/view2"
+        android:id="@+id/ivShadow"
         android:layout_width="match_parent"
         android:layout_height="7dp"
         android:background="@drawable/toolbar_dropshadow"

@@ -6,6 +6,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.footprnt.R;
 
+/**
+ * Saved Posts activity
+ * @author Clarisa Leu
+ */
 public class SavedPosts extends AppCompatActivity {
 
     @Override
