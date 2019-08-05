@@ -19,7 +19,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -77,7 +76,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
         RatingBar rating;
         TextView tvBusinessAddress;
         TextView tvBusinessPhone;
-        Button btnCall;
+        ImageView btnCall;
 
         private Context mContext;
 
@@ -104,6 +103,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
                     ivBusinessImage = mAlertDialog.findViewById(R.id.ivBusinessImage);
                     tvBusinessName = mAlertDialog.findViewById(R.id.tvBusinessName);
                     tvBusinessCategory = mAlertDialog.findViewById(R.id.tvBusinessCategory);
+                    btnCall = mAlertDialog.findViewById(R.id.btnCall);
                     rating = mAlertDialog.findViewById(R.id.rating);
                     LayerDrawable stars = (LayerDrawable) rating.getProgressDrawable();
                     stars.getDrawable(2).setColorFilter(Color.parseColor("#659DBD"), PorterDuff.Mode.SRC_ATOP);
@@ -132,7 +132,26 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
                     return true;
                 }
             });
-            tvBusinessPhone.setText(business.getPhone());
+            final String businessPhoneNum = business.getPhone();
+            if (businessPhoneNum != null && businessPhoneNum.length() > 0){
+                tvBusinessPhone.setText(businessPhoneNum);
+                tvBusinessPhone.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + businessPhoneNum));
+                        ((Activity) mContext).startActivityForResult(intent, 20);
+                    }
+                });
+                btnCall.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + businessPhoneNum));
+                        ((Activity) mContext).startActivityForResult(intent, 20);
+                    }
+                });
+            } else {
+                tvBusinessPhone.setVisibility(View.GONE);
+            }
             if (business.getImageUrl() == null || business.getImageUrl().length() == 0){
                 Picasso.with(mContext).load("https://pyzikscott.files.wordpress.com/2016/03/yelp-placeholder.png?w=584");
             } else {
