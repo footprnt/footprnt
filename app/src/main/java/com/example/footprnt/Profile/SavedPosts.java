@@ -40,6 +40,7 @@ public class SavedPosts extends AppCompatActivity {
     ArrayList<SavedPost> mSavedPosts;
     SavedPostsAdapter mSavedPostsAdapter;
     CardView mNoNetwork;
+    CardView mNoSavedPosts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +51,8 @@ public class SavedPosts extends AppCompatActivity {
         mRvSavedPosts = findViewById(R.id.rvSavedPosts);
         mNoNetwork = findViewById(R.id.cvRoot);
         mNoNetwork.setVisibility(View.INVISIBLE);
+        mNoSavedPosts = findViewById(R.id.cvRoot2);
+        mNoSavedPosts.setVisibility(View.INVISIBLE);
 
         // Set adapter
         mSavedPosts = new ArrayList<>();

@@ -33,6 +33,7 @@ import com.example.footprnt.Models.Post;
 import com.example.footprnt.Models.SavedPost;
 import com.example.footprnt.R;
 import com.example.footprnt.Util.AppConstants;
+import com.parse.DeleteCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -108,9 +109,7 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Vi
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        holder.mTitle.setText(title);
         holder.mTvTitle.setText(sb);
-        holder.mTitle.setTextColor(ContextCompat.getColor(mContext, R.color.grey));
         SimpleTarget<Bitmap> target = new SimpleTarget<Bitmap>() {
             @Override
             public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
@@ -121,7 +120,7 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Vi
         holder.mIvImage.setTag(target);
         ParseFile image = null;
         try {
-            image = post.fetchIfNeeded().getParseFile(AppConstants.profileImage);
+            image = post.fetchIfNeeded().getParseFile(AppConstants.image);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -132,6 +131,7 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Vi
             Glide.with(mContext).asBitmap().load(image.getUrl()).centerCrop().into(target);
         } else {
             holder.mIvImage.setVisibility(View.INVISIBLE);
+            holder.mTitle.setTextColor(ContextCompat.getColor(mContext, R.color.grey));
             String description = "";
             try {
                 description = post.fetchIfNeeded().getString(AppConstants.description);
@@ -170,10 +170,16 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Vi
             @Override
             public boolean onLongClick(View v) {
                 int newPosition = holder.getAdapterPosition();
+                SavedPost savedPost1 = mPosts.get(newPosition);
                 mPosts.remove(newPosition);
                 notifyItemRemoved(newPosition);
                 notifyItemChanged(newPosition, mPosts.size());
-                Toast.makeText(mContext, "Saved Post Deleted", Toast.LENGTH_SHORT).show();
+                savedPost1.deleteInBackground(new DeleteCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        Toast.makeText(mContext, "Saved Post Deleted", Toast.LENGTH_SHORT).show();
+                    }
+                });
                 return true;
             }
         });
