@@ -1,16 +1,17 @@
 /*
- * PostDetailActivity.java
+ * SavedPostDetails.java
  * v1.0
  * July 2019
  * Copyright ©2019 Footprnt Inc.
  */
-package com.example.footprnt.Map;
+package com.example.footprnt.Profile;
 
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.footprnt.Map.Util.PostAdapter;
@@ -24,21 +25,20 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 /**
- * Displays extended details of a post
+ * Saved Post Details Activity
  *
- * @author Jocelyn Shen, Clarisa Leu
- * @version 1.0
- * @since 2019-07-22
+ * @author Clarisa Leu
  */
-public class PostDetailActivity extends AppCompatActivity {
+public class SavedPostDetails extends AppCompatActivity {
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_detail);
         Bundle bundle = getIntent().getExtras();
         final Post post = (Post) bundle.getSerializable(Post.class.getSimpleName());
         Boolean privacy;
+        assert post != null;
         Object privacySetting = post.getUser().get(AppConstants.privacy);
         if (privacySetting == null) {
             privacy = false;
@@ -67,12 +67,15 @@ public class PostDetailActivity extends AppCompatActivity {
                 savedPost.saveInBackground(new SaveCallback() {
                     @Override
                     public void done(ParseException e) {
-                        Toast.makeText(PostDetailActivity.this, "Saved Post", Toast.LENGTH_LONG).show();
-                        // TODO: set tint
+                        Toast.makeText(SavedPostDetails.this, "Unsaved Post", Toast.LENGTH_SHORT).show();
+                        // TODO: set tint, update UI
+                        setResult(AppConstants.SAVED_POST_DETAILS_FROM_PROFILE);
+                        finish();
                     }
                 });
             }
         });
+
 
     }
 }

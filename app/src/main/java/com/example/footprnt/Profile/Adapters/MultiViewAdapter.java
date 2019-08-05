@@ -294,7 +294,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     @Override
                     public void onClick(View v) {
                         Intent it = new Intent(mContext, UserSettings.class);
-                        ((Activity) mContext).startActivityForResult(it, AppConstants.RELOAD_USERPROFILE_FRAGMENT_REQUEST_CODE);
+                        ((Activity) mContext).startActivityForResult(it, AppConstants.RELOAD_USER_PROFILE_FRAGMENT_REQUEST_CODE);
                     }
                 });
             }
@@ -546,6 +546,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
      * @param title    the title of the pie chart
      */
     private void setUpPieChart(PieChart pieChart, int visited, int total, String title) {
+        // TODO: put custom color in constants
         List<PieEntry> pieEntries = new ArrayList<>();
         pieEntries.add(new PieEntry(visited, title));
         pieEntries.add(new PieEntry(total - visited, "Unvisited"));

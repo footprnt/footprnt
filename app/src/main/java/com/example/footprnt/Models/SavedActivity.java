@@ -1,5 +1,5 @@
 /*
- * MarkerDetails.java
+ * SavedActivity.java
  * v1.0
  * July 2019
  * Copyright ©2019 Footprnt Inc.
@@ -15,18 +15,12 @@ import com.parse.ParseUser;
 import java.io.Serializable;
 
 /**
- * @author Jocelyn Shen
+ * SavedActivity class for saving activities from discover page functionality
+ *
+ * @author Clarisa Leu
  */
-@ParseClassName("MarkerDetails")
-public class MarkerDetails extends ParseObject implements Serializable {
-
-    public ParseObject getPost() {
-        return getParseObject(AppConstants.post);
-    }
-
-    public void setPost(Post post) {
-        put(AppConstants.post, post);
-    }
+@ParseClassName("SavedActivity")
+public class SavedActivity extends ParseObject implements Serializable {
 
     public ParseUser getUser() {
         return getParseUser(AppConstants.user);
@@ -36,9 +30,14 @@ public class MarkerDetails extends ParseObject implements Serializable {
         put(AppConstants.user, user);
     }
 
-    public static class Query extends ParseQuery<MarkerDetails> {
+    public static class Query extends ParseQuery<SavedActivity> {
         public Query() {
-            super(MarkerDetails.class);
+            super(SavedActivity.class);
+        }
+
+        public Query getTop() {
+            setLimit(AppConstants.postLimit);
+            return this;
         }
 
         public Query withUser() {

@@ -1,5 +1,5 @@
 /*
- * MarkerDetails.java
+ * SavedPost.java
  * v1.0
  * July 2019
  * Copyright ©2019 Footprnt Inc.
@@ -15,10 +15,12 @@ import com.parse.ParseUser;
 import java.io.Serializable;
 
 /**
- * @author Jocelyn Shen
+ * SavePost class for saving posts functionality
+ *
+ * @author Clarisa Leu
  */
-@ParseClassName("MarkerDetails")
-public class MarkerDetails extends ParseObject implements Serializable {
+@ParseClassName("SavedPost")
+public class SavedPost extends ParseObject implements Serializable {
 
     public ParseObject getPost() {
         return getParseObject(AppConstants.post);
@@ -36,9 +38,14 @@ public class MarkerDetails extends ParseObject implements Serializable {
         put(AppConstants.user, user);
     }
 
-    public static class Query extends ParseQuery<MarkerDetails> {
+    public static class Query extends ParseQuery<SavedPost> {
         public Query() {
-            super(MarkerDetails.class);
+            super(SavedPost.class);
+        }
+
+        public Query getTop() {
+            setLimit(AppConstants.postLimit);
+            return this;
         }
 
         public Query withUser() {

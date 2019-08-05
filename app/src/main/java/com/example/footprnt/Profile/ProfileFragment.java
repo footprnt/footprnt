@@ -144,7 +144,7 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == AppConstants.RELOAD_USERPROFILE_FRAGMENT_REQUEST_CODE) {
+        if (resultCode == AppConstants.RELOAD_USER_PROFILE_FRAGMENT_REQUEST_CODE) {
             mMultiAdapter.notifyItemChanged(0);
         }
         // TODO: fix so the stat chart updates if user removes unique city, continent, or country (i.e. decrement)
@@ -173,36 +173,22 @@ public class ProfileFragment extends Fragment {
     }
 
     /**
-     * Helper method to set up the toolbar
+     * Helper method to set up the toolbar. Toolbar functionality includes settings
+     * log out, and viewing the users saved posts/saved activities
      *
      * @param v this view
      */
     private void setUpToolbar(final View v) {
-        // Log out button
         final ImageView settings = v.findViewById(R.id.settings);
         settings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Object privacySetting = ParseUser.getCurrentUser().get(AppConstants.privacy);
-                if (privacySetting == null) {
-                    mIsPrivate = false;
-                } else {
-                    if ((Boolean) privacySetting == true) {
-                        mIsPrivate = true;
-                    } else {
-                        mIsPrivate = false;
-                    }
-                }
                 PopupMenu popup = new PopupMenu(getActivity(), settings);
                 popup.getMenuInflater().inflate(R.menu.popup_menu, popup.getMenu());
-                if (mIsPrivate) {
-                    popup.getMenu().getItem(1).setChecked(true);
-                } else {
-                    popup.getMenu().getItem(1).setChecked(false);
-                }
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     public boolean onMenuItemClick(MenuItem item) {
                         if (item.getItemId() == R.id.logout) {
+                            // Logout
                             // Destroy instances of DB's on logout
                             StatDatabase.getStatDatabase(getContext()).clearAllTables();
                             PostDatabase.getPostDatabase(getContext()).clearAllTables();
@@ -210,16 +196,14 @@ public class ProfileFragment extends Fragment {
                             ParseUser.logOut();
                             Intent intent = new Intent(getActivity(), LoginActivity.class);
                             startActivity(intent);
-                        } else {
-                            if (mIsPrivate) {
-                                item.setChecked(false);
-                                ParseUser.getCurrentUser().put(AppConstants.privacy, false);
-                                ParseUser.getCurrentUser().saveInBackground();
-                            } else {
-                                item.setChecked(true);
-                                ParseUser.getCurrentUser().put(AppConstants.privacy, true);
-                                ParseUser.getCurrentUser().saveInBackground();
-                            }
+                        } else if (item.getItemId() == R.id.savedPosts) {
+                            // Saved Posts
+                            Intent it = new Intent(getContext(), SavedPosts.class);
+                            startActivity(it);
+                        } else if (item.getItemId() == R.id.savedActivities) {
+                            // Saved Activities
+                            Intent it = new Intent(getContext(), SavedActivities.class);
+                            startActivity(it);
                         }
                         return true;
                     }
