@@ -156,6 +156,7 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Vi
                             Intent intent = new Intent(mContext, PostDetailActivity.class);
                             Bundle bundle = new Bundle();
                             bundle.putSerializable(Post.class.getSimpleName(), post);
+                            bundle.putSerializable("hideView", true);
                             intent.putExtras(bundle);
                             ((Activity) mContext).startActivityForResult(intent, AppConstants.SAVED_POST_DETAILS_FROM_PROFILE);
                         }

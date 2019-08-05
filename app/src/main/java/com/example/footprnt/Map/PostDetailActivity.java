@@ -49,6 +49,7 @@ public class PostDetailActivity extends AppCompatActivity {
         mBookmark = findViewById(R.id.ivSave);
         Bundle bundle = getIntent().getExtras();
         mPost = (Post) bundle.getSerializable(Post.class.getSimpleName());
+        Boolean hideView = (Boolean) bundle.getSerializable("hideView");
         Boolean privacy = null;
         Object privacySetting = null;
         try {
@@ -73,46 +74,49 @@ public class PostDetailActivity extends AppCompatActivity {
         UiUtil.setPostImages(mPost, vh, this, privacy);
 
         // Save Post
-        checkIfSaved();
-        mBookmark.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!mIsPostSaved) {
-                    // Post not saved yet - save
-                    SavedPost savedPost = new SavedPost();
-                    savedPost.setPost(mPost);
-                    savedPost.setUser(ParseUser.getCurrentUser());
-                    savedPost.saveInBackground(new SaveCallback() {
-                        @Override
-                        public void done(ParseException e) {
-                            mIsPostSaved = true;
-                            Toast.makeText(PostDetailActivity.this, "Saved Post", Toast.LENGTH_SHORT).show();
-                            mBookmark.setImageResource(R.drawable.ic_save_check_filled);
-                        }
-                    });
-                } else {
-                    // Post already saved - unsaved
-                    ParseQuery<ParseObject> query = ParseQuery.getQuery("SavedPost");
-                    query.whereEqualTo(AppConstants.user, ParseUser.getCurrentUser()).whereEqualTo(AppConstants.post, mPost);
-                    query.findInBackground(new FindCallback<ParseObject>() {
-                        @Override
-                        public void done(List<ParseObject> objects, ParseException e) {
-                            if (e == null) {
-                                ParseObject.deleteAllInBackground(objects, new DeleteCallback() {
-                                    @Override
-                                    public void done(ParseException e) {
-                                        mIsPostSaved = false;
-                                        mBookmark.setImageResource(R.drawable.ic_save_check);
-                                        Toast.makeText(PostDetailActivity.this, "Unsaved Post", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
+        if (!hideView) {
+            checkIfSaved();
+            mBookmark.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!mIsPostSaved) {
+                        // Post not saved yet - save
+                        SavedPost savedPost = new SavedPost();
+                        savedPost.setPost(mPost);
+                        savedPost.setUser(ParseUser.getCurrentUser());
+                        savedPost.saveInBackground(new SaveCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                mIsPostSaved = true;
+                                Toast.makeText(PostDetailActivity.this, "Saved Post", Toast.LENGTH_SHORT).show();
+                                mBookmark.setImageResource(R.drawable.ic_save_check_filled);
                             }
-                        }
-                    });
+                        });
+                    } else {
+                        // Post already saved - unsaved
+                        ParseQuery<ParseObject> query = ParseQuery.getQuery("SavedPost");
+                        query.whereEqualTo(AppConstants.user, ParseUser.getCurrentUser()).whereEqualTo(AppConstants.post, mPost);
+                        query.findInBackground(new FindCallback<ParseObject>() {
+                            @Override
+                            public void done(List<ParseObject> objects, ParseException e) {
+                                if (e == null) {
+                                    ParseObject.deleteAllInBackground(objects, new DeleteCallback() {
+                                        @Override
+                                        public void done(ParseException e) {
+                                            mIsPostSaved = false;
+                                            mBookmark.setImageResource(R.drawable.ic_save_check);
+                                            Toast.makeText(PostDetailActivity.this, "Unsaved Post", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    }
                 }
-            }
-        });
-
+            });
+        } else {
+            mBookmark.setVisibility(View.INVISIBLE);
+        }
     }
 
     // Check if post is already saved
