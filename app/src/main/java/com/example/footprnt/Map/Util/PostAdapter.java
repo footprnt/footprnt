@@ -111,8 +111,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 Intent intent = new Intent(mContext, PostDetailActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putSerializable(Post.class.getSimpleName(), post);
-                // TODO: put in constants
-                bundle.putSerializable("hideView", false);
+                bundle.putSerializable(AppConstants.hideView, false);
                 intent.putExtras(bundle);
                 // TODO: put req code in app util
                 ((Activity) mContext).startActivityForResult(intent, 20);

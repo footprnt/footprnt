@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -156,12 +157,24 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Vi
                             Intent intent = new Intent(mContext, PostDetailActivity.class);
                             Bundle bundle = new Bundle();
                             bundle.putSerializable(Post.class.getSimpleName(), post);
-                            bundle.putSerializable("hideView", true);
+                            bundle.putSerializable(AppConstants.hideView, true);
                             intent.putExtras(bundle);
                             ((Activity) mContext).startActivityForResult(intent, AppConstants.SAVED_POST_DETAILS_FROM_PROFILE);
                         }
                     });
                 }
+            }
+        });
+        // Delete Saved Post
+        holder.mRootView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                int newPosition = holder.getAdapterPosition();
+                mPosts.remove(newPosition);
+                notifyItemRemoved(newPosition);
+                notifyItemChanged(newPosition, mPosts.size());
+                Toast.makeText(mContext, "Saved Post Deleted", Toast.LENGTH_SHORT).show();
+                return true;
             }
         });
     }
