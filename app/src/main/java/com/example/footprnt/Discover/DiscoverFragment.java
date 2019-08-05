@@ -143,20 +143,9 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                     R.color.refresh_progress_3,
                     R.color.refresh_progress_4,
                     R.color.refresh_progress_5);
-
-
-//        mSwipeContainer = view.findViewById(R.id.swipeContainer2);
-//        mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-//            @Override
-//            public void onRefresh() {
-//                RefreshBusinesses();
-//            }
-//        });
-//        mSwipeContainer.setColorSchemeResources(R.color.refresh_progress_1,
-//                R.color.refresh_progress_2,
-//                R.color.refresh_progress_3,
-//                R.color.refresh_progress_4,
-//                R.color.refresh_progress_5);
+        } catch (Exception e) {
+            Toast.makeText(getContext(), "No businesses here", Toast.LENGTH_LONG).show();
+        }
         return view;
     }
     public void RefreshBusinesses() {

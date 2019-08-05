@@ -9,7 +9,7 @@
     android:layout_marginBottom="80dp"
     android:clickable="true"
     android:foreground="?android:attr/selectableItemBackground"
-    card_view:cardElevation="@dimen/card_elevation">>
+    card_view:cardElevation="@dimen/card_elevation">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -17,10 +17,11 @@
 
         <View
             android:id="@+id/vPalette"
-            android:transitionName="palette"
-            android:background="@color/ghostwhite_off_white"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:background="@color/ghostwhite_off_white"
+            android:transitionName="palette" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -31,12 +32,12 @@
             android:layout_marginRight="8dp"
             android:layout_marginBottom="8dp"
             android:height="100dp"
-            android:textColor="@color/grey"
+            android:fontFamily="@font/roboto"
             android:gravity="center"
             android:text="NO NETWORK CONNECTION"
+            android:textColor="@color/grey"
             android:textSize="20dp"
             android:textStyle="bold"
-            android:fontFamily="@font/roboto"
             card_view:layout_constraintBottom_toBottomOf="parent"
             card_view:layout_constraintEnd_toEndOf="parent"
             card_view:layout_constraintStart_toStartOf="parent"

@@ -1,22 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/fragment_profile"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/saved_post_activity"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/whitesmoke_off_white"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".Profile.SavedPosts">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/rlMainContent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="55dp">
+        android:layout_marginTop="55dp">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvPosts"
+            android:id="@+id/rvSavedActivities"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-    <include layout="@layout/toolbar_custom_profile" />
+    <include layout="@layout/toolbar_saved_post" />
 </RelativeLayout>

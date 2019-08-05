@@ -17,6 +17,7 @@ import java.util.List;
 /**
  * This is an interface which acts is an intermediary between the user and the database.
  * All the operation to be performed on the posts table is defined here.
+ * PostDaoAccess is used for accessing user posts and saved posts databases
  *
  * @author Clarisa Leu-Rodriguez
  */
