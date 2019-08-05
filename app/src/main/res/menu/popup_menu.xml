@@ -6,7 +6,7 @@
     <item
         android:id="@+id/privacy"
         android:checkable="true"
-        android:title="Make anonymous" />
+        android:title="Incognito Mode" />
     <item
         android:id="@+id/logout"
         android:title="Logout" />
