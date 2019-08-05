@@ -10,6 +10,7 @@ import android.app.Application;
 
 import com.example.footprnt.Models.MarkerDetails;
 import com.example.footprnt.Models.Post;
+import com.example.footprnt.Models.SavedActivity;
 import com.example.footprnt.Models.SavedPost;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
@@ -33,6 +34,7 @@ public class ParseApplication extends Application {
         ParseObject.registerSubclass(Post.class);
         ParseObject.registerSubclass(MarkerDetails.class);
         ParseObject.registerSubclass(SavedPost.class);
+        ParseObject.registerSubclass(SavedActivity.class);
 
         final Parse.Configuration configuration = new Parse.Configuration.Builder(this)
                 .applicationId(getResources().getString(R.string.application_id))

@@ -7,7 +7,9 @@
 package com.example.footprnt.Profile;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -38,6 +40,7 @@ public class SavedPosts extends AppCompatActivity {
     RecyclerView mRvSavedPosts;
     ArrayList<SavedPost> mSavedPosts;
     SavedPostsAdapter mSavedPostsAdapter;
+    LayoutInflater mInflater;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,11 +54,24 @@ public class SavedPosts extends AppCompatActivity {
         mSavedPosts = new ArrayList<>();
         mSavedPostsAdapter = new SavedPostsAdapter(mSavedPosts, this);
 
-
         // Get saved posts
-        getSavedPosts();
-        mRvSavedPosts.setLayoutManager(new LinearLayoutManager(this));
-        mRvSavedPosts.setAdapter(mSavedPostsAdapter);
+        // TODO: implement database for saved posts
+        if (AppUtil.haveNetworkConnection(getApplicationContext())) {
+            getSavedPosts();
+            mRvSavedPosts.setLayoutManager(new LinearLayoutManager(this));
+            mRvSavedPosts.setAdapter(mSavedPostsAdapter);
+        } else {
+            // Display no network connection message
+            // TODO: fix
+            View view = mRvSavedPosts;
+            if (view != null) {
+                ViewGroup parent = (ViewGroup) view.getParent();
+                int index = parent.indexOfChild(view);
+                parent.removeView(view);
+                view = mInflater.inflate(R.layout.item_no_network_connection_profile, parent, false);
+                parent.addView(view, index);
+            }
+        }
 
         mBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,7 +97,7 @@ public class SavedPosts extends AppCompatActivity {
                     for (int i = 0; i < objects.size(); i++) {
                         final SavedPost savedPost = objects.get(i);
                         mSavedPosts.add(savedPost);
-                        mSavedPostsAdapter.notifyItemInserted(mSavedPosts.size()-1);
+                        mSavedPostsAdapter.notifyItemInserted(mSavedPosts.size() - 1);
                     }
                 } else {
                     AppUtil.logError(SavedPosts.this, TAG, "Error querying saved posts", e, true);

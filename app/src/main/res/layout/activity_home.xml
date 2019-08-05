@@ -9,20 +9,22 @@
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_view"
-        app:labelVisibilityMode="unlabeled"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?android:attr/windowBackground"
+        app:labelVisibilityMode="unlabeled"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:menu="@menu/bottom_nav_menu" />
+
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/viewpager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
     <FrameLayout
         android:id="@+id/flContainer"
         android:layout_width="0dp"
@@ -41,6 +43,4 @@
         android:layout_above="@id/nav_view"
         android:background="@drawable/shadow"
         app:layout_constraintBottom_toBottomOf="@+id/flContainer" />
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

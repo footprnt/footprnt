@@ -72,7 +72,8 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
     }
 
     public static class BusinessViewHolder extends RecyclerView.ViewHolder {
-        public View cardView;
+        // TODO: change names to fit android style
+        View cardView;
         ImageView ivBusinessImage;
         TextView tvBusinessName;
         TextView tvBusinessCategory;

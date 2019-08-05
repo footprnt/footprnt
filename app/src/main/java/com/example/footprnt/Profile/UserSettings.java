@@ -154,7 +154,7 @@ public class UserSettings extends AppCompatActivity {
                     mParseFile = null;
                 }
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             Toast.makeText(this, R.string.photo_error, Toast.LENGTH_LONG).show();
         }
     }

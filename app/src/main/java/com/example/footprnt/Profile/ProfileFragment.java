@@ -187,11 +187,7 @@ public class ProfileFragment extends Fragment {
                 if (privacySetting == null) {
                     mIsPrivate = false;
                 } else {
-                    if ((Boolean) privacySetting == true) {
-                        mIsPrivate = true;
-                    } else {
-                        mIsPrivate = false;
-                    }
+                    mIsPrivate = (Boolean) privacySetting;
                 }
                 PopupMenu popup = new PopupMenu(getActivity(), settings);
                 popup.getMenuInflater().inflate(R.menu.popup_menu, popup.getMenu());

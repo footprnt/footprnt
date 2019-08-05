@@ -23,7 +23,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-
         <ImageView
             android:id="@+id/search"
             android:layout_width="wrap_content"
@@ -53,9 +52,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/search"
             app:layout_constraintTop_toTopOf="parent" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeContainer2"
@@ -255,9 +252,7 @@
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="@+id/textView8" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
-
                 </androidx.cardview.widget.CardView>
-
 
                 <TextView
                     android:id="@+id/textView4"
@@ -274,9 +269,7 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"
                     app:layout_constraintBottom_toTopOf="@+id/rvMuseums"
-                    app:layout_constraintTop_toTopOf="parent">
-
-                </androidx.recyclerview.widget.RecyclerView>
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/textView5"
@@ -294,9 +287,7 @@
                     android:layout_marginBottom="8dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/rvRestaurants"
-                    tools:layout_editor_absoluteX="2dp">
-
-                </androidx.recyclerview.widget.RecyclerView>
+                    tools:layout_editor_absoluteX="2dp" />
 
                 <TextView
                     android:id="@+id/textView6"
@@ -311,9 +302,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp">
-
-                </androidx.recyclerview.widget.RecyclerView>
+                    android:layout_marginBottom="8dp" />
 
                 <TextView
                     android:id="@+id/textView7"
@@ -331,9 +320,6 @@
                     android:layout_marginBottom="8dp" />
 
             </LinearLayout>
-
         </ScrollView>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

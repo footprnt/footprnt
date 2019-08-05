@@ -8,7 +8,6 @@
     android:orientation="vertical"
     tools:context=".Profile.SavedPosts">
 
-
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/rlMainContent"
         android:layout_width="match_parent"
@@ -22,5 +21,4 @@
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <include layout="@layout/toolbar_saved_post" />
-
 </RelativeLayout>

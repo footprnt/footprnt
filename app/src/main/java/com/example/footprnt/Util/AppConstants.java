@@ -64,6 +64,7 @@ public class AppConstants {
     public static final int GET_FROM_GALLERY = 3;
     public static final int UPDATE_POST_FROM_PROFILE = 301;
     public static final int DELETE_POST_FROM_PROFILE = 302;
+    public static final int SAVED_POST_DETAILS_FROM_PROFILE = 2005;
 
     // For Logcat:
     public static final String APP_TAG = "footprnt";

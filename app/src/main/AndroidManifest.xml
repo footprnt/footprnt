@@ -27,7 +27,12 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
-        <activity android:name=".Profile.SavedPosts"></activity>
+        <activity android:name=".Profile.SavedPosts"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Profile.SavedPostDetails"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Profile.SavedActivities"
+            android:screenOrientation="portrait"/>
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
@@ -55,8 +60,10 @@
         <activity
             android:name=".Profile.EditPost"
             android:label="@string/title_activity_edit_post"
-            android:theme="@style/AppTheme.CustomTheme" />
-        <activity android:name=".Profile.UserSettings" />
+            android:theme="@style/AppTheme.CustomTheme"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".Profile.UserSettings"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".Map.FeedActivity"
             android:theme="@style/MyTheme" />
