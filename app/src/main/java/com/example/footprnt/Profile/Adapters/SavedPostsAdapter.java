@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -26,6 +27,7 @@ import com.bumptech.glide.request.transition.Transition;
 import com.example.footprnt.Models.Post;
 import com.example.footprnt.Models.SavedPost;
 import com.example.footprnt.R;
+import com.example.footprnt.Util.AppConstants;
 
 import java.util.ArrayList;
 
@@ -59,22 +61,27 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Vi
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
+        holder.mProgressBar.setVisibility(View.VISIBLE);
         final SavedPost savedPost = mPosts.get(position);
         final Post post = (Post) savedPost.getPost();
         if (post != null) {
             holder.mRootView.setTag(post);
             StringBuilder sb = new StringBuilder();
-            String cityName = post.getCity();
-            if (cityName != null) {
-                sb.append(cityName).append(", ");
-            }
-            String countryName = post.getCountry();
-            if (countryName != null) {
-                sb.append(countryName).append(", ");
-            }
-            String continentName = post.getContinent();
-            if (continentName != null) {
-                sb.append(continentName);
+            try {
+                String cityName = post.fetchIfNeeded().getString(AppConstants.city);
+                if (cityName != null) {
+                    sb.append(cityName).append(", ");
+                }
+                String countryName = post.fetchIfNeeded().getString(AppConstants.country);
+                if (countryName != null) {
+                    sb.append(countryName).append(", ");
+                }
+                String continentName = post.fetchIfNeeded().getString(AppConstants.continent);
+                if (continentName != null) {
+                    sb.append(continentName);
+                }
+            } catch (com.parse.ParseException e) {
+                e.printStackTrace();
             }
             holder.mTitle.setText(post.getTitle());
             holder.mTitle.setTextColor(ContextCompat.getColor(mContext, R.color.grey));
@@ -105,7 +112,7 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Vi
                 }
             });
         }
-
+        holder.mProgressBar.setVisibility(View.INVISIBLE);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -115,6 +122,7 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Vi
         View mVPalette;
         TextView mTvText;
         TextView mTitle;
+        ProgressBar mProgressBar;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -124,6 +132,7 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Vi
             mVPalette = itemView.findViewById(R.id.vPalette);
             mTitle = itemView.findViewById(R.id.eventTitle);
             mTvText = itemView.findViewById(R.id.tvText);
+            mProgressBar = itemView.findViewById(R.id.progressBar);
         }
     }
 }

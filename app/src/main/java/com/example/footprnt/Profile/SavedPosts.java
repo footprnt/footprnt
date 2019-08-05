@@ -7,6 +7,7 @@
 package com.example.footprnt.Profile;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -43,15 +44,25 @@ public class SavedPosts extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_saved_posts);
         // Set views
-        mSavedPosts = new ArrayList<>();
         mBackButton = findViewById(R.id.ivBack);
         mRvSavedPosts = findViewById(R.id.rvSavedPosts);
 
+        // Set adapter
+        mSavedPosts = new ArrayList<>();
+        mSavedPostsAdapter = new SavedPostsAdapter(mSavedPosts, this);
+
+
         // Get saved posts
         getSavedPosts();
-        mSavedPostsAdapter = new SavedPostsAdapter(mSavedPosts, this);
         mRvSavedPosts.setLayoutManager(new LinearLayoutManager(this));
         mRvSavedPosts.setAdapter(mSavedPostsAdapter);
+
+        mBackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
     /**
@@ -70,9 +81,10 @@ public class SavedPosts extends AppCompatActivity {
                     for (int i = 0; i < objects.size(); i++) {
                         final SavedPost savedPost = objects.get(i);
                         mSavedPosts.add(savedPost);
+                        mSavedPostsAdapter.notifyItemInserted(mSavedPosts.size()-1);
                     }
                 } else {
-                    AppUtil.logError(SavedPosts.this, TAG, "Error querying posts", e, true);
+                    AppUtil.logError(SavedPosts.this, TAG, "Error querying saved posts", e, true);
                 }
             }
         });
