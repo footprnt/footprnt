@@ -118,12 +118,23 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
             cardView.setTag(business);
             tvBusinessName.setText(business.getName());
             tvBusinessCategory.setText(business.getCategories().get(0));
-            rating.setRating((float) business.getRating());
-            LayerDrawable stars = (LayerDrawable) rating.getProgressDrawable();
-            stars.getDrawable(2).setColorFilter(Color.parseColor("#659DBD"), PorterDuff.Mode.SRC_ATOP);
-            tvBusinessAddress.setText(business.getAddress().get(0));
+            try {
+                rating.setVisibility(View.VISIBLE);
+                rating.setRating((float) business.getRating());
+                LayerDrawable stars = (LayerDrawable) rating.getProgressDrawable();
+                stars.getDrawable(2).setColorFilter(Color.parseColor("#659DBD"), PorterDuff.Mode.SRC_ATOP);
+            } catch (Exception e) {
+                rating.setVisibility(View.INVISIBLE);
+            }
+            try {
+                tvBusinessAddress.setVisibility(View.VISIBLE);
+                tvBusinessAddress.setText(business.getAddress().get(0));
+            } catch (Exception e) {
+                tvBusinessAddress.setVisibility(View.GONE);
+            }
             final String url = business.getWebsite();
-            tvBusinessName.setOnTouchListener(new View.OnTouchListener(){
+            if (url != null && url.length() > 0) {
+                tvBusinessName.setOnTouchListener(new View.OnTouchListener(){
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
                     Intent i = new Intent(Intent.ACTION_VIEW);
@@ -132,8 +143,10 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
                     return true;
                 }
             });
+            }
             final String businessPhoneNum = business.getPhone();
             if (businessPhoneNum != null && businessPhoneNum.length() > 0){
+                tvBusinessPhone.setVisibility(View.VISIBLE);
                 tvBusinessPhone.setText(businessPhoneNum);
                 tvBusinessPhone.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -163,9 +176,14 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
             cardView.setTag(business);
             tvBusinessName.setText(business.getName());
             tvBusinessCategory.setText(business.getCategories().get(0));
-            rating.setRating((float) business.getRating());
-            LayerDrawable stars = (LayerDrawable) rating.getProgressDrawable();
-            stars.getDrawable(2).setColorFilter(Color.parseColor("#659DBD"), PorterDuff.Mode.SRC_ATOP);
+            try {
+                rating.setVisibility(View.VISIBLE);
+                rating.setRating((float) business.getRating());
+                LayerDrawable stars = (LayerDrawable) rating.getProgressDrawable();
+                stars.getDrawable(2).setColorFilter(Color.parseColor("#659DBD"), PorterDuff.Mode.SRC_ATOP);
+            } catch (Exception e) {
+                rating.setVisibility(View.INVISIBLE);
+            }
             if (business.getImageUrl() == null || business.getImageUrl().length() == 0){
                 Picasso.with(mContext).load("https://pyzikscott.files.wordpress.com/2016/03/yelp-placeholder.png?w=584");
             } else {

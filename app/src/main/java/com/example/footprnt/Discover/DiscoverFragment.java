@@ -94,18 +94,30 @@ public class DiscoverFragment extends Fragment implements LocationListener {
     private TextView mAddress;
     private TextView noEvent;
     String address;
+    private TextView nothingNearYou;
+    private TextView restaurants;
+    private TextView museums;
+    private TextView clubs;
+    private TextView hotels;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_discover, parent, false);
         rvRestaurants = view.findViewById(R.id.rvRestaurants);
+        restaurants = view.findViewById(R.id.restaurants);
         rvMuseums = view.findViewById(R.id.rvMuseums);
+        museums = view.findViewById(R.id.museums);
         rvHotels = view.findViewById(R.id.rvHotels);
+        hotels = view.findViewById(R.id.hotels);
         rvClubs = view.findViewById(R.id.rvClubs);
+        clubs = view.findViewById(R.id.clubs);
         mSearchText = view.findViewById(R.id.searchText);
         mAddress = view.findViewById(R.id.address);
         noEvent = view.findViewById(R.id.noEvent);
         noEvent.setVisibility(View.INVISIBLE);
+        nothingNearYou = view.findViewById(R.id.nothingNearYou);
+        nothingNearYou.setVisibility(View.INVISIBLE);
         handleSearch();
         arrQueries = new ArrayList<>();
         arrRecyclerViews = new ArrayList<>();
@@ -115,7 +127,6 @@ public class DiscoverFragment extends Fragment implements LocationListener {
         mMuseums = new ArrayList<>();
         mHotels = new ArrayList<>();
         mClubs = new ArrayList<>();
-        try {
             getAddress();
             getAdventureOfTheDay();
             prepareArrayLists();
@@ -132,9 +143,7 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                     R.color.refresh_progress_3,
                     R.color.refresh_progress_4,
                     R.color.refresh_progress_5);
-        } catch (Exception e) {
-            Toast.makeText(getContext(), "No businesses here", Toast.LENGTH_LONG).show();
-        }
+
 
 //        mSwipeContainer = view.findViewById(R.id.swipeContainer2);
 //        mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -184,6 +193,7 @@ public class DiscoverFragment extends Fragment implements LocationListener {
     }
 
     public void populateView() {
+        nothingNearYou.setVisibility(View.INVISIBLE);
         for (int i = 0; i < arrQueries.size(); i++) {
             final int finalI = i;
             getAddress();
@@ -196,7 +206,7 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                     }
                     @Override
                     public void onResponse(Call call, Response response) {
-                        ArrayList<Business> arrTemp = yelpService.processResults(response);
+                        final ArrayList<Business> arrTemp = yelpService.processResults(response);
                         arrBusinesses.remove(finalI);
                         arrBusinesses.add(finalI, arrTemp);
                         getActivity().runOnUiThread(new Runnable() {
@@ -208,6 +218,13 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                                 arrAdapters.remove(finalI);
                                 arrAdapters.add(finalI, arrAdapter);
                                 arrRecyclerViews.get(finalI).setAdapter(arrAdapters.get(finalI));
+                                if (arrTemp.size() == 0){
+                                    restaurants.setVisibility(View.GONE);
+                                    museums.setVisibility(View.GONE);
+                                    clubs.setVisibility(View.GONE);
+                                    hotels.setVisibility(View.GONE);
+                                    nothingNearYou.setVisibility(View.VISIBLE);
+                                }
                             }
                         });
                     }
