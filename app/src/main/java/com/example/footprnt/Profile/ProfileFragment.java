@@ -222,6 +222,10 @@ public class ProfileFragment extends Fragment {
                             // Saved Posts
                             Intent it = new Intent(getContext(), SavedPosts.class);
                             startActivity(it);
+                        } else if (item.getItemId() == R.id.savedActivities) {
+                            // Saved Activities
+                            Intent it = new Intent(getContext(), SavedActivities.class);
+                            startActivity(it);
                         }
                         return true;
                     }
