@@ -6,6 +6,8 @@
  */
 package com.example.footprnt.Map;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -32,12 +34,14 @@ import com.parse.SaveCallback;
  */
 public class PostDetailActivity extends AppCompatActivity {
 
+    private Post post;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_detail);
         Bundle bundle = getIntent().getExtras();
-        final Post post = (Post) bundle.getSerializable(Post.class.getSimpleName());
+        post = (Post) bundle.getSerializable(Post.class.getSimpleName());
         Boolean privacy;
         Object privacySetting = post.getUser().get(AppConstants.privacy);
         if (privacySetting == null) {
@@ -73,6 +77,22 @@ public class PostDetailActivity extends AppCompatActivity {
                 });
             }
         });
+    }
 
+    /**
+     * Share a post with someone
+     * @param view
+     */
+    public void shareIntent(View view) {
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND);
+        shareIntent.putExtra(Intent.EXTRA_TEXT, post.getTitle() + "\n" + post.getDescription());
+        if (post.getImage() != null && post.getImage().getUrl().length() > 0){
+            Uri imageUri = Uri.parse(post.getImage().getUrl());
+            shareIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
+        }
+        shareIntent.setType("image/jpeg");
+        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        startActivityForResult(Intent.createChooser(shareIntent, "send"), 0);
     }
 }
