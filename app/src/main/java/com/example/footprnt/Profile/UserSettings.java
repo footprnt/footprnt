@@ -17,6 +17,7 @@ import android.provider.MediaStore;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,6 +54,7 @@ public class UserSettings extends AppCompatActivity {
     EditText mEtNumber;
     EditText mEtEmail;
     EditText mEtDescription;
+    Switch mSwitchPrivacy;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -171,6 +173,13 @@ public class UserSettings extends AppCompatActivity {
         mEtDescription.setText(mUser.getString(AppConstants.description));
         mEtNumber.setText(String.format("%s", mUser.get(AppConstants.phone)));
         mEtEmail.setText(String.format("%s", mUser.get(AppConstants.email)));
+        Boolean userPrivacy = mUser.getBoolean(AppConstants.privacy);
+        if(userPrivacy == null){
+            userPrivacy = false;
+            mUser.put(AppConstants.privacy, false);
+            mUser.saveInBackground();
+        }
+        mSwitchPrivacy.setChecked(userPrivacy);
     }
 
     /**
@@ -185,5 +194,6 @@ public class UserSettings extends AppCompatActivity {
         mEtEmail = findViewById(R.id.etEmail);
         mIvSave = findViewById(R.id.ivSave);
         mEtDescription = findViewById(R.id.etDescription);
+        mSwitchPrivacy = findViewById(R.id.switchPrivate);
     }
 }

@@ -173,8 +173,8 @@ public class ProfileFragment extends Fragment {
     }
 
     /**
-     * Helper method to set up the toolbar. Toolbar functionality includes settings user as anonymous,
-     * log out, and viewing the users saved posts
+     * Helper method to set up the toolbar. Toolbar functionality includes settings
+     * log out, and viewing the users saved posts/saved activities
      *
      * @param v this view
      */
@@ -183,19 +183,8 @@ public class ProfileFragment extends Fragment {
         settings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Object privacySetting = ParseUser.getCurrentUser().get(AppConstants.privacy);
-                if (privacySetting == null) {
-                    mIsPrivate = false;
-                } else {
-                    mIsPrivate = (Boolean) privacySetting;
-                }
                 PopupMenu popup = new PopupMenu(getActivity(), settings);
                 popup.getMenuInflater().inflate(R.menu.popup_menu, popup.getMenu());
-                if (mIsPrivate) {
-                    popup.getMenu().getItem(1).setChecked(true);
-                } else {
-                    popup.getMenu().getItem(1).setChecked(false);
-                }
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     public boolean onMenuItemClick(MenuItem item) {
                         if (item.getItemId() == R.id.logout) {
@@ -207,17 +196,6 @@ public class ProfileFragment extends Fragment {
                             ParseUser.logOut();
                             Intent intent = new Intent(getActivity(), LoginActivity.class);
                             startActivity(intent);
-                        } else if (item.getItemId() == R.id.privacy) {
-                            // Incognito mode
-                            if (mIsPrivate) {
-                                item.setChecked(false);
-                                ParseUser.getCurrentUser().put(AppConstants.privacy, false);
-                                ParseUser.getCurrentUser().saveInBackground();
-                            } else {
-                                item.setChecked(true);
-                                ParseUser.getCurrentUser().put(AppConstants.privacy, true);
-                                ParseUser.getCurrentUser().saveInBackground();
-                            }
                         } else if (item.getItemId() == R.id.savedPosts) {
                             // Saved Posts
                             Intent it = new Intent(getContext(), SavedPosts.class);

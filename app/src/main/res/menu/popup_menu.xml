@@ -7,10 +7,6 @@
         android:id="@+id/savedPosts"
         android:title="Saved Posts" />
     <item
-        android:id="@+id/privacy"
-        android:checkable="true"
-        android:title="Incognito Mode" />
-    <item
         android:id="@+id/logout"
         android:title="Logout" />
 </menu>
