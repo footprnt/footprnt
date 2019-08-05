@@ -356,6 +356,8 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                         }
                     }
                     mProgressBar.setVisibility(ProgressBar.INVISIBLE);
+                } else {
+                    mProgressBar.setVisibility(ProgressBar.INVISIBLE);
                 }
             }
         });
