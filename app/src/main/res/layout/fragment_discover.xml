@@ -8,6 +8,38 @@
     android:gravity="bottom"
     android:orientation="vertical">
 
+    <TextView
+        android:id="@+id/nothingNearYou"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="200dp"
+        android:fontFamily="@font/montserrat_bold"
+        android:text="No places near you"
+        android:textColor="#659DBD"
+        android:textSize="24sp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/pbLoading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"></ProgressBar>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/relLayout1"
         android:layout_width="0dp"
@@ -97,7 +129,6 @@
                         android:id="@+id/btnCall"
                         android:layout_width="19dp"
                         android:layout_height="17dp"
-                        android:layout_marginTop="4dp"
                         android:layout_marginBottom="8dp"
                         android:src="@drawable/ic_map"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -255,7 +286,7 @@
                 </androidx.cardview.widget.CardView>
 
                 <TextView
-                    android:id="@+id/textView4"
+                    android:id="@+id/restaurants"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/montserrat"
@@ -272,7 +303,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/textView5"
+                    android:id="@+id/museums"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/montserrat"
@@ -290,7 +321,7 @@
                     tools:layout_editor_absoluteX="2dp" />
 
                 <TextView
-                    android:id="@+id/textView6"
+                    android:id="@+id/clubs"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/montserrat"
@@ -305,7 +336,7 @@
                     android:layout_marginBottom="8dp" />
 
                 <TextView
-                    android:id="@+id/textView7"
+                    android:id="@+id/hotels"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/montserrat"
