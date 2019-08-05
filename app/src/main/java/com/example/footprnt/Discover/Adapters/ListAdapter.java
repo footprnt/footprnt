@@ -26,10 +26,14 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
 import com.example.footprnt.Discover.Models.Business;
+import com.example.footprnt.Map.MapFragment;
 import com.example.footprnt.R;
+import com.example.footprnt.ViewPagerAdapter;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -80,8 +84,11 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
         TextView tvBusinessAddress;
         TextView tvBusinessPhone;
         ImageView btnCall;
+        ImageView btnLocation;
 
         private Context mContext;
+        private String joinAddress;
+        private AlertDialog dialog;
 
         public BusinessViewHolder(final View itemView) {
             super(itemView);
@@ -103,10 +110,12 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
                     lp.dimAmount = 0f;
                     mAlertDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
                     mAlertDialog.show();
+                    dialog = mAlertDialog;
                     ivBusinessImage = mAlertDialog.findViewById(R.id.ivBusinessImage);
                     tvBusinessName = mAlertDialog.findViewById(R.id.tvBusinessName);
                     tvBusinessCategory = mAlertDialog.findViewById(R.id.tvBusinessCategory);
                     btnCall = mAlertDialog.findViewById(R.id.btnCall);
+                    btnLocation = mAlertDialog.findViewById(R.id.btnLocation);
                     rating = mAlertDialog.findViewById(R.id.rating);
                     LayerDrawable stars = (LayerDrawable) rating.getProgressDrawable();
                     stars.getDrawable(2).setColorFilter(Color.parseColor("#659DBD"), PorterDuff.Mode.SRC_ATOP);
@@ -118,9 +127,10 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
         }
 
         @SuppressLint("ClickableViewAccessibility")
-        public void bindBusinessDetail(Business business) {
+        public void bindBusinessDetail(final Business business) {
             cardView.setTag(business);
-            tvBusinessName.setText(business.getName());
+            final String businessName = business.getName();
+            tvBusinessName.setText(businessName);
             tvBusinessCategory.setText(business.getCategories().get(0));
             try {
                 rating.setVisibility(View.VISIBLE);
@@ -130,10 +140,38 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
             } catch (Exception e) {
                 rating.setVisibility(View.INVISIBLE);
             }
+            final String imageUrl = business.getImageUrl();
+            if (imageUrl == null || imageUrl.length() == 0){
+                Picasso.with(mContext).load("https://pyzikscott.files.wordpress.com/2016/03/yelp-placeholder.png?w=584");
+            } else {
+                Picasso.with(mContext).load(imageUrl).into(ivBusinessImage);
+            }
             try {
                 tvBusinessAddress.setVisibility(View.VISIBLE);
-                tvBusinessAddress.setText(business.getAddress().get(0));
+                joinAddress = String.join(" ", business.getAddress());
+                tvBusinessAddress.setText(joinAddress);
+                tvBusinessAddress.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                        ViewPager viewPager = ((Activity) mContext).findViewById(R.id.viewpager);
+                        viewPager.setCurrentItem(0);
+                        Fragment viewPagerAdapter = ((ViewPagerAdapter) viewPager.getAdapter()).getItem(0);
+                        ((MapFragment) viewPagerAdapter).handleDiscoverInteraction(joinAddress, businessName, imageUrl);
+                    }
+                });
+                btnLocation.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                        ViewPager viewPager = ((Activity) mContext).findViewById(R.id.viewpager);
+                        viewPager.setCurrentItem(0);
+                        Fragment viewPagerAdapter = ((ViewPagerAdapter) viewPager.getAdapter()).getItem(0);
+                        ((MapFragment) viewPagerAdapter).handleDiscoverInteraction(joinAddress, businessName, imageUrl);
+                    }
+                });
             } catch (Exception e) {
+                btnLocation.setVisibility(View.GONE);
                 tvBusinessAddress.setVisibility(View.GONE);
             }
             final String url = business.getWebsite();
@@ -169,11 +207,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
             } else {
                 tvBusinessPhone.setVisibility(View.GONE);
             }
-            if (business.getImageUrl() == null || business.getImageUrl().length() == 0){
-                Picasso.with(mContext).load("https://pyzikscott.files.wordpress.com/2016/03/yelp-placeholder.png?w=584");
-            } else {
-                Picasso.with(mContext).load(business.getImageUrl()).into(ivBusinessImage);
-            }
+
         }
 
         public  void bindBusiness (Business business) {

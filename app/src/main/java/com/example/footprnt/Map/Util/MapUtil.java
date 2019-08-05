@@ -60,7 +60,7 @@ public class MapUtil {
      * @param map
      * @param context
      */
-    public static void geoLocate(EditText searchText, GoogleMap map, Context context) {
+    public static Location geoLocate(EditText searchText, GoogleMap map, Context context) {
         String searchString = searchText.getText().toString();
 
         Geocoder geocoder = new Geocoder(context);
@@ -71,13 +71,15 @@ public class MapUtil {
 
         }
 
+        Location l = new Location(LocationManager.GPS_PROVIDER);
+
         if (list.size() > 0) {
             Address address = list.get(0);
-            Location l = new Location(LocationManager.GPS_PROVIDER);
             l.setLatitude(address.getLatitude());
             l.setLongitude(address.getLongitude());
             centreMapOnLocation(map, l);
         }
+        return l;
     }
 
     /**

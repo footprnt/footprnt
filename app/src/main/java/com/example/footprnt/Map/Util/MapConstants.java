@@ -32,6 +32,8 @@ public class MapConstants {
     public static int STYLE_RETRO = R.raw.style_json_retro;
     public static int STYLE_BASIC = R.raw.style_json_basic;
     public static BitmapDescriptor DEFAULT_MARKER = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
+    public static BitmapDescriptor MARKER_CYAN = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN);
+
 
     // Filter menu items
     public static String MENU_ITEMS[] = {"Create", "Current", "Discover", "View", "Street"};

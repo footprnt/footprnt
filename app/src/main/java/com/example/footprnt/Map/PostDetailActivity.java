@@ -6,6 +6,8 @@
  */
 package com.example.footprnt.Map;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -41,6 +43,7 @@ public class PostDetailActivity extends AppCompatActivity {
     Boolean mIsPostSaved;
     ImageView mBookmark;
     Post mPost;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,5 +142,22 @@ public class PostDetailActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    /**
+     * Share a post with someone
+     * @param view
+     */
+    public void shareIntent(View view) {
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND);
+        shareIntent.putExtra(Intent.EXTRA_TEXT, mPost.getTitle() + "\n" + mPost.getDescription());
+        if (mPost.getImage() != null && mPost.getImage().getUrl().length() > 0){
+            Uri imageUri = Uri.parse(mPost.getImage().getUrl());
+            shareIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
+        }
+        shareIntent.setType("image/jpeg");
+        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        startActivityForResult(Intent.createChooser(shareIntent, "send"), 0);
     }
 }

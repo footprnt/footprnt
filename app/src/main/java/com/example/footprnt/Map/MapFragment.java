@@ -115,6 +115,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     private CustomInfoWindowAdapter mInfoAdapter;
     ArrayList<Marker> markers;
     private ArrayList<MarkerDetails> mMarkerDetails;
+    private Marker mTempMarker;
 
     // Post variables
     private ParseUser mUser;
@@ -817,5 +818,25 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 mPopup.getMenu().getItem(i).setChecked(false);
             }
         }
+    }
+
+    /**
+     * Zooms in on business location and creates marker at the business location
+     * @param address address of business
+     * @param businessName name of business
+     * @param imageUrl url of business image
+     */
+    public void handleDiscoverInteraction(String address, String businessName, String imageUrl){
+        EditText et = new EditText(getContext());
+        et.setText(address);
+        Location l = MapUtil.geoLocate(et, mMap, getContext());
+        if (imageUrl == null){
+            imageUrl = "";
+        }
+        mTempMarker = mMap.addMarker(new MarkerOptions()
+                .position(new LatLng(l.getLatitude(), l.getLongitude()))
+                .title(businessName)
+                .snippet(imageUrl)
+                .icon(MapConstants.MARKER_CYAN));
     }
 }
