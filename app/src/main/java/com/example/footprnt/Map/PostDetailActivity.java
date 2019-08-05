@@ -25,7 +25,11 @@ import com.example.footprnt.Models.SavedPost;
 import com.example.footprnt.R;
 import com.example.footprnt.Util.AppConstants;
 import com.example.footprnt.Util.AppUtil;
+import com.parse.DeleteCallback;
+import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
@@ -34,6 +38,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
+import java.util.List;
 
 /**
  * Displays extended details of a post
@@ -44,16 +49,25 @@ import java.net.URL;
  */
 public class PostDetailActivity extends AppCompatActivity {
 
-    private Post post;
+    Boolean mIsPostSaved;
+    ImageView mBookmark;
+    Post mPost;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_detail);
+        mBookmark = findViewById(R.id.ivSave);
         Bundle bundle = getIntent().getExtras();
-        post = (Post) bundle.getSerializable(Post.class.getSimpleName());
-        Boolean privacy;
-        Object privacySetting = post.getUser().get(AppConstants.privacy);
+        mPost = (Post) bundle.getSerializable(Post.class.getSimpleName());
+        Boolean hideView = (Boolean) bundle.getSerializable("hideView");
+        Boolean privacy = null;
+        Object privacySetting = null;
+        try {
+            privacySetting = mPost.getUser().fetchIfNeeded().get(AppConstants.privacy);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         if (privacySetting == null) {
             privacy = false;
         } else {
@@ -67,24 +81,73 @@ public class PostDetailActivity extends AppCompatActivity {
             }
         });
         PostAdapter.ViewHolder vh = new PostAdapter.ViewHolder(findViewById(R.id.constraintlayout));
-        UiUtil.setPostText(post, vh, this, privacy);
-        UiUtil.setPostImages(post, vh, this, privacy);
+        UiUtil.setPostText(mPost, vh, this, privacy);
+        UiUtil.setPostImages(mPost, vh, this, privacy);
 
         // Save Post
-        final ImageView mBookmark = findViewById(R.id.ivSave);
-        mBookmark.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SavedPost savedPost = new SavedPost();
-                savedPost.setPost(post);
-                savedPost.setUser(ParseUser.getCurrentUser());
-                savedPost.saveInBackground(new SaveCallback() {
-                    @Override
-                    public void done(ParseException e) {
-                        Toast.makeText(PostDetailActivity.this, "Saved Post", Toast.LENGTH_LONG).show();
-                        // TODO: set tint
+        if (!hideView) {
+            checkIfSaved();
+            mBookmark.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!mIsPostSaved) {
+                        // Post not saved yet - save
+                        SavedPost savedPost = new SavedPost();
+                        savedPost.setPost(mPost);
+                        savedPost.setUser(ParseUser.getCurrentUser());
+                        savedPost.saveInBackground(new SaveCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                mIsPostSaved = true;
+                                Toast.makeText(PostDetailActivity.this, "Saved Post", Toast.LENGTH_SHORT).show();
+                                mBookmark.setImageResource(R.drawable.ic_save_check_filled);
+                            }
+                        });
+                    } else {
+                        // Post already saved - unsaved
+                        ParseQuery<ParseObject> query = ParseQuery.getQuery("SavedPost");
+                        query.whereEqualTo(AppConstants.user, ParseUser.getCurrentUser()).whereEqualTo(AppConstants.post, mPost);
+                        query.findInBackground(new FindCallback<ParseObject>() {
+                            @Override
+                            public void done(List<ParseObject> objects, ParseException e) {
+                                if (e == null) {
+                                    ParseObject.deleteAllInBackground(objects, new DeleteCallback() {
+                                        @Override
+                                        public void done(ParseException e) {
+                                            mIsPostSaved = false;
+                                            mBookmark.setImageResource(R.drawable.ic_save_check);
+                                            Toast.makeText(PostDetailActivity.this, "Unsaved Post", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                }
+                            }
+                        });
                     }
-                });
+                }
+            });
+        } else {
+            mBookmark.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    // Check if post is already saved
+    private void checkIfSaved() {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("SavedPost");
+        query.whereEqualTo(AppConstants.user, ParseUser.getCurrentUser()).whereEqualTo(AppConstants.post, mPost);
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> objects, ParseException e) {
+                if (e == null) {
+                    if (objects.size() > 0) {
+                        mIsPostSaved = true;
+                        mBookmark.setImageResource(R.drawable.ic_save_check_filled);
+                    } else {
+                        mIsPostSaved = false;
+                        mBookmark.setImageResource(R.drawable.ic_save_check);
+                    }
+                } else {
+                    Toast.makeText(PostDetailActivity.this, "Error querying saved posts", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -96,10 +159,10 @@ public class PostDetailActivity extends AppCompatActivity {
     public void shareIntent(View view) {
         Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
-        shareIntent.putExtra(Intent.EXTRA_TEXT, post.getTitle() + "\n" + post.getDescription());
-        if (post.getImage() != null && post.getImage().getUrl().length() > 0){
+        shareIntent.putExtra(Intent.EXTRA_TEXT, mPost.getTitle() + "\n" + mPost.getDescription());
+        if (mPost.getImage() != null && mPost.getImage().getUrl().length() > 0) {
             try {
-                URL url = new URL(post.getImage().getUrl());
+                URL url = new URL(mPost.getImage().getUrl());
                 Bitmap bitmap = BitmapFactory.decodeStream(url.openConnection().getInputStream());
                 OutputStream out = null;
                 File file = AppUtil.getPhotoFileUri(this, AppConstants.photoFileNameShare);

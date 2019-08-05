@@ -70,7 +70,10 @@ public class AppConstants {
     // For Logcat:
     public static final String APP_TAG = "footprnt";
 
-    // For settings
+    // For settings:
     public static final String LOGOUT = "Logout";
     public static final String PRIVACY = "Make anonymous";
+
+    // For saved posts:
+    public static final String hideView = "hideView";
 }

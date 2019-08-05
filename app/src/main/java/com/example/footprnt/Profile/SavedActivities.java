@@ -52,14 +52,13 @@ public class SavedActivities extends AppCompatActivity {
         mSavedActivitiesAdapter = new SavedActivitiesAdapter(mSavedBussinesses, this);
 
         // Get saved businesses
-        // TODO: implement database for saved activities
+        // TODO: implement database for saved activities ?
         if(AppUtil.haveNetworkConnection(getApplicationContext())){
             getSavedActivities();
             mRvSavedActivities.setLayoutManager(new LinearLayoutManager(this));
             mRvSavedActivities.setAdapter(mSavedActivitiesAdapter);
         } else {
             // Display no network connection message
-            // TODO: fix
             mRvSavedActivities.setVisibility(View.INVISIBLE);
             mNoNetwork.setVisibility(View.VISIBLE);
 
@@ -72,6 +71,7 @@ public class SavedActivities extends AppCompatActivity {
         });
     }
 
+    // TODO: implement
     private void getSavedActivities(){
 
     }

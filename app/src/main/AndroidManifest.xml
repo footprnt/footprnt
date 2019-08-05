@@ -30,8 +30,6 @@
         tools:targetApi="m">
         <activity android:name=".Profile.SavedPosts"
             android:screenOrientation="portrait"/>
-        <activity android:name=".Profile.SavedPostDetails"
-            android:screenOrientation="portrait"/>
         <activity android:name=".Profile.SavedActivities"
             android:screenOrientation="portrait"/>
 
