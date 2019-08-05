@@ -206,7 +206,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
             }
         });
         mMap.setOnMapLongClickListener(this);
-
         mJumpToCurrentLocation = true;
         setupMapStyles();
         setupMapUserLocation();
