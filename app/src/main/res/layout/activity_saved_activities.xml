@@ -18,6 +18,9 @@
             android:id="@+id/rvSavedActivities"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
+
+        <include layout="@layout/item_no_network_connection_profile" />
+
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <include layout="@layout/toolbar_saved_post" />

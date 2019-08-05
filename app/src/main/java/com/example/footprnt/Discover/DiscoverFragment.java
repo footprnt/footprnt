@@ -68,7 +68,7 @@ import static android.content.Context.LOCATION_SERVICE;
  * @version 1.0
  */
 public class DiscoverFragment extends Fragment implements LocationListener {
-        public static final String TAG = DiscoverFragment.class.getSimpleName();
+    public static final String TAG = DiscoverFragment.class.getSimpleName();
     private SwipeRefreshLayout mSwipeContainer;
     RecyclerView rvRestaurants;
     RecyclerView rvMuseums;
