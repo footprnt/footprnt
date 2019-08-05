@@ -78,7 +78,7 @@ public class EditPost extends AppCompatActivity {
         mBtnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ParseQuery<ParseObject> query = ParseQuery.getQuery(AppConstants.post);
+                ParseQuery<ParseObject> query = ParseQuery.getQuery(AppConstants.Post);
                 query.whereEqualTo(AppConstants.objectId, mPost.getObjectId());
                 query.getInBackground(mPost.getObjectId(), new GetCallback<ParseObject>() {
                     public void done(final ParseObject object, ParseException e) {

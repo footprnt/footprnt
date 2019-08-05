@@ -50,7 +50,7 @@ public class HomeActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         // Reload the user image on the profile fragment
-        if (resultCode == AppConstants.RELOAD_USERPROFILE_FRAGMENT_REQUEST_CODE) {
+        if (resultCode == AppConstants.RELOAD_USER_PROFILE_FRAGMENT_REQUEST_CODE) {
             mFragment3.onActivityResult(requestCode, resultCode, data);
         }
         // Delete post from profile fragment

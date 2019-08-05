@@ -144,7 +144,7 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == AppConstants.RELOAD_USERPROFILE_FRAGMENT_REQUEST_CODE) {
+        if (resultCode == AppConstants.RELOAD_USER_PROFILE_FRAGMENT_REQUEST_CODE) {
             mMultiAdapter.notifyItemChanged(0);
         }
         // TODO: fix so the stat chart updates if user removes unique city, continent, or country (i.e. decrement)

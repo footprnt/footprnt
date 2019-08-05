@@ -42,7 +42,8 @@ public class AppConstants {
     public static final int postLimit = 20;
 
     // For getting extras for intents:
-    public static String post = "Post";
+    public static String post = "post";
+    public static String Post = "Post";
     public static String position = "Position";
 
     // For passing data between fragments
@@ -59,7 +60,7 @@ public class AppConstants {
     // Request Codes User Throughout Application:
     public static final int SIGN_UP_ACTIVITY_REQUEST_CODE = 20;
     public static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
-    public static final int RELOAD_USERPROFILE_FRAGMENT_REQUEST_CODE = 2001;
+    public static final int RELOAD_USER_PROFILE_FRAGMENT_REQUEST_CODE = 2001;
     public static final int GET_FROM_GALLERY = 3;
     public static final int UPDATE_POST_FROM_PROFILE = 301;
     public static final int DELETE_POST_FROM_PROFILE = 302;

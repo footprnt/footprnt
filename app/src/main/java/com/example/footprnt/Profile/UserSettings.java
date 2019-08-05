@@ -116,7 +116,7 @@ public class UserSettings extends AppCompatActivity {
                     public void done(ParseException e) {
                         updateCurrentViews();
                         Intent data = new Intent();
-                        setResult(AppConstants.RELOAD_USERPROFILE_FRAGMENT_REQUEST_CODE, data);
+                        setResult(AppConstants.RELOAD_USER_PROFILE_FRAGMENT_REQUEST_CODE, data);
                         finish();
                     }
                 });
