@@ -29,6 +29,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Scroller;
 import android.widget.Switch;
@@ -142,10 +143,14 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     private MediaPlayer mBubble;
     private MediaPlayer mBubbleClose;
 
+    // Progress bar variables
+    private ProgressBar mProgressBar;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_map, container, false);
+        mProgressBar = v.findViewById(R.id.pbLoading);
         initialization();
         return v;
     }
@@ -331,6 +336,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     public void loadMarkers() {
         mMarkerDetails = new ArrayList<>();
         markers = new ArrayList<>();
+        mProgressBar.setVisibility(ProgressBar.VISIBLE);
         final MarkerDetails.Query postQuery = new MarkerDetails.Query();
         postQuery.withUser().whereEqualTo(AppConstants.user, mUser);
         postQuery.findInBackground(new FindCallback<MarkerDetails>() {
@@ -349,6 +355,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                             e1.printStackTrace();
                         }
                     }
+                    mProgressBar.setVisibility(ProgressBar.INVISIBLE);
                 }
             }
         });
@@ -360,6 +367,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     public void loadAllMarkers() {
         mMarkerDetails = new ArrayList<>();
         markers = new ArrayList<>();
+        mProgressBar.setVisibility(View.VISIBLE);
         final MarkerDetails.Query postQuery = new MarkerDetails.Query();
         postQuery.withUser();
         postQuery.findInBackground(new FindCallback<MarkerDetails>() {
@@ -376,6 +384,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                         }
                     }
                 }
+                mProgressBar.setVisibility(View.INVISIBLE);
             }
         });
     }
@@ -469,10 +478,12 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
             @Override
             public void onClick(View v) {
                 mSwipe.start();                 // Add sound when user sends post
+                mProgressBar.setVisibility(View.VISIBLE);
                 final String title = ((EditText) mAlertDialog.findViewById(R.id.etTitle)).getText().toString();
                 final String snippet = ((EditText) mAlertDialog.findViewById(R.id.etSnippet)).getText().toString();
                 if( TextUtils.isEmpty(title) || TextUtils.isEmpty(snippet)) {
                     Toast.makeText(getContext(), R.string.post_incomplete, Toast.LENGTH_SHORT).show();
+                    mProgressBar.setVisibility(View.INVISIBLE);
                 } else {
                     final MarkerDetails mOptions = new MarkerDetails();
                     mOptions.setUser(mUser);
@@ -493,6 +504,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                                         loadMarkers();
                                     }
                                 });
+                                mProgressBar.setVisibility(View.INVISIBLE);
                             }
                         });
                     } else {
@@ -503,6 +515,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                         } catch (ParseException e) {
                             e.printStackTrace();
                         }
+                        mProgressBar.setVisibility(View.INVISIBLE);
                         mOptions.saveInBackground();
                     }
                     mAlertDialog.dismiss();

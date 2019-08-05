@@ -15,6 +15,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,6 +48,7 @@ public class SignUpActivity extends AppCompatActivity {
     private EditText mEmailInput;
     private EditText mDescription;
     private Button mSubmitNewUser;
+    private ProgressBar mProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +90,7 @@ public class SignUpActivity extends AppCompatActivity {
         }
 
         user.put(AppConstants.phone, mPhoneInput.getText().toString());
+        mProgressBar.setVisibility(View.VISIBLE);
         user.signUpInBackground(new SignUpCallback() {
             @Override
             public void done(com.parse.ParseException e) {
@@ -96,6 +99,7 @@ public class SignUpActivity extends AppCompatActivity {
                 } else {
                     e.printStackTrace();
                 }
+                mProgressBar.setVisibility(View.INVISIBLE);
             }
         });
     }
@@ -104,6 +108,7 @@ public class SignUpActivity extends AppCompatActivity {
      * Helper method to initialize views
      */
     private void initializeViews() {
+        mProgressBar = findViewById(R.id.pbLoading);
         mUsernameInput = findViewById(R.id.new_username);
         mPasswordInput = findViewById(R.id.new_password);
         mPhoneInput = findViewById(R.id.phone_number);
