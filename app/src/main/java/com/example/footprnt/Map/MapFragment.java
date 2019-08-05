@@ -682,7 +682,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                     createFeed();
                 }
                 else if (MapConstants.MENU_ITEMS[position] == MapConstants.DISCOVER) {
-                    ViewPager viewPager = (ViewPager) getActivity().findViewById(R.id.viewpager);
+                    ViewPager viewPager = getActivity().findViewById(R.id.viewpager);
                     viewPager.setCurrentItem(1);
                     Fragment viewPagerAdapter = ((ViewPagerAdapter) viewPager.getAdapter()).getItem(1);
                     ((DiscoverFragment) viewPagerAdapter).setDataFromMapFragment(mTappedLocation);
