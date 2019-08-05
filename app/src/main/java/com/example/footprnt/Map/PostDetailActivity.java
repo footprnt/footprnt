@@ -44,7 +44,6 @@ public class PostDetailActivity extends AppCompatActivity {
     ImageView mBookmark;
     Post mPost;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
