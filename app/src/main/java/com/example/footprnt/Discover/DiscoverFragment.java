@@ -127,6 +127,7 @@ public class DiscoverFragment extends Fragment implements LocationListener {
         mMuseums = new ArrayList<>();
         mHotels = new ArrayList<>();
         mClubs = new ArrayList<>();
+        try {
             getAddress();
             getAdventureOfTheDay();
             prepareArrayLists();

@@ -168,6 +168,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         mSwipe = MediaPlayer.create(getContext(), R.raw.swipe_two);
         mBubble = MediaPlayer.create(getContext(), R.raw.bubble);
         mBubbleClose = MediaPlayer.create(getContext(), R.raw.bubble_close);
+        mProgressBar = view.findViewById(R.id.pbLoading);
         configureMapStyleMenu();
     }
 
@@ -206,7 +207,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
             }
         });
         mMap.setOnMapLongClickListener(this);
-
         mJumpToCurrentLocation = true;
         setupMapStyles();
         setupMapUserLocation();
