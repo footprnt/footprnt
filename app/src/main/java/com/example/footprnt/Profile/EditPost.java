@@ -127,10 +127,10 @@ public class EditPost extends AppCompatActivity {
         // Check for null values for either city, country, or continent
         StringBuilder sb = new StringBuilder();
         if (mPost.getCity() != null) {
-            sb.append(mPost.getCity()).append(",");
+            sb.append(mPost.getCity()).append(", ");
         }
         if (mPost.getCountry() != null) {
-            sb.append(mPost.getCountry()).append(",");
+            sb.append(mPost.getCountry()).append(", ");
         }
         if (mPost.getContinent() != null) {
             sb.append(mPost.getContinent());
