@@ -61,13 +61,13 @@
             android:textColor="#FFFFFF"
             android:textSize="20dp"
             android:textStyle="bold"
-            card_view:layout_constraintBottom_toTopOf="@+id/textView4"
+            card_view:layout_constraintBottom_toTopOf="@+id/restaurants"
             card_view:layout_constraintEnd_toEndOf="parent"
             card_view:layout_constraintHorizontal_bias="0.0"
             card_view:layout_constraintStart_toStartOf="parent" />
 
         <TextView
-            android:id="@+id/textView4"
+            android:id="@+id/restaurants"
             android:layout_width="match_parent"
             android:layout_height="67dp"
             android:layout_marginStart="8dp"
