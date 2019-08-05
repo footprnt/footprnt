@@ -38,7 +38,6 @@ public class SavedPosts extends AppCompatActivity {
     ArrayList<SavedPost> mSavedPosts;
     SavedPostsAdapter mSavedPostsAdapter;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,7 +52,6 @@ public class SavedPosts extends AppCompatActivity {
         mSavedPostsAdapter = new SavedPostsAdapter(mSavedPosts, this);
         mRvSavedPosts.setLayoutManager(new LinearLayoutManager(this));
         mRvSavedPosts.setAdapter(mSavedPostsAdapter);
-
     }
 
     /**

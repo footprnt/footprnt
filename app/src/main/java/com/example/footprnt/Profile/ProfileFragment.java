@@ -32,7 +32,6 @@ import com.example.footprnt.Database.StatDatabase;
 import com.example.footprnt.Database.UserDatabase;
 import com.example.footprnt.LoginActivity;
 import com.example.footprnt.Models.Post;
-import com.example.footprnt.Models.SavedPost;
 import com.example.footprnt.Profile.Adapters.MultiViewAdapter;
 import com.example.footprnt.Profile.Util.ProfileConstants;
 import com.example.footprnt.R;
@@ -225,7 +224,7 @@ public class ProfileFragment extends Fragment {
                             }
                         } else if (item.getItemId() == R.id.savedPosts) {
                             // Saved Posts
-                            Intent it = new Intent(getContext(), SavedPost.class);
+                            Intent it = new Intent(getContext(), SavedPosts.class);
                             startActivity(it);
                         }
                         return true;
