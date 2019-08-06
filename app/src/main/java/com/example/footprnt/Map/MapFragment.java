@@ -235,7 +235,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                     mParseFile = new ParseFile(photoFile);
                 } else {
                     mParseFile = null;
-                    Toast.makeText(getContext(), R.string.camera_message, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(),getResources().getString(R.string.camera_message), Toast.LENGTH_SHORT).show();
                 }
             } else {
                 if (resultCode == getActivity().RESULT_OK) {
@@ -257,7 +257,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 }
             }
         } catch (Exception e){
-            Toast.makeText(getContext(), R.string.photo_error, Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), getResources().getString(R.string.photo_error), Toast.LENGTH_LONG).show();
         }
     }
 
@@ -485,7 +485,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 final String title = ((EditText) mAlertDialog.findViewById(R.id.etTitle)).getText().toString();
                 final String snippet = ((EditText) mAlertDialog.findViewById(R.id.etSnippet)).getText().toString();
                 if( TextUtils.isEmpty(title) || TextUtils.isEmpty(snippet)) {
-                    Toast.makeText(getContext(), R.string.post_incomplete, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), getResources().getString(R.string.post_incomplete), Toast.LENGTH_SHORT).show();
                     mProgressBar.setVisibility(View.INVISIBLE);
                 } else {
                     final MarkerDetails mOptions = new MarkerDetails();
