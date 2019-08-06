@@ -33,8 +33,8 @@
 
         <TextView
             android:id="@+id/tvBusinessName"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_width="332dp"
+            android:layout_height="47dp"
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
             android:layout_marginTop="12dp"

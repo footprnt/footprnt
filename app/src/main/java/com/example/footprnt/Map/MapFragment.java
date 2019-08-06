@@ -281,6 +281,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         if(mUser.getInt(MapConstants.MAP_STYLE)!=0) {
             mMapStyle = mUser.getInt(MapConstants.MAP_STYLE);
         } else {
+            // Default to the Aubergine style
             mMapStyle = MapConstants.STYLE_AUBERGINE;
         }
         mMenuItemsAdded = false;
