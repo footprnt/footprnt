@@ -275,7 +275,6 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
             } else {
                 mTvBusinessPhone.setVisibility(View.GONE);
             }
-
         }
 
         @SuppressLint("ResourceType")

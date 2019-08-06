@@ -26,4 +26,5 @@
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <include layout="@layout/toolbar_saved_post" />
+
 </RelativeLayout>
