@@ -57,6 +57,7 @@ public class AppConstants {
     // For camera:
     public static String photoFileName = "photo.jpg";
     public static String photoFileNameShare = "share.jpg";
+    public static String photoType = "image/jpeg";
     public static String fileProvider = "com.example.fileprovider";
     public static String profileImagePath = "profPic.jpg";  // Used in taking new profile picture
     public static String profileImagePathJPEG = "profPic.jpeg";

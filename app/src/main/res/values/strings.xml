@@ -31,7 +31,10 @@
     <string name="unsaved_activity">Unsaved Activity</string>
     <string name="error_query_saved_posts">Error querying saved posts</string>
     <string name="error_query_saved_activity">Error querying saved activities</string>
+    <string name="error_query_posts">Error querying posts</string>
     <string name="tel">tel:</string>
+    <string name="saved_post">Saved Post</string>
+    <string name="unsaved_post">Unsaved Post</string>
     <string name="username_taken">Username taken</string>
     <string name="username_already_exist">Username already exists</string>
     <string name="password_must_match">Passwords must match</string>
