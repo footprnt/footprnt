@@ -15,6 +15,7 @@ import java.util.List;
 
 /**
  * ViewPagerAdapter to swipe between fragments
+ *
  * @author Clarisa Leu-Rodriguez
  */
 public class ViewPagerAdapter extends FragmentPagerAdapter {

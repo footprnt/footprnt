@@ -8,7 +8,6 @@ package com.example.footprnt;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -40,7 +39,7 @@ import java.util.List;
  */
 public class SignUpActivity extends AppCompatActivity {
 
-    private final String TAG = SignUpActivity.class.getSimpleName();
+    private final String TAG = "SignUpActivity";
     private EditText mUsernameInput;
     private EditText mPasswordInput;
     private EditText mPasswordConfirm;
@@ -54,38 +53,36 @@ public class SignUpActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
-
         initializeViews();
-
         mSubmitNewUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                signup();
+                signUp();
             }
         });
     }
 
-    public void signup(){
+    public void signUp() {
         ParseUser user = new ParseUser();
         String newUsername = mUsernameInput.getText().toString();
         if (userNameDoesNotExist(newUsername)) {
             user.setUsername(mUsernameInput.getText().toString());
         } else {
-            Toast.makeText(SignUpActivity.this, "Username already exists", Toast.LENGTH_LONG).show();
+            Toast.makeText(SignUpActivity.this, getResources().getString(R.string.username_already_exist), Toast.LENGTH_LONG).show();
             return;
         }
         user.put(AppConstants.description, mDescription.getText().toString());
         if (mPasswordInput.getText().toString().equals(mPasswordConfirm.getText().toString())) {
             user.setPassword(mPasswordInput.getText().toString());
         } else {
-            Toast.makeText(SignUpActivity.this, "Passwords must match", Toast.LENGTH_SHORT).show();
+            Toast.makeText(SignUpActivity.this, getResources().getString(R.string.password_must_match), Toast.LENGTH_SHORT).show();
             return;
         }
         String newEmail = mEmailInput.getText().toString();
         if (AppUtil.isValidEmail(newEmail)) {
             user.setEmail(newEmail);
         } else {
-            Toast.makeText(SignUpActivity.this, "Please enter a valid email", Toast.LENGTH_SHORT).show();
+            Toast.makeText(SignUpActivity.this, getResources().getString(R.string.request_valid_email), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -119,10 +116,10 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    signup();
+                    signUp();
                 }
                 InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
+                inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                 return false;
             }
         });
@@ -137,16 +134,16 @@ public class SignUpActivity extends AppCompatActivity {
      */
     private boolean userNameDoesNotExist(final String username) {
         final boolean[] res = {true};
-        ParseQuery<ParseUser> query = getUserByUsername(username);
+        ParseQuery<ParseUser> query = ParseUser.getQuery();
+        query.whereEqualTo(AppConstants.username, username);
         query.findInBackground(new FindCallback<ParseUser>() {
             @Override
             public void done(List<ParseUser> objects, ParseException e) {
                 if (e != null) {
-                    Log.d(TAG, "error querying for username");
                     e.printStackTrace();
                     res[0] = false;
                 } else if (objects.size() != 0) {
-                    Toast.makeText(SignUpActivity.this, "Username taken", Toast.LENGTH_LONG).show();
+                    Toast.makeText(SignUpActivity.this, getResources().getString(R.string.username_taken), Toast.LENGTH_LONG).show();
                     res[0] = false;
                 } else {
                     res[0] = true;
@@ -154,11 +151,5 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
         return res[0];
-    }
-
-    private ParseQuery<ParseUser> getUserByUsername(String username) {
-        ParseQuery<ParseUser> query = ParseUser.getQuery();
-        query.whereEqualTo("username", username);
-        return query;
     }
 }

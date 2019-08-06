@@ -43,6 +43,7 @@ import java.io.File;
  */
 public class UserSettings extends AppCompatActivity {
 
+    private final String TAG = "UserSettings";
     File mPhotoFile;
     ParseFile mParseFile;
     final ParseUser mUser = ParseUser.getCurrentUser();
@@ -64,20 +65,19 @@ public class UserSettings extends AppCompatActivity {
         updateCurrentViews();
 
         // Set on click listener for photo
-        // TODO: don't show videos
         mTvEditPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(UserSettings.this);
-                builder.setTitle("Upload or Take a Photo");
-                builder.setPositiveButton("Upload", new DialogInterface.OnClickListener() {
+                builder.setTitle(getResources().getString(R.string.upload_or_take_photo));
+                builder.setPositiveButton(getResources().getString(R.string.upload), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // Upload image
                         startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI), AppConstants.GET_FROM_GALLERY);
                     }
                 });
-                builder.setNegativeButton("Take a Photo", new DialogInterface.OnClickListener() {
+                builder.setNegativeButton(getResources().getString(R.string.take_photo), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // Take Photo
@@ -130,7 +130,7 @@ public class UserSettings extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, final Intent data) {
         try {
             if (requestCode == AppConstants.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
-                if (resultCode == this.RESULT_OK) {
+                if (resultCode == RESULT_OK) {
                     Bitmap takenImage = BitmapFactory.decodeFile(mPhotoFile.getAbsolutePath());
                     mIvProfileImage.setImageBitmap(takenImage);
                     File photoFile = AppUtil.getPhotoFileUri(this, AppConstants.photoFileName);
@@ -139,12 +139,12 @@ public class UserSettings extends AppCompatActivity {
                     mParseFile = null;
                 }
             } else {
-                if (resultCode == this.RESULT_OK) {
+                if (resultCode == RESULT_OK) {
                     Bitmap bitmap = null;
                     Uri selectedImage = data.getData();
                     try {
                         bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
-                    } catch (Exception e) {
+                    } catch (Exception ignored) {
                     }
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
                     bitmap.compress(Bitmap.CompressFormat.JPEG, AppConstants.captureImageQuality, stream);
@@ -157,7 +157,7 @@ public class UserSettings extends AppCompatActivity {
                 }
             }
         } catch (Exception e) {
-            Toast.makeText(this, R.string.photo_error, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getResources().getString(R.string.photo_error), Toast.LENGTH_LONG).show();
         }
     }
 

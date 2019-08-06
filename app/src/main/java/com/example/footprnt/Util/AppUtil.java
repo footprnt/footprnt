@@ -16,10 +16,15 @@ import android.text.format.DateUtils;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.footprnt.R;
 import com.google.android.gms.maps.model.LatLng;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
@@ -55,6 +60,20 @@ public class AppUtil {
     }
 
     /**
+     * Helper method to parse JSONArray into ArrayList of Strings
+     *
+     * @param arr to parse
+     * @return arr as ArrayList of Strings
+     */
+    public static ArrayList<String> parseJSONArray(JSONArray arr) throws JSONException {
+        ArrayList<String> list = new ArrayList<>();
+        for (int i = 0; i < arr.length(); i++) {
+            list.add(arr.getString(i));
+        }
+        return list;
+    }
+
+    /**
      * Helper method to check if valid email
      *
      * @param email
@@ -80,10 +99,10 @@ public class AppUtil {
      * @return photo file Uri
      */
     public static File getPhotoFileUri(Context context, String fileName) {
-        File mediaStorageDir = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), AppConstants.APP_TAG);
+        File mediaStorageDir = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), String.valueOf(R.string.app_name));
 
         if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()) {
-            Log.d(AppConstants.APP_TAG, "failed to create directory");
+            Log.d(String.valueOf(R.string.app_name), "failed to create directory");
         }
 
         File file = new File(mediaStorageDir.getPath() + File.separator + fileName);
@@ -125,8 +144,7 @@ public class AppUtil {
      * @return relative time ago
      */
     public static String getRelativeTimeAgo(String rawJsonDate) {
-        String twitterFormat = "EEE MMM dd HH:mm:ss ZZZZZ yyyy";
-        SimpleDateFormat sf = new SimpleDateFormat(twitterFormat, Locale.ENGLISH);
+        SimpleDateFormat sf = new SimpleDateFormat("EEE MMM dd HH:mm:ss ZZZZZ yyyy", Locale.ENGLISH);
         sf.setLenient(true);
         String relativeDate = "";
         try {
