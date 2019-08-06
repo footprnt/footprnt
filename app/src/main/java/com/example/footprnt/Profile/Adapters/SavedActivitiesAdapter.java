@@ -148,6 +148,7 @@ public class SavedActivitiesAdapter extends RecyclerView.Adapter<SavedActivities
                     stars.getDrawable(2).setColorFilter(Color.parseColor(mContext.getResources().getString(R.color.blue_business)), PorterDuff.Mode.SRC_ATOP);
                     mTvBusinessAddress = mAlertDialog.findViewById(R.id.tvBusinessAddress);
                     mTvBusinessPhone = mAlertDialog.findViewById(R.id.tvBusinessPhone);
+                    bindBusinessDetail(business);
                 }
             });
         }
