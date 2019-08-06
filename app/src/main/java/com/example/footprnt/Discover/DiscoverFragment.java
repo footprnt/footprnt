@@ -185,13 +185,6 @@ public class DiscoverFragment extends Fragment implements LocationListener {
         }
     }
 
-//    public void showProgressBar() {
-//        mProgressBar.setVisibility(View.VISIBLE);
-//    }
-//    public void hideProgressBar() {
-//        mProgressBar.setVisibility(View.INVISIBLE);
-//    }
-
     public void populateView() {
         mProgressBar.setVisibility(ProgressBar.VISIBLE);
         nothingNearYou.setVisibility(View.INVISIBLE);
@@ -228,7 +221,6 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                                 }
                             }
                         });
-//                        mProgressBar.setVisibility(ProgressBar.INVISIBLE);
                     }
                 });
             }
