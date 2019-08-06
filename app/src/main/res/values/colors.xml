@@ -22,4 +22,6 @@
     <color name="snow_off_white">#FFFAFA</color>
     <color name = "aqua">#003B46</color>
     <color name = "seafoam">#C4DFE6</color>
+    <color name ="blue_business">#659DBD</color>
+    <color name="black_business">#050505</color>
 </resources>

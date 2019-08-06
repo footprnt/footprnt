@@ -61,9 +61,4 @@ public class Event {
         return eventUrl;
     }
 
-
-
-
-
-
 }

@@ -60,7 +60,7 @@ public class PostDetailActivity extends AppCompatActivity {
         mBookmark = findViewById(R.id.ivSave);
         Bundle bundle = getIntent().getExtras();
         mPost = (Post) bundle.getSerializable(Post.class.getSimpleName());
-        Boolean hideView = (Boolean) bundle.getSerializable("hideView");
+        Boolean hideView = (Boolean) bundle.getSerializable(AppConstants.hideView);
         Boolean privacy = null;
         Object privacySetting = null;
         try {
@@ -105,7 +105,7 @@ public class PostDetailActivity extends AppCompatActivity {
                         });
                     } else {
                         // Post already saved - unsaved
-                        ParseQuery<ParseObject> query = ParseQuery.getQuery("SavedPost");
+                        ParseQuery<ParseObject> query = ParseQuery.getQuery(AppConstants.savedPost);
                         query.whereEqualTo(AppConstants.user, ParseUser.getCurrentUser()).whereEqualTo(AppConstants.post, mPost);
                         query.findInBackground(new FindCallback<ParseObject>() {
                             @Override
@@ -132,7 +132,7 @@ public class PostDetailActivity extends AppCompatActivity {
 
     // Check if post is already saved
     private void checkIfSaved() {
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("SavedPost");
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(AppConstants.savedPost);
         query.whereEqualTo(AppConstants.user, ParseUser.getCurrentUser()).whereEqualTo(AppConstants.post, mPost);
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
@@ -168,7 +168,7 @@ public class PostDetailActivity extends AppCompatActivity {
                 File file = AppUtil.getPhotoFileUri(this, AppConstants.photoFileNameShare);
                 try {
                     out = new FileOutputStream(file);
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+                    bitmap.compress(Bitmap.CompressFormat.PNG, AppConstants.captureImageQuality, out);
                     out.flush();
                     out.close();
                 } catch (Exception e) {
@@ -183,6 +183,6 @@ public class PostDetailActivity extends AppCompatActivity {
         }
         shareIntent.setType("image/jpeg");
         shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        startActivityForResult(Intent.createChooser(shareIntent, "send"), 0);
+        startActivityForResult(Intent.createChooser(shareIntent, AppConstants.send), 0);
     }
 }
