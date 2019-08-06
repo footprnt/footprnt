@@ -112,7 +112,6 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
             super(itemView);
             mCardView = itemView;
             mContext = itemView.getContext();
-            mBookmark = itemView.findViewById(R.id.ivBookmark);
             mIvBusinessImage = itemView.findViewById(R.id.ivBusinessImage);
             mTvBusinessName = itemView.findViewById(R.id.tvBusinessName);
             mTvBusinessCategory = itemView.findViewById(R.id.tvBusinessCategory);
@@ -133,6 +132,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
                     mAlertDialog.show();
                     mDialog = mAlertDialog;
                     mIvBusinessImage = mAlertDialog.findViewById(R.id.ivBusinessImage);
+                    mBookmark = mAlertDialog.findViewById(R.id.ivBookmark);
                     mTvBusinessName = mAlertDialog.findViewById(R.id.tvBusinessName);
                     mTvBusinessCategory = mAlertDialog.findViewById(R.id.tvBusinessCategory);
                     mBtnCall = mAlertDialog.findViewById(R.id.btnCall);
