@@ -50,7 +50,7 @@ public class SavedActivities extends AppCompatActivity {
         // Set views
         mBackButton = findViewById(R.id.ivBack);
         mRvSavedActivities = findViewById(R.id.rvSavedActivities);
-        mNoNetwork = findViewById(R.id.cvRoot);
+        mNoNetwork = findViewById(R.id.cvAdventure);
         mNoNetwork.setVisibility(View.INVISIBLE);
         mNoSavedActivities = findViewById(R.id.cvRoot2);
         mNoSavedActivities.setVisibility(View.INVISIBLE);

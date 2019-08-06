@@ -685,7 +685,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
      * @param latLng location to launch create post or view feed
      */
     private void configureFilterMenu(LatLng latLng) {
-        final Marker m = mMap.addMarker(new MarkerOptions().position(latLng).icon(MapConstants.DEFAULT_MARKER));
+        final Marker m = mMap.addMarker(new MarkerOptions().position(latLng).icon(MapConstants.MARKER_AZURE));
         mBubble.start();
         mFilterMenuLayout.setVisibility(View.VISIBLE);
         FilterMenu.OnMenuChangeListener menuChangeListener = new FilterMenu.OnMenuChangeListener() {
