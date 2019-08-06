@@ -192,6 +192,7 @@ public class DiscoverFragment extends Fragment implements LocationListener {
         mArrAdapters.clear();
         prepareArrayLists();
         populateView();
+        getAdventureOfTheDay();
         mSwipeContainer.setRefreshing(false);
     }
 
@@ -449,75 +450,75 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                                 }
                                 mNoEvent.setVisibility(View.INVISIBLE);
                                 mProgressBarAdventure.setVisibility(View.INVISIBLE);
-                            }
-                        });
-                        adventure.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                final ObjectAnimator oa1 = ObjectAnimator.ofFloat(adventure, "scaleX", 1f, 0f);
-                                final ObjectAnimator oa2 = ObjectAnimator.ofFloat(adventure, "scaleX", 0f, 1f);
-                                oa1.setInterpolator(new DecelerateInterpolator());
-                                oa2.setInterpolator(new AccelerateDecelerateInterpolator());
-                                oa1.setDuration(100);
-                                oa2.setDuration(100);
-                                oa1.addListener(new AnimatorListenerAdapter() {
+                                adventure.setOnClickListener(new View.OnClickListener() {
                                     @Override
-                                    public void onAnimationEnd(Animator animation) {
-                                        super.onAnimationEnd(animation);
-                                        completed.setVisibility(View.VISIBLE);
-                                        cancel.setVisibility(View.VISIBLE);
-                                        completed.setOnClickListener(new View.OnClickListener() {
+                                    public void onClick(View view) {
+                                        final ObjectAnimator oa1 = ObjectAnimator.ofFloat(adventure, "scaleX", 1f, 0f);
+                                        final ObjectAnimator oa2 = ObjectAnimator.ofFloat(adventure, "scaleX", 0f, 1f);
+                                        oa1.setInterpolator(new DecelerateInterpolator());
+                                        oa2.setInterpolator(new AccelerateDecelerateInterpolator());
+                                        oa1.setDuration(100);
+                                        oa2.setDuration(100);
+                                        oa1.addListener(new AnimatorListenerAdapter() {
                                             @Override
-                                            public void onClick(View v) {
-                                                ArrayList<String> userCompletedAdventures = ((ArrayList<String>) ParseUser.getCurrentUser().get("completed_adventure"));
-                                                if (userCompletedAdventures != null) {
-                                                    userCompletedAdventures.add(mAdventure.getEventId());
-                                                } else {
-                                                    userCompletedAdventures = new ArrayList<>();
-                                                    userCompletedAdventures.add(mAdventure.getEventId());
-                                                }
-                                                ParseUser.getCurrentUser().put("completed_adventure", userCompletedAdventures);
-                                                ParseUser.getCurrentUser().saveInBackground(new SaveCallback() {
+                                            public void onAnimationEnd(Animator animation) {
+                                                super.onAnimationEnd(animation);
+                                                completed.setVisibility(View.VISIBLE);
+                                                cancel.setVisibility(View.VISIBLE);
+                                                completed.setOnClickListener(new View.OnClickListener() {
                                                     @Override
-                                                    public void done(ParseException e) {
-                                                        completed.setVisibility(View.INVISIBLE);
-                                                        cancel.setVisibility(View.INVISIBLE);
-                                                        getAdventureOfTheDay();
+                                                    public void onClick(View v) {
+                                                        ArrayList<String> userCompletedAdventures = ((ArrayList<String>) ParseUser.getCurrentUser().get("completed_adventure"));
+                                                        if (userCompletedAdventures != null) {
+                                                            userCompletedAdventures.add(mAdventure.getEventId());
+                                                        } else {
+                                                            userCompletedAdventures = new ArrayList<>();
+                                                            userCompletedAdventures.add(mAdventure.getEventId());
+                                                        }
+                                                        ParseUser.getCurrentUser().put("completed_adventure", userCompletedAdventures);
+                                                        ParseUser.getCurrentUser().saveInBackground(new SaveCallback() {
+                                                            @Override
+                                                            public void done(ParseException e) {
+                                                                completed.setVisibility(View.INVISIBLE);
+                                                                cancel.setVisibility(View.INVISIBLE);
+                                                                getAdventureOfTheDay();
+                                                            }
+                                                        });
                                                     }
                                                 });
-                                            }
-                                        });
-                                        cancel.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                ArrayList<String> userUncompletedAdventure = ((ArrayList<String>) ParseUser.getCurrentUser().get("uncompleted_adventure"));
-                                                if (userUncompletedAdventure != null) {
-                                                    userUncompletedAdventure.add(mAdventure.getEventId());
-                                                } else {
-                                                    userUncompletedAdventure = new ArrayList<>();
-                                                    userUncompletedAdventure.add(mAdventure.getEventId());
-                                                }
-                                                ParseUser.getCurrentUser().put("uncompleted_adventure", userUncompletedAdventure);
-                                                ParseUser.getCurrentUser().saveInBackground(new SaveCallback() {
+                                                cancel.setOnClickListener(new View.OnClickListener() {
                                                     @Override
-                                                    public void done(ParseException e) {
-                                                        completed.setVisibility(View.INVISIBLE);
-                                                        cancel.setVisibility(View.INVISIBLE);
-                                                        getAdventureOfTheDay();
+                                                    public void onClick(View v) {
+                                                        ArrayList<String> userUncompletedAdventure = ((ArrayList<String>) ParseUser.getCurrentUser().get("uncompleted_adventure"));
+                                                        if (userUncompletedAdventure != null) {
+                                                            userUncompletedAdventure.add(mAdventure.getEventId());
+                                                        } else {
+                                                            userUncompletedAdventure = new ArrayList<>();
+                                                            userUncompletedAdventure.add(mAdventure.getEventId());
+                                                        }
+                                                        ParseUser.getCurrentUser().put("uncompleted_adventure", userUncompletedAdventure);
+                                                        ParseUser.getCurrentUser().saveInBackground(new SaveCallback() {
+                                                            @Override
+                                                            public void done(ParseException e) {
+                                                                completed.setVisibility(View.INVISIBLE);
+                                                                cancel.setVisibility(View.INVISIBLE);
+                                                                getAdventureOfTheDay();
+                                                            }
+                                                        });
                                                     }
                                                 });
+                                                eventImage.setVisibility(View.INVISIBLE);
+                                                eventTitle.setVisibility(View.INVISIBLE);
+                                                eventDescription.setVisibility(View.INVISIBLE);
+                                                eventTime.setVisibility(View.INVISIBLE);
+                                                eventUrl.setVisibility(View.INVISIBLE);
+                                                eventHeader.setVisibility(View.INVISIBLE);
+                                                oa2.start();
                                             }
                                         });
-                                        eventImage.setVisibility(View.INVISIBLE);
-                                        eventTitle.setVisibility(View.INVISIBLE);
-                                        eventDescription.setVisibility(View.INVISIBLE);
-                                        eventTime.setVisibility(View.INVISIBLE);
-                                        eventUrl.setVisibility(View.INVISIBLE);
-                                        eventHeader.setVisibility(View.INVISIBLE);
-                                        oa2.start();
+                                        oa1.start();
                                     }
                                 });
-                                oa1.start();
                             }
                         });
                     } else {
@@ -531,8 +532,10 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                                 eventUrl.setVisibility(View.INVISIBLE);
                                 mNoEvent.setVisibility(View.VISIBLE);
                                 mProgressBarAdventure.setVisibility(View.INVISIBLE);
+                                adventure.setClickable(false);
                             }
                         });
+
                     }
                 } else {
                     mFragmentContext.runOnUiThread(new Runnable() {
@@ -545,6 +548,8 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                             eventUrl.setVisibility(View.INVISIBLE);
                             mNoEvent.setVisibility(View.VISIBLE);
                             mProgressBarAdventure.setVisibility(View.INVISIBLE);
+                            adventure.setClickable(false);
+
                         }
                     });
                 }
