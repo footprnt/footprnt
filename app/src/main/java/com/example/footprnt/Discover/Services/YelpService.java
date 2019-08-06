@@ -6,6 +6,9 @@
  */
 package com.example.footprnt.Discover.Services;
 
+import android.view.View;
+import android.widget.ProgressBar;
+
 import com.example.footprnt.Discover.Models.Business;
 import com.example.footprnt.Discover.Models.Event;
 import com.example.footprnt.Discover.Util.DiscoverConstants;
@@ -37,7 +40,6 @@ public class YelpService {
      */
     public static void findBusinesses(String location, String query, Callback callback) {
         String url = DiscoverConstants.YELP_BASE_URL + location + "&term=" + query;
-        // todo set limit
         Request request = new Request.Builder()
                 .url(url)
                 .header("Authorization", DiscoverConstants.YELP_TOKEN)
@@ -83,7 +85,6 @@ public class YelpService {
             e.printStackTrace();
         } catch (JSONException e) {
             e.printStackTrace();
-
         }
         return events;
     }
@@ -94,7 +95,7 @@ public class YelpService {
      * @param response raw response from Yelp API call
      * @return List of restaurants from Yelp in given location
      */
-    public ArrayList<Business> processResults(Response response) {
+    public ArrayList<Business> processResults(Response response, ProgressBar pbLoader) {
         ArrayList<Business> businesses = new ArrayList<>();
         try {
             String jsonData = response.body().string();
@@ -130,11 +131,11 @@ public class YelpService {
                         imageUrl, address, latitude, longitude, categories);
                 businesses.add(business);
             }
+            pbLoader.setVisibility(View.INVISIBLE);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {
             e.printStackTrace();
-
         }
         return businesses;
     }

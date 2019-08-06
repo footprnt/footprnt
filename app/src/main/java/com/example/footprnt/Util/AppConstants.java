@@ -23,6 +23,8 @@ public class AppConstants {
 
     // For getting attributes in database:
     public static String profileImage = "profileImg";
+    public static String savedPost = "SavedPost";
+    public static String savedActivity = "SavedActivity";
     public static String phone = "phone";
     public static String email = "email";
     public static String createdAt = "createdAt";
@@ -39,6 +41,12 @@ public class AppConstants {
     public static final String continent = "continent";
     public static final String tags = "tags";
     public static final String privacy = "private";
+    public static final String imageUrl = "imageUrl";
+    public static final String address = "address";
+    public static final String rating = "rating";
+    public static final String website = "website";
+    public static final String categories = "categories";
+
     public static final int postLimit = 20;
 
     // For getting extras for intents:
@@ -66,6 +74,7 @@ public class AppConstants {
     public static final int UPDATE_POST_FROM_PROFILE = 301;
     public static final int DELETE_POST_FROM_PROFILE = 302;
     public static final int SAVED_POST_DETAILS_FROM_PROFILE = 2005;
+    public static final int VIEW_BUSINESS_PAGE = 21;
 
     // For Logcat:
     public static final String APP_TAG = "footprnt";
@@ -76,4 +85,7 @@ public class AppConstants {
 
     // For saved posts:
     public static final String hideView = "hideView";
+
+    // For sharing:
+    public static final String send = "send";
 }
