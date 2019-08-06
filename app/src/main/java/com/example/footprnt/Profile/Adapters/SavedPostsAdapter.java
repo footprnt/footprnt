@@ -180,6 +180,9 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Vi
                         Toast.makeText(mContext, "Saved Post Deleted", Toast.LENGTH_SHORT).show();
                     }
                 });
+                if(mPosts.size()==0){
+                    ((Activity) mContext).finish();
+                }
                 return true;
             }
         });

@@ -61,9 +61,9 @@ public class SavedActivities extends AppCompatActivity {
 
         // Get saved activities
         // TODO: implement database for saved activities ?
-        if(AppUtil.haveNetworkConnection(getApplicationContext())){
+        if (AppUtil.haveNetworkConnection(getApplicationContext())) {
             getSavedActivities();
-            mRvSavedActivities.setLayoutManager(new GridLayoutManager(this,2));
+            mRvSavedActivities.setLayoutManager(new GridLayoutManager(this, 2));
             mRvSavedActivities.setAdapter(mSavedActivitiesAdapter);
         } else {
             // Display no network connection message
@@ -81,7 +81,7 @@ public class SavedActivities extends AppCompatActivity {
     /**
      * Helper method to get query saved activities from user from DB
      */
-    private void getSavedActivities(){
+    private void getSavedActivities() {
         final SavedActivity.Query query = new SavedActivity.Query();
         query
                 .getTop()
@@ -92,10 +92,15 @@ public class SavedActivities extends AppCompatActivity {
             @Override
             public void done(List<SavedActivity> objects, ParseException e) {
                 if (e == null) {
-                    for (int i = 0; i < objects.size(); i++) {
-                        final SavedActivity savedActivity = objects.get(i);
-                        mSavedActivities.add(savedActivity);
-                        mSavedActivitiesAdapter.notifyItemInserted(mSavedActivities.size() - 1);
+                    if (objects.size() == 0) {
+                        mNoSavedActivities.setVisibility(View.VISIBLE);
+                        mRvSavedActivities.setVisibility(View.INVISIBLE);
+                    } else {
+                        for (int i = 0; i < objects.size(); i++) {
+                            final SavedActivity savedActivity = objects.get(i);
+                            mSavedActivities.add(savedActivity);
+                            mSavedActivitiesAdapter.notifyItemInserted(mSavedActivities.size() - 1);
+                        }
                     }
                 } else {
                     AppUtil.logError(SavedActivities.this, TAG, "Error querying saved activities", e, true);

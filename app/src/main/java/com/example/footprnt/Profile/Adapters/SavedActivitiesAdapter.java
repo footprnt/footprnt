@@ -118,12 +118,15 @@ public class SavedActivitiesAdapter extends RecyclerView.Adapter<SavedActivities
                         Toast.makeText(mContext, "Saved Activity Deleted", Toast.LENGTH_SHORT).show();
                     }
                 });
+                if (mSavedActivities.size() == 0) {
+                    ((Activity) mContext).finish();
+                }
                 return true;
             }
         });
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         View mCardView;
         ImageView mIvBusinessImage;
         TextView mTvBusinessName;
@@ -264,15 +267,6 @@ public class SavedActivitiesAdapter extends RecyclerView.Adapter<SavedActivities
                 });
             } else {
                 mTvBusinessPhone.setVisibility(View.GONE);
-            }
-        }
-
-        @Override
-        public void onClick(View v) {
-            int position = getAdapterPosition();
-            if (position != RecyclerView.NO_POSITION) {
-                // TODO: implement business details view on click
-
             }
         }
     }

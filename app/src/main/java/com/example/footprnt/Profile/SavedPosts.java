@@ -57,7 +57,6 @@ public class SavedPosts extends AppCompatActivity {
         // Set adapter
         mSavedPosts = new ArrayList<>();
         mSavedPostsAdapter = new SavedPostsAdapter(mSavedPosts, this);
-
         // Get saved posts
         // TODO: implement database for saved posts ?
         if (AppUtil.haveNetworkConnection(getApplicationContext())) {
@@ -91,10 +90,15 @@ public class SavedPosts extends AppCompatActivity {
             @Override
             public void done(List<SavedPost> objects, ParseException e) {
                 if (e == null) {
-                    for (int i = 0; i < objects.size(); i++) {
-                        final SavedPost savedPost = objects.get(i);
-                        mSavedPosts.add(savedPost);
-                        mSavedPostsAdapter.notifyItemInserted(mSavedPosts.size() - 1);
+                    if (objects.size() == 0) {
+                        mNoSavedPosts.setVisibility(View.VISIBLE);
+                        mRvSavedPosts.setVisibility(View.INVISIBLE);
+                    } else {
+                        for (int i = 0; i < objects.size(); i++) {
+                            final SavedPost savedPost = objects.get(i);
+                            mSavedPosts.add(savedPost);
+                            mSavedPostsAdapter.notifyItemInserted(mSavedPosts.size() - 1);
+                        }
                     }
                 } else {
                     AppUtil.logError(SavedPosts.this, TAG, "Error querying saved posts", e, true);
