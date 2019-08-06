@@ -15,6 +15,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,23 +26,27 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.footprnt.Discover.Models.Business;
+import com.example.footprnt.Discover.Util.DiscoverConstants;
 import com.example.footprnt.Map.MapFragment;
 import com.example.footprnt.R;
+import com.example.footprnt.Util.AppConstants;
 import com.example.footprnt.ViewPagerAdapter;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
- * Adapts Businesss to the recyclerview
+ * Adapts business views for RV on the Discover Fragment
  *
- * @author Stanley Nwakamma 2019
+ * @author Stanley Nwakamma, Jocelyn Shen, Clarisa Leu
  */
 public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHolder> {
     private ArrayList<Business> mBusinesses;
@@ -52,14 +57,14 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
         mContext = context;
     }
 
+    @SuppressLint("ResourceAsColor")
     @NonNull
     @Override
     public BusinessViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        // TODO: put radius in constants and color in resources
         CardView card = (CardView) LayoutInflater.from(parent.getContext()).inflate(R.layout.item_business, parent, false);
-        card.setCardBackgroundColor(Color.parseColor("#050505"));
+        card.setCardBackgroundColor(R.color.black_business);
         card.setMaxCardElevation(0);
-        card.setRadius(30);
+        card.setRadius(DiscoverConstants.CARD_ELEVATION);
         BusinessViewHolder viewHolder = new BusinessViewHolder(card);
         return viewHolder;
     }
@@ -75,30 +80,34 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
     }
 
     public static class BusinessViewHolder extends RecyclerView.ViewHolder {
-        // TODO: change names to fit android style
-        View cardView;
-        ImageView ivBusinessImage;
-        TextView tvBusinessName;
-        TextView tvBusinessCategory;
-        RatingBar rating;
-        TextView tvBusinessAddress;
-        TextView tvBusinessPhone;
-        ImageView btnCall;
-        ImageView btnLocation;
+
+        View mCardView;
+        ImageView mIvBusinessImage;
+        TextView mTvBusinessName;
+        TextView mTvBusinessCategory;
+        RatingBar mRating;
+        TextView mTvBusinessAddress;
+        TextView mTvBusinessPhone;
+        ImageView mBtnCall;
+        ImageView mBtnLocation;
+        ImageView mBookmark;
 
         private Context mContext;
-        private String joinAddress;
-        private AlertDialog dialog;
+        private String mJoinAddress;
+        private AlertDialog mDialog;
 
         public BusinessViewHolder(final View itemView) {
             super(itemView);
-            cardView = itemView;
+            mCardView = itemView;
             mContext = itemView.getContext();
-            ivBusinessImage = itemView.findViewById(R.id.ivBusinessImage);
-            tvBusinessName = itemView.findViewById(R.id.tvBusinessName);
-            tvBusinessCategory = itemView.findViewById(R.id.tvBusinessCategory);
-            rating = itemView.findViewById(R.id.rating);
-            cardView.setOnClickListener(new View.OnClickListener(){
+            mBookmark = itemView.findViewById(R.id.ivBookmark);
+            mIvBusinessImage = itemView.findViewById(R.id.ivBusinessImage);
+            mTvBusinessName = itemView.findViewById(R.id.tvBusinessName);
+            mTvBusinessCategory = itemView.findViewById(R.id.tvBusinessCategory);
+            mRating = itemView.findViewById(R.id.rating);
+            mCardView.setOnClickListener(new View.OnClickListener() {
+                @SuppressLint("ResourceType")
+                @RequiresApi(api = Build.VERSION_CODES.O)
                 @Override
                 public void onClick(View v) {
                     Business business = (Business) v.getTag();
@@ -110,122 +119,124 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
                     lp.dimAmount = 0f;
                     mAlertDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
                     mAlertDialog.show();
-                    dialog = mAlertDialog;
-                    ivBusinessImage = mAlertDialog.findViewById(R.id.ivBusinessImage);
-                    tvBusinessName = mAlertDialog.findViewById(R.id.tvBusinessName);
-                    tvBusinessCategory = mAlertDialog.findViewById(R.id.tvBusinessCategory);
-                    btnCall = mAlertDialog.findViewById(R.id.btnCall);
-                    btnLocation = mAlertDialog.findViewById(R.id.btnLocation);
-                    rating = mAlertDialog.findViewById(R.id.rating);
-                    LayerDrawable stars = (LayerDrawable) rating.getProgressDrawable();
-                    stars.getDrawable(2).setColorFilter(Color.parseColor("#659DBD"), PorterDuff.Mode.SRC_ATOP);
-                    tvBusinessAddress = mAlertDialog.findViewById(R.id.tvBusinessAddress);
-                    tvBusinessPhone = mAlertDialog.findViewById(R.id.tvBusinessPhone);
+                    mDialog = mAlertDialog;
+                    mIvBusinessImage = mAlertDialog.findViewById(R.id.ivBusinessImage);
+                    mTvBusinessName = mAlertDialog.findViewById(R.id.tvBusinessName);
+                    mTvBusinessCategory = mAlertDialog.findViewById(R.id.tvBusinessCategory);
+                    mBtnCall = mAlertDialog.findViewById(R.id.btnCall);
+                    mBtnLocation = mAlertDialog.findViewById(R.id.btnLocation);
+                    mRating = mAlertDialog.findViewById(R.id.rating);
+                    LayerDrawable stars = (LayerDrawable) mRating.getProgressDrawable();
+                    stars.getDrawable(2).setColorFilter(Color.parseColor(mContext.getResources().getString(R.color.blue_business)), PorterDuff.Mode.SRC_ATOP);
+                    mTvBusinessAddress = mAlertDialog.findViewById(R.id.tvBusinessAddress);
+                    mTvBusinessPhone = mAlertDialog.findViewById(R.id.tvBusinessPhone);
                     bindBusinessDetail(business);
                 }
             });
         }
 
-        @SuppressLint("ClickableViewAccessibility")
+        @RequiresApi(api = Build.VERSION_CODES.O)
+        @SuppressLint({"ClickableViewAccessibility", "ResourceType"})
         public void bindBusinessDetail(final Business business) {
-            cardView.setTag(business);
+            mCardView.setTag(business);
             final String businessName = business.getName();
-            tvBusinessName.setText(businessName);
-            tvBusinessCategory.setText(business.getCategories().get(0));
+            mTvBusinessName.setText(businessName);
+            mTvBusinessCategory.setText(business.getCategories().get(0));
             try {
-                rating.setVisibility(View.VISIBLE);
-                rating.setRating((float) business.getRating());
-                LayerDrawable stars = (LayerDrawable) rating.getProgressDrawable();
-                stars.getDrawable(2).setColorFilter(Color.parseColor("#659DBD"), PorterDuff.Mode.SRC_ATOP);
+                mRating.setVisibility(View.VISIBLE);
+                mRating.setRating((float) business.getRating());
+                LayerDrawable stars = (LayerDrawable) mRating.getProgressDrawable();
+                stars.getDrawable(2).setColorFilter(Color.parseColor(mContext.getResources().getString(R.color.blue_business)), PorterDuff.Mode.SRC_ATOP);
             } catch (Exception e) {
-                rating.setVisibility(View.INVISIBLE);
+                mRating.setVisibility(View.INVISIBLE);
             }
             final String imageUrl = business.getImageUrl();
-            if (imageUrl == null || imageUrl.length() == 0){
-                Picasso.with(mContext).load("https://pyzikscott.files.wordpress.com/2016/03/yelp-placeholder.png?w=584");
+            if (imageUrl == null || imageUrl.length() == 0) {
+                Picasso.with(mContext).load(DiscoverConstants.IMAGE_PLACEHOLDER_PATH);
             } else {
-                Picasso.with(mContext).load(imageUrl).into(ivBusinessImage);
+                Picasso.with(mContext).load(imageUrl).into(mIvBusinessImage);
             }
             try {
-                tvBusinessAddress.setVisibility(View.VISIBLE);
-                joinAddress = String.join(" ", business.getAddress());
-                tvBusinessAddress.setText(joinAddress);
-                tvBusinessAddress.setOnClickListener(new View.OnClickListener() {
+                mTvBusinessAddress.setVisibility(View.VISIBLE);
+                mJoinAddress = String.join(" ", business.getAddress());
+                mTvBusinessAddress.setText(mJoinAddress);
+                mTvBusinessAddress.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        dialog.dismiss();
+                        mDialog.dismiss();
                         ViewPager viewPager = ((Activity) mContext).findViewById(R.id.viewpager);
                         viewPager.setCurrentItem(0);
-                        Fragment viewPagerAdapter = ((ViewPagerAdapter) viewPager.getAdapter()).getItem(0);
-                        ((MapFragment) viewPagerAdapter).handleDiscoverInteraction(joinAddress, businessName, imageUrl);
+                        Fragment viewPagerAdapter = ((ViewPagerAdapter) Objects.requireNonNull(viewPager.getAdapter())).getItem(0);
+                        ((MapFragment) viewPagerAdapter).handleDiscoverInteraction(mJoinAddress, businessName, imageUrl);
                     }
                 });
-                btnLocation.setOnClickListener(new View.OnClickListener() {
+                mBtnLocation.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        dialog.dismiss();
+                        mDialog.dismiss();
                         ViewPager viewPager = ((Activity) mContext).findViewById(R.id.viewpager);
                         viewPager.setCurrentItem(0);
                         Fragment viewPagerAdapter = ((ViewPagerAdapter) viewPager.getAdapter()).getItem(0);
-                        ((MapFragment) viewPagerAdapter).handleDiscoverInteraction(joinAddress, businessName, imageUrl);
+                        ((MapFragment) viewPagerAdapter).handleDiscoverInteraction(mJoinAddress, businessName, imageUrl);
                     }
                 });
             } catch (Exception e) {
-                btnLocation.setVisibility(View.GONE);
-                tvBusinessAddress.setVisibility(View.GONE);
+                mBtnLocation.setVisibility(View.GONE);
+                mTvBusinessAddress.setVisibility(View.GONE);
             }
             final String url = business.getWebsite();
             if (url != null && url.length() > 0) {
-                tvBusinessName.setOnTouchListener(new View.OnTouchListener(){
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    Intent i = new Intent(Intent.ACTION_VIEW);
-                    i.setData(Uri.parse(url));
-                    ((Activity) mContext).startActivityForResult(i, 20);
-                    return true;
-                }
-            });
-            }
-            final String businessPhoneNum = business.getPhone();
-            if (businessPhoneNum != null && businessPhoneNum.length() > 0){
-                tvBusinessPhone.setVisibility(View.VISIBLE);
-                tvBusinessPhone.setText(businessPhoneNum);
-                tvBusinessPhone.setOnClickListener(new View.OnClickListener() {
+                mTvBusinessName.setOnTouchListener(new View.OnTouchListener() {
                     @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + businessPhoneNum));
-                        ((Activity) mContext).startActivityForResult(intent, 20);
+                    public boolean onTouch(View v, MotionEvent event) {
+                        Intent i = new Intent(Intent.ACTION_VIEW);
+                        i.setData(Uri.parse(url));
+                        ((Activity) mContext).startActivityForResult(i, AppConstants.VIEW_BUSINESS_PAGE);
+                        return true;
                     }
                 });
-                btnCall.setOnClickListener(new View.OnClickListener() {
+            }
+            final String businessPhoneNum = business.getPhone();
+            if (businessPhoneNum != null && businessPhoneNum.length() > 0) {
+                mTvBusinessPhone.setVisibility(View.VISIBLE);
+                mTvBusinessPhone.setText(businessPhoneNum);
+                mTvBusinessPhone.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + businessPhoneNum));
-                        ((Activity) mContext).startActivityForResult(intent, 20);
+                        ((Activity) mContext).startActivityForResult(intent, AppConstants.VIEW_BUSINESS_PAGE);
+                    }
+                });
+                mBtnCall.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + businessPhoneNum));
+                        ((Activity) mContext).startActivityForResult(intent, AppConstants.VIEW_BUSINESS_PAGE);
                     }
                 });
             } else {
-                tvBusinessPhone.setVisibility(View.GONE);
+                mTvBusinessPhone.setVisibility(View.GONE);
             }
 
         }
 
-        public  void bindBusiness (Business business) {
-            cardView.setTag(business);
-            tvBusinessName.setText(business.getName());
-            tvBusinessCategory.setText(business.getCategories().get(0));
+        @SuppressLint("ResourceType")
+        public void bindBusiness(Business business) {
+            mCardView.setTag(business);
+            mTvBusinessName.setText(business.getName());
+            mTvBusinessCategory.setText(business.getCategories().get(0));
             try {
-                rating.setVisibility(View.VISIBLE);
-                rating.setRating((float) business.getRating());
-                LayerDrawable stars = (LayerDrawable) rating.getProgressDrawable();
-                stars.getDrawable(2).setColorFilter(Color.parseColor("#659DBD"), PorterDuff.Mode.SRC_ATOP);
+                mRating.setVisibility(View.VISIBLE);
+                mRating.setRating((float) business.getRating());
+                LayerDrawable stars = (LayerDrawable) mRating.getProgressDrawable();
+                stars.getDrawable(2).setColorFilter(Color.parseColor(mContext.getResources().getString(R.color.blue_business)), PorterDuff.Mode.SRC_ATOP);
             } catch (Exception e) {
-                rating.setVisibility(View.INVISIBLE);
+                mRating.setVisibility(View.INVISIBLE);
             }
-            if (business.getImageUrl() == null || business.getImageUrl().length() == 0){
-                Picasso.with(mContext).load("https://pyzikscott.files.wordpress.com/2016/03/yelp-placeholder.png?w=584");
+            if (business.getImageUrl() == null || business.getImageUrl().length() == 0) {
+                Picasso.with(mContext).load(DiscoverConstants.IMAGE_PLACEHOLDER_PATH);
             } else {
-                Picasso.with(mContext).load(business.getImageUrl()).into(ivBusinessImage);
+                Picasso.with(mContext).load(business.getImageUrl()).into(mIvBusinessImage);
             }
         }
     }

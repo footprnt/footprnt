@@ -64,7 +64,7 @@ import static android.content.Context.LOCATION_SERVICE;
  * Displays all business queried from Yelp API.
  * Businesses displayed: Restaurants, Museums, Hotels, Clubs.
  *
- * @author Stanley Nwakamma, Clarisa Leu
+ * @author Stanley Nwakamma, Clarisa Leu, Jocelyn Shen
  * @version 1.0
  */
 public class DiscoverFragment extends Fragment implements LocationListener {
