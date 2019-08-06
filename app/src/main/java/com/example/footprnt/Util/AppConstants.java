@@ -41,6 +41,12 @@ public class AppConstants {
     public static final String continent = "continent";
     public static final String tags = "tags";
     public static final String privacy = "private";
+    public static final String imageUrl = "imageUrl";
+    public static final String address = "address";
+    public static final String rating = "rating";
+    public static final String website = "website";
+    public static final String categories = "categories";
+
     public static final int postLimit = 20;
 
     // For getting extras for intents:

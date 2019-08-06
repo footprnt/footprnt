@@ -37,14 +37,18 @@ import com.example.footprnt.Discover.Models.Business;
 import com.example.footprnt.Discover.Util.DiscoverConstants;
 import com.example.footprnt.Map.MapFragment;
 import com.example.footprnt.Map.PostDetailActivity;
+import com.example.footprnt.Models.SavedActivity;
+import com.example.footprnt.Models.SavedPost;
 import com.example.footprnt.R;
 import com.example.footprnt.Util.AppConstants;
 import com.example.footprnt.ViewPagerAdapter;
+import com.parse.DeleteCallback;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -114,7 +118,6 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
             mTvBusinessName = itemView.findViewById(R.id.tvBusinessName);
             mTvBusinessCategory = itemView.findViewById(R.id.tvBusinessCategory);
             mRating = itemView.findViewById(R.id.rating);
-            checkIfSaved();  // Check if the business is saved in DB and update view
             mCardView.setOnClickListener(new View.OnClickListener() {
                 @SuppressLint("ResourceType")
                 @RequiresApi(api = Build.VERSION_CODES.O)
@@ -149,6 +152,45 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
         @SuppressLint({"ClickableViewAccessibility", "ResourceType"})
         public void bindBusinessDetail(final Business business) {
             mCardView.setTag(business);
+            checkIfSaved(business);  // Check if the business is saved in DB and update view
+            mBookmark.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!mIsSaved) {
+                        // Activity not saved yet - save
+                        SavedActivity savedActivity = new SavedActivity();
+
+                        savedPost.setUser(ParseUser.getCurrentUser());
+                        savedPost.saveInBackground(new SaveCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                mIsSaved = true;
+                                Toast.makeText(mContext, "Saved Activity", Toast.LENGTH_SHORT).show();
+                                mBookmark.setImageResource(R.drawable.ic_save_check_filled_blue);
+                            }
+                        });
+                    } else {
+                        // Post already saved - unsaved
+                        ParseQuery<ParseObject> query = ParseQuery.getQuery(AppConstants.savedActivity);
+                        query.whereEqualTo(AppConstants.user, ParseUser.getCurrentUser()).whereEqualTo(AppConstants.website, business.getWebsite()).whereEqualTo(AppConstants.imageUrl, business.getImageUrl());
+                        query.findInBackground(new FindCallback<ParseObject>() {
+                            @Override
+                            public void done(List<ParseObject> objects, ParseException e) {
+                                if (e == null) {
+                                    ParseObject.deleteAllInBackground(objects, new DeleteCallback() {
+                                        @Override
+                                        public void done(ParseException e) {
+                                            mIsSaved = false;
+                                            mBookmark.setImageResource(R.drawable.ic_save_check_blue);
+                                            Toast.makeText(mContext, "Unsaved Activity", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    }
+                }
+            });
             final String businessName = business.getName();
             mTvBusinessName.setText(businessName);
             mTvBusinessCategory.setText(business.getCategories().get(0));
@@ -254,9 +296,9 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
          * Helper method to update view for bookmark and check if business is saved in DB
          */
         // Check if post is already saved
-        private void checkIfSaved() {
+        private void checkIfSaved(Business business) {
             ParseQuery<ParseObject> query = ParseQuery.getQuery(AppConstants.savedActivity);
-            query.whereEqualTo(AppConstants.user, ParseUser.getCurrentUser()).whereEqualTo(AppConstants.post, mPost);
+            query.whereEqualTo(AppConstants.user, ParseUser.getCurrentUser()).whereEqualTo(AppConstants.name, business.getName()).whereEqualTo(AppConstants.website, business.getWebsite());
             query.findInBackground(new FindCallback<ParseObject>() {
                 @Override
                 public void done(List<ParseObject> objects, ParseException e) {
