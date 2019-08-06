@@ -59,7 +59,7 @@ public class PostDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_post_detail);
         mBookmark = findViewById(R.id.ivSave);
         Bundle bundle = getIntent().getExtras();
-        mPost = (Post) bundle.getSerializable(Post.class.getSimpleName());
+        mPost = (Post) bundle.getSerializable(AppConstants.Post);
         Boolean hideView = (Boolean) bundle.getSerializable(AppConstants.hideView);
         Boolean privacy = null;
         Object privacySetting = null;
