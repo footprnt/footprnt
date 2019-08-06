@@ -6,6 +6,7 @@
  */
 package com.example.footprnt.Discover;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -27,6 +28,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -105,6 +107,8 @@ public class DiscoverFragment extends Fragment implements LocationListener {
     private ArrayList<RecyclerView> mArrRecyclerViews;
     private ArrayList<ListAdapter> mArrAdapters;
     private ArrayList<ArrayList<Business>> mArrBusinesses;
+    private ProgressBar mProgressBar;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
@@ -124,6 +128,7 @@ public class DiscoverFragment extends Fragment implements LocationListener {
         mNoEvent.setVisibility(View.INVISIBLE);
         mNothingNearYou = view.findViewById(R.id.nothingNearYou);
         mNothingNearYou.setVisibility(View.INVISIBLE);
+        mProgressBar = view.findViewById(R.id.pbLoading);
         mArrQueries = new ArrayList<>();
         mArrRecyclerViews = new ArrayList<>();
         mArrAdapters = new ArrayList<>();
@@ -204,6 +209,7 @@ public class DiscoverFragment extends Fragment implements LocationListener {
     public void populateView() {
         mNothingNearYou.setVisibility(View.INVISIBLE);
         for (int i = 0; i < mArrQueries.size(); i++) {
+            mProgressBar.setVisibility(ProgressBar.VISIBLE);
             final int finalI = i;
             getAddress();
             if (mBusinessAddress != null) {
@@ -216,7 +222,7 @@ public class DiscoverFragment extends Fragment implements LocationListener {
 
                     @Override
                     public void onResponse(Call call, Response response) {
-                        final ArrayList<Business> arrTemp = yelpService.processResults(response);
+                        final ArrayList<Business> arrTemp = yelpService.processResults(response, mProgressBar);
                         mArrBusinesses.remove(finalI);
                         mArrBusinesses.add(finalI, arrTemp);
                         getActivity().runOnUiThread(new Runnable() {
@@ -234,6 +240,7 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                                     mTvClubs.setVisibility(View.GONE);
                                     mTvHotels.setVisibility(View.GONE);
                                     mNothingNearYou.setVisibility(View.VISIBLE);
+                                    mProgressBar.setVisibility(ProgressBar.INVISIBLE);
                                 }
                             }
                         });
@@ -344,6 +351,7 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                 if (arrTemp.size() > 0) {
                     final Event e = arrTemp.get(0);
                     mFragmentContext.runOnUiThread(new Runnable() {
+                        @SuppressLint("ClickableViewAccessibility")
                         @Override
                         public void run() {
                             String imageUrl = e.getImageUrl();
