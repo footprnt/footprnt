@@ -18,8 +18,12 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
@@ -52,6 +56,20 @@ public class AppUtil {
                     haveConnectedMobile = true;
         }
         return haveConnectedWifi || haveConnectedMobile;
+    }
+
+    /**
+     * Helper method to parse JSONArray into ArrayList of Strings
+     *
+     * @param arr to parse
+     * @return arr as ArrayList of Strings
+     */
+    public static ArrayList<String> parseJSONArray(JSONArray arr) throws JSONException {
+        ArrayList<String> list = new ArrayList<>();
+        for (int i = 0; i < arr.length(); i++) {
+            list.add(arr.getString(i));
+        }
+        return list;
     }
 
     /**

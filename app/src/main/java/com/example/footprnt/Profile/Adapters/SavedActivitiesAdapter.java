@@ -24,6 +24,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -31,13 +32,15 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
-import com.example.footprnt.Discover.Models.Business;
 import com.example.footprnt.Discover.Util.DiscoverConstants;
 import com.example.footprnt.Map.MapFragment;
 import com.example.footprnt.Models.SavedActivity;
 import com.example.footprnt.R;
 import com.example.footprnt.Util.AppConstants;
+import com.example.footprnt.Util.AppUtil;
 import com.example.footprnt.ViewPagerAdapter;
+import com.parse.DeleteCallback;
+import com.parse.ParseException;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
@@ -74,6 +77,7 @@ public class SavedActivitiesAdapter extends RecyclerView.Adapter<SavedActivities
         return new ViewHolder(postView);  // return a new ViewHolder
     }
 
+    @SuppressLint("ResourceType")
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
@@ -81,7 +85,8 @@ public class SavedActivitiesAdapter extends RecyclerView.Adapter<SavedActivities
         holder.mCardView.setTag(savedBusiness);
         holder.mTvBusinessName.setText(savedBusiness.getName());
         try {
-            holder.mTvBusinessCategory.setText((CharSequence) savedBusiness.getCategories().get(0));
+            ArrayList<String> categories = AppUtil.parseJSONArray(savedBusiness.getCategories());
+            holder.mTvBusinessCategory.setText(categories.get(0));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -98,6 +103,24 @@ public class SavedActivitiesAdapter extends RecyclerView.Adapter<SavedActivities
         } else {
             Picasso.with(mContext).load(savedBusiness.getImageUrl()).into(holder.mIvBusinessImage);
         }
+        // Delete Saved Activity
+        holder.mCardView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                int newPosition = holder.getAdapterPosition();
+                SavedActivity savedActivity = mSavedActivities.get(newPosition);
+                mSavedActivities.remove(newPosition);
+                notifyItemRemoved(newPosition);
+                notifyItemChanged(newPosition, mSavedActivities.size());
+                savedActivity.deleteInBackground(new DeleteCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        Toast.makeText(mContext, "Saved Activity Deleted", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                return true;
+            }
+        });
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -144,6 +167,7 @@ public class SavedActivitiesAdapter extends RecyclerView.Adapter<SavedActivities
                     mBtnCall = mAlertDialog.findViewById(R.id.btnCall);
                     mBtnLocation = mAlertDialog.findViewById(R.id.btnLocation);
                     mRating = mAlertDialog.findViewById(R.id.rating);
+                    mAlertDialog.findViewById(R.id.ivBookmark).setVisibility(View.INVISIBLE);
                     LayerDrawable stars = (LayerDrawable) mRating.getProgressDrawable();
                     stars.getDrawable(2).setColorFilter(Color.parseColor(mContext.getResources().getString(R.color.blue_business)), PorterDuff.Mode.SRC_ATOP);
                     mTvBusinessAddress = mAlertDialog.findViewById(R.id.tvBusinessAddress);
@@ -159,9 +183,9 @@ public class SavedActivitiesAdapter extends RecyclerView.Adapter<SavedActivities
             mCardView.setTag(savedBusiness);
             final String businessName = savedBusiness.getName();
             mTvBusinessName.setText(businessName);
-            // TODO: fix?
             try {
-                mTvBusinessCategory.setText((CharSequence) savedBusiness.getCategories().get(0));
+                ArrayList<String> categories = AppUtil.parseJSONArray(savedBusiness.getCategories());
+                mTvBusinessCategory.setText(categories.get(0));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -180,8 +204,9 @@ public class SavedActivitiesAdapter extends RecyclerView.Adapter<SavedActivities
                 Picasso.with(mContext).load(imageUrl).into(mIvBusinessImage);
             }
             try {
+                ArrayList<String> address = AppUtil.parseJSONArray(savedBusiness.getAddress());
                 mTvBusinessAddress.setVisibility(View.VISIBLE);
-                mJoinAddress = String.join(" ", (CharSequence) savedBusiness.getAddress());
+                mJoinAddress = String.join(" ", address);
                 mTvBusinessAddress.setText(mJoinAddress);
                 mTvBusinessAddress.setOnClickListener(new View.OnClickListener() {
                     @Override
