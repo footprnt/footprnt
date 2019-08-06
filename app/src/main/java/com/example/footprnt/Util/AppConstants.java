@@ -23,6 +23,8 @@ public class AppConstants {
 
     // For getting attributes in database:
     public static String profileImage = "profileImg";
+    public static String savedPost = "SavedPost";
+    public static String savedActivity = "SavedActivity";
     public static String phone = "phone";
     public static String email = "email";
     public static String createdAt = "createdAt";
@@ -77,4 +79,7 @@ public class AppConstants {
 
     // For saved posts:
     public static final String hideView = "hideView";
+
+    // For sharing:
+    public static final String send = "send";
 }

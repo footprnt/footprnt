@@ -24,6 +24,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -35,12 +36,19 @@ import androidx.viewpager.widget.ViewPager;
 import com.example.footprnt.Discover.Models.Business;
 import com.example.footprnt.Discover.Util.DiscoverConstants;
 import com.example.footprnt.Map.MapFragment;
+import com.example.footprnt.Map.PostDetailActivity;
 import com.example.footprnt.R;
 import com.example.footprnt.Util.AppConstants;
 import com.example.footprnt.ViewPagerAdapter;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -95,6 +103,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
         private Context mContext;
         private String mJoinAddress;
         private AlertDialog mDialog;
+        private Boolean mIsSaved;
 
         public BusinessViewHolder(final View itemView) {
             super(itemView);
@@ -105,6 +114,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
             mTvBusinessName = itemView.findViewById(R.id.tvBusinessName);
             mTvBusinessCategory = itemView.findViewById(R.id.tvBusinessCategory);
             mRating = itemView.findViewById(R.id.rating);
+            checkIfSaved();  // Check if the business is saved in DB and update view
             mCardView.setOnClickListener(new View.OnClickListener() {
                 @SuppressLint("ResourceType")
                 @RequiresApi(api = Build.VERSION_CODES.O)
@@ -238,6 +248,31 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
             } else {
                 Picasso.with(mContext).load(business.getImageUrl()).into(mIvBusinessImage);
             }
+        }
+
+        /**
+         * Helper method to update view for bookmark and check if business is saved in DB
+         */
+        // Check if post is already saved
+        private void checkIfSaved() {
+            ParseQuery<ParseObject> query = ParseQuery.getQuery(AppConstants.savedActivity);
+            query.whereEqualTo(AppConstants.user, ParseUser.getCurrentUser()).whereEqualTo(AppConstants.post, mPost);
+            query.findInBackground(new FindCallback<ParseObject>() {
+                @Override
+                public void done(List<ParseObject> objects, ParseException e) {
+                    if (e == null) {
+                        if (objects.size() > 0) {
+                            mIsSaved = true;
+                            mBookmark.setImageResource(R.drawable.ic_save_check_filled_blue);
+                        } else {
+                            mIsSaved = false;
+                            mBookmark.setImageResource(R.drawable.ic_save_check_blue);
+                        }
+                    } else {
+                        Toast.makeText(mContext, "Error querying saved activites", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
         }
     }
 }
