@@ -49,16 +49,16 @@ public class ForgotPassword extends AppCompatActivity {
                                 public void done(ParseException e) {
                                     if (e == null) {
                                         // An email was successfully sent with reset instructions.
-                                        Toast.makeText(getApplicationContext(), "Please check your password for reset instructions", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(getApplicationContext(), getResources().getString(R.string.password_reset_check_email), Toast.LENGTH_LONG).show();
                                         finish();
                                     } else {
-                                        Toast.makeText(getApplicationContext(), "Network error, please try again later.", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(getApplicationContext(), getResources().getString(R.string.network_error_try_again), Toast.LENGTH_LONG).show();
                                         finish();
                                     }
                                 }
                             });
                 } else {
-                    Toast.makeText(getApplicationContext(), "Emails must match", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.emails_must_match), Toast.LENGTH_LONG).show();
                 }
             }
         });
