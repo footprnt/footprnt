@@ -6,6 +6,9 @@
  */
 package com.example.footprnt.Discover;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -23,13 +26,17 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -99,6 +106,7 @@ public class DiscoverFragment extends Fragment implements LocationListener {
     private TextView museums;
     private TextView clubs;
     private TextView hotels;
+    private boolean mCardFlipped=false;
 
 
     @Override
@@ -387,6 +395,70 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                         }
                     });
                 }
+                handleCompleteAdventure();
+            }
+        });
+    }
+
+    public void handleCompleteAdventure() {
+        final CardView adventure = getActivity().findViewById(R.id.cvAdventure);
+        final ImageButton completed = adventure.findViewById(R.id.check);
+        final ImageButton cancel = adventure.findViewById(R.id.cancel);
+        final ImageView eventImage = adventure.findViewById(R.id.eventImage);
+        final TextView eventTitle = adventure.findViewById(R.id.eventTitle);
+        final TextView eventDescription = adventure.findViewById(R.id.eventDescrption);
+        final TextView eventTime = adventure.findViewById(R.id.eventStart);
+        final TextView eventUrl = adventure.findViewById(R.id.eventUrl);
+        final TextView eventHeader = adventure.findViewById(R.id.tvAdventure);
+        adventure.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final ObjectAnimator oa1 = ObjectAnimator.ofFloat(adventure, "scaleX", 1f, 0f);
+                final ObjectAnimator oa2 = ObjectAnimator.ofFloat(adventure, "scaleX", 0f, 1f);
+                oa1.setInterpolator(new DecelerateInterpolator());
+                oa2.setInterpolator(new AccelerateDecelerateInterpolator());
+                oa1.setDuration(100);
+                oa2.setDuration(100);
+                if (!mCardFlipped) {
+                    oa1.addListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            super.onAnimationEnd(animation);
+                            completed.setVisibility(View.VISIBLE);
+                            completed.setClickable(false);
+                            cancel.setVisibility(View.VISIBLE);
+                            cancel.setClickable(false);
+                            eventImage.setVisibility(View.INVISIBLE);
+                            eventTitle.setVisibility(View.INVISIBLE);
+                            eventDescription.setVisibility(View.INVISIBLE);
+                            eventTime.setVisibility(View.INVISIBLE);
+                            eventUrl.setVisibility(View.INVISIBLE);
+                            eventHeader.setVisibility(View.INVISIBLE);
+                            oa2.start();
+                        }
+                    });
+                    mCardFlipped = true;
+                } else {
+                    oa1.addListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            super.onAnimationEnd(animation);
+                            completed.setVisibility(View.INVISIBLE);
+                            completed.setClickable(false);
+                            cancel.setVisibility(View.INVISIBLE);
+                            cancel.setClickable(false);
+                            eventImage.setVisibility(View.VISIBLE);
+                            eventTitle.setVisibility(View.VISIBLE);
+                            eventDescription.setVisibility(View.VISIBLE);
+                            eventTime.setVisibility(View.VISIBLE);
+                            eventUrl.setVisibility(View.VISIBLE);
+                            eventHeader.setVisibility(View.VISIBLE);
+                            oa2.start();
+                        }
+                    });
+                    mCardFlipped = false;
+                }
+                oa1.start();
             }
         });
     }
