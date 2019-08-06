@@ -33,6 +33,8 @@ public class MapConstants {
     public static int STYLE_BASIC = R.raw.style_json_basic;
     public static BitmapDescriptor DEFAULT_MARKER = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
     public static BitmapDescriptor MARKER_CYAN = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN);
+    public static BitmapDescriptor MARKER_AZURE = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
+
 
 
     // Filter menu items

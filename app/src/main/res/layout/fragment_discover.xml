@@ -147,7 +147,7 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.cardview.widget.CardView
-                    android:id="@+id/cvRoot"
+                    android:id="@+id/cvAdventure"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="8dp"
@@ -159,8 +159,36 @@
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/adventureCard"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp">
+                        android:layout_height="wrap_content">
+
+                        <ImageButton
+                            android:id="@+id/cancel"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:background="#BB1010"
+                            android:fontFamily="@font/montserrat"
+                            android:src="@drawable/ic_cancel"
+                            android:text="Button"
+                            android:visibility="invisible"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/check"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <ImageButton
+                            android:id="@+id/check"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:background="#4CAF50"
+                            android:fontFamily="@font/montserrat"
+                            android:text="Button"
+                            android:visibility="invisible"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/cancel"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:srcCompat="@drawable/ic_checkmark"
+                            />
 
                         <TextView
                             android:id="@+id/noEvent"
@@ -180,14 +208,14 @@
                             app:layout_constraintTop_toTopOf="parent" />
 
                         <TextView
-                            android:id="@+id/textView8"
+                            android:id="@+id/tvAdventure"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
                             android:layout_marginLeft="8dp"
                             android:layout_marginTop="8dp"
                             android:fontFamily="@font/montserrat_bold"
-                            android:text="ADVENTURE OF THE DAY"
+                            android:text="ADVENTURE NEAR YOU"
                             android:textColor="#659DBD"
                             android:textSize="18sp"
                             app:layout_constraintStart_toStartOf="parent"
@@ -201,7 +229,7 @@
                             android:layout_marginLeft="8dp"
                             android:layout_marginTop="8dp"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/textView8"
+                            app:layout_constraintTop_toBottomOf="@+id/tvAdventure"
                             app:srcCompat="@android:color/white" />
 
                         <TextView
@@ -265,9 +293,10 @@
                             android:fontFamily="@font/roboto"
                             android:text="TextView"
                             android:textSize="12sp"
-                            app:layout_constraintBottom_toBottomOf="@+id/textView8"
+                            app:layout_constraintBottom_toBottomOf="@+id/tvAdventure"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="@+id/textView8" />
+                            app:layout_constraintTop_toTopOf="@+id/tvAdventure" />
+
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </androidx.cardview.widget.CardView>
 

@@ -255,8 +255,9 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
                 });
             }
             final String businessPhoneNum = business.getPhone();
-            if (businessPhoneNum != null && businessPhoneNum.length() > 0) {
+            if (businessPhoneNum != null && businessPhoneNum.length() > 0){
                 mTvBusinessPhone.setVisibility(View.VISIBLE);
+                mBtnCall.setVisibility(View.VISIBLE);
                 mTvBusinessPhone.setText(businessPhoneNum);
                 mTvBusinessPhone.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -274,6 +275,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
                 });
             } else {
                 mTvBusinessPhone.setVisibility(View.GONE);
+                mBtnCall.setVisibility(View.GONE);
             }
 
         }
