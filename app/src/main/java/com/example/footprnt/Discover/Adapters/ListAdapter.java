@@ -262,14 +262,14 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
                 mTvBusinessPhone.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse(R.string.tel + businessPhoneNum));
+                        Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse(mContext.getResources().getString(R.string.tel) + businessPhoneNum));
                         ((Activity) mContext).startActivityForResult(intent, AppConstants.VIEW_BUSINESS_PAGE);
                     }
                 });
                 mBtnCall.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse(R.string.tel + businessPhoneNum));
+                        Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse(mContext.getResources().getString(R.string.tel) + businessPhoneNum));
                         ((Activity) mContext).startActivityForResult(intent, AppConstants.VIEW_BUSINESS_PAGE);
                     }
                 });
