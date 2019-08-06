@@ -57,6 +57,9 @@ import com.example.footprnt.R;
 import com.example.footprnt.Util.AppConstants;
 import com.example.footprnt.Util.AppUtil;
 import com.google.android.gms.maps.model.LatLng;
+import com.parse.ParseException;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -118,12 +121,14 @@ public class DiscoverFragment extends Fragment implements LocationListener {
     private TextView museums;
     private TextView clubs;
     private TextView hotels;
-    private boolean mCardFlipped=false;
+//    private boolean mCardFlipped=false;
     private ArrayList<String> mArrQueries;
     private ArrayList<RecyclerView> mArrRecyclerViews;
     private ArrayList<ListAdapter> mArrAdapters;
     private ArrayList<ArrayList<Business>> mArrBusinesses;
     private ProgressBar mProgressBar;
+    private Event mAdventure;
+    private ProgressBar mProgressBarAdventure;
 
 
     @Override
@@ -145,6 +150,7 @@ public class DiscoverFragment extends Fragment implements LocationListener {
         mNothingNearYou = view.findViewById(R.id.nothingNearYou);
         mNothingNearYou.setVisibility(View.INVISIBLE);
         mProgressBar = view.findViewById(R.id.pbLoading);
+        mProgressBarAdventure = view.findViewById(R.id.pbLoading2);
         mArrQueries = new ArrayList<>();
         mArrRecyclerViews = new ArrayList<>();
         mArrAdapters = new ArrayList<>();
@@ -186,6 +192,7 @@ public class DiscoverFragment extends Fragment implements LocationListener {
         mArrAdapters.clear();
         prepareArrayLists();
         populateView();
+        getAdventureOfTheDay();
         mSwipeContainer.setRefreshing(false);
     }
 
@@ -350,6 +357,7 @@ public class DiscoverFragment extends Fragment implements LocationListener {
     }
 
     public void getAdventureOfTheDay() {
+        mProgressBarAdventure.setVisibility(View.VISIBLE);
         yelpService.findEvents(mBusinessAddress, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -364,63 +372,171 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                 final TextView eventDescription = getActivity().findViewById(R.id.eventDescrption);
                 final TextView eventTime = getActivity().findViewById(R.id.eventStart);
                 final TextView eventUrl = getActivity().findViewById(R.id.eventUrl);
+                final CardView adventure = getActivity().findViewById(R.id.cvAdventure);
+                final ImageButton completed = adventure.findViewById(R.id.check);
+                final ImageButton cancel = adventure.findViewById(R.id.cancel);
+                final TextView eventHeader = adventure.findViewById(R.id.tvAdventure);
                 if (arrTemp.size() > 0) {
-                    final Event e = arrTemp.get(0);
-                    mFragmentContext.runOnUiThread(new Runnable() {
-                        @SuppressLint("ClickableViewAccessibility")
-                        @Override
-                        public void run() {
-                            String imageUrl = e.getImageUrl();
-                            if (imageUrl != null && imageUrl.length() > 0) {
-                                eventImage.setVisibility(View.VISIBLE);
-                                try {
-                                    Glide.with(mFragmentContext).load(imageUrl).apply(RequestOptions.circleCropTransform()).into(eventImage);
-                                } catch (Exception e) {
+                    ArrayList<String> userCompletedAdventures = ((ArrayList<String>) ParseUser.getCurrentUser().get("completed_adventure"));
+                    ArrayList<String> userUncompletedAdventures = ((ArrayList<String>) ParseUser.getCurrentUser().get("uncompleted_adventure"));
+                    if (userCompletedAdventures == null){
+                        userCompletedAdventures = new ArrayList<>();
+                    }
+                    if (userUncompletedAdventures == null){
+                        userUncompletedAdventures = new ArrayList<>();
+                    }
+                    Event prevAdventure = mAdventure;
+                    for (Event event : arrTemp){
+                        if (userCompletedAdventures.size() == 0 && userUncompletedAdventures.size() == 0){
+                            mAdventure = event;
+                            break;
+                        } else if (!userCompletedAdventures.contains(event.getEventId()) && !userUncompletedAdventures.contains(event.getEventId())){
+                            mAdventure = event;
+                            break;
+                        }
+                    }
+                    if (mAdventure != null && prevAdventure != mAdventure) {
+                        mFragmentContext.runOnUiThread(new Runnable() {
+                            @SuppressLint("ClickableViewAccessibility")
+                            @Override
+                            public void run() {
+                                String imageUrl = mAdventure.getImageUrl();
+                                if (imageUrl != null && imageUrl.length() > 0) {
+                                    eventImage.setVisibility(View.VISIBLE);
+                                    try {
+                                        Glide.with(mFragmentContext).load(imageUrl).apply(RequestOptions.circleCropTransform()).into(eventImage);
+                                    } catch (Exception e) {
+                                        eventImage.setVisibility(View.GONE);
+                                    }
+                                } else {
                                     eventImage.setVisibility(View.GONE);
                                 }
-                            } else {
-                                eventImage.setVisibility(View.GONE);
-                            }
-                            String title = e.getName();
-                            if (title != null && title.length() > 0) {
-                                eventTitle.setVisibility(View.VISIBLE);
-                                eventTitle.setText(title);
-                            } else {
-                                eventTitle.setVisibility(View.GONE);
-                            }
-                            String description = e.getDescription();
-                            if (description != null && description.length() > 0) {
-                                eventDescription.setVisibility(View.VISIBLE);
-                                eventDescription.setText(description);
-                            } else {
-                                eventDescription.setVisibility(View.GONE);
-                            }
-                            String time = e.getTimeStart();
-                            if (time != null && time.length() > 0) {
-                                eventTime.setVisibility(View.VISIBLE);
-                                String dateDisplay = time.substring(0, 10);
-                                eventTime.setText(dateDisplay);
-                            } else {
-                                eventTime.setVisibility(View.GONE);
-                            }
-                            final String yelpUrl = e.getEventUrl();
-                            if (yelpUrl != null && yelpUrl.length() > 0) {
-                                eventUrl.setVisibility(View.VISIBLE);
-                                eventUrl.setOnTouchListener(new View.OnTouchListener() {
+                                String title = mAdventure.getName();
+                                if (title != null && title.length() > 0) {
+                                    eventTitle.setVisibility(View.VISIBLE);
+                                    eventTitle.setText(title);
+                                } else {
+                                    eventTitle.setVisibility(View.GONE);
+                                }
+                                String description = mAdventure.getDescription();
+                                if (description != null && description.length() > 0) {
+                                    eventDescription.setVisibility(View.VISIBLE);
+                                    eventDescription.setText(description);
+                                } else {
+                                    eventDescription.setVisibility(View.GONE);
+                                }
+                                String time = mAdventure.getTimeStart();
+                                if (time != null && time.length() > 0) {
+                                    eventTime.setVisibility(View.VISIBLE);
+                                    String dateDisplay = time.substring(0, 10);
+                                    eventTime.setText(dateDisplay);
+                                } else {
+                                    eventTime.setVisibility(View.GONE);
+                                }
+                                final String yelpUrl = mAdventure.getEventUrl();
+                                if (yelpUrl != null && yelpUrl.length() > 0) {
+                                    eventUrl.setVisibility(View.VISIBLE);
+                                    eventUrl.setOnTouchListener(new View.OnTouchListener() {
+                                        @Override
+                                        public boolean onTouch(View v, MotionEvent event) {
+                                            Intent i = new Intent(Intent.ACTION_VIEW);
+                                            i.setData(Uri.parse(yelpUrl));
+                                            ((Activity) getContext()).startActivityForResult(i, AppConstants.VIEW_BUSINESS_PAGE);
+                                            return true;
+                                        }
+                                    });
+                                } else {
+                                    eventUrl.setVisibility(View.GONE);
+                                }
+                                mNoEvent.setVisibility(View.INVISIBLE);
+                                mProgressBarAdventure.setVisibility(View.INVISIBLE);
+                                adventure.setOnClickListener(new View.OnClickListener() {
                                     @Override
-                                    public boolean onTouch(View v, MotionEvent event) {
-                                        Intent i = new Intent(Intent.ACTION_VIEW);
-                                        i.setData(Uri.parse(yelpUrl));
-                                        ((Activity) getContext()).startActivityForResult(i, AppConstants.VIEW_BUSINESS_PAGE);
-                                        return true;
+                                    public void onClick(View view) {
+                                        final ObjectAnimator oa1 = ObjectAnimator.ofFloat(adventure, "scaleX", 1f, 0f);
+                                        final ObjectAnimator oa2 = ObjectAnimator.ofFloat(adventure, "scaleX", 0f, 1f);
+                                        oa1.setInterpolator(new DecelerateInterpolator());
+                                        oa2.setInterpolator(new AccelerateDecelerateInterpolator());
+                                        oa1.setDuration(100);
+                                        oa2.setDuration(100);
+                                        oa1.addListener(new AnimatorListenerAdapter() {
+                                            @Override
+                                            public void onAnimationEnd(Animator animation) {
+                                                super.onAnimationEnd(animation);
+                                                completed.setVisibility(View.VISIBLE);
+                                                cancel.setVisibility(View.VISIBLE);
+                                                completed.setOnClickListener(new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View v) {
+                                                        ArrayList<String> userCompletedAdventures = ((ArrayList<String>) ParseUser.getCurrentUser().get("completed_adventure"));
+                                                        if (userCompletedAdventures != null) {
+                                                            userCompletedAdventures.add(mAdventure.getEventId());
+                                                        } else {
+                                                            userCompletedAdventures = new ArrayList<>();
+                                                            userCompletedAdventures.add(mAdventure.getEventId());
+                                                        }
+                                                        ParseUser.getCurrentUser().put("completed_adventure", userCompletedAdventures);
+                                                        ParseUser.getCurrentUser().saveInBackground(new SaveCallback() {
+                                                            @Override
+                                                            public void done(ParseException e) {
+                                                                completed.setVisibility(View.INVISIBLE);
+                                                                cancel.setVisibility(View.INVISIBLE);
+                                                                getAdventureOfTheDay();
+                                                            }
+                                                        });
+                                                    }
+                                                });
+                                                cancel.setOnClickListener(new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View v) {
+                                                        ArrayList<String> userUncompletedAdventure = ((ArrayList<String>) ParseUser.getCurrentUser().get("uncompleted_adventure"));
+                                                        if (userUncompletedAdventure != null) {
+                                                            userUncompletedAdventure.add(mAdventure.getEventId());
+                                                        } else {
+                                                            userUncompletedAdventure = new ArrayList<>();
+                                                            userUncompletedAdventure.add(mAdventure.getEventId());
+                                                        }
+                                                        ParseUser.getCurrentUser().put("uncompleted_adventure", userUncompletedAdventure);
+                                                        ParseUser.getCurrentUser().saveInBackground(new SaveCallback() {
+                                                            @Override
+                                                            public void done(ParseException e) {
+                                                                completed.setVisibility(View.INVISIBLE);
+                                                                cancel.setVisibility(View.INVISIBLE);
+                                                                getAdventureOfTheDay();
+                                                            }
+                                                        });
+                                                    }
+                                                });
+                                                eventImage.setVisibility(View.INVISIBLE);
+                                                eventTitle.setVisibility(View.INVISIBLE);
+                                                eventDescription.setVisibility(View.INVISIBLE);
+                                                eventTime.setVisibility(View.INVISIBLE);
+                                                eventUrl.setVisibility(View.INVISIBLE);
+                                                eventHeader.setVisibility(View.INVISIBLE);
+                                                oa2.start();
+                                            }
+                                        });
+                                        oa1.start();
                                     }
                                 });
-                            } else {
-                                eventUrl.setVisibility(View.GONE);
                             }
-                            mNoEvent.setVisibility(View.INVISIBLE);
-                        }
-                    });
+                        });
+                    } else {
+                        mFragmentContext.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                eventImage.setVisibility(View.INVISIBLE);
+                                eventTitle.setVisibility(View.INVISIBLE);
+                                eventDescription.setVisibility(View.INVISIBLE);
+                                eventTime.setVisibility(View.INVISIBLE);
+                                eventUrl.setVisibility(View.INVISIBLE);
+                                mNoEvent.setVisibility(View.VISIBLE);
+                                mProgressBarAdventure.setVisibility(View.INVISIBLE);
+                                adventure.setClickable(false);
+                            }
+                        });
+
+                    }
                 } else {
                     mFragmentContext.runOnUiThread(new Runnable() {
                         @Override
@@ -431,73 +547,12 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                             eventTime.setVisibility(View.INVISIBLE);
                             eventUrl.setVisibility(View.INVISIBLE);
                             mNoEvent.setVisibility(View.VISIBLE);
-                        }
-                    });
-                }
-                handleCompleteAdventure();
-            }
-        });
-    }
+                            mProgressBarAdventure.setVisibility(View.INVISIBLE);
+                            adventure.setClickable(false);
 
-    public void handleCompleteAdventure() {
-        final CardView adventure = getActivity().findViewById(R.id.cvAdventure);
-        final ImageButton completed = adventure.findViewById(R.id.check);
-        final ImageButton cancel = adventure.findViewById(R.id.cancel);
-        final ImageView eventImage = adventure.findViewById(R.id.eventImage);
-        final TextView eventTitle = adventure.findViewById(R.id.eventTitle);
-        final TextView eventDescription = adventure.findViewById(R.id.eventDescrption);
-        final TextView eventTime = adventure.findViewById(R.id.eventStart);
-        final TextView eventUrl = adventure.findViewById(R.id.eventUrl);
-        final TextView eventHeader = adventure.findViewById(R.id.tvAdventure);
-        adventure.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final ObjectAnimator oa1 = ObjectAnimator.ofFloat(adventure, "scaleX", 1f, 0f);
-                final ObjectAnimator oa2 = ObjectAnimator.ofFloat(adventure, "scaleX", 0f, 1f);
-                oa1.setInterpolator(new DecelerateInterpolator());
-                oa2.setInterpolator(new AccelerateDecelerateInterpolator());
-                oa1.setDuration(100);
-                oa2.setDuration(100);
-                if (!mCardFlipped) {
-                    oa1.addListener(new AnimatorListenerAdapter() {
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
-                            super.onAnimationEnd(animation);
-                            completed.setVisibility(View.VISIBLE);
-                            completed.setClickable(false);
-                            cancel.setVisibility(View.VISIBLE);
-                            cancel.setClickable(false);
-                            eventImage.setVisibility(View.INVISIBLE);
-                            eventTitle.setVisibility(View.INVISIBLE);
-                            eventDescription.setVisibility(View.INVISIBLE);
-                            eventTime.setVisibility(View.INVISIBLE);
-                            eventUrl.setVisibility(View.INVISIBLE);
-                            eventHeader.setVisibility(View.INVISIBLE);
-                            oa2.start();
                         }
                     });
-                    mCardFlipped = true;
-                } else {
-                    oa1.addListener(new AnimatorListenerAdapter() {
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
-                            super.onAnimationEnd(animation);
-                            completed.setVisibility(View.INVISIBLE);
-                            completed.setClickable(false);
-                            cancel.setVisibility(View.INVISIBLE);
-                            cancel.setClickable(false);
-                            eventImage.setVisibility(View.VISIBLE);
-                            eventTitle.setVisibility(View.VISIBLE);
-                            eventDescription.setVisibility(View.VISIBLE);
-                            eventTime.setVisibility(View.VISIBLE);
-                            eventUrl.setVisibility(View.VISIBLE);
-                            eventHeader.setVisibility(View.VISIBLE);
-                            oa2.start();
-                        }
-                    });
-                    mCardFlipped = false;
                 }
-                oa1.start();
             }
         });
     }
