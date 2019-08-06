@@ -63,7 +63,7 @@ public class SavedActivities extends AppCompatActivity {
         // TODO: implement database for saved activities ?
         if(AppUtil.haveNetworkConnection(getApplicationContext())){
             getSavedActivities();
-            mRvSavedActivities.setLayoutManager(new GridLayoutManager(this,3));
+            mRvSavedActivities.setLayoutManager(new GridLayoutManager(this,2));
             mRvSavedActivities.setAdapter(mSavedActivitiesAdapter);
         } else {
             // Display no network connection message

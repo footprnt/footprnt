@@ -33,8 +33,8 @@
 
         <TextView
             android:id="@+id/tvBusinessName"
-            android:layout_width="330dp"
-            android:layout_height="47dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
             android:layout_marginTop="12dp"
@@ -55,16 +55,20 @@
 
         <TextView
             android:id="@+id/tvBusinessCategory"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_width="347dp"
+            android:layout_height="47dp"
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
             android:fontFamily="@font/roboto"
             android:text="Business category"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textColor="#FFFFFF"
             android:textSize="24sp"
             android:textStyle="italic"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@id/view3"
             app:layout_constraintTop_toBottomOf="@+id/tvBusinessName" />
 
@@ -141,7 +145,7 @@
             android:layout_marginBottom="208dp"
             app:layout_constraintBottom_toTopOf="@+id/rating"
             app:layout_constraintEnd_toEndOf="@+id/ivBusinessImage"
-            app:layout_constraintHorizontal_bias="0.666"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toEndOf="@+id/tvBusinessName"
             app:srcCompat="@drawable/ic_save_check_blue" />
     </androidx.constraintlayout.widget.ConstraintLayout>
