@@ -113,15 +113,6 @@ public class DiscoverFragment extends Fragment implements LocationListener {
     private TextView mTvHotels;
     private Location mCurrLocation;
     private EditText mSearchText;
-    FragmentActivity myContext;
-    private TextView noEvent;
-    String address;
-    private TextView nothingNearYou;
-    private TextView restaurants;
-    private TextView museums;
-    private TextView clubs;
-    private TextView hotels;
-//    private boolean mCardFlipped=false;
     private ArrayList<String> mArrQueries;
     private ArrayList<RecyclerView> mArrRecyclerViews;
     private ArrayList<ListAdapter> mArrAdapters;
@@ -129,7 +120,11 @@ public class DiscoverFragment extends Fragment implements LocationListener {
     private ProgressBar mProgressBar;
     private Event mAdventure;
     private ProgressBar mProgressBarAdventure;
-
+    private ImageView eventImage;
+    private TextView eventTitle;
+    private TextView eventDescription;
+    private TextView eventTime;
+    private TextView eventUrl;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
@@ -159,6 +154,11 @@ public class DiscoverFragment extends Fragment implements LocationListener {
         mMuseums = new ArrayList<>();
         mHotels = new ArrayList<>();
         mClubs = new ArrayList<>();
+        eventImage = view.findViewById(R.id.eventImage);
+        eventTitle = view.findViewById(R.id.eventTitle);
+        eventDescription = view.findViewById(R.id.eventDescrption);
+        eventTime = view.findViewById(R.id.eventStart);
+        eventUrl = view.findViewById(R.id.eventUrl);
 
         // Handle user searching:
         handleSearch();
@@ -357,6 +357,15 @@ public class DiscoverFragment extends Fragment implements LocationListener {
 
     public void getAdventureOfTheDay() {
         mProgressBarAdventure.setVisibility(View.VISIBLE);
+        eventImage.setVisibility(View.INVISIBLE);
+        eventTitle.setVisibility(View.INVISIBLE);
+        eventDescription.setVisibility(View.INVISIBLE);
+        eventTime.setVisibility(View.INVISIBLE);
+        eventUrl.setVisibility(View.INVISIBLE);
+        if (mNoEvent != null) {
+            mNoEvent.setVisibility(View.INVISIBLE);
+        }
+
         yelpService.findEvents(mBusinessAddress, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -366,14 +375,13 @@ public class DiscoverFragment extends Fragment implements LocationListener {
             @Override
             public void onResponse(Call call, Response response) {
                 final ArrayList<Event> arrTemp = yelpService.processEvents(response);
-                final ImageView eventImage = getActivity().findViewById(R.id.eventImage);
-                final TextView eventTitle = getActivity().findViewById(R.id.eventTitle);
-                final TextView eventDescription = getActivity().findViewById(R.id.eventDescrption);
-                final TextView eventTime = getActivity().findViewById(R.id.eventStart);
-                final TextView eventUrl = getActivity().findViewById(R.id.eventUrl);
+
+
                 final CardView adventure = getActivity().findViewById(R.id.cvAdventure);
                 final ImageButton completed = adventure.findViewById(R.id.check);
                 final ImageButton cancel = adventure.findViewById(R.id.cancel);
+                completed.setVisibility(View.INVISIBLE);
+                cancel.setVisibility(View.INVISIBLE);
                 final TextView eventHeader = adventure.findViewById(R.id.tvAdventure);
                 if (arrTemp.size() > 0) {
                     ArrayList<String> userCompletedAdventures = ((ArrayList<String>) ParseUser.getCurrentUser().get("completed_adventure"));
