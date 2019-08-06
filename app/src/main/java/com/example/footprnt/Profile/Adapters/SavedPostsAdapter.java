@@ -77,37 +77,29 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Vi
         holder.mRootView.setTag(post);
         StringBuilder sb = new StringBuilder();
         String cityName = "";
+        String countryName = "";
+        String continentName = "";
+        String title = "";
+        String description = "";
+        ParseFile image = null;
         try {
             cityName = post.fetchIfNeeded().getString(AppConstants.city);
+            countryName = post.fetchIfNeeded().getString(AppConstants.country);
+            continentName = post.fetchIfNeeded().getString(AppConstants.continent);
+            title = post.fetchIfNeeded().getString(AppConstants.title);
+            description = post.fetchIfNeeded().getString(AppConstants.description);
+            image = post.fetchIfNeeded().getParseFile(AppConstants.image);
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        if (cityName != null) {
+        if (cityName.length() > 0) {
             sb.append(cityName).append(", ");
         }
-        String countryName = "";
-        try {
-            countryName = post.fetchIfNeeded().getString(AppConstants.country);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        if (countryName != null) {
+        if (countryName.length() > 0) {
             sb.append(countryName).append(", ");
         }
-        String continentName = "";
-        try {
-            continentName = post.fetchIfNeeded().getString(AppConstants.continent);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        if (continentName != null) {
+        if (continentName.length() > 0) {
             sb.append(continentName);
-        }
-        String title = "";
-        try {
-            title = post.fetchIfNeeded().getString(AppConstants.title);
-        } catch (ParseException e) {
-            e.printStackTrace();
         }
         holder.mTvTitle.setText(sb);
         SimpleTarget<Bitmap> target = new SimpleTarget<Bitmap>() {
@@ -118,12 +110,6 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Vi
             }
         };
         holder.mIvImage.setTag(target);
-        ParseFile image = null;
-        try {
-            image = post.fetchIfNeeded().getParseFile(AppConstants.image);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
         if (image != null) {
             holder.mTvText.setVisibility(View.INVISIBLE);
             holder.mIvImage.setVisibility(View.VISIBLE);
@@ -132,12 +118,6 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Vi
         } else {
             holder.mIvImage.setVisibility(View.INVISIBLE);
             holder.mTitle.setTextColor(ContextCompat.getColor(mContext, R.color.grey));
-            String description = "";
-            try {
-                description = post.fetchIfNeeded().getString(AppConstants.description);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
             holder.mTvText.setText(description);
             holder.mTitle.setText(title);
             holder.mTitle.setVisibility(View.VISIBLE);
@@ -177,10 +157,10 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Vi
                 savedPost1.deleteInBackground(new DeleteCallback() {
                     @Override
                     public void done(ParseException e) {
-                        Toast.makeText(mContext, "Saved Post Deleted", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, R.string.delete_saved_post, Toast.LENGTH_SHORT).show();
                     }
                 });
-                if(mPosts.size()==0){
+                if (mPosts.size() == 0) {
                     ((Activity) mContext).finish();
                 }
                 return true;

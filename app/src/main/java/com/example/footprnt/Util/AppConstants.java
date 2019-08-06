@@ -54,9 +54,6 @@ public class AppConstants {
     public static String Post = "Post";
     public static String position = "Position";
 
-    // For passing data between fragments
-    public static final String PREFERENCES = "MyPrefs" ;
-
     // For camera:
     public static String photoFileName = "photo.jpg";
     public static String photoFileNameShare = "share.jpg";
@@ -76,16 +73,7 @@ public class AppConstants {
     public static final int SAVED_POST_DETAILS_FROM_PROFILE = 2005;
     public static final int VIEW_BUSINESS_PAGE = 21;
 
-    // For Logcat:
-    public static final String APP_TAG = "footprnt";
-
-    // For settings:
-    public static final String LOGOUT = "Logout";
-    public static final String PRIVACY = "Make anonymous";
-
-    // For saved posts:
+    // For saved posts & sharing:
     public static final String hideView = "hideView";
-
-    // For sharing:
     public static final String send = "send";
 }

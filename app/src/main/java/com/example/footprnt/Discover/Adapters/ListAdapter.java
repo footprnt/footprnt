@@ -171,7 +171,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
                             @Override
                             public void done(ParseException e) {
                                 mIsSaved = true;
-                                Toast.makeText(mContext, "Saved Activity", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(mContext, R.string.saved_activity, Toast.LENGTH_SHORT).show();
                                 mBookmark.setImageResource(R.drawable.ic_save_check_filled_blue);
                             }
                         });
@@ -188,7 +188,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
                                         public void done(ParseException e) {
                                             mIsSaved = false;
                                             mBookmark.setImageResource(R.drawable.ic_save_check_blue);
-                                            Toast.makeText(mContext, "Unsaved Activity", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(mContext, R.string.unsaved_activity, Toast.LENGTH_SHORT).show();
                                         }
                                     });
                                 }
@@ -255,21 +255,21 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
                 });
             }
             final String businessPhoneNum = business.getPhone();
-            if (businessPhoneNum != null && businessPhoneNum.length() > 0){
+            if (businessPhoneNum != null && businessPhoneNum.length() > 0) {
                 mTvBusinessPhone.setVisibility(View.VISIBLE);
                 mBtnCall.setVisibility(View.VISIBLE);
                 mTvBusinessPhone.setText(businessPhoneNum);
                 mTvBusinessPhone.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + businessPhoneNum));
+                        Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse(R.string.tel + businessPhoneNum));
                         ((Activity) mContext).startActivityForResult(intent, AppConstants.VIEW_BUSINESS_PAGE);
                     }
                 });
                 mBtnCall.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + businessPhoneNum));
+                        Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse(R.string.tel + businessPhoneNum));
                         ((Activity) mContext).startActivityForResult(intent, AppConstants.VIEW_BUSINESS_PAGE);
                     }
                 });
@@ -317,7 +317,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
                             mBookmark.setImageResource(R.drawable.ic_save_check_blue);
                         }
                     } else {
-                        Toast.makeText(mContext, "Error querying saved activities", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, R.string.error_query_saved_activity, Toast.LENGTH_SHORT).show();
                     }
                 }
             });

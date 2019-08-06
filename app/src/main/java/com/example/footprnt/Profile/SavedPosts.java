@@ -34,7 +34,7 @@ import java.util.List;
  */
 public class SavedPosts extends AppCompatActivity {
 
-    private final String TAG = SavedPost.class.getSimpleName();
+    private final String TAG = "SavedPosts";
     ImageView mBackButton;
     RecyclerView mRvSavedPosts;
     ArrayList<SavedPost> mSavedPosts;
@@ -81,10 +81,7 @@ public class SavedPosts extends AppCompatActivity {
      */
     private void getSavedPosts() {
         final SavedPost.Query query = new SavedPost.Query();
-        query
-                .getTop()
-                .withUser()
-                .whereEqualTo(AppConstants.user, ParseUser.getCurrentUser());
+        query.getTop().withUser().whereEqualTo(AppConstants.user, ParseUser.getCurrentUser());
         query.addDescendingOrder(AppConstants.createdAt);
         query.findInBackground(new FindCallback<SavedPost>() {
             @Override
@@ -94,14 +91,13 @@ public class SavedPosts extends AppCompatActivity {
                         mNoSavedPosts.setVisibility(View.VISIBLE);
                         mRvSavedPosts.setVisibility(View.INVISIBLE);
                     } else {
-                        for (int i = 0; i < objects.size(); i++) {
-                            final SavedPost savedPost = objects.get(i);
-                            mSavedPosts.add(savedPost);
-                            mSavedPostsAdapter.notifyItemInserted(mSavedPosts.size() - 1);
+                        for(SavedPost p : objects){
+                            mSavedPosts.add(p);
+                            mSavedPostsAdapter.notifyItemInserted(mSavedPosts.size()-1);
                         }
                     }
                 } else {
-                    AppUtil.logError(SavedPosts.this, TAG, "Error querying saved posts", e, true);
+                    AppUtil.logError(SavedPosts.this, TAG, String.valueOf(R.string.error_query_saved_posts), e, true);
                 }
             }
         });
