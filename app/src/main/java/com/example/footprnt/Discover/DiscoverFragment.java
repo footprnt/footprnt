@@ -27,6 +27,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -99,6 +100,7 @@ public class DiscoverFragment extends Fragment implements LocationListener {
     private TextView museums;
     private TextView clubs;
     private TextView hotels;
+    private ProgressBar mProgressBar;
 
 
     @Override
@@ -127,6 +129,7 @@ public class DiscoverFragment extends Fragment implements LocationListener {
         mMuseums = new ArrayList<>();
         mHotels = new ArrayList<>();
         mClubs = new ArrayList<>();
+        mProgressBar = view.findViewById(R.id.pbLoading);
         try {
             getAddress();
             getAdventureOfTheDay();
@@ -182,7 +185,15 @@ public class DiscoverFragment extends Fragment implements LocationListener {
         }
     }
 
+//    public void showProgressBar() {
+//        mProgressBar.setVisibility(View.VISIBLE);
+//    }
+//    public void hideProgressBar() {
+//        mProgressBar.setVisibility(View.INVISIBLE);
+//    }
+
     public void populateView() {
+        mProgressBar.setVisibility(ProgressBar.VISIBLE);
         nothingNearYou.setVisibility(View.INVISIBLE);
         for (int i = 0; i < arrQueries.size(); i++) {
             final int finalI = i;
@@ -196,7 +207,7 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                     }
                     @Override
                     public void onResponse(Call call, Response response) {
-                        final ArrayList<Business> arrTemp = yelpService.processResults(response);
+                        final ArrayList<Business> arrTemp = yelpService.processResults(response, mProgressBar);
                         arrBusinesses.remove(finalI);
                         arrBusinesses.add(finalI, arrTemp);
                         getActivity().runOnUiThread(new Runnable() {
@@ -217,6 +228,7 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                                 }
                             }
                         });
+//                        mProgressBar.setVisibility(ProgressBar.INVISIBLE);
                     }
                 });
             }

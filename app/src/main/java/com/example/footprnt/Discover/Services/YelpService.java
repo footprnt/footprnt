@@ -6,6 +6,9 @@
  */
 package com.example.footprnt.Discover.Services;
 
+import android.view.View;
+import android.widget.ProgressBar;
+
 import com.example.footprnt.Discover.Models.Business;
 import com.example.footprnt.Discover.Models.Event;
 import com.example.footprnt.Discover.Util.DiscoverConstants;
@@ -94,7 +97,7 @@ public class YelpService {
      * @param response raw response from Yelp API call
      * @return List of restaurants from Yelp in given location
      */
-    public ArrayList<Business> processResults(Response response) {
+    public ArrayList<Business> processResults(Response response, ProgressBar pbLoader) {
         ArrayList<Business> businesses = new ArrayList<>();
         try {
             String jsonData = response.body().string();
@@ -130,6 +133,7 @@ public class YelpService {
                         imageUrl, address, latitude, longitude, categories);
                 businesses.add(business);
             }
+            pbLoader.setVisibility(View.INVISIBLE);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {
