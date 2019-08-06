@@ -36,15 +36,14 @@ import androidx.viewpager.widget.ViewPager;
 import com.example.footprnt.Discover.Models.Business;
 import com.example.footprnt.Discover.Util.DiscoverConstants;
 import com.example.footprnt.Map.MapFragment;
-import com.example.footprnt.Map.PostDetailActivity;
 import com.example.footprnt.Models.SavedActivity;
-import com.example.footprnt.Models.SavedPost;
 import com.example.footprnt.R;
 import com.example.footprnt.Util.AppConstants;
 import com.example.footprnt.ViewPagerAdapter;
 import com.parse.DeleteCallback;
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -159,9 +158,16 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
                     if (!mIsSaved) {
                         // Activity not saved yet - save
                         SavedActivity savedActivity = new SavedActivity();
-
-                        savedPost.setUser(ParseUser.getCurrentUser());
-                        savedPost.saveInBackground(new SaveCallback() {
+                        savedActivity.setAddress(business.getAddress());
+                        savedActivity.setCategories(business.getCategories());
+                        savedActivity.setImageUrl(business.getImageUrl());
+                        savedActivity.setName(business.getName());
+                        savedActivity.setUser(ParseUser.getCurrentUser());
+                        savedActivity.setWebsite(business.getWebsite());
+                        savedActivity.setPhoneNumber(business.getPhone());
+                        savedActivity.setRating(business.getRating());
+                        savedActivity.setLocation(new ParseGeoPoint(business.getLatitude(), business.getLongitude()));
+                        savedActivity.saveInBackground(new SaveCallback() {
                             @Override
                             public void done(ParseException e) {
                                 mIsSaved = true;
@@ -295,7 +301,6 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
         /**
          * Helper method to update view for bookmark and check if business is saved in DB
          */
-        // Check if post is already saved
         private void checkIfSaved(Business business) {
             ParseQuery<ParseObject> query = ParseQuery.getQuery(AppConstants.savedActivity);
             query.whereEqualTo(AppConstants.user, ParseUser.getCurrentUser()).whereEqualTo(AppConstants.name, business.getName()).whereEqualTo(AppConstants.website, business.getWebsite());
@@ -311,7 +316,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
                             mBookmark.setImageResource(R.drawable.ic_save_check_blue);
                         }
                     } else {
-                        Toast.makeText(mContext, "Error querying saved activites", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, "Error querying saved activities", Toast.LENGTH_SHORT).show();
                     }
                 }
             });
