@@ -189,6 +189,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
             final String businessPhoneNum = business.getPhone();
             if (businessPhoneNum != null && businessPhoneNum.length() > 0){
                 tvBusinessPhone.setVisibility(View.VISIBLE);
+                btnCall.setVisibility(View.VISIBLE);
                 tvBusinessPhone.setText(businessPhoneNum);
                 tvBusinessPhone.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -206,6 +207,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
                 });
             } else {
                 tvBusinessPhone.setVisibility(View.GONE);
+                btnCall.setVisibility(View.GONE);
             }
 
         }
