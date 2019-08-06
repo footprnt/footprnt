@@ -63,7 +63,6 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Vi
 
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        mContext = parent.getContext();  // get the context and create the inflater
         LayoutInflater inflater = LayoutInflater.from(mContext);
         View postView = inflater.inflate(R.layout.item_post_card, parent, false);
         return new ViewHolder(postView);  // return a new ViewHolder
