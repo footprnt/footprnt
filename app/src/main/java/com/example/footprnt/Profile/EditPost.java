@@ -36,6 +36,7 @@ import com.parse.SaveCallback;
  */
 public class EditPost extends AppCompatActivity {
 
+    private final String TAG = "EditPost";
     ImageView mIvPicture;
     TextView mTvDate;
     EditText mEtDescription;
@@ -53,7 +54,7 @@ public class EditPost extends AppCompatActivity {
         // Get post from serializable extras
         Intent intent = this.getIntent();
         Bundle bundle = intent.getExtras();
-        mPost = (Post) bundle.getSerializable(Post.class.getSimpleName());
+        mPost = (Post) bundle.getSerializable(AppConstants.Post);
         final int position = (int) bundle.getSerializable(AppConstants.position);
 
         // Set views

@@ -71,7 +71,6 @@ public class SavedActivitiesAdapter extends RecyclerView.Adapter<SavedActivities
 
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        mContext = parent.getContext();  // get the context and create the inflater
         LayoutInflater inflater = LayoutInflater.from(mContext);
         View postView = inflater.inflate(R.layout.item_business, parent, false);
         return new ViewHolder(postView);  // return a new ViewHolder
@@ -254,14 +253,14 @@ public class SavedActivitiesAdapter extends RecyclerView.Adapter<SavedActivities
                 mTvBusinessPhone.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + businessPhoneNum));
+                        Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse(mContext.getResources().getString(R.string.tel) + businessPhoneNum));
                         ((Activity) mContext).startActivityForResult(intent, AppConstants.VIEW_BUSINESS_PAGE);
                     }
                 });
                 mBtnCall.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + businessPhoneNum));
+                        Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse(mContext.getResources().getString(R.string.tel) + businessPhoneNum));
                         ((Activity) mContext).startActivityForResult(intent, AppConstants.VIEW_BUSINESS_PAGE);
                     }
                 });
