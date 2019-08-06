@@ -54,7 +54,7 @@ import java.util.ArrayList;
  */
 public class LoginActivity extends AppCompatActivity {
 
-    private final String TAG = LoginActivity.class.getSimpleName();
+    private final String TAG = "LoginActivity";
     private EditText mUsernameInput;
     private EditText mPasswordInput;
     private TextView mForgotPassword;
@@ -68,7 +68,6 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mProgressBar = findViewById(R.id.pbLoading);
-
         initialization();
 
         // Persisted login
@@ -130,7 +129,7 @@ public class LoginActivity extends AppCompatActivity {
                     login(username, password);
                 }
                 InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
+                inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                 return false;
             }
         });
@@ -176,10 +175,10 @@ public class LoginActivity extends AppCompatActivity {
                             @Override
                             public void done(ParseUser user, ParseException err) {
                                 if (err != null) {
-                                    Log.d(TAG, "Error occurred" + err.toString());
+                                    Log.d(TAG, getResources().getString(R.string.error_occurred) + err.toString());
                                     err.printStackTrace();
                                 } else if (user == null) {
-                                    Log.d(TAG, "User cancelled the Facebook login.");
+                                    Log.d(TAG, getResources().getString(R.string.user_cancel_fb_login));
                                 } else {
                                     handleFacebookUser(user);
                                 }
@@ -192,11 +191,12 @@ public class LoginActivity extends AppCompatActivity {
 
     /**
      * Helper method to handle valid user signing up with Facebook
+     *
      * @param user
      */
     private void handleFacebookUser(final ParseUser user) {
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
-        if(accessToken!=null) {
+        if (accessToken != null) {
             if (user.isNew()) {
                 GraphRequest request = GraphRequest.newMeRequest(accessToken,
                         new GraphRequest.GraphJSONObjectCallback() {
@@ -209,7 +209,7 @@ public class LoginActivity extends AppCompatActivity {
                                     user.put(AppConstants.phone, "");  // Set phone as empty for now
                                     user.put(AppConstants.privacy, false);  // Set incognito mode as false for now
                                     user.put(AppConstants.email, "");  // Set user email as empty for now
-                                    URL picUrl = new URL(String.format("https://graph.facebook.com/%s/picture?type=large", Profile.getCurrentProfile().getId()));
+                                    URL picUrl = new URL(String.format(getResources().getString(R.string.facebook_img_url), Profile.getCurrentProfile().getId()));
                                     Bitmap bitmap = BitmapFactory.decodeStream(picUrl.openConnection().getInputStream());
                                     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                                     bitmap.compress(Bitmap.CompressFormat.JPEG, AppConstants.captureImageQuality, byteArrayOutputStream);
@@ -253,5 +253,3 @@ public class LoginActivity extends AppCompatActivity {
         ParseFacebookUtils.onActivityResult(requestCode, resultCode, data);
     }
 }
-
-

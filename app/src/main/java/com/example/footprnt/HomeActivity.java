@@ -36,8 +36,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
  */
 public class HomeActivity extends AppCompatActivity {
 
+    private final String TAG = "HomeActivity";
     final FragmentManager mFragmentManager = getSupportFragmentManager();
-
     View mShadow;
     Fragment mFragment1;
     Fragment mFragment2;

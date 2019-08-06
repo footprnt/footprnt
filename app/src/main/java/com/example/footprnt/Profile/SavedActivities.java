@@ -13,15 +13,20 @@ import android.widget.ImageView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.footprnt.Discover.Models.Business;
+import com.example.footprnt.Models.SavedActivity;
 import com.example.footprnt.Profile.Adapters.SavedActivitiesAdapter;
 import com.example.footprnt.R;
+import com.example.footprnt.Util.AppConstants;
 import com.example.footprnt.Util.AppUtil;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Activity to display the saved activities/events from the discover page
@@ -33,9 +38,10 @@ public class SavedActivities extends AppCompatActivity {
     private final String TAG = SavedActivities.class.getSimpleName();
     ImageView mBackButton;
     RecyclerView mRvSavedActivities;
-    ArrayList<Business> mSavedBussinesses;
+    ArrayList<SavedActivity> mSavedActivities;
     SavedActivitiesAdapter mSavedActivitiesAdapter;
     CardView mNoNetwork;
+    CardView mNoSavedActivities;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,22 +52,23 @@ public class SavedActivities extends AppCompatActivity {
         mRvSavedActivities = findViewById(R.id.rvSavedActivities);
         mNoNetwork = findViewById(R.id.cvAdventure);
         mNoNetwork.setVisibility(View.INVISIBLE);
+        mNoSavedActivities = findViewById(R.id.cvRoot2);
+        mNoSavedActivities.setVisibility(View.INVISIBLE);
 
         // Set adapter
-        mSavedBussinesses = new ArrayList<>();
-        mSavedActivitiesAdapter = new SavedActivitiesAdapter(mSavedBussinesses, this);
+        mSavedActivities = new ArrayList<>();
+        mSavedActivitiesAdapter = new SavedActivitiesAdapter(mSavedActivities, this);
 
-        // Get saved businesses
+        // Get saved activities
         // TODO: implement database for saved activities ?
-        if(AppUtil.haveNetworkConnection(getApplicationContext())){
+        if (AppUtil.haveNetworkConnection(getApplicationContext())) {
             getSavedActivities();
-            mRvSavedActivities.setLayoutManager(new LinearLayoutManager(this));
+            mRvSavedActivities.setLayoutManager(new GridLayoutManager(this, 2));
             mRvSavedActivities.setAdapter(mSavedActivitiesAdapter);
         } else {
             // Display no network connection message
             mRvSavedActivities.setVisibility(View.INVISIBLE);
             mNoNetwork.setVisibility(View.VISIBLE);
-
         }
         mBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,8 +78,34 @@ public class SavedActivities extends AppCompatActivity {
         });
     }
 
-    // TODO: implement
-    private void getSavedActivities(){
-
+    /**
+     * Helper method to get query saved activities from user from DB
+     */
+    private void getSavedActivities() {
+        final SavedActivity.Query query = new SavedActivity.Query();
+        query
+                .getTop()
+                .withUser()
+                .whereEqualTo(AppConstants.user, ParseUser.getCurrentUser());
+        query.addDescendingOrder(AppConstants.createdAt);
+        query.findInBackground(new FindCallback<SavedActivity>() {
+            @Override
+            public void done(List<SavedActivity> objects, ParseException e) {
+                if (e == null) {
+                    if (objects.size() == 0) {
+                        mNoSavedActivities.setVisibility(View.VISIBLE);
+                        mRvSavedActivities.setVisibility(View.INVISIBLE);
+                    } else {
+                        for (int i = 0; i < objects.size(); i++) {
+                            final SavedActivity savedActivity = objects.get(i);
+                            mSavedActivities.add(savedActivity);
+                            mSavedActivitiesAdapter.notifyItemInserted(mSavedActivities.size() - 1);
+                        }
+                    }
+                } else {
+                    AppUtil.logError(SavedActivities.this, TAG, "Error querying saved activities", e, true);
+                }
+            }
+        });
     }
 }
