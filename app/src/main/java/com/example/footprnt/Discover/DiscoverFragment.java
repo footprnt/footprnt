@@ -218,6 +218,7 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                                     clubs.setVisibility(View.GONE);
                                     hotels.setVisibility(View.GONE);
                                     nothingNearYou.setVisibility(View.VISIBLE);
+                                    mProgressBar.setVisibility(ProgressBar.INVISIBLE);
                                 }
                             }
                         });
