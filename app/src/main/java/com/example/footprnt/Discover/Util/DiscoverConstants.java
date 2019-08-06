@@ -20,9 +20,12 @@ public class DiscoverConstants {
     public static final String HOTEL = "hotel";
     public static final String MUSEUM = "museum";
     public static final String CLUB = "club";
+    public static final String DEFAULT_LOCATION = "1 Hacker Way Menlo Park, CA 94025";
 
-    // For business views:
+    // For business views & display:
     public static final String IMAGE_PLACEHOLDER_PATH = "https://pyzikscott.files.wordpress.com/2016/03/yelp-placeholder.png?w=584";
     public static final int CARD_ELEVATION = 30;
+    public static final String NO_BUSINESS_MESSAGE = "No businesses here";
+    public static final String NOT_VALID_LOCATION_MESSAGE = "Not valid location";
 
 }

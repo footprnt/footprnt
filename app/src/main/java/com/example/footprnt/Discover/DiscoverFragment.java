@@ -45,6 +45,7 @@ import com.example.footprnt.Discover.Models.Event;
 import com.example.footprnt.Discover.Services.YelpService;
 import com.example.footprnt.Discover.Util.DiscoverConstants;
 import com.example.footprnt.R;
+import com.example.footprnt.Util.AppConstants;
 import com.example.footprnt.Util.AppUtil;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -68,7 +69,19 @@ import static android.content.Context.LOCATION_SERVICE;
  * @version 1.0
  */
 public class DiscoverFragment extends Fragment implements LocationListener {
-    public static final String TAG = DiscoverFragment.class.getSimpleName();
+
+    public static final String TAG = DiscoverFragment.class.getSimpleName();  // For logcat
+    FragmentActivity mFragmentContext;
+
+    // Querying Yelp:
+    final YelpService yelpService = new YelpService();
+    private LatLng mLocation;
+    ArrayList<Business> mRestaurants;
+    ArrayList<Business> mMuseums;
+    ArrayList<Business> mHotels;
+    ArrayList<Business> mClubs;
+
+    // Views:
     private SwipeRefreshLayout mSwipeContainer;
     RecyclerView rvRestaurants;
     RecyclerView rvMuseums;
@@ -78,55 +91,50 @@ public class DiscoverFragment extends Fragment implements LocationListener {
     ListAdapter mAdapterMuseums;
     ListAdapter mAdapterHotels;
     ListAdapter mAdapterClubs;
-    ArrayList<Business> mRestaurants;
-    ArrayList<Business> mMuseums;
-    ArrayList<Business> mHotels;
-    ArrayList<Business> mClubs;
-    final YelpService yelpService = new YelpService();
-    private LatLng mLocation;
-    private ArrayList<String> arrQueries;
-    private ArrayList<RecyclerView> arrRecyclerViews;
-    private ArrayList<ListAdapter> arrAdapters;
-    private ArrayList<ArrayList<Business>> arrBusinesses;
+    private TextView mAddress;
+    private TextView mNoEvent;
+    String mBusinessAddress;
+    private TextView mNothingNearYou;
+    private TextView mTvRestaurants;
+    private TextView mTvMuseums;
+    private TextView mTvClubs;
+    private TextView mTvHotels;
     private Location mCurrLocation;
     private EditText mSearchText;
-    FragmentActivity myContext;
-    private TextView mAddress;
-    private TextView noEvent;
-    String address;
-    private TextView nothingNearYou;
-    private TextView restaurants;
-    private TextView museums;
-    private TextView clubs;
-    private TextView hotels;
-
+    private ArrayList<String> mArrQueries;
+    private ArrayList<RecyclerView> mArrRecyclerViews;
+    private ArrayList<ListAdapter> mArrAdapters;
+    private ArrayList<ArrayList<Business>> mArrBusinesses;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_discover, parent, false);
+        // Set Views & Initialize
         rvRestaurants = view.findViewById(R.id.rvRestaurants);
-        restaurants = view.findViewById(R.id.restaurants);
+        mTvRestaurants = view.findViewById(R.id.restaurants);
         rvMuseums = view.findViewById(R.id.rvMuseums);
-        museums = view.findViewById(R.id.museums);
+        mTvMuseums = view.findViewById(R.id.museums);
         rvHotels = view.findViewById(R.id.rvHotels);
-        hotels = view.findViewById(R.id.hotels);
+        mTvHotels = view.findViewById(R.id.hotels);
         rvClubs = view.findViewById(R.id.rvClubs);
-        clubs = view.findViewById(R.id.clubs);
+        mTvClubs = view.findViewById(R.id.clubs);
         mSearchText = view.findViewById(R.id.searchText);
         mAddress = view.findViewById(R.id.address);
-        noEvent = view.findViewById(R.id.noEvent);
-        noEvent.setVisibility(View.INVISIBLE);
-        nothingNearYou = view.findViewById(R.id.nothingNearYou);
-        nothingNearYou.setVisibility(View.INVISIBLE);
-        handleSearch();
-        arrQueries = new ArrayList<>();
-        arrRecyclerViews = new ArrayList<>();
-        arrAdapters = new ArrayList<>();
-        arrBusinesses = new ArrayList<>();
+        mNoEvent = view.findViewById(R.id.noEvent);
+        mNoEvent.setVisibility(View.INVISIBLE);
+        mNothingNearYou = view.findViewById(R.id.nothingNearYou);
+        mNothingNearYou.setVisibility(View.INVISIBLE);
+        mArrQueries = new ArrayList<>();
+        mArrRecyclerViews = new ArrayList<>();
+        mArrAdapters = new ArrayList<>();
+        mArrBusinesses = new ArrayList<>();
         mRestaurants = new ArrayList<>();
         mMuseums = new ArrayList<>();
         mHotels = new ArrayList<>();
         mClubs = new ArrayList<>();
+
+        // Handle user searching:
+        handleSearch();
         try {
             getAddress();
             getAdventureOfTheDay();
@@ -145,20 +153,27 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                     R.color.refresh_progress_4,
                     R.color.refresh_progress_5);
         } catch (Exception e) {
-            Toast.makeText(getContext(), "No businesses here", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), DiscoverConstants.NO_BUSINESS_MESSAGE, Toast.LENGTH_LONG).show();
         }
         return view;
     }
+
+    /**
+     * Helper method to refresh RV
+     */
     public void RefreshBusinesses() {
-        arrAdapters.clear();
+        mArrAdapters.clear();
         prepareArrayLists();
         populateView();
         mSwipeContainer.setRefreshing(false);
     }
 
-    public void getAddress(){
+    /**
+     * Helper method to get address
+     */
+    public void getAddress() {
         if (mLocation != null) {
-            address = AppUtil.getAddress(getContext(), mLocation);
+            mBusinessAddress = AppUtil.getAddress(getContext(), mLocation);
         } else {
             mLocation = null;
             if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -166,54 +181,59 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                 Criteria criteria = new Criteria();
                 Location currLocation = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
                 if (currLocation != null) {
-                    address = AppUtil.getAddress(getContext(), new LatLng(currLocation.getLatitude(), currLocation.getLongitude()));
+                    mBusinessAddress = AppUtil.getAddress(getContext(), new LatLng(currLocation.getLatitude(), currLocation.getLongitude()));
                 } else {
                     locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5, this);
                     if (mCurrLocation != null) {
-                        address = AppUtil.getAddress(getContext(), new LatLng(mCurrLocation.getLatitude(), mCurrLocation.getLongitude()));
+                        mBusinessAddress = AppUtil.getAddress(getContext(), new LatLng(mCurrLocation.getLatitude(), mCurrLocation.getLongitude()));
                     } else {
-                        address = "1 Hacker Way Menlo Park, CA 94025";
+                        // Default location in case location search doesn't work on first try
+                        mBusinessAddress = DiscoverConstants.DEFAULT_LOCATION;
                     }
                 }
             } else {
                 Toast.makeText(getContext(), "No location permission", Toast.LENGTH_LONG).show();
-                address = null;
+                mBusinessAddress = null;
             }
         }
     }
 
+    /**
+     * Helper method to populate business views
+     */
     public void populateView() {
-        nothingNearYou.setVisibility(View.INVISIBLE);
-        for (int i = 0; i < arrQueries.size(); i++) {
+        mNothingNearYou.setVisibility(View.INVISIBLE);
+        for (int i = 0; i < mArrQueries.size(); i++) {
             final int finalI = i;
             getAddress();
-            if (address != null) {
-                mAddress.setText(address);
-                yelpService.findBusinesses(address, arrQueries.get(i), new Callback() {
+            if (mBusinessAddress != null) {
+                mAddress.setText(mBusinessAddress);
+                yelpService.findBusinesses(mBusinessAddress, mArrQueries.get(i), new Callback() {
                     @Override
                     public void onFailure(Call call, IOException e) {
                         e.printStackTrace();
                     }
+
                     @Override
                     public void onResponse(Call call, Response response) {
                         final ArrayList<Business> arrTemp = yelpService.processResults(response);
-                        arrBusinesses.remove(finalI);
-                        arrBusinesses.add(finalI, arrTemp);
+                        mArrBusinesses.remove(finalI);
+                        mArrBusinesses.add(finalI, arrTemp);
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-                                arrRecyclerViews.get(finalI).setLayoutManager(linearLayoutManager);
-                                ListAdapter arrAdapter = new ListAdapter(getContext(), arrBusinesses.get(finalI));
-                                arrAdapters.remove(finalI);
-                                arrAdapters.add(finalI, arrAdapter);
-                                arrRecyclerViews.get(finalI).setAdapter(arrAdapters.get(finalI));
-                                if (arrTemp.size() == 0){
-                                    restaurants.setVisibility(View.GONE);
-                                    museums.setVisibility(View.GONE);
-                                    clubs.setVisibility(View.GONE);
-                                    hotels.setVisibility(View.GONE);
-                                    nothingNearYou.setVisibility(View.VISIBLE);
+                                mArrRecyclerViews.get(finalI).setLayoutManager(linearLayoutManager);
+                                ListAdapter arrAdapter = new ListAdapter(getContext(), mArrBusinesses.get(finalI));
+                                mArrAdapters.remove(finalI);
+                                mArrAdapters.add(finalI, arrAdapter);
+                                mArrRecyclerViews.get(finalI).setAdapter(mArrAdapters.get(finalI));
+                                if (arrTemp.size() == 0) {
+                                    mTvRestaurants.setVisibility(View.GONE);
+                                    mTvMuseums.setVisibility(View.GONE);
+                                    mTvClubs.setVisibility(View.GONE);
+                                    mTvHotels.setVisibility(View.GONE);
+                                    mNothingNearYou.setVisibility(View.VISIBLE);
                                 }
                             }
                         });
@@ -225,6 +245,7 @@ public class DiscoverFragment extends Fragment implements LocationListener {
 
     /**
      * To get a query location from Map fragment
+     *
      * @param latLng The location passed from Map
      */
     public void setDataFromMapFragment(LatLng latLng) {
@@ -232,8 +253,8 @@ public class DiscoverFragment extends Fragment implements LocationListener {
         try {
             populateView();
             getAdventureOfTheDay();
-        } catch(Exception e){
-            Toast.makeText(getContext(), "No businesses here", Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            Toast.makeText(getContext(), DiscoverConstants.NO_BUSINESS_MESSAGE, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -241,10 +262,11 @@ public class DiscoverFragment extends Fragment implements LocationListener {
      * Prepares Array list of queries, Recyclerviews, Adapters and Businesses.
      */
     private void prepareArrayLists() {
-        arrQueries = new ArrayList<>(Arrays.asList(DiscoverConstants.RESTAURANT, DiscoverConstants.MUSEUM, DiscoverConstants.HOTEL, DiscoverConstants.CLUB));
-        arrRecyclerViews = new ArrayList<>(Arrays.asList(rvRestaurants, rvMuseums, rvHotels, rvClubs));;
-        arrAdapters = new ArrayList<>(Arrays.asList(mAdapterRestaurants, mAdapterMuseums, mAdapterHotels, mAdapterClubs));
-        arrBusinesses = new ArrayList<>(Arrays.asList(mRestaurants, mMuseums, mHotels, mClubs));
+        mArrQueries = new ArrayList<>(Arrays.asList(DiscoverConstants.RESTAURANT, DiscoverConstants.MUSEUM, DiscoverConstants.HOTEL, DiscoverConstants.CLUB));
+        mArrRecyclerViews = new ArrayList<>(Arrays.asList(rvRestaurants, rvMuseums, rvHotels, rvClubs));
+        ;
+        mArrAdapters = new ArrayList<>(Arrays.asList(mAdapterRestaurants, mAdapterMuseums, mAdapterHotels, mAdapterClubs));
+        mArrBusinesses = new ArrayList<>(Arrays.asList(mRestaurants, mMuseums, mHotels, mClubs));
     }
 
     @Override
@@ -269,11 +291,11 @@ public class DiscoverFragment extends Fragment implements LocationListener {
 
     @Override
     public void onAttach(Activity activity) {
-        myContext = (FragmentActivity) activity;
+        mFragmentContext = (FragmentActivity) activity;
         super.onAttach(activity);
     }
 
-    public void handleSearch(){
+    public void handleSearch() {
         mSearchText.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -282,7 +304,7 @@ public class DiscoverFragment extends Fragment implements LocationListener {
 
                     Geocoder geocoder = new Geocoder(getContext());
                     List<Address> list = new ArrayList<>();
-                    try{
+                    try {
                         list = geocoder.getFromLocationName(searchString, 1);
                     } catch (IOException e) {
 
@@ -294,22 +316,23 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                         populateView();
                         getAdventureOfTheDay();
                     } else {
-                        Toast.makeText(getContext(), "Not valid location", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), DiscoverConstants.NOT_VALID_LOCATION_MESSAGE, Toast.LENGTH_LONG).show();
                     }
                 }
-                InputMethodManager inputManager = (InputMethodManager) myContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputManager.hideSoftInputFromWindow(myContext.getCurrentFocus().getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
+                InputMethodManager inputManager = (InputMethodManager) mFragmentContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputManager.hideSoftInputFromWindow(mFragmentContext.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                 return false;
             }
         });
     }
 
-    public void getAdventureOfTheDay(){
-        yelpService.findEvents(address, new Callback() {
+    public void getAdventureOfTheDay() {
+        yelpService.findEvents(mBusinessAddress, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
             }
+
             @Override
             public void onResponse(Call call, Response response) {
                 final ArrayList<Event> arrTemp = yelpService.processEvents(response);
@@ -318,38 +341,38 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                 final TextView eventDescription = getActivity().findViewById(R.id.eventDescrption);
                 final TextView eventTime = getActivity().findViewById(R.id.eventStart);
                 final TextView eventUrl = getActivity().findViewById(R.id.eventUrl);
-                if (arrTemp.size() > 0){
+                if (arrTemp.size() > 0) {
                     final Event e = arrTemp.get(0);
-                    myContext.runOnUiThread(new Runnable() {
+                    mFragmentContext.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             String imageUrl = e.getImageUrl();
-                            if (imageUrl != null && imageUrl.length() > 0){
+                            if (imageUrl != null && imageUrl.length() > 0) {
                                 eventImage.setVisibility(View.VISIBLE);
                                 try {
-                                    Glide.with(myContext).load(imageUrl).apply(RequestOptions.circleCropTransform()).into(eventImage);
-                                } catch (Exception e){
+                                    Glide.with(mFragmentContext).load(imageUrl).apply(RequestOptions.circleCropTransform()).into(eventImage);
+                                } catch (Exception e) {
                                     eventImage.setVisibility(View.GONE);
                                 }
                             } else {
                                 eventImage.setVisibility(View.GONE);
                             }
                             String title = e.getName();
-                            if (title != null && title.length() > 0){
+                            if (title != null && title.length() > 0) {
                                 eventTitle.setVisibility(View.VISIBLE);
                                 eventTitle.setText(title);
                             } else {
                                 eventTitle.setVisibility(View.GONE);
                             }
                             String description = e.getDescription();
-                            if (description != null && description.length() > 0){
+                            if (description != null && description.length() > 0) {
                                 eventDescription.setVisibility(View.VISIBLE);
                                 eventDescription.setText(description);
                             } else {
                                 eventDescription.setVisibility(View.GONE);
                             }
                             String time = e.getTimeStart();
-                            if (time != null && time.length() > 0){
+                            if (time != null && time.length() > 0) {
                                 eventTime.setVisibility(View.VISIBLE);
                                 String dateDisplay = time.substring(0, 10);
                                 eventTime.setText(dateDisplay);
@@ -357,25 +380,25 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                                 eventTime.setVisibility(View.GONE);
                             }
                             final String yelpUrl = e.getEventUrl();
-                            if (yelpUrl != null && yelpUrl.length() > 0){
+                            if (yelpUrl != null && yelpUrl.length() > 0) {
                                 eventUrl.setVisibility(View.VISIBLE);
-                                eventUrl.setOnTouchListener(new View.OnTouchListener(){
+                                eventUrl.setOnTouchListener(new View.OnTouchListener() {
                                     @Override
                                     public boolean onTouch(View v, MotionEvent event) {
                                         Intent i = new Intent(Intent.ACTION_VIEW);
                                         i.setData(Uri.parse(yelpUrl));
-                                        ((Activity) getContext()).startActivityForResult(i, 20);
+                                        ((Activity) getContext()).startActivityForResult(i, AppConstants.VIEW_BUSINESS_PAGE);
                                         return true;
                                     }
                                 });
                             } else {
                                 eventUrl.setVisibility(View.GONE);
                             }
-                            noEvent.setVisibility(View.INVISIBLE);
+                            mNoEvent.setVisibility(View.INVISIBLE);
                         }
                     });
                 } else {
-                    myContext.runOnUiThread(new Runnable() {
+                    mFragmentContext.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             eventImage.setVisibility(View.INVISIBLE);
@@ -383,7 +406,7 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                             eventDescription.setVisibility(View.INVISIBLE);
                             eventTime.setVisibility(View.INVISIBLE);
                             eventUrl.setVisibility(View.INVISIBLE);
-                            noEvent.setVisibility(View.VISIBLE);
+                            mNoEvent.setVisibility(View.VISIBLE);
                         }
                     });
                 }
