@@ -6,8 +6,9 @@
  */
 package com.example.footprnt.Profile.Adapters.ViewHolders;
 
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.footprnt.R;
 
@@ -15,6 +16,8 @@ import com.example.footprnt.R;
  * View holder for post item for profile page
  *
  * @author Clarisa Leu-Rodriguez
+ * @version 1.0
+ * @since 7-22-19
  */
 public class NoPostsViewHolder extends RecyclerView.ViewHolder {
 

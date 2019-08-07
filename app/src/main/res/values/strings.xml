@@ -25,6 +25,7 @@
     <string name="post_incomplete">You must have title and snippet</string>
     <string name="photo_error">Invalid media type</string>
     <string name="delete_saved_post">Saved Post Deleted</string>
+    <string name="delete_saved_activity">Deleted Saved Activity</string>
     <string name="saved_activity">Saved Activity</string>
     <string name="unsaved_activity">Unsaved Activity</string>
     <string name="error_query_saved_posts">Error querying saved posts</string>
@@ -44,4 +45,9 @@
     <string name="network_error_try_again">Network error, please try again later.</string>
     <string name="password_reset_check_email">Please check your password for reset instructions</string>
     <string name="upload_or_take_photo">Upload or Take a Photo</string>
+    <string name="visited_cities">Visited Cities</string>
+    <string name="visited_countries">Visited Countries</string>
+    <string name="visited_continents">Visited Continents</string>
+    <string name="unvisited">Unvisited</string>
+    <string name="no_location_permission">No location permission</string>
 </resources>

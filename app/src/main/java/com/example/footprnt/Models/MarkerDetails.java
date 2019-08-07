@@ -16,6 +16,8 @@ import java.io.Serializable;
 
 /**
  * @author Jocelyn Shen
+ * @version 1.0
+ * @since 7-22-19
  */
 @ParseClassName("MarkerDetails")
 public class MarkerDetails extends ParseObject implements Serializable {

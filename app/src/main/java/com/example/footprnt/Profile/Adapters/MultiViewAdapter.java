@@ -14,6 +14,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,6 +60,8 @@ import java.util.List;
  * Custom adapter to handle the multiple views on the profile page fragment
  *
  * @author Clarisa Leu-Rodriguez, Jocelyn Shen
+ * @version 1.0
+ * @since 7-22-19
  */
 public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -316,7 +319,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             final HashMap<String, Integer> countries = stats.get(1);
             final HashMap<String, Integer> continents = stats.get(2);
             if (cities != null && cities.size() < ProfileConstants.totalNumCities) {
-                setUpPieChart(vh3.getPieChartCity(), cities.size(), ProfileConstants.totalNumCities, "Visited Cities");
+                setUpPieChart(vh3.getPieChartCity(), cities.size(), ProfileConstants.totalNumCities, mContext.getResources().getString(R.string.visited_cities));
             } else {
                 View view = vh3.getRootView().findViewById(R.id.pieChartCity);
                 if (view != null) {
@@ -328,7 +331,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 }
             }
             if (countries != null && countries.size() < ProfileConstants.totalNumCountries) {
-                setUpPieChart(vh3.getPieChartCountry(), countries.size(), ProfileConstants.totalNumCountries, "Visited Countries");
+                setUpPieChart(vh3.getPieChartCountry(), countries.size(), ProfileConstants.totalNumCountries, mContext.getResources().getString(R.string.visited_countries));
             } else {
                 View view = vh3.getRootView().findViewById(R.id.pieChartCountry);
                 if (view != null) {
@@ -340,7 +343,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 }
             }
             if (continents != null && continents.size() < ProfileConstants.totalNumContinents) {
-                setUpPieChart(vh3.getPieChartContinent(), continents.size(), ProfileConstants.totalNumContinents, "Visited Continents");
+                setUpPieChart(vh3.getPieChartContinent(), continents.size(), ProfileConstants.totalNumContinents, mContext.getResources().getString(R.string.visited_continents));
             } else {
                 View view = vh3.getRootView().findViewById(R.id.pieChartContinent);
                 if (view != null) {
@@ -400,15 +403,15 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 vh5.getRootView().setTag(postWrapper);
                 StringBuilder sb = new StringBuilder();
                 String cityName = postWrapper.getCity();
-                if (cityName != null) {
+                if (!TextUtils.isEmpty(cityName)) {
                     sb.append(cityName).append(", ");
                 }
                 String countryName = postWrapper.getCountry();
-                if (countryName != null) {
+                if (!TextUtils.isEmpty(countryName)) {
                     sb.append(countryName).append(", ");
                 }
                 String continentName = postWrapper.getContinent();
-                if (continentName != null) {
+                if (!TextUtils.isEmpty(continentName)) {
                     sb.append(continentName);
                 }
                 vh5.getTvTitle().setText(sb);
@@ -422,7 +425,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 };
                 vh5.getRootView().setClickable(false);
                 vh5.getIvImage().setTag(target);
-                if (postWrapper.imageUrl.length() > 0) {
+                if (!TextUtils.isEmpty(postWrapper.imageUrl)) {
                     vh5.getTvDescription().setVisibility(View.INVISIBLE);
                     vh5.getIvImage().setVisibility(View.VISIBLE);
                     vh5.getPostTitle().setVisibility(View.INVISIBLE);
@@ -434,7 +437,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     vh5.getPostTitle().setVisibility(View.VISIBLE);
                     vh5.getTvDescription().setVisibility(View.VISIBLE);
                 }
-                if (postWrapper.getImageUrl().length() > 0) {
+                if (!TextUtils.isEmpty(postWrapper.getImageUrl())) {
                     Glide.with(mContext).asBitmap().load(postWrapper.getImageUrl()).centerCrop().into(target);
                 }
             }
@@ -453,10 +456,10 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             vh6.getProgressBar().setVisibility(View.VISIBLE);
             UserWrapper userWrapper = (UserWrapper) mItems.get(position);
             if (userWrapper != null) {
-                if (userWrapper.getProfileImg().length() > 0) {
+                if (!TextUtils.isEmpty(userWrapper.getProfileImg())) {
                     vh6.setIvProfileImage(userWrapper.getProfileImg(), mContext);
                 }
-                if (userWrapper.getDescription().length() > 0) {
+                if (!TextUtils.isEmpty(userWrapper.getDescription())) {
                     vh6.getTvDescription().setText(userWrapper.getDescription());
                 }
                 vh6.getTvUsername().setText("@" + userWrapper.getUsername());
@@ -477,7 +480,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             vh7.getProgressBar().setVisibility(View.VISIBLE);
             StatWrapper statWrapper = (StatWrapper) mItems.get(position);
             if (statWrapper.getCityVisited() < ProfileConstants.totalNumCities) {
-                setUpPieChart(vh7.getPieChartCity(), statWrapper.getCityVisited(), ProfileConstants.totalNumCities, "Visited Cities");
+                setUpPieChart(vh7.getPieChartCity(), statWrapper.getCityVisited(), ProfileConstants.totalNumCities, mContext.getResources().getString(R.string.visited_cities));
             } else {
                 View view = vh7.getRootView().findViewById(R.id.pieChartCity);
                 if (view != null) {
@@ -489,7 +492,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 }
             }
             if (statWrapper.getCountryVisited() < ProfileConstants.totalNumCountries) {
-                setUpPieChart(vh7.getPieChartCountry(), statWrapper.getCountryVisited(), ProfileConstants.totalNumCountries, "Visited Countries");
+                setUpPieChart(vh7.getPieChartCountry(), statWrapper.getCountryVisited(), ProfileConstants.totalNumCountries, mContext.getResources().getString(R.string.visited_countries));
             } else {
                 View view = vh7.getRootView().findViewById(R.id.pieChartCountry);
                 if (view != null) {
@@ -501,7 +504,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 }
             }
             if (statWrapper.getContinentVisited() < ProfileConstants.totalNumContinents) {
-                setUpPieChart(vh7.getPieChartContinent(), statWrapper.getContinentVisited(), ProfileConstants.totalNumContinents, "Visited Continents");
+                setUpPieChart(vh7.getPieChartContinent(), statWrapper.getContinentVisited(), ProfileConstants.totalNumContinents, mContext.getResources().getString(R.string.visited_continents));
             } else {
                 View view = vh7.getRootView().findViewById(R.id.pieChartContinent);
                 if (view != null) {
@@ -546,10 +549,9 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
      * @param title    the title of the pie chart
      */
     private void setUpPieChart(PieChart pieChart, int visited, int total, String title) {
-        // TODO: put custom color in constants
         List<PieEntry> pieEntries = new ArrayList<>();
         pieEntries.add(new PieEntry(visited, title));
-        pieEntries.add(new PieEntry(total - visited, "Unvisited"));
+        pieEntries.add(new PieEntry(total - visited, mContext.getResources().getString(R.string.unvisited)));
         PieDataSet pieDataSet = new PieDataSet(pieEntries, "");
         int[] CUSTOM_COLORS = {
                 Color.rgb(125, 187, 201), Color.rgb(64, 89, 128), Color.rgb(217, 184, 162),

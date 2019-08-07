@@ -23,6 +23,8 @@ import java.util.ArrayList;
  * Custom Post Model Class
  *
  * @author Clarisa Leu, Jocelyn Shen
+ * @version 1.0
+ * @since 7-22-19
  */
 @ParseClassName("Post")
 public class Post extends ParseObject implements Serializable {

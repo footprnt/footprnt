@@ -120,11 +120,11 @@ public class DiscoverFragment extends Fragment implements LocationListener {
     private ProgressBar mProgressBar;
     private Event mAdventure;
     private ProgressBar mProgressBarAdventure;
-    private ImageView eventImage;
-    private TextView eventTitle;
-    private TextView eventDescription;
-    private TextView eventTime;
-    private TextView eventUrl;
+    private ImageView mEventImage;
+    private TextView mEventTitle;
+    private TextView mEventDescription;
+    private TextView mEventTime;
+    private TextView mEventUrl;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
@@ -154,11 +154,11 @@ public class DiscoverFragment extends Fragment implements LocationListener {
         mMuseums = new ArrayList<>();
         mHotels = new ArrayList<>();
         mClubs = new ArrayList<>();
-        eventImage = view.findViewById(R.id.eventImage);
-        eventTitle = view.findViewById(R.id.eventTitle);
-        eventDescription = view.findViewById(R.id.eventDescrption);
-        eventTime = view.findViewById(R.id.eventStart);
-        eventUrl = view.findViewById(R.id.eventUrl);
+        mEventImage = view.findViewById(R.id.eventImage);
+        mEventTitle = view.findViewById(R.id.eventTitle);
+        mEventDescription = view.findViewById(R.id.eventDescrption);
+        mEventTime = view.findViewById(R.id.eventStart);
+        mEventUrl = view.findViewById(R.id.eventUrl);
 
         // Handle user searching:
         handleSearch();
@@ -220,7 +220,7 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                     }
                 }
             } else {
-                Toast.makeText(getContext(), "No location permission", Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), getContext().getResources().getString(R.string.no_location_permission), Toast.LENGTH_LONG).show();
                 mBusinessAddress = null;
             }
         }
@@ -336,7 +336,7 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                     List<Address> list = new ArrayList<>();
                     try {
                         list = geocoder.getFromLocationName(searchString, 1);
-                    } catch (IOException e) {
+                    } catch (IOException ignored) {
 
                     }
 
@@ -358,11 +358,11 @@ public class DiscoverFragment extends Fragment implements LocationListener {
 
     public void getAdventureOfTheDay() {
         mProgressBarAdventure.setVisibility(View.VISIBLE);
-        eventImage.setVisibility(View.INVISIBLE);
-        eventTitle.setVisibility(View.INVISIBLE);
-        eventDescription.setVisibility(View.INVISIBLE);
-        eventTime.setVisibility(View.INVISIBLE);
-        eventUrl.setVisibility(View.INVISIBLE);
+        mEventImage.setVisibility(View.INVISIBLE);
+        mEventTitle.setVisibility(View.INVISIBLE);
+        mEventDescription.setVisibility(View.INVISIBLE);
+        mEventTime.setVisibility(View.INVISIBLE);
+        mEventUrl.setVisibility(View.INVISIBLE);
         if (mNoEvent != null) {
             mNoEvent.setVisibility(View.INVISIBLE);
         }
@@ -410,41 +410,41 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                             public void run() {
                                 String imageUrl = mAdventure.getImageUrl();
                                 if (imageUrl != null && imageUrl.length() > 0) {
-                                    eventImage.setVisibility(View.VISIBLE);
+                                    mEventImage.setVisibility(View.VISIBLE);
                                     try {
-                                        Glide.with(mFragmentContext).load(imageUrl).apply(RequestOptions.circleCropTransform()).into(eventImage);
+                                        Glide.with(mFragmentContext).load(imageUrl).apply(RequestOptions.circleCropTransform()).into(mEventImage);
                                     } catch (Exception e) {
-                                        eventImage.setVisibility(View.GONE);
+                                        mEventImage.setVisibility(View.GONE);
                                     }
                                 } else {
-                                    eventImage.setVisibility(View.GONE);
+                                    mEventImage.setVisibility(View.GONE);
                                 }
                                 String title = mAdventure.getName();
                                 if (title != null && title.length() > 0) {
-                                    eventTitle.setVisibility(View.VISIBLE);
-                                    eventTitle.setText(title);
+                                    mEventTitle.setVisibility(View.VISIBLE);
+                                    mEventTitle.setText(title);
                                 } else {
-                                    eventTitle.setVisibility(View.GONE);
+                                    mEventTitle.setVisibility(View.GONE);
                                 }
                                 String description = mAdventure.getDescription();
                                 if (description != null && description.length() > 0) {
-                                    eventDescription.setVisibility(View.VISIBLE);
-                                    eventDescription.setText(description);
+                                    mEventDescription.setVisibility(View.VISIBLE);
+                                    mEventDescription.setText(description);
                                 } else {
-                                    eventDescription.setVisibility(View.GONE);
+                                    mEventDescription.setVisibility(View.GONE);
                                 }
                                 String time = mAdventure.getTimeStart();
                                 if (time != null && time.length() > 0) {
-                                    eventTime.setVisibility(View.VISIBLE);
+                                    mEventTime.setVisibility(View.VISIBLE);
                                     String dateDisplay = time.substring(0, 10);
-                                    eventTime.setText(dateDisplay);
+                                    mEventTime.setText(dateDisplay);
                                 } else {
-                                    eventTime.setVisibility(View.GONE);
+                                    mEventTime.setVisibility(View.GONE);
                                 }
                                 final String yelpUrl = mAdventure.getEventUrl();
                                 if (yelpUrl != null && yelpUrl.length() > 0) {
-                                    eventUrl.setVisibility(View.VISIBLE);
-                                    eventUrl.setOnTouchListener(new View.OnTouchListener() {
+                                    mEventUrl.setVisibility(View.VISIBLE);
+                                    mEventUrl.setOnTouchListener(new View.OnTouchListener() {
                                         @Override
                                         public boolean onTouch(View v, MotionEvent event) {
                                             Intent i = new Intent(Intent.ACTION_VIEW);
@@ -454,7 +454,7 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                                         }
                                     });
                                 } else {
-                                    eventUrl.setVisibility(View.GONE);
+                                    mEventUrl.setVisibility(View.GONE);
                                 }
                                 mNoEvent.setVisibility(View.INVISIBLE);
                                 mProgressBarAdventure.setVisibility(View.INVISIBLE);
@@ -515,11 +515,11 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                                                         });
                                                     }
                                                 });
-                                                eventImage.setVisibility(View.INVISIBLE);
-                                                eventTitle.setVisibility(View.INVISIBLE);
-                                                eventDescription.setVisibility(View.INVISIBLE);
-                                                eventTime.setVisibility(View.INVISIBLE);
-                                                eventUrl.setVisibility(View.INVISIBLE);
+                                                mEventImage.setVisibility(View.INVISIBLE);
+                                                mEventTitle.setVisibility(View.INVISIBLE);
+                                                mEventDescription.setVisibility(View.INVISIBLE);
+                                                mEventTime.setVisibility(View.INVISIBLE);
+                                                mEventUrl.setVisibility(View.INVISIBLE);
                                                 eventHeader.setVisibility(View.INVISIBLE);
                                                 oa2.start();
                                             }
@@ -533,11 +533,11 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                         mFragmentContext.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                eventImage.setVisibility(View.INVISIBLE);
-                                eventTitle.setVisibility(View.INVISIBLE);
-                                eventDescription.setVisibility(View.INVISIBLE);
-                                eventTime.setVisibility(View.INVISIBLE);
-                                eventUrl.setVisibility(View.INVISIBLE);
+                                mEventImage.setVisibility(View.INVISIBLE);
+                                mEventTitle.setVisibility(View.INVISIBLE);
+                                mEventDescription.setVisibility(View.INVISIBLE);
+                                mEventTime.setVisibility(View.INVISIBLE);
+                                mEventUrl.setVisibility(View.INVISIBLE);
                                 mNoEvent.setVisibility(View.VISIBLE);
                                 mProgressBarAdventure.setVisibility(View.INVISIBLE);
                                 adventure.setClickable(false);
@@ -549,11 +549,11 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                     mFragmentContext.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            eventImage.setVisibility(View.INVISIBLE);
-                            eventTitle.setVisibility(View.INVISIBLE);
-                            eventDescription.setVisibility(View.INVISIBLE);
-                            eventTime.setVisibility(View.INVISIBLE);
-                            eventUrl.setVisibility(View.INVISIBLE);
+                            mEventImage.setVisibility(View.INVISIBLE);
+                            mEventTitle.setVisibility(View.INVISIBLE);
+                            mEventDescription.setVisibility(View.INVISIBLE);
+                            mEventTime.setVisibility(View.INVISIBLE);
+                            mEventUrl.setVisibility(View.INVISIBLE);
                             mNoEvent.setVisibility(View.VISIBLE);
                             mProgressBarAdventure.setVisibility(View.INVISIBLE);
                             adventure.setClickable(false);

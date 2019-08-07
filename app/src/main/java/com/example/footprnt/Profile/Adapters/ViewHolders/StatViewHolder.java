@@ -20,6 +20,8 @@ import com.github.mikephil.charting.charts.PieChart;
  * View holder for user statistics item for profile page
  *
  * @author Clarisa Leu-Rodriguez
+ * @version 1.0
+ * @since 7-22-19
  */
 public class StatViewHolder extends RecyclerView.ViewHolder {
 

@@ -22,6 +22,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * View holder for user information item for profile page
  *
  * @author Clarisa Leu-Rodriguez
+ * @version 1.0
+ * @since 7-22-19
  */
 public class UserInfoViewHolder extends RecyclerView.ViewHolder {
 

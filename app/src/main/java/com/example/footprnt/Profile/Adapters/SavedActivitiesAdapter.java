@@ -16,6 +16,7 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
 import android.os.Build;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -50,9 +51,10 @@ import java.util.Objects;
 
 /**
  * Adapts saved businesses to profile recycler view for saved things to do
- * TODO: implement
  *
  * @author Clarisa Leu
+ * @version 1.0
+ * @since 7-22-19
  */
 public class SavedActivitiesAdapter extends RecyclerView.Adapter<SavedActivitiesAdapter.ViewHolder> {
 
@@ -97,7 +99,7 @@ public class SavedActivitiesAdapter extends RecyclerView.Adapter<SavedActivities
         } catch (Exception e) {
             holder.mRating.setVisibility(View.INVISIBLE);
         }
-        if (savedBusiness.getImageUrl() == null || savedBusiness.getImageUrl().length() == 0) {
+        if (TextUtils.isEmpty(savedBusiness.getImageUrl())) {
             Picasso.with(mContext).load(DiscoverConstants.IMAGE_PLACEHOLDER_PATH);
         } else {
             Picasso.with(mContext).load(savedBusiness.getImageUrl()).into(holder.mIvBusinessImage);
@@ -114,10 +116,10 @@ public class SavedActivitiesAdapter extends RecyclerView.Adapter<SavedActivities
                 savedActivity.deleteInBackground(new DeleteCallback() {
                     @Override
                     public void done(ParseException e) {
-                        Toast.makeText(mContext, "Saved Activity Deleted", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, mContext.getResources().getString(R.string.delete_saved_activity), Toast.LENGTH_SHORT).show();
                     }
                 });
-                if (mSavedActivities.size() == 0) {
+                if (mSavedActivities.isEmpty()) {
                     ((Activity) mContext).finish();
                 }
                 return true;
@@ -200,7 +202,7 @@ public class SavedActivitiesAdapter extends RecyclerView.Adapter<SavedActivities
                 mRating.setVisibility(View.INVISIBLE);
             }
             final String imageUrl = savedBusiness.getImageUrl();
-            if (imageUrl == null || imageUrl.length() == 0) {
+            if (TextUtils.isEmpty(imageUrl)) {
                 Picasso.with(mContext).load(DiscoverConstants.IMAGE_PLACEHOLDER_PATH);
             } else {
                 Picasso.with(mContext).load(imageUrl).into(mIvBusinessImage);
@@ -235,7 +237,7 @@ public class SavedActivitiesAdapter extends RecyclerView.Adapter<SavedActivities
                 mTvBusinessAddress.setVisibility(View.GONE);
             }
             final String url = savedBusiness.getWebsite();
-            if (url != null && url.length() > 0) {
+            if (!TextUtils.isEmpty(url)) {
                 mTvBusinessName.setOnTouchListener(new View.OnTouchListener() {
                     @Override
                     public boolean onTouch(View v, MotionEvent event) {
@@ -247,7 +249,7 @@ public class SavedActivitiesAdapter extends RecyclerView.Adapter<SavedActivities
                 });
             }
             final String businessPhoneNum = savedBusiness.getPhoneNumber();
-            if (businessPhoneNum != null && businessPhoneNum.length() > 0) {
+            if (!TextUtils.isEmpty(businessPhoneNum)) {
                 mTvBusinessPhone.setVisibility(View.VISIBLE);
                 mTvBusinessPhone.setText(businessPhoneNum);
                 mTvBusinessPhone.setOnClickListener(new View.OnClickListener() {
