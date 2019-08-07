@@ -125,6 +125,7 @@ public class DiscoverFragment extends Fragment implements LocationListener {
     private TextView mEventDescription;
     private TextView mEventTime;
     private TextView mEventUrl;
+    private boolean allEmpty = true;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
@@ -226,11 +227,23 @@ public class DiscoverFragment extends Fragment implements LocationListener {
         }
     }
 
+    private int numBusinesses = 0;
+
     /**
      * Helper method to populate business views
      */
     public void populateView() {
+        numBusinesses = 0;
+        mTvRestaurants.setVisibility(View.VISIBLE);
+        mTvMuseums.setVisibility(View.VISIBLE);
+        mTvClubs.setVisibility(View.VISIBLE);
+        mTvHotels.setVisibility(View.VISIBLE);
+        rvRestaurants.setVisibility(View.VISIBLE);
+        rvMuseums.setVisibility(View.VISIBLE);
+        rvClubs.setVisibility(View.VISIBLE);
+        rvHotels.setVisibility(View.VISIBLE);
         mNothingNearYou.setVisibility(View.INVISIBLE);
+
         for (int i = 0; i < mArrQueries.size(); i++) {
             mProgressBar.setVisibility(ProgressBar.VISIBLE);
             final int finalI = i;
@@ -246,8 +259,26 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                     @Override
                     public void onResponse(Call call, Response response) {
                         final ArrayList<Business> arrTemp = yelpService.processResults(response, mProgressBar);
+                        numBusinesses += arrTemp.size();
                         mArrBusinesses.remove(finalI);
                         mArrBusinesses.add(finalI, arrTemp);
+                        System.out.println("numbus");
+                        System.out.println(numBusinesses);
+                        System.out.println("finali");
+                        System.out.println(finalI);
+                        if (numBusinesses == 0 && finalI == 0) {
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mNothingNearYou.setVisibility(View.VISIBLE);
+                                    mProgressBar.setVisibility(ProgressBar.INVISIBLE);
+                                    mTvRestaurants.setVisibility(View.INVISIBLE);
+                                    mTvMuseums.setVisibility(View.INVISIBLE);
+                                    mTvClubs.setVisibility(View.INVISIBLE);
+                                    mTvHotels.setVisibility(View.INVISIBLE);
+                                }
+                            });
+                        }
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -257,13 +288,40 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                                 mArrAdapters.remove(finalI);
                                 mArrAdapters.add(finalI, arrAdapter);
                                 mArrRecyclerViews.get(finalI).setAdapter(mArrAdapters.get(finalI));
-                                if (arrTemp.size() == 0) {
-                                    mTvRestaurants.setVisibility(View.GONE);
-                                    mTvMuseums.setVisibility(View.GONE);
-                                    mTvClubs.setVisibility(View.GONE);
-                                    mTvHotels.setVisibility(View.GONE);
-                                    mNothingNearYou.setVisibility(View.VISIBLE);
-                                    mProgressBar.setVisibility(ProgressBar.INVISIBLE);
+
+                                if (finalI == 0) {
+                                    if (mArrBusinesses.get(finalI).size() == 0) {
+                                        mTvRestaurants.setVisibility(View.GONE);
+                                        rvRestaurants.setVisibility(View.GONE);
+                                    } else {
+                                        mTvRestaurants.setVisibility(View.VISIBLE);
+                                        rvRestaurants.setVisibility(View.VISIBLE);
+                                    }
+                                } else if (finalI == 1) {
+                                    if (mArrBusinesses.get(finalI).size() == 0) {
+                                        mTvMuseums.setVisibility(View.GONE);
+                                        rvMuseums.setVisibility(View.GONE);
+                                    } else {
+                                        mTvMuseums.setVisibility(View.VISIBLE);
+                                        rvMuseums.setVisibility(View.VISIBLE);
+                                    }
+                                } else if (finalI == 2) {
+                                    if (mArrBusinesses.get(finalI).size() == 0) {
+                                        mTvHotels.setVisibility(View.GONE);
+                                        rvHotels.setVisibility(View.GONE);
+                                    } else {
+                                        mTvHotels.setVisibility(View.VISIBLE);
+                                        rvHotels.setVisibility(View.VISIBLE);
+                                    }
+                                } else if (finalI == 3) {
+                                    if (mArrBusinesses.get(finalI).size() == 0) {
+                                        mTvClubs.setVisibility(View.GONE);
+                                        rvClubs.setVisibility(View.GONE);
+                                    } else {
+                                        mTvClubs.setVisibility(View.VISIBLE);
+                                        rvClubs.setVisibility(View.VISIBLE);
+                                    }
+
                                 }
                             }
                         });
@@ -294,7 +352,6 @@ public class DiscoverFragment extends Fragment implements LocationListener {
     private void prepareArrayLists() {
         mArrQueries = new ArrayList<>(Arrays.asList(DiscoverConstants.RESTAURANT, DiscoverConstants.MUSEUM, DiscoverConstants.HOTEL, DiscoverConstants.CLUB));
         mArrRecyclerViews = new ArrayList<>(Arrays.asList(rvRestaurants, rvMuseums, rvHotels, rvClubs));
-        ;
         mArrAdapters = new ArrayList<>(Arrays.asList(mAdapterRestaurants, mAdapterMuseums, mAdapterHotels, mAdapterClubs));
         mArrBusinesses = new ArrayList<>(Arrays.asList(mRestaurants, mMuseums, mHotels, mClubs));
     }
