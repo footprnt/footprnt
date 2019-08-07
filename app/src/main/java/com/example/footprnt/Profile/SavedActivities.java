@@ -84,10 +84,7 @@ public class SavedActivities extends AppCompatActivity {
      */
     private void getSavedActivities() {
         final SavedActivity.Query query = new SavedActivity.Query();
-        query
-                .getTop()
-                .withUser()
-                .whereEqualTo(AppConstants.user, ParseUser.getCurrentUser());
+        query.getTop().withUser().whereEqualTo(AppConstants.user, ParseUser.getCurrentUser());
         query.addDescendingOrder(AppConstants.createdAt);
         query.findInBackground(new FindCallback<SavedActivity>() {
             @Override

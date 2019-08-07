@@ -13,6 +13,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Criteria;
@@ -129,6 +130,7 @@ public class DiscoverFragment extends Fragment implements LocationListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_discover, parent, false);
+        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         // Set Views & Initialize
         rvRestaurants = view.findViewById(R.id.rvRestaurants);
         mTvRestaurants = view.findViewById(R.id.restaurants);
@@ -384,9 +386,9 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                 completed.setVisibility(View.INVISIBLE);
                 cancel.setVisibility(View.INVISIBLE);
                 final TextView eventHeader = adventure.findViewById(R.id.tvAdventure);
-                if (arrTemp.size() > 0) {
-                    ArrayList<String> userCompletedAdventures = ((ArrayList<String>) ParseUser.getCurrentUser().get("completed_adventure"));
-                    ArrayList<String> userUncompletedAdventures = ((ArrayList<String>) ParseUser.getCurrentUser().get("uncompleted_adventure"));
+                if (!arrTemp.isEmpty()) {
+                    ArrayList<String> userCompletedAdventures = ((ArrayList<String>) ParseUser.getCurrentUser().get(AppConstants.completed_adventure));
+                    ArrayList<String> userUncompletedAdventures = ((ArrayList<String>) ParseUser.getCurrentUser().get(AppConstants.uncompleted_adventure));
                     if (userCompletedAdventures == null){
                         userCompletedAdventures = new ArrayList<>();
                     }

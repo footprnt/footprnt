@@ -50,4 +50,7 @@
     <string name="visited_continents">Visited Continents</string>
     <string name="unvisited">Unvisited</string>
     <string name="no_location_permission">No location permission</string>
+    <string name="cities">Cities</string>
+    <string name="countries">Countries</string>
+    <string name="continents">Continents</string>
 </resources>

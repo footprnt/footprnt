@@ -7,6 +7,7 @@
 package com.example.footprnt.Profile;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -83,6 +84,7 @@ public class ProfileFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_profile, container, false);
+        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         mLayout = v.findViewById(R.id.rvPosts);
         setUpToolbar(v);
         setUpDB();
@@ -205,6 +207,9 @@ public class ProfileFragment extends Fragment {
                         } else if (item.getItemId() == R.id.savedActivities) {
                             // Saved Activities
                             intent = new Intent(getContext(), SavedActivities.class);
+                        } else if (item.getItemId() == R.id.userStatistics) {
+                            // User Statistics
+                            intent = new Intent(getContext(), UserStatistics.class);
                         }
                         if (intent != null) {
                             startActivity(intent);

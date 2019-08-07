@@ -54,7 +54,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".Map.StreetViewActivity" />
-        <activity android:name=".ForgotPassword" />
+        <activity android:name=".ForgotPassword"
+            android:screenOrientation="portrait"/>
         <activity android:name=".Map.PostDetailActivity" />
         <activity
             android:name=".Profile.EditPost"
@@ -89,6 +90,8 @@
         <activity
             android:name=".HomeActivity"
             android:configChanges="orientation|keyboard|keyboardHidden" />
+        <activity android:name=".Profile.UserStatistics"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".LoginActivity"
             android:label="@string/app_name"
