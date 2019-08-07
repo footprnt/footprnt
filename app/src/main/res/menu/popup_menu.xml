@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
+        android:id="@+id/userStatistics"
+        android:title="User Statistics" />
+    <item
         android:id="@+id/savedActivities"
+        android:contentDescription="saved activities"
         android:title="Saved Activities" />
     <item
         android:id="@+id/savedPosts"
+        android:contentDescription="saved posts"
         android:title="Saved Posts" />
     <item
         android:id="@+id/logout"
+        android:contentDescription="logout"
         android:title="Logout" />
 </menu>

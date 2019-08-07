@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">footprnt</string>
-    <string name="title_home">Home</string>
+    <string name="title_home">Map</string>
     <string name="title_dashboard">Discover</string>
     <string name="title_notifications">Profile</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -50,6 +50,8 @@
     <string name="visited_continents">Visited Continents</string>
     <string name="unvisited">Unvisited</string>
     <string name="no_location_permission">No location permission</string>
+    <string name="cities">Cities</string>
+    <string name="countries">Countries</string>
+    <string name="continents">Continents</string>
     <string name="profile_image">profileImg</string>
-
 </resources>

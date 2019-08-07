@@ -48,6 +48,9 @@ public class AppConstants {
     public static final String rating = "rating";
     public static final String website = "website";
     public static final String categories = "categories";
+    public static final String uncompleted_adventure = "uncompleted_adventure";
+    public static final String completed_adventure = "completed_adventure";
+
 
     public static final int postLimit = 20;
 
