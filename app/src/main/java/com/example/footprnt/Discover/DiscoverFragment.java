@@ -257,6 +257,26 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                                 mArrAdapters.remove(finalI);
                                 mArrAdapters.add(finalI, arrAdapter);
                                 mArrRecyclerViews.get(finalI).setAdapter(mArrAdapters.get(finalI));
+                                if (mRestaurants != null || mRestaurants.size() != 0) {
+                                    mTvRestaurants.setVisibility(View.VISIBLE);
+                                } else {
+                                    mTvRestaurants.setVisibility(View.GONE);
+                                }
+                                if (mMuseums != null || mMuseums.size() != 0) {
+                                    mTvMuseums.setVisibility(View.VISIBLE);
+                                } else {
+                                    mTvMuseums.setVisibility(View.GONE);
+                                }
+                                if (mClubs != null || mClubs.size() != 0) {
+                                    mTvClubs.setVisibility(View.VISIBLE);
+                                } else {
+                                    mTvClubs.setVisibility(View.GONE);
+                                }
+                                if (mHotels != null || mHotels.size() != 0) {
+                                    mTvHotels.setVisibility(View.VISIBLE);
+                                } else {
+                                    mTvHotels.setVisibility(View.GONE);
+                                }
                                 if (arrTemp.size() == 0) {
                                     mTvRestaurants.setVisibility(View.GONE);
                                     mTvMuseums.setVisibility(View.GONE);
