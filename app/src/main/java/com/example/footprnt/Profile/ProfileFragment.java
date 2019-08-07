@@ -7,6 +7,7 @@
 package com.example.footprnt.Profile;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -83,6 +84,7 @@ public class ProfileFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_profile, container, false);
+        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         mLayout = v.findViewById(R.id.rvPosts);
         setUpToolbar(v);
         setUpDB();
@@ -205,6 +207,15 @@ public class ProfileFragment extends Fragment {
                         } else if (item.getItemId() == R.id.savedActivities) {
                             // Saved Activities
                             intent = new Intent(getContext(), SavedActivities.class);
+                        } else if (item.getItemId() == R.id.userStatistics) {
+                            // User Statistics - pass in the key set of the users traveled places
+                            intent = new Intent(getContext(), UserStatistics.class);
+                            ArrayList<String> cityKeys = new ArrayList<>(mCities.keySet());
+                            ArrayList<String> countryKeys = new ArrayList<>(mCountries.keySet());
+                            ArrayList<String> continentKeys = new ArrayList<>(mContinents.keySet());
+                            intent.putStringArrayListExtra(AppConstants.city, cityKeys);
+                            intent.putStringArrayListExtra(AppConstants.country, countryKeys);
+                            intent.putStringArrayListExtra(AppConstants.continent, continentKeys);
                         }
                         if (intent != null) {
                             startActivity(intent);
@@ -223,10 +234,7 @@ public class ProfileFragment extends Fragment {
     private void getPosts() {
         final Post.Query postsQuery = new Post.Query();
         // Only add current user's posts
-        postsQuery
-                .getTop()
-                .withUser()
-                .whereEqualTo(AppConstants.user, ParseUser.getCurrentUser());
+        postsQuery.getTop().withUser().whereEqualTo(AppConstants.user, ParseUser.getCurrentUser());
         postsQuery.addDescendingOrder(AppConstants.createdAt);
         postsQuery.findInBackground(new FindCallback<Post>() {
             @Override
