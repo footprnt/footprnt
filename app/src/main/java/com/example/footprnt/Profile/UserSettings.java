@@ -187,7 +187,6 @@ public class UserSettings extends AppCompatActivity {
         mSwitchPrivacy.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                System.out.println(isChecked);
                 if (isChecked) {
                     mSwitchPrivacy.setChecked(true);
                     mUser.put(AppConstants.privacy, true);

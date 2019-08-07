@@ -264,10 +264,6 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                         numBusinesses += arrTemp.size();
                         mArrBusinesses.remove(finalI);
                         mArrBusinesses.add(finalI, arrTemp);
-                        System.out.println("numbus");
-                        System.out.println(numBusinesses);
-                        System.out.println("finali");
-                        System.out.println(finalI);
                         if (numBusinesses == 0 && finalI == 0) {
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
