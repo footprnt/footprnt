@@ -159,7 +159,7 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Vi
                 savedPost1.deleteInBackground(new DeleteCallback() {
                     @Override
                     public void done(ParseException e) {
-                        Toast.makeText(mContext, R.string.delete_saved_post, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, mContext.getResources().getString(R.string.delete_saved_post), Toast.LENGTH_SHORT).show();
                     }
                 });
                 if (mPosts.size() == 0) {

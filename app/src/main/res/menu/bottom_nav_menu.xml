@@ -3,18 +3,19 @@
 
     <item
         android:id="@+id/navigation_home"
+        android:contentDescription="map"
         android:icon="@drawable/ic_map"
-        android:title="@string/title_home"
-        />
+        android:title="@string/title_home" />
 
     <item
         android:id="@+id/navigation_dashboard"
+        android:contentDescription="discover"
         android:icon="@drawable/ic_rocket"
-        android:title="@string/title_dashboard"
-        />
+        android:title="@string/title_dashboard" />
 
     <item
         android:id="@+id/navigation_notifications"
+        android:contentDescription="profile"
         android:icon="@drawable/ic_profile"
         android:title="@string/title_notifications" />
 

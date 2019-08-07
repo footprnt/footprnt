@@ -171,7 +171,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
                             @Override
                             public void done(ParseException e) {
                                 mIsSaved = true;
-                                Toast.makeText(mContext, R.string.saved_activity, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(mContext, mContext.getResources().getString(R.string.saved_activity), Toast.LENGTH_SHORT).show();
                                 mBookmark.setImageResource(R.drawable.ic_save_check_filled_blue);
                             }
                         });
@@ -188,7 +188,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
                                         public void done(ParseException e) {
                                             mIsSaved = false;
                                             mBookmark.setImageResource(R.drawable.ic_save_check_blue);
-                                            Toast.makeText(mContext, R.string.unsaved_activity, Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(mContext, mContext.getResources().getString(R.string.unsaved_activity), Toast.LENGTH_SHORT).show();
                                         }
                                     });
                                 }
@@ -317,7 +317,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
                             mBookmark.setImageResource(R.drawable.ic_save_check_blue);
                         }
                     } else {
-                        Toast.makeText(mContext, R.string.error_query_saved_activity, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, mContext.getResources().getString(R.string.error_query_saved_activity), Toast.LENGTH_SHORT).show();
                     }
                 }
             });
