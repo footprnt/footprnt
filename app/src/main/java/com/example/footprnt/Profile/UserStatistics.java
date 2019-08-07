@@ -11,9 +11,14 @@ import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.footprnt.Profile.Adapters.StatAdapter;
 import com.example.footprnt.R;
+import com.example.footprnt.Util.AppConstants;
+
+import java.util.ArrayList;
 
 /**
  * User Statistics Page
@@ -29,6 +34,12 @@ public class UserStatistics extends AppCompatActivity {
     RecyclerView mRvCities;
     RecyclerView mRvCountries;
     RecyclerView mRvContinents;
+    ArrayList<String> mCities;  // Associated cities user has traveled
+    ArrayList<String> mCountries;  // Associated countries user has traveled
+    ArrayList<String> mContinents;  // Associated continents user has traveled
+    StatAdapter mCityAdapter;
+    StatAdapter mCountryAdapter;
+    StatAdapter mContinentAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -41,5 +52,20 @@ public class UserStatistics extends AppCompatActivity {
         mRvCountries = findViewById(R.id.rvCountries);
         mRvContinents = findViewById(R.id.rvContinents);
 
+        mCities = getIntent().getStringArrayListExtra(AppConstants.city);
+        mCountries = getIntent().getStringArrayListExtra(AppConstants.country);
+        mContinents = getIntent().getStringArrayListExtra(AppConstants.continent);
+
+        mCityAdapter = new StatAdapter(mCities, this);
+        mRvCities.setLayoutManager(new LinearLayoutManager(this));
+        mRvCities.setAdapter(mCityAdapter);
+
+        mCountryAdapter = new StatAdapter(mCountries, this);
+        mRvCountries.setLayoutManager(new LinearLayoutManager(this));
+        mRvCountries.setAdapter(mCountryAdapter);
+
+        mContinentAdapter = new StatAdapter(mContinents, this);
+        mRvContinents.setLayoutManager(new LinearLayoutManager(this));
+        mRvContinents.setAdapter(mContinentAdapter);
     }
 }

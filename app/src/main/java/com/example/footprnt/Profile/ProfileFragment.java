@@ -208,8 +208,14 @@ public class ProfileFragment extends Fragment {
                             // Saved Activities
                             intent = new Intent(getContext(), SavedActivities.class);
                         } else if (item.getItemId() == R.id.userStatistics) {
-                            // User Statistics
+                            // User Statistics - pass in the key set of the users traveled places
                             intent = new Intent(getContext(), UserStatistics.class);
+                            ArrayList<String> cityKeys = new ArrayList<>(mCities.keySet());
+                            ArrayList<String> countryKeys = new ArrayList<>(mCountries.keySet());
+                            ArrayList<String> continentKeys = new ArrayList<>(mContinents.keySet());
+                            intent.putStringArrayListExtra(AppConstants.city, cityKeys);
+                            intent.putStringArrayListExtra(AppConstants.country, countryKeys);
+                            intent.putStringArrayListExtra(AppConstants.continent, continentKeys);
                         }
                         if (intent != null) {
                             startActivity(intent);
@@ -228,10 +234,7 @@ public class ProfileFragment extends Fragment {
     private void getPosts() {
         final Post.Query postsQuery = new Post.Query();
         // Only add current user's posts
-        postsQuery
-                .getTop()
-                .withUser()
-                .whereEqualTo(AppConstants.user, ParseUser.getCurrentUser());
+        postsQuery.getTop().withUser().whereEqualTo(AppConstants.user, ParseUser.getCurrentUser());
         postsQuery.addDescendingOrder(AppConstants.createdAt);
         postsQuery.findInBackground(new FindCallback<Post>() {
             @Override

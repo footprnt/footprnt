@@ -7,19 +7,24 @@
 package com.example.footprnt.Profile.Adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.footprnt.R;
+import com.kc.unsplash.Unsplash;
+import com.kc.unsplash.models.Photo;
+import com.kc.unsplash.models.SearchResults;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Adapts saved stats to profile recycler view
@@ -30,10 +35,12 @@ import java.util.ArrayList;
  */
 public class StatAdapter extends RecyclerView.Adapter<StatAdapter.ViewHolder> {
 
-    static ArrayList<String> mStats;  // list of stats
-    static Context mContext;  // context for rendering
+    ArrayList<String> mStats;  // list of stats
+    Context mContext;  // context for rendering
+    Unsplash unsplash;
 
     public StatAdapter(ArrayList<String> stats, Context context) {
+        unsplash = new Unsplash(context.getString(R.string.unsplash_access));
         mStats = stats;
         mContext = context;
     }
@@ -51,28 +58,35 @@ public class StatAdapter extends RecyclerView.Adapter<StatAdapter.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
-       // TODO: set views
+    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
+        String stat = mStats.get(position);
+        unsplash.searchPhotos(stat, new Unsplash.OnSearchCompleteListener() {
+            @Override
+            public void onComplete(SearchResults results) {
+                Log.d("Photos", "Total Results Found " + results.getTotal());
+                List<Photo> photos = results.getResults();
+                String statPictureUrl = photos.get(3).getUrls().getRegular();
+                Glide.with(mContext).load(statPictureUrl).into(holder.mIvImage);
+            }
+
+            @Override
+            public void onError(String error) {
+                Log.d("Unsplash", error);
+            }
+        });
+        holder.mName.setText(stat);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         View mRootView;
+        TextView mName;
         ImageView mIvImage;
-        TextView mTvTitle;
-        View mVPalette;
-        TextView mTvText;
-        TextView mTitle;
-        ProgressBar mProgressBar;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             mRootView = itemView;
-            mIvImage = itemView.findViewById(R.id.ivImage);
-            mTvTitle = itemView.findViewById(R.id.tvTitle);
-            mVPalette = itemView.findViewById(R.id.vPalette);
-            mTitle = itemView.findViewById(R.id.eventTitle);
-            mTvText = itemView.findViewById(R.id.tvText);
-            mProgressBar = itemView.findViewById(R.id.progressBar);
+            mIvImage = itemView.findViewById(R.id.ivPicture);
+            mName = itemView.findViewById(R.id.tvName);
         }
     }
 }
