@@ -145,15 +145,15 @@ public class UiUtil {
      * @param context current context of post
      */
     public static void setPostImages(Post post, PostAdapter.ViewHolder holder, Context context, Boolean privacy) {
-        if(post.getImage()!=null) {
+        if (post.getImage() != null) {
             String imgUrl = post.getImage().getUrl();
             Glide.with(context).load(imgUrl).into(holder.ivPicture);
             holder.ivPicture.setVisibility(View.VISIBLE);
         } else {
             holder.ivPicture.setVisibility(View.GONE);
         }
-        if ((post.getUser().getParseFile("profileImg") != null && !privacy) || (post.getUser().getParseFile("profileImg") != null && privacy == null)) {
-            String userImgUrl = post.getUser().getParseFile("profileImg").getUrl();
+        if ((post.getUser().getParseFile(context.getResources().getString(R.string.profile_image)) != null && !privacy) || (post.getUser().getParseFile(context.getResources().getString(R.string.profile_image)) != null && privacy == null)) {
+            String userImgUrl = post.getUser().getParseFile(context.getResources().getString(R.string.profile_image)).getUrl();
             Glide.with(context).load(userImgUrl).apply(RequestOptions.circleCropTransform()).into(holder.ivUserPicture);
         } else {
             Glide.with(context).load(MapConstants.PLACEHOLDER_IMAGE).apply(RequestOptions.circleCropTransform()).into(holder.ivUserPicture);
@@ -162,6 +162,7 @@ public class UiUtil {
 
     /**
      * Hides toolbar for aesthetics
+     *
      * @param activity
      */
     public static void hideToolBar(Activity activity) {
@@ -173,6 +174,7 @@ public class UiUtil {
 
     /**
      * Shows toolbar again
+     *
      * @param activity
      */
     public static void showToolbar(Activity activity) {

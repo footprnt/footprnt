@@ -50,4 +50,6 @@
     <string name="visited_continents">Visited Continents</string>
     <string name="unvisited">Unvisited</string>
     <string name="no_location_permission">No location permission</string>
+    <string name="profile_image">profileImg</string>
+
 </resources>

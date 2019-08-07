@@ -235,7 +235,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                     mParseFile = new ParseFile(photoFile);
                 } else {
                     mParseFile = null;
-                    Toast.makeText(getContext(),getResources().getString(R.string.camera_message), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), getResources().getString(R.string.camera_message), Toast.LENGTH_SHORT).show();
                 }
             } else {
                 if (resultCode == getActivity().RESULT_OK) {
@@ -256,7 +256,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                     mParseFile = null;
                 }
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             Toast.makeText(getContext(), getResources().getString(R.string.photo_error), Toast.LENGTH_LONG).show();
         }
     }
@@ -278,11 +278,10 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
         mMarkerDetails = new ArrayList<>();
         markers = new ArrayList<>();
         mInfoAdapter = new CustomInfoWindowAdapter(getContext());
-        if(mUser.getInt(MapConstants.MAP_STYLE)!=0) {
+        if (mUser.getInt(MapConstants.MAP_STYLE) != 0) {
             mMapStyle = mUser.getInt(MapConstants.MAP_STYLE);
         } else {
-            // Default to the Aubergine style
-            mMapStyle = MapConstants.STYLE_AUBERGINE;
+            mMapStyle = MapConstants.STYLE_AUBERGINE;             // Default to the Aubergine style
         }
         mMenuItemsAdded = false;
     }
@@ -471,8 +470,9 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
 
     /**
      * Handles send post and cancel post buttons in alert dialog
+     *
      * @param point point where post is being made
-     * @param temp temporary marker for UI purposes
+     * @param temp  temporary marker for UI purposes
      */
     private void handlePostButtons(final LatLng point, final Marker temp) {
         ImageView sendPost = mAlertDialog.findViewById(R.id.cancel);
@@ -484,7 +484,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                 mProgressBar.setVisibility(View.VISIBLE);
                 final String title = ((EditText) mAlertDialog.findViewById(R.id.etTitle)).getText().toString();
                 final String snippet = ((EditText) mAlertDialog.findViewById(R.id.etSnippet)).getText().toString();
-                if( TextUtils.isEmpty(title) || TextUtils.isEmpty(snippet)) {
+                if (TextUtils.isEmpty(title) || TextUtils.isEmpty(snippet)) {
                     Toast.makeText(getContext(), getResources().getString(R.string.post_incomplete), Toast.LENGTH_SHORT).show();
                     mProgressBar.setVisibility(View.INVISIBLE);
                 } else {
@@ -544,7 +544,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
             public void onClick(View v) {
                 MapUtil.geoLocate(mSearchText, mMap, getContext());
                 InputMethodManager inputManager = (InputMethodManager) myContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputManager.hideSoftInputFromWindow(myContext.getCurrentFocus().getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
+                inputManager.hideSoftInputFromWindow(myContext.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
             }
         });
         mSearchText.setOnEditorActionListener(new EditText.OnEditorActionListener() {
@@ -554,7 +554,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
                     MapUtil.geoLocate(mSearchText, mMap, getContext());
                 }
                 InputMethodManager inputManager = (InputMethodManager) myContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputManager.hideSoftInputFromWindow(myContext.getCurrentFocus().getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
+                inputManager.hideSoftInputFromWindow(myContext.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                 return false;
             }
         });
@@ -682,6 +682,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
 
     /**
      * Configures on map long press filter menu animation and sound
+     *
      * @param latLng location to launch create post or view feed
      */
     private void configureFilterMenu(LatLng latLng) {
@@ -693,38 +694,36 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
             public void onMenuItemClick(View view, int position) {
                 if (MapConstants.MENU_ITEMS[position] == MapConstants.CREATE) {
                     createPostDialog(mTappedLocation);
-                }
-                else if (MapConstants.MENU_ITEMS[position] == MapConstants.VIEW) {
+                } else if (MapConstants.MENU_ITEMS[position] == MapConstants.VIEW) {
                     createFeed();
-                }
-                else if (MapConstants.MENU_ITEMS[position] == MapConstants.DISCOVER) {
+                } else if (MapConstants.MENU_ITEMS[position] == MapConstants.DISCOVER) {
                     ViewPager viewPager = getActivity().findViewById(R.id.viewpager);
                     viewPager.setCurrentItem(1);
                     Fragment viewPagerAdapter = ((ViewPagerAdapter) viewPager.getAdapter()).getItem(1);
                     ((DiscoverFragment) viewPagerAdapter).setDataFromMapFragment(mTappedLocation);
-                }
-                else if (MapConstants.MENU_ITEMS[position] == MapConstants.CURRENT) {
+                } else if (MapConstants.MENU_ITEMS[position] == MapConstants.CURRENT) {
                     if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                         Location location = mMap.getMyLocation();
                         LatLng currLocation = new LatLng(location.getLatitude(), location.getLongitude());
                         createPostDialog(currLocation);
                     }
-                }
-                else if (MapConstants.MENU_ITEMS[position] == MapConstants.STREET){
+                } else if (MapConstants.MENU_ITEMS[position] == MapConstants.STREET) {
                     Intent i = new Intent(getActivity(), StreetViewActivity.class);
                     i.putExtra(MapConstants.LATITUDE, mTappedLocation.latitude);
                     i.putExtra(MapConstants.LONGITUDE, mTappedLocation.longitude);
                     startActivityForResult(i, 20);
                 }
             }
+
             @Override
             public void onMenuCollapse() {
                 mFilterMenuLayout.setVisibility(View.INVISIBLE);
-                ((HomeActivity)getActivity()).showBottomNav();
+                ((HomeActivity) getActivity()).showBottomNav();
                 UiUtil.showToolbar(getActivity());
                 mBubbleClose.start();
                 m.remove();
             }
+
             @Override
             public void onMenuExpand() {
             }
@@ -825,15 +824,16 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
 
     /**
      * Zooms in on business location and creates marker at the business location
-     * @param address address of business
+     *
+     * @param address      address of business
      * @param businessName name of business
-     * @param imageUrl url of business image
+     * @param imageUrl     url of business image
      */
-    public void handleDiscoverInteraction(String address, String businessName, String imageUrl){
+    public void handleDiscoverInteraction(String address, String businessName, String imageUrl) {
         EditText et = new EditText(getContext());
         et.setText(address);
         Location l = MapUtil.geoLocate(et, mMap, getContext());
-        if (imageUrl == null){
+        if (imageUrl == null) {
             imageUrl = "";
         }
         mTempMarker = mMap.addMarker(new MarkerOptions()
