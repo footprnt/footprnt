@@ -134,6 +134,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginBottom="8dp"
+            android:contentDescription="business rating"
             app:layout_constraintBottom_toBottomOf="@+id/view3"
             app:layout_constraintEnd_toEndOf="parent" />
 
@@ -144,6 +145,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginBottom="208dp"
+            android:contentDescription="archive business"
             app:layout_constraintBottom_toTopOf="@+id/rating"
             app:layout_constraintEnd_toEndOf="@+id/ivBusinessImage"
             app:srcCompat="@drawable/ic_save_check_blue" />
