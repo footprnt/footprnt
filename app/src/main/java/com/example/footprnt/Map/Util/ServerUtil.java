@@ -83,7 +83,7 @@ public class ServerUtil {
             @Override
             public void done(com.parse.ParseException e) {
                 if (e == null) {
-                    Toast.makeText(context, R.string.post_message, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, context.getResources().getString(R.string.post_message), Toast.LENGTH_SHORT).show();
                 } else {
                     e.printStackTrace();
                 }
