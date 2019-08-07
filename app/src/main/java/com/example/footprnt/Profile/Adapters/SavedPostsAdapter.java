@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,6 +46,8 @@ import java.util.ArrayList;
  * Adapts saved posts to profile recycler view
  *
  * @author Clarisa Leu
+ * @version 1.0
+ * @since 7-22-19
  */
 public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.ViewHolder> {
 
@@ -91,13 +94,13 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Vi
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        if (cityName.length() > 0) {
+        if (!TextUtils.isEmpty(cityName)) {
             sb.append(cityName).append(", ");
         }
-        if (countryName.length() > 0) {
+        if (!TextUtils.isEmpty(countryName)) {
             sb.append(countryName).append(", ");
         }
-        if (continentName.length() > 0) {
+        if (!TextUtils.isEmpty(continentName)) {
             sb.append(continentName);
         }
         holder.mTvTitle.setText(sb);

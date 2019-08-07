@@ -50,6 +50,8 @@ import java.util.List;
  * Fragment for profile page
  *
  * @author Clarisa Leu, Jocelyn Shen
+ * @version 1.0
+ * @since 7-22-19
  */
 public class ProfileFragment extends Fragment {
 
@@ -145,7 +147,6 @@ public class ProfileFragment extends Fragment {
         if (resultCode == AppConstants.RELOAD_USER_PROFILE_FRAGMENT_REQUEST_CODE) {
             mMultiAdapter.notifyItemChanged(0);
         }
-        // TODO: fix so the stat chart updates if user removes unique city, continent, or country (i.e. decrement)
         // Delete post
         if (resultCode == AppConstants.DELETE_POST_FROM_PROFILE) {
             int position = data.getIntExtra(AppConstants.position, 0);

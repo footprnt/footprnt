@@ -33,6 +33,8 @@ import com.parse.SaveCallback;
  * Edit post pop up window for ProfileFragment. Allows user to edit clicked on post from RV.
  *
  * @author Clarisa Leu-Rodriguez
+ * @version 1.0
+ * @since 7-22-19
  */
 public class EditPost extends AppCompatActivity {
 

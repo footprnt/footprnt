@@ -7,9 +7,11 @@
 package com.example.footprnt.Util;
 
 /**
- * MapConstants used in application
+ * Constants used in application
  *
  * @author Clarisa Leu, Jocelyn Shen, Stanley
+ * @version 1.0
+ * @since 2019-07-22
  */
 public class AppConstants {
 
