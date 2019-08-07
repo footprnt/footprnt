@@ -22,6 +22,8 @@ import com.example.footprnt.R;
  * View holder for post item for profile page
  *
  * @author Clarisa Leu-Rodriguez
+ * @version 1.0
+ * @since 7-22-19
  */
 public class PostViewHolder extends RecyclerView.ViewHolder {
 

@@ -98,7 +98,7 @@ public class ServerUtil {
      * @param md marker detail
      */
     public static Marker createMarker(GoogleMap mMap, MarkerDetails md) throws com.parse.ParseException {
-        if(md.getPost()!=null) {
+        if (md.getPost() != null) {
             Post post = (Post) md.getPost();
             double latitude = (post.fetchIfNeeded().getParseGeoPoint("location")).getLatitude();
             double longitude = (post.fetchIfNeeded().getParseGeoPoint("location")).getLongitude();

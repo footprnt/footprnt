@@ -33,6 +33,8 @@ import java.util.regex.Pattern;
  * Utility functions used throughout application
  *
  * @author Clarisa Leu, Jocelyn Shen
+ * @version 1.0
+ * @since 2019-07-22
  */
 public class AppUtil {
 

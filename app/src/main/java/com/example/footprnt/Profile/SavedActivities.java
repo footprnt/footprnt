@@ -32,10 +32,12 @@ import java.util.List;
  * Activity to display the saved activities/events from the discover page
  *
  * @author Clarisa Leu
+ * @version 1.0
+ * @since 7-22-19
  */
 public class SavedActivities extends AppCompatActivity {
 
-    private final String TAG = SavedActivities.class.getSimpleName();
+    private final String TAG = "SavedActivities";
     ImageView mBackButton;
     RecyclerView mRvSavedActivities;
     ArrayList<SavedActivity> mSavedActivities;
@@ -60,7 +62,6 @@ public class SavedActivities extends AppCompatActivity {
         mSavedActivitiesAdapter = new SavedActivitiesAdapter(mSavedActivities, this);
 
         // Get saved activities
-        // TODO: implement database for saved activities ?
         if (AppUtil.haveNetworkConnection(getApplicationContext())) {
             getSavedActivities();
             mRvSavedActivities.setLayoutManager(new GridLayoutManager(this, 2));
@@ -92,18 +93,17 @@ public class SavedActivities extends AppCompatActivity {
             @Override
             public void done(List<SavedActivity> objects, ParseException e) {
                 if (e == null) {
-                    if (objects.size() == 0) {
+                    if (objects.isEmpty()) {
                         mNoSavedActivities.setVisibility(View.VISIBLE);
                         mRvSavedActivities.setVisibility(View.INVISIBLE);
                     } else {
-                        for (int i = 0; i < objects.size(); i++) {
-                            final SavedActivity savedActivity = objects.get(i);
+                        for(SavedActivity savedActivity : objects){
                             mSavedActivities.add(savedActivity);
                             mSavedActivitiesAdapter.notifyItemInserted(mSavedActivities.size() - 1);
                         }
                     }
                 } else {
-                    AppUtil.logError(SavedActivities.this, TAG, "Error querying saved activities", e, true);
+                    AppUtil.logError(SavedActivities.this, TAG, getResources().getString(R.string.error_query_saved_activity), e, true);
                 }
             }
         });

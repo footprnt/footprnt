@@ -40,6 +40,8 @@ import java.io.File;
  * Activity to allow users to change their profile information
  *
  * @author Clarisa Leu-Rodriguez
+ * @version 1.0
+ * @since 2019-07-22
  */
 public class UserSettings extends AppCompatActivity {
 

@@ -22,6 +22,8 @@ import com.parse.RequestPasswordResetCallback;
  * Activity to reset user password
  *
  * @author Clarisa Leu-Rodriguez
+ * @version 1.0
+ * @since 2019-07-22
  */
 public class ForgotPassword extends AppCompatActivity {
 
