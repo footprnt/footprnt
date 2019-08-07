@@ -7,11 +7,12 @@
 package com.example.footprnt.Profile;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.footprnt.Profile.Adapters.StatAdapter;
@@ -57,15 +58,22 @@ public class UserStatistics extends AppCompatActivity {
         mContinents = getIntent().getStringArrayListExtra(AppConstants.continent);
 
         mCityAdapter = new StatAdapter(mCities, this);
-        mRvCities.setLayoutManager(new LinearLayoutManager(this));
+        mRvCities.setLayoutManager(new GridLayoutManager(this, 3));
         mRvCities.setAdapter(mCityAdapter);
 
         mCountryAdapter = new StatAdapter(mCountries, this);
-        mRvCountries.setLayoutManager(new LinearLayoutManager(this));
+        mRvCountries.setLayoutManager(new GridLayoutManager(this, 3));
         mRvCountries.setAdapter(mCountryAdapter);
 
         mContinentAdapter = new StatAdapter(mContinents, this);
-        mRvContinents.setLayoutManager(new LinearLayoutManager(this));
+        mRvContinents.setLayoutManager(new GridLayoutManager(this, 3));
         mRvContinents.setAdapter(mContinentAdapter);
+
+        mBackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 }
