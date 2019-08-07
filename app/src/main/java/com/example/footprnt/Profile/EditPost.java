@@ -32,7 +32,7 @@ import com.parse.SaveCallback;
 /**
  * Edit post pop up window for ProfileFragment. Allows user to edit clicked on post from RV.
  *
- * @author Clarisa Leu-Rodriguez
+ * @author Clarisa Leu-Rodriguez, Jocelyn Shen
  * @version 1.0
  * @since 7-22-19
  */
@@ -43,7 +43,7 @@ public class EditPost extends AppCompatActivity {
     TextView mTvDate;
     EditText mEtDescription;
     EditText mEtTitle;
-    EditText mEtLocation;
+    TextView mEtLocation;
     FloatingActionButton mBtnDelete;
     FloatingActionButton mBtnSave;
     Post mPost;
@@ -66,7 +66,7 @@ public class EditPost extends AppCompatActivity {
         mEtTitle = findViewById(R.id.etTitle);
         mEtLocation = findViewById(R.id.etLocation);
         mBtnDelete = findViewById(R.id.cancel);
-        mBtnSave = findViewById(R.id.save);
+        mBtnSave = findViewById(R.id.ivSaveBtnPost);
 
         setViews();
 
@@ -106,11 +106,14 @@ public class EditPost extends AppCompatActivity {
             public void onClick(View v) {
                 mPost.setTitle(mEtTitle.getText().toString());
                 mPost.setDescription(mEtDescription.getText().toString());
-                mPost.getUser().saveInBackground(new SaveCallback() {
+                mPost.saveInBackground(new SaveCallback() {
                     @Override
                     public void done(ParseException e) {
                         Intent it = new Intent();
                         it.putExtra(AppConstants.position, position);
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable(AppConstants.Post, mPost);
+                        it.putExtras(bundle);
                         setResult(AppConstants.UPDATE_POST_FROM_PROFILE, it);
                         finish();
                     }

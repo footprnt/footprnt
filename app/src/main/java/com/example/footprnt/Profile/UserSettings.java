@@ -193,7 +193,7 @@ public class UserSettings extends AppCompatActivity {
         mEtUsername = findViewById(R.id.etUsername);
         mEtNumber = findViewById(R.id.etNumber);
         mEtEmail = findViewById(R.id.etEmail);
-        mIvSave = findViewById(R.id.ivSave);
+        mIvSave = findViewById(R.id.ivSaveBtnPost);
         mEtDescription = findViewById(R.id.etDescription);
         mSwitchPrivacy = findViewById(R.id.switchPrivate);
     }

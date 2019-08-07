@@ -19,7 +19,7 @@
         android:orientation="vertical">
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/save"
+            android:id="@+id/ivSaveBtnPost"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
@@ -154,7 +154,7 @@
             card_view:layout_constraintStart_toStartOf="parent"
             card_view:layout_constraintTop_toBottomOf="@+id/etDescription" />
 
-        <EditText
+        <TextView
             android:id="@+id/etLocation"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -164,8 +164,6 @@
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:ems="10"
-            android:hint="@string/location"
-            android:inputType="textPersonName"
             android:textSize="14sp"
             card_view:layout_constraintEnd_toEndOf="parent"
             card_view:layout_constraintHorizontal_bias="0.0"
