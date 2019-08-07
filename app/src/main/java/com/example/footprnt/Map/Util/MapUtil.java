@@ -37,8 +37,9 @@ public class MapUtil {
      */
     public static JSONObject getContinents(Activity activity) {
         JSONObject mContinents = new JSONObject();
-        try{
-            InputStream is = activity.getAssets().open(MapConstants.CONTINENTS);;
+        try {
+            InputStream is = activity.getAssets().open(MapConstants.CONTINENTS);
+            ;
             int size = is.available();
             byte[] buffer = new byte[size];
             is.read(buffer);
@@ -65,7 +66,7 @@ public class MapUtil {
 
         Geocoder geocoder = new Geocoder(context);
         List<Address> list = new ArrayList<>();
-        try{
+        try {
             list = geocoder.getFromLocationName(searchString, 1);
         } catch (IOException e) {
 

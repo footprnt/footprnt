@@ -5,11 +5,14 @@
         android:title="User Statistics" />
     <item
         android:id="@+id/savedActivities"
+        android:contentDescription="saved activities"
         android:title="Saved Activities" />
     <item
         android:id="@+id/savedPosts"
+        android:contentDescription="saved posts"
         android:title="Saved Posts" />
     <item
         android:id="@+id/logout"
+        android:contentDescription="logout"
         android:title="Logout" />
 </menu>

@@ -3,11 +3,12 @@ package com.example.footprnt.Map.Util;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
-import androidx.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
@@ -25,7 +26,7 @@ import com.google.android.gms.maps.model.Marker;
  * @version 1.0
  * @since 2019-07-22
  */
-public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter{
+public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
 
     private final View mWindow;
     private Context mContext;
@@ -40,7 +41,7 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter{
      * Grabs the post associated with marker
      *
      * @param marker marker clicked on by user
-     * @param v view
+     * @param v      view
      */
     public void getPostObject(final Marker marker, final View v) {
         final ImageView image = v.findViewById(R.id.imageMarker);
@@ -54,7 +55,7 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter{
 
                 @Override
                 public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                    if(marker.getSnippet().equals(v.getTag())) {
+                    if (marker.getSnippet().equals(v.getTag())) {
                         return false;
                     }
 
@@ -91,7 +92,8 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter{
         try {
             mHandler = new Handler();
             getPostObject(marker, mWindow);
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
         return mWindow;
     }
 }
