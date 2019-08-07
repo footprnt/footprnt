@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,6 +46,8 @@ import java.util.ArrayList;
  * Adapts saved posts to profile recycler view
  *
  * @author Clarisa Leu
+ * @version 1.0
+ * @since 7-22-19
  */
 public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.ViewHolder> {
 
@@ -63,7 +66,6 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Vi
 
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        mContext = parent.getContext();  // get the context and create the inflater
         LayoutInflater inflater = LayoutInflater.from(mContext);
         View postView = inflater.inflate(R.layout.item_post_card, parent, false);
         return new ViewHolder(postView);  // return a new ViewHolder
@@ -92,13 +94,13 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Vi
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        if (cityName.length() > 0) {
+        if (!TextUtils.isEmpty(cityName)) {
             sb.append(cityName).append(", ");
         }
-        if (countryName.length() > 0) {
+        if (!TextUtils.isEmpty(countryName)) {
             sb.append(countryName).append(", ");
         }
-        if (continentName.length() > 0) {
+        if (!TextUtils.isEmpty(continentName)) {
             sb.append(continentName);
         }
         holder.mTvTitle.setText(sb);
@@ -157,7 +159,7 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Vi
                 savedPost1.deleteInBackground(new DeleteCallback() {
                     @Override
                     public void done(ParseException e) {
-                        Toast.makeText(mContext, R.string.delete_saved_post, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, mContext.getResources().getString(R.string.delete_saved_post), Toast.LENGTH_SHORT).show();
                     }
                 });
                 if (mPosts.size() == 0) {

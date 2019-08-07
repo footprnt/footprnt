@@ -18,6 +18,8 @@ import java.io.Serializable;
  * SavePost class for saving posts functionality
  *
  * @author Clarisa Leu
+ * @version 1.0
+ * @since 7-22-19
  */
 @ParseClassName("SavedPost")
 public class SavedPost extends ParseObject implements Serializable {

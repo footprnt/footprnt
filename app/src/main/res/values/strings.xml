@@ -23,15 +23,17 @@
     <string name="take_photo">Take a Photo</string>
     <string name="camera_message">Picture was not taken!</string>
     <string name="post_incomplete">You must have title and snippet</string>
-    <string name="facebook_app_id">340294903574165</string>
-    <string name="fb_login_protocol_scheme">fb340294903574165</string>
     <string name="photo_error">Invalid media type</string>
     <string name="delete_saved_post">Saved Post Deleted</string>
+    <string name="delete_saved_activity">Deleted Saved Activity</string>
     <string name="saved_activity">Saved Activity</string>
     <string name="unsaved_activity">Unsaved Activity</string>
     <string name="error_query_saved_posts">Error querying saved posts</string>
     <string name="error_query_saved_activity">Error querying saved activities</string>
+    <string name="error_query_posts">Error querying posts</string>
     <string name="tel">tel:</string>
+    <string name="saved_post">Saved Post</string>
+    <string name="unsaved_post">Unsaved Post</string>
     <string name="username_taken">Username taken</string>
     <string name="username_already_exist">Username already exists</string>
     <string name="password_must_match">Passwords must match</string>
@@ -43,4 +45,11 @@
     <string name="network_error_try_again">Network error, please try again later.</string>
     <string name="password_reset_check_email">Please check your password for reset instructions</string>
     <string name="upload_or_take_photo">Upload or Take a Photo</string>
+    <string name="visited_cities">Visited Cities</string>
+    <string name="visited_countries">Visited Countries</string>
+    <string name="visited_continents">Visited Continents</string>
+    <string name="unvisited">Unvisited</string>
+    <string name="no_location_permission">No location permission</string>
+    <string name="profile_image">profileImg</string>
+
 </resources>

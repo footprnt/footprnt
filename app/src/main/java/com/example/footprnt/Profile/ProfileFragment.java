@@ -50,14 +50,13 @@ import java.util.List;
  * Fragment for profile page
  *
  * @author Clarisa Leu, Jocelyn Shen
+ * @version 1.0
+ * @since 7-22-19
  */
 public class ProfileFragment extends Fragment {
 
-    public final static String TAG = ProfileFragment.class.getName();
+    public final static String TAG = "ProfileFragment";
     final ParseUser mUser = ParseUser.getCurrentUser();
-
-    // For anonymous user:
-    private boolean mIsPrivate;
 
     // For database:
     PostRepository mPostRepository;
@@ -148,7 +147,6 @@ public class ProfileFragment extends Fragment {
         if (resultCode == AppConstants.RELOAD_USER_PROFILE_FRAGMENT_REQUEST_CODE) {
             mMultiAdapter.notifyItemChanged(0);
         }
-        // TODO: fix so the stat chart updates if user removes unique city, continent, or country (i.e. decrement)
         // Delete post
         if (resultCode == AppConstants.DELETE_POST_FROM_PROFILE) {
             int position = data.getIntExtra(AppConstants.position, 0);
@@ -188,6 +186,7 @@ public class ProfileFragment extends Fragment {
                 popup.getMenuInflater().inflate(R.menu.popup_menu, popup.getMenu());
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     public boolean onMenuItemClick(MenuItem item) {
+                        Intent intent = null;
                         if (item.getItemId() == R.id.logout) {
                             // Logout
                             if (AppUtil.haveNetworkConnection(getActivity().getApplicationContext())) {
@@ -196,19 +195,19 @@ public class ProfileFragment extends Fragment {
                                 PostDatabase.getPostDatabase(getContext()).clearAllTables();
                                 UserDatabase.getUserDatabase(getContext()).clearAllTables();
                                 ParseUser.logOut();
-                                Intent intent = new Intent(getActivity(), LoginActivity.class);
-                                startActivity(intent);
+                                intent = new Intent(getActivity(), LoginActivity.class);
                             } else {
-                                Toast.makeText(getContext(), "No network connection, try again later", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), getResources().getString(R.string.network_error_try_again), Toast.LENGTH_SHORT).show();
                             }
                         } else if (item.getItemId() == R.id.savedPosts) {
                             // Saved Posts
-                            Intent it = new Intent(getContext(), SavedPosts.class);
-                            startActivity(it);
+                            intent = new Intent(getContext(), SavedPosts.class);
                         } else if (item.getItemId() == R.id.savedActivities) {
                             // Saved Activities
-                            Intent it = new Intent(getContext(), SavedActivities.class);
-                            startActivity(it);
+                            intent = new Intent(getContext(), SavedActivities.class);
+                        }
+                        if (intent != null) {
+                            startActivity(intent);
                         }
                         return true;
                     }
@@ -270,7 +269,7 @@ public class ProfileFragment extends Fragment {
                         }
                     }
                 } else {
-                    AppUtil.logError(getContext(), TAG, "Error querying posts", e, true);
+                    AppUtil.logError(getContext(), TAG, getResources().getString(R.string.error_query_posts), e, true);
                 }
                 mObjects.add(mUser);
                 mStats.add(mCities);
@@ -279,7 +278,7 @@ public class ProfileFragment extends Fragment {
                 mObjects.add(mStats);
                 mStatRepository.insertStat(new StatWrapper(mStats, mUser));
                 mMultiAdapter.notifyDataSetChanged();
-                if (mPosts.size() > 0 && mPosts != null) {
+                if (mPosts.size() > 0) {
                     mObjects.addAll(mPosts);
                     mMultiAdapter.notifyDataSetChanged();
                 } else {

@@ -31,6 +31,8 @@ import java.util.List;
  * Saved Posts activity
  *
  * @author Clarisa Leu
+ * @version 1.0
+ * @since 2019-07-22
  */
 public class SavedPosts extends AppCompatActivity {
 
@@ -58,7 +60,6 @@ public class SavedPosts extends AppCompatActivity {
         mSavedPosts = new ArrayList<>();
         mSavedPostsAdapter = new SavedPostsAdapter(mSavedPosts, this);
         // Get saved posts
-        // TODO: implement database for saved posts ?
         if (AppUtil.haveNetworkConnection(getApplicationContext())) {
             getSavedPosts();
             mRvSavedPosts.setLayoutManager(new LinearLayoutManager(this));
@@ -87,7 +88,7 @@ public class SavedPosts extends AppCompatActivity {
             @Override
             public void done(List<SavedPost> objects, ParseException e) {
                 if (e == null) {
-                    if (objects.size() == 0) {
+                    if (objects.isEmpty()) {
                         mNoSavedPosts.setVisibility(View.VISIBLE);
                         mRvSavedPosts.setVisibility(View.INVISIBLE);
                     } else {
@@ -97,7 +98,7 @@ public class SavedPosts extends AppCompatActivity {
                         }
                     }
                 } else {
-                    AppUtil.logError(SavedPosts.this, TAG, String.valueOf(R.string.error_query_saved_posts), e, true);
+                    AppUtil.logError(SavedPosts.this, TAG, getResources().getString(R.string.error_query_saved_posts), e, true);
                 }
             }
         });

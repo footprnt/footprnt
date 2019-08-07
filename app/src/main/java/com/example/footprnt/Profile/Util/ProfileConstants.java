@@ -10,6 +10,8 @@ package com.example.footprnt.Profile.Util;
  * MapConstants used in ProfileFragment
  *
  * @author Clarisa Leu-Rodriguez
+ * @version 1.0
+ * @since 7-22-19
  */
 public class ProfileConstants {
 

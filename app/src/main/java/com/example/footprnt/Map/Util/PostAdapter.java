@@ -60,7 +60,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         if (privacySetting == null) {
             privacy = false;
         } else {
-            if ((Boolean) privacySetting == true){
+            if ((Boolean) privacySetting == true) {
                 privacy = true;
             } else {
                 privacy = false;

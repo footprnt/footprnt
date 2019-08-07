@@ -22,6 +22,8 @@ import java.util.ArrayList;
  * SavedActivity class for saving activities from discover page functionality
  *
  * @author Clarisa Leu
+ * @version 1.0
+ * @since 7-22-19
  */
 @ParseClassName("SavedActivity")
 public class SavedActivity extends ParseObject implements Serializable {

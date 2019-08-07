@@ -1,6 +1,7 @@
 package com.example.footprnt.Map;
 
 import android.os.Bundle;
+
 import androidx.fragment.app.FragmentActivity;
 
 import com.example.footprnt.Map.Util.MapConstants;

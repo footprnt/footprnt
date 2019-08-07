@@ -7,9 +7,11 @@
 package com.example.footprnt.Util;
 
 /**
- * MapConstants used in application
+ * Constants used in application
  *
  * @author Clarisa Leu, Jocelyn Shen, Stanley
+ * @version 1.0
+ * @since 2019-07-22
  */
 public class AppConstants {
 
@@ -57,6 +59,7 @@ public class AppConstants {
     // For camera:
     public static String photoFileName = "photo.jpg";
     public static String photoFileNameShare = "share.jpg";
+    public static String photoType = "image/jpeg";
     public static String fileProvider = "com.example.fileprovider";
     public static String profileImagePath = "profPic.jpg";  // Used in taking new profile picture
     public static String profileImagePathJPEG = "profPic.jpeg";

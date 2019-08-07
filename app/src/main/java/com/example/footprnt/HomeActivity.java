@@ -101,6 +101,7 @@ public class HomeActivity extends AppCompatActivity {
                 return true;
             }
         });
+        
         mNavView.setSelectedItemId(R.id.navigation_home);
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
