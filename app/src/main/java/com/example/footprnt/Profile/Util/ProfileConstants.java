@@ -26,4 +26,7 @@ public class ProfileConstants {
 
     // For no posts object to add to adapter:
     public static final String noPosts = "No Posts!";
+
+    // URL for detailed stat view:
+    public static final String wikiUrl = "https://en.wikipedia.org/wiki/";
 }

@@ -170,10 +170,11 @@ public class ProfileFragment extends Fragment {
                 mMultiAdapter.notifyItemChanged(position);
             }
         }
-        // TODO: fix so UI updates
         // Save post
         if (resultCode == AppConstants.UPDATE_POST_FROM_PROFILE) {
             int position = data.getIntExtra(AppConstants.position, 0);
+            Post post = (Post) data.getSerializableExtra(AppConstants.Post);
+            mObjects.set(position, post);
             mMultiAdapter.notifyItemChanged(position);
         }
     }

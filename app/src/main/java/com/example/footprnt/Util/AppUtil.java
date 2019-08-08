@@ -69,6 +69,9 @@ public class AppUtil {
      */
     public static ArrayList<String> parseJSONArray(JSONArray arr) throws JSONException {
         ArrayList<String> list = new ArrayList<>();
+        if (arr == null) {
+            return new ArrayList<>();
+        }
         for (int i = 0; i < arr.length(); i++) {
             list.add(arr.getString(i));
         }

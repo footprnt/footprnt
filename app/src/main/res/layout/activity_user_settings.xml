@@ -210,7 +210,7 @@
         app:layout_constraintVertical_bias="0.109" />
 
     <ImageView
-        android:id="@+id/ivSave"
+        android:id="@+id/ivSaveBtnPost"
         android:layout_width="40dp"
         android:layout_height="34dp"
         android:layout_marginStart="8dp"

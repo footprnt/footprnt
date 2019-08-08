@@ -41,6 +41,7 @@ import com.example.footprnt.Profile.UserSettings;
 import com.example.footprnt.Profile.Util.ProfileConstants;
 import com.example.footprnt.R;
 import com.example.footprnt.Util.AppConstants;
+import com.example.footprnt.Util.AppUtil;
 import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
@@ -51,6 +52,8 @@ import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
+
+import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -373,8 +376,13 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     vh3.getViewFlipper().showPrevious();
                 }
             });
-            // TODO: put adventures complete number here
-            vh3.getAdventureNumber().setText("FIX ME");
+            int numberOfAdventuresCompleted = 0;
+            try {
+                numberOfAdventuresCompleted = AppUtil.parseJSONArray(ParseUser.getCurrentUser().getJSONArray(AppConstants.completed_adventure)).size();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            vh3.getAdventureNumber().setText(Integer.toString(numberOfAdventuresCompleted));
             vh3.getProgressBar().setVisibility(View.INVISIBLE);
         }
     }
