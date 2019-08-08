@@ -117,6 +117,13 @@ public class ProfileFragment extends Fragment {
             StatDatabase.getStatDatabase(getContext()).clearAllTables();
             PostDatabase.getPostDatabase(getContext()).clearAllTables();
             UserDatabase.getUserDatabase(getContext()).clearAllTables();
+            // For Refresh:
+            mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    refreshViews();
+                }
+            });
             getPosts();
         } else {
             // Add User
@@ -135,20 +142,13 @@ public class ProfileFragment extends Fragment {
                     mPostWrappers.add(p);
                 }
                 mObjects.addAll(mPostWrappers);
+                mSwipeContainer.setVisibility(View.INVISIBLE);
             }
         }
         // For post feed view:
         mMultiAdapter = new MultiViewAdapter(getContext(), mObjects);
         mLayout.setLayoutManager(new LinearLayoutManager(getContext()));
         mLayout.setAdapter(mMultiAdapter);
-
-        // For Refresh:
-        mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                refreshViews();
-            }
-        });
 
         return v;
     }
@@ -157,7 +157,13 @@ public class ProfileFragment extends Fragment {
      * Helper method to refresh views
      */
     private void refreshViews() {
+        mPosts.clear();
+        mPostWrappers.clear();
         mObjects.clear();
+        mCities.clear();
+        mCountries.clear();
+        mContinents.clear();
+        mStats.clear();
         getPosts();
         mSwipeContainer.setRefreshing(false);
     }
