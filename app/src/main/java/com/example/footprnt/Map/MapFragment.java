@@ -152,6 +152,11 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_map, container, false);
         mProgressBar = v.findViewById(R.id.pbLoading);
+        // Check for network
+        if(!AppUtil.haveNetworkConnection(getContext())){
+            Toast.makeText(getContext(), getResources().getString(R.string.network_error_try_again), Toast.LENGTH_LONG).show();
+            mProgressBar.setVisibility(View.INVISIBLE);
+        }
         initialization();
         return v;
     }

@@ -130,61 +130,69 @@ public class DiscoverFragment extends Fragment implements LocationListener {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_discover, parent, false);
-        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        // Set Views & Initialize
-        rvRestaurants = view.findViewById(R.id.rvRestaurants);
-        mTvRestaurants = view.findViewById(R.id.restaurants);
-        rvMuseums = view.findViewById(R.id.rvMuseums);
-        mTvMuseums = view.findViewById(R.id.museums);
-        rvHotels = view.findViewById(R.id.rvHotels);
-        mTvHotels = view.findViewById(R.id.hotels);
-        rvClubs = view.findViewById(R.id.rvClubs);
-        mTvClubs = view.findViewById(R.id.clubs);
-        mSearchText = view.findViewById(R.id.searchText);
-        mAddress = view.findViewById(R.id.address);
-        mNoEvent = view.findViewById(R.id.noEvent);
-        mNoEvent.setVisibility(View.INVISIBLE);
-        mNothingNearYou = view.findViewById(R.id.nothingNearYou);
-        mNothingNearYou.setVisibility(View.INVISIBLE);
-        mProgressBar = view.findViewById(R.id.pbLoading);
-        mProgressBarAdventure = view.findViewById(R.id.pbLoading2);
-        mArrQueries = new ArrayList<>();
-        mArrRecyclerViews = new ArrayList<>();
-        mArrAdapters = new ArrayList<>();
-        mArrBusinesses = new ArrayList<>();
-        mRestaurants = new ArrayList<>();
-        mMuseums = new ArrayList<>();
-        mHotels = new ArrayList<>();
-        mClubs = new ArrayList<>();
-        mEventImage = view.findViewById(R.id.eventImage);
-        mEventTitle = view.findViewById(R.id.eventTitle);
-        mEventDescription = view.findViewById(R.id.eventDescrption);
-        mEventTime = view.findViewById(R.id.eventStart);
-        mEventUrl = view.findViewById(R.id.eventUrl);
+        View view = null;
+        // Check for network
+        if(!AppUtil.haveNetworkConnection(getContext())){
+            Toast.makeText(getContext(), getResources().getString(R.string.network_error_try_again), Toast.LENGTH_LONG).show();
+            view = inflater.inflate(R.layout.item_no_network_connection_profile, parent, false);
+        } else {
+            view = inflater.inflate(R.layout.fragment_discover, parent, false);
+            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            // Set Views & Initialize
+            rvRestaurants = view.findViewById(R.id.rvRestaurants);
+            mTvRestaurants = view.findViewById(R.id.restaurants);
+            rvMuseums = view.findViewById(R.id.rvMuseums);
+            mTvMuseums = view.findViewById(R.id.museums);
+            rvHotels = view.findViewById(R.id.rvHotels);
+            mTvHotels = view.findViewById(R.id.hotels);
+            rvClubs = view.findViewById(R.id.rvClubs);
+            mTvClubs = view.findViewById(R.id.clubs);
+            mSearchText = view.findViewById(R.id.searchText);
+            mAddress = view.findViewById(R.id.address);
+            mNoEvent = view.findViewById(R.id.noEvent);
+            mNoEvent.setVisibility(View.INVISIBLE);
+            mNothingNearYou = view.findViewById(R.id.nothingNearYou);
+            mNothingNearYou.setVisibility(View.INVISIBLE);
+            mProgressBar = view.findViewById(R.id.pbLoading);
+            mProgressBarAdventure = view.findViewById(R.id.pbLoading2);
+            mArrQueries = new ArrayList<>();
+            mArrRecyclerViews = new ArrayList<>();
+            mArrAdapters = new ArrayList<>();
+            mArrBusinesses = new ArrayList<>();
+            mRestaurants = new ArrayList<>();
+            mMuseums = new ArrayList<>();
+            mHotels = new ArrayList<>();
+            mClubs = new ArrayList<>();
+            mEventImage = view.findViewById(R.id.eventImage);
+            mEventTitle = view.findViewById(R.id.eventTitle);
+            mEventDescription = view.findViewById(R.id.eventDescrption);
+            mEventTime = view.findViewById(R.id.eventStart);
+            mEventUrl = view.findViewById(R.id.eventUrl);
 
-        // Handle user searching:
-        handleSearch();
-        try {
-            getAddress();
-            getAdventureOfTheDay();
-            prepareArrayLists();
-            populateView();
-            mSwipeContainer = view.findViewById(R.id.swipeContainer2);
-            mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                @Override
-                public void onRefresh() {
-                    RefreshBusinesses();
-                }
-            });
-            mSwipeContainer.setColorSchemeResources(R.color.refresh_progress_1,
-                    R.color.refresh_progress_2,
-                    R.color.refresh_progress_3,
-                    R.color.refresh_progress_4,
-                    R.color.refresh_progress_5);
-        } catch (Exception e) {
-            Toast.makeText(getContext(), DiscoverConstants.NO_BUSINESS_MESSAGE, Toast.LENGTH_LONG).show();
+            // Handle user searching:
+            handleSearch();
+            try {
+                getAddress();
+                getAdventureOfTheDay();
+                prepareArrayLists();
+                populateView();
+                mSwipeContainer = view.findViewById(R.id.swipeContainer2);
+                mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        RefreshBusinesses();
+                    }
+                });
+                mSwipeContainer.setColorSchemeResources(R.color.refresh_progress_1,
+                        R.color.refresh_progress_2,
+                        R.color.refresh_progress_3,
+                        R.color.refresh_progress_4,
+                        R.color.refresh_progress_5);
+            } catch (Exception e) {
+                Toast.makeText(getContext(), DiscoverConstants.NO_BUSINESS_MESSAGE, Toast.LENGTH_LONG).show();
+            }
         }
+        assert view!=null;
         return view;
     }
 

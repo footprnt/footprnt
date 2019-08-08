@@ -126,6 +126,7 @@ public class ProfileFragment extends Fragment {
             });
             getPosts();
         } else {
+            mObjects.clear();
             // Add User
             if (mUserWrapper != null) {
                 mObjects.add(mUserWrapper);
@@ -142,7 +143,12 @@ public class ProfileFragment extends Fragment {
                     mPostWrappers.add(p);
                 }
                 mObjects.addAll(mPostWrappers);
-                mSwipeContainer.setVisibility(View.INVISIBLE);
+                mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        Toast.makeText(getContext(), getResources().getString(R.string.network_error_try_again), Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         }
         // For post feed view:
@@ -158,7 +164,6 @@ public class ProfileFragment extends Fragment {
      */
     private void refreshViews() {
         mPosts.clear();
-        mPostWrappers.clear();
         mObjects.clear();
         mCities.clear();
         mCountries.clear();

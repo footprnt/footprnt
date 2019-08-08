@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.footprnt.Profile.Adapters.StatAdapter;
 import com.example.footprnt.R;
 import com.example.footprnt.Util.AppConstants;
+import com.example.footprnt.Util.AppUtil;
 
 import java.util.ArrayList;
 
@@ -47,6 +48,12 @@ public class UserStatistics extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_statistics);
+
+        // Network error case
+        if (!AppUtil.haveNetworkConnection(getApplicationContext())) {
+            Toast.makeText(this, getResources().getString(R.string.network_error_try_again), Toast.LENGTH_SHORT).show();
+            finish();
+        }
 
         // Set Views
         mBackButton = findViewById(R.id.ivBack);
