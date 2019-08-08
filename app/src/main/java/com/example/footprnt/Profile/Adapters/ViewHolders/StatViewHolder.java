@@ -7,7 +7,6 @@
 package com.example.footprnt.Profile.Adapters.ViewHolders;
 
 import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
@@ -33,16 +32,6 @@ public class StatViewHolder extends RecyclerView.ViewHolder {
     PieChart mPieChartCountry;
     PieChart mPieChartContinent;
     TextView mAdventureNumber;
-    ProgressBar mProgressBar;
-
-    /**
-     * Getter for progress bar
-     *
-     * @return ProgressBar
-     */
-    public ProgressBar getProgressBar() {
-        return mProgressBar;
-    }
 
     /**
      * Getter for the ViewFlipper to switch between pie charts
@@ -131,6 +120,5 @@ public class StatViewHolder extends RecyclerView.ViewHolder {
         mPieChartCity = v.findViewById(R.id.pieChartCity);
         mPieChartCountry = v.findViewById(R.id.pieChartCountry);
         mPieChartContinent = v.findViewById(R.id.pieChartContinent);
-        mProgressBar = v.findViewById(R.id.progressBar);
     }
 }

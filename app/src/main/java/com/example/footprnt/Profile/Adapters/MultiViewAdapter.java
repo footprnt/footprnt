@@ -217,7 +217,6 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
      */
     private void configurePostViewHolder(final PostViewHolder vh1, final int position) {
         if (position < mItems.size()) {
-            vh1.getProgressBar().setVisibility(View.VISIBLE);
             Post post = (Post) mItems.get(position);
             if (post != null) {
                 vh1.getRootView().setTag(post);
@@ -269,7 +268,6 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     }
                 });
             }
-            vh1.getProgressBar().setVisibility(View.INVISIBLE);
         }
     }
 
@@ -281,7 +279,6 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
      */
     private void configureUserInfoViewHolder(final UserInfoViewHolder vh2, final int position) {
         if (position < mItems.size()) {
-            vh2.getProgressBar().setVisibility(View.VISIBLE);
             final ParseUser user = (ParseUser) mItems.get(position);
             if (user != null) {
                 if (user.getParseFile(AppConstants.profileImage) != null) {
@@ -304,7 +301,6 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     }
                 });
             }
-            vh2.getProgressBar().setVisibility(View.INVISIBLE);
         }
     }
 
@@ -316,7 +312,6 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
      */
     private void configureStatViewHolder(final StatViewHolder vh3, final int position) {
         if (position < mItems.size()) {
-            vh3.getProgressBar().setVisibility(View.VISIBLE);
             final ArrayList<HashMap<String, Integer>> stats = (ArrayList<HashMap<String, Integer>>) mItems.get(position);
             final HashMap<String, Integer> cities = stats.get(0);
             final HashMap<String, Integer> countries = stats.get(1);
@@ -376,15 +371,21 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     vh3.getViewFlipper().showPrevious();
                 }
             });
-            int numberOfAdventuresCompleted = 0;
-            try {
-                numberOfAdventuresCompleted = AppUtil.parseJSONArray(ParseUser.getCurrentUser().getJSONArray(AppConstants.completed_adventure)).size();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            vh3.getAdventureNumber().setText(Integer.toString(numberOfAdventuresCompleted));
-            vh3.getProgressBar().setVisibility(View.INVISIBLE);
+            vh3.getAdventureNumber().setText(getAdventureOfDayNumber());
         }
+    }
+
+    /**
+     * Helper method to get the adventure of the day number
+     */
+    private String getAdventureOfDayNumber() {
+        int numberOfAdventuresCompleted = 0;
+        try {
+            numberOfAdventuresCompleted = AppUtil.parseJSONArray(ParseUser.getCurrentUser().getJSONArray(AppConstants.completed_adventure)).size();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return Integer.toString(numberOfAdventuresCompleted);
     }
 
     /**
@@ -405,7 +406,6 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
      */
     private void configurePostWrapperViewHolder(final PostViewHolder vh5, final int position) {
         if (position < mItems.size()) {
-            vh5.getProgressBar().setVisibility(View.VISIBLE);
             PostWrapper postWrapper = (PostWrapper) mItems.get(position);
             if (postWrapper != null) {
                 vh5.getRootView().setTag(postWrapper);
@@ -449,7 +449,6 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     Glide.with(mContext).asBitmap().load(postWrapper.getImageUrl()).centerCrop().into(target);
                 }
             }
-            vh5.getProgressBar().setVisibility(View.INVISIBLE);
         }
     }
 
@@ -461,7 +460,6 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
      */
     private void configureUserWrapperViewHolder(final UserInfoViewHolder vh6, final int position) {
         if (position < mItems.size()) {
-            vh6.getProgressBar().setVisibility(View.VISIBLE);
             UserWrapper userWrapper = (UserWrapper) mItems.get(position);
             if (userWrapper != null) {
                 if (!TextUtils.isEmpty(userWrapper.getProfileImg())) {
@@ -473,7 +471,6 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 vh6.getTvUsername().setText("@" + userWrapper.getUsername());
                 vh6.getTvEditProfile().setVisibility(View.INVISIBLE);
             }
-            vh6.getProgressBar().setVisibility(View.INVISIBLE);
         }
     }
 
@@ -485,7 +482,6 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
      */
     private void configureStatWrapperViewHolder(final StatViewHolder vh7, final int position) {
         if (position < mItems.size()) {
-            vh7.getProgressBar().setVisibility(View.VISIBLE);
             StatWrapper statWrapper = (StatWrapper) mItems.get(position);
             if (statWrapper.getCityVisited() < ProfileConstants.totalNumCities) {
                 setUpPieChart(vh7.getPieChartCity(), statWrapper.getCityVisited(), ProfileConstants.totalNumCities, mContext.getResources().getString(R.string.visited_cities));
@@ -542,9 +538,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     vh7.getViewFlipper().showPrevious();
                 }
             });
-            // TODO: put adventures complete number here
-            vh7.getAdventureNumber().setText("FIX ME");
-            vh7.getProgressBar().setVisibility(View.INVISIBLE);
+            vh7.getAdventureNumber().setText(getAdventureOfDayNumber());
         }
     }
 
