@@ -23,6 +23,7 @@ import androidx.appcompat.widget.PopupMenu;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.footprnt.Database.Models.PostWrapper;
 import com.example.footprnt.Database.Models.StatWrapper;
@@ -81,8 +82,9 @@ public class ProfileFragment extends Fragment {
     HashMap<String, Integer> mContinents;  // Contains the continents and number of times visited by user
     ArrayList<HashMap<String, Integer>> mStats;  // StatWrapper to be passed to adapter
 
-    // For progress bar
+    // For progress bar & swipe to refresh:
     ProgressBar mProgressBar;
+    SwipeRefreshLayout mSwipeContainer;
 
     @Nullable
     @Override
@@ -90,6 +92,8 @@ public class ProfileFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_profile, container, false);
         getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         mLayout = v.findViewById(R.id.rvPosts);
+        mProgressBar = v.findViewById(R.id.pbLoading);
+        mSwipeContainer = v.findViewById(R.id.swipeContainer);
         setUpToolbar(v);
         setUpDB();
 
@@ -101,7 +105,6 @@ public class ProfileFragment extends Fragment {
         mContinents = new HashMap<>();
         mPosts = new ArrayList<>();
         mStats = new ArrayList<>();
-        mProgressBar = v.findViewById(R.id.pbLoading);
 
         // Get posts from DB or Network
         if (AppUtil.haveNetworkConnection(getActivity())) {
@@ -132,8 +135,28 @@ public class ProfileFragment extends Fragment {
         mMultiAdapter = new MultiViewAdapter(getContext(), mObjects);
         mLayout.setLayoutManager(new LinearLayoutManager(getContext()));
         mLayout.setAdapter(mMultiAdapter);
+
+
+        // For Refresh:
+        mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshViews();
+            }
+        });
+
         return v;
     }
+
+    /**
+     * Helper method to refresh views
+     */
+    private void refreshViews(){
+        mObjects.clear();
+        getPosts();
+        mSwipeContainer.setRefreshing(false);
+    }
+
 
     /**
      * Helper method to set up database
