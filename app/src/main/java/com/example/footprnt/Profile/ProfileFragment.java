@@ -10,16 +10,13 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.PopupMenu;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -41,6 +38,12 @@ import com.example.footprnt.Profile.Util.ProfileConstants;
 import com.example.footprnt.R;
 import com.example.footprnt.Util.AppConstants;
 import com.example.footprnt.Util.AppUtil;
+import com.nightonke.boommenu.BoomButtons.ButtonPlaceEnum;
+import com.nightonke.boommenu.BoomButtons.HamButton;
+import com.nightonke.boommenu.BoomButtons.OnBMClickListener;
+import com.nightonke.boommenu.BoomMenuButton;
+import com.nightonke.boommenu.ButtonEnum;
+import com.nightonke.boommenu.Piece.PiecePlaceEnum;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
@@ -82,9 +85,10 @@ public class ProfileFragment extends Fragment {
     HashMap<String, Integer> mContinents;  // Contains the continents and number of times visited by user
     ArrayList<HashMap<String, Integer>> mStats;  // StatWrapper to be passed to adapter
 
-    // For progress bar & swipe to refresh:
+    // For progress bar, menu & swipe to refresh:
     ProgressBar mProgressBar;
     SwipeRefreshLayout mSwipeContainer;
+    private BoomMenuButton mBoomButtonMenu;
 
     @Nullable
     @Override
@@ -94,7 +98,10 @@ public class ProfileFragment extends Fragment {
         mLayout = v.findViewById(R.id.rvPosts);
         mProgressBar = v.findViewById(R.id.pbLoading);
         mSwipeContainer = v.findViewById(R.id.swipeContainer);
-        setUpToolbar(v);
+        mBoomButtonMenu = v.findViewById(R.id.bmb);
+
+
+        setUpMenu();
         setUpDB();
 
         // Populate stat maps and get posts
@@ -136,7 +143,6 @@ public class ProfileFragment extends Fragment {
         mLayout.setLayoutManager(new LinearLayoutManager(getContext()));
         mLayout.setAdapter(mMultiAdapter);
 
-
         // For Refresh:
         mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -151,10 +157,84 @@ public class ProfileFragment extends Fragment {
     /**
      * Helper method to refresh views
      */
-    private void refreshViews(){
+    private void refreshViews() {
         mObjects.clear();
         getPosts();
         mSwipeContainer.setRefreshing(false);
+    }
+
+
+    /**
+     * Helper method to set up menu
+     */
+    private void setUpMenu() {
+        mBoomButtonMenu.setButtonEnum(ButtonEnum.Ham);
+        mBoomButtonMenu.setPiecePlaceEnum(PiecePlaceEnum.HAM_4);
+        mBoomButtonMenu.setButtonPlaceEnum(ButtonPlaceEnum.HAM_4);
+
+        // Places you've been so far
+        mBoomButtonMenu.addBuilder(new HamButton.Builder()
+                .normalImageRes(R.drawable.globe).rippleEffect(true).normalColor(R.color.colorPrimary)
+                .normalTextRes(R.string.places_been_so_far).shadowEffect(true).listener(new OnBMClickListener() {
+                    @Override
+                    public void onBoomButtonClick(int index) {
+                        // User Statistics - pass in the key set of the users traveled places
+                        Intent intent = new Intent(getContext(), UserStatistics.class);
+                        ArrayList<String> cityKeys = new ArrayList<>(mCities.keySet());
+                        ArrayList<String> countryKeys = new ArrayList<>(mCountries.keySet());
+                        ArrayList<String> continentKeys = new ArrayList<>(mContinents.keySet());
+                        intent.putStringArrayListExtra(AppConstants.city, cityKeys);
+                        intent.putStringArrayListExtra(AppConstants.country, countryKeys);
+                        intent.putStringArrayListExtra(AppConstants.continent, continentKeys);
+                        startActivity(intent);
+                    }
+                })
+                .subNormalTextRes(R.string.blank));
+
+        // Saved Posts
+        mBoomButtonMenu.addBuilder(new HamButton.Builder()
+                .normalImageRes(R.drawable.ic_save_check_filled_blue).rippleEffect(true)
+                .normalTextRes(R.string.saved_posts).shadowEffect(true).normalColor(R.color.colorPrimary).listener(new OnBMClickListener() {
+                    @Override
+                    public void onBoomButtonClick(int index) {
+                        Intent intent = new Intent(getContext(), SavedPosts.class);
+                        startActivity(intent);
+                    }
+                })
+                .subNormalTextRes(R.string.blank));
+
+        // Saved Activities
+        mBoomButtonMenu.addBuilder(new HamButton.Builder()
+                .normalImageRes(R.drawable.ic_save_check_filled).rippleEffect(true)
+                .normalTextRes(R.string.saved_activities).shadowEffect(true).normalColor(R.color.colorPrimary).listener(new OnBMClickListener() {
+                    @Override
+                    public void onBoomButtonClick(int index) {
+                        Intent intent = new Intent(getContext(), SavedActivities.class);
+                        startActivity(intent);
+                    }
+                })
+                .subNormalTextRes(R.string.blank));
+
+        // Logout
+        mBoomButtonMenu.addBuilder(new HamButton.Builder()
+                .normalImageRes(R.drawable.ic_logout).rippleEffect(true)
+                .normalTextRes(R.string.logout).shadowEffect(true).normalColor(R.color.colorPrimary)
+                .subNormalTextRes(R.string.blank).listener(new OnBMClickListener() {
+                    @Override
+                    public void onBoomButtonClick(int index) {
+                        if (AppUtil.haveNetworkConnection(getActivity().getApplicationContext())) {
+                            // Destroy instances of DB's on logout
+                            StatDatabase.getStatDatabase(getContext()).clearAllTables();
+                            PostDatabase.getPostDatabase(getContext()).clearAllTables();
+                            UserDatabase.getUserDatabase(getContext()).clearAllTables();
+                            ParseUser.logOut();
+                            Intent intent = new Intent(getActivity(), LoginActivity.class);
+                            startActivity(intent);
+                        } else {
+                            Toast.makeText(getContext(), getResources().getString(R.string.network_error_try_again), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }));
     }
 
 
@@ -200,61 +280,6 @@ public class ProfileFragment extends Fragment {
             mObjects.set(position, post);
             mMultiAdapter.notifyItemChanged(position);
         }
-    }
-
-    /**
-     * Helper method to set up the toolbar. Toolbar functionality includes settings
-     * log out, and viewing the users saved posts/saved activities
-     *
-     * @param v this view
-     */
-    private void setUpToolbar(final View v) {
-        final ImageView settings = v.findViewById(R.id.settings);
-        settings.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                PopupMenu popup = new PopupMenu(getActivity(), settings);
-                popup.getMenuInflater().inflate(R.menu.popup_menu, popup.getMenu());
-                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    public boolean onMenuItemClick(MenuItem item) {
-                        Intent intent = null;
-                        if (item.getItemId() == R.id.logout) {
-                            // Logout
-                            if (AppUtil.haveNetworkConnection(getActivity().getApplicationContext())) {
-                                // Destroy instances of DB's on logout
-                                StatDatabase.getStatDatabase(getContext()).clearAllTables();
-                                PostDatabase.getPostDatabase(getContext()).clearAllTables();
-                                UserDatabase.getUserDatabase(getContext()).clearAllTables();
-                                ParseUser.logOut();
-                                intent = new Intent(getActivity(), LoginActivity.class);
-                            } else {
-                                Toast.makeText(getContext(), getResources().getString(R.string.network_error_try_again), Toast.LENGTH_SHORT).show();
-                            }
-                        } else if (item.getItemId() == R.id.savedPosts) {
-                            // Saved Posts
-                            intent = new Intent(getContext(), SavedPosts.class);
-                        } else if (item.getItemId() == R.id.savedActivities) {
-                            // Saved Activities
-                            intent = new Intent(getContext(), SavedActivities.class);
-                        } else if (item.getItemId() == R.id.userStatistics) {
-                            // User Statistics - pass in the key set of the users traveled places
-                            intent = new Intent(getContext(), UserStatistics.class);
-                            ArrayList<String> cityKeys = new ArrayList<>(mCities.keySet());
-                            ArrayList<String> countryKeys = new ArrayList<>(mCountries.keySet());
-                            ArrayList<String> continentKeys = new ArrayList<>(mContinents.keySet());
-                            intent.putStringArrayListExtra(AppConstants.city, cityKeys);
-                            intent.putStringArrayListExtra(AppConstants.country, countryKeys);
-                            intent.putStringArrayListExtra(AppConstants.continent, continentKeys);
-                        }
-                        if (intent != null) {
-                            startActivity(intent);
-                        }
-                        return true;
-                    }
-                });
-                popup.show();
-            }
-        });
     }
 
     /**

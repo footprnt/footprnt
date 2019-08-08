@@ -14,10 +14,10 @@
         android:layout_height="match_parent"
         android:layout_marginTop="55dp">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvSavedPosts"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvSavedPosts"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
 
         <include layout="@layout/item_no_network_connection_profile" />
 
