@@ -16,6 +16,7 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
 import android.os.Build;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -209,7 +210,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
                 mRating.setVisibility(View.INVISIBLE);
             }
             final String imageUrl = business.getImageUrl();
-            if (imageUrl == null || imageUrl.length() == 0) {
+            if (TextUtils.isEmpty(imageUrl)) {
                 Picasso.with(mContext).load(DiscoverConstants.IMAGE_PLACEHOLDER_PATH);
             } else {
                 Picasso.with(mContext).load(imageUrl).into(mIvBusinessImage);
@@ -292,7 +293,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
             } catch (Exception e) {
                 mRating.setVisibility(View.INVISIBLE);
             }
-            if (business.getImageUrl() == null || business.getImageUrl().length() == 0) {
+            if (TextUtils.isEmpty(business.getImageUrl())) {
                 Picasso.with(mContext).load(DiscoverConstants.IMAGE_PLACEHOLDER_PATH);
             } else {
                 Picasso.with(mContext).load(business.getImageUrl()).into(mIvBusinessImage);
