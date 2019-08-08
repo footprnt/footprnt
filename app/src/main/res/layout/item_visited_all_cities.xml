@@ -33,6 +33,7 @@
             android:layout_marginRight="8dp"
             android:layout_marginBottom="8dp"
             android:height="100dp"
+            android:fontFamily="@font/roboto_medium"
             android:gravity="center"
             android:text="CONGRATS! YOU'VE VISITED ALL OF THE CITIES IN THE WORLD!"
             android:textColor="#FFFFFF"

@@ -9,7 +9,6 @@ package com.example.footprnt.Profile.Adapters.ViewHolders;
 import android.content.Intent;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -33,7 +32,6 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
     View mVPalette;
     TextView mTvText;
     TextView mTitle;
-    ProgressBar mProgressBar;
 
     /**
      * Getter for the root view of the post view holder
@@ -89,14 +87,6 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         return mTitle;
     }
 
-    /**
-     * Getter for progress bar
-     *
-     * @return ProgressBar
-     */
-    public ProgressBar getProgressBar() {
-        return mProgressBar;
-    }
 
     /**
      * Constructor for PostViewHolder
@@ -111,10 +101,8 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         mVPalette = itemView.findViewById(R.id.vPalette);
         mTitle = itemView.findViewById(R.id.eventTitle);
         mTvText = itemView.findViewById(R.id.tvText);
-        mProgressBar = itemView.findViewById(R.id.progressBar);
 
         // Set on click listener to launch detailed post view
-        // TODO: fix this
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
