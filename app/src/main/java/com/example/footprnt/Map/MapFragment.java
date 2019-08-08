@@ -152,6 +152,12 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_map, container, false);
         mProgressBar = v.findViewById(R.id.pbLoading);
+        View messageView = LayoutInflater.from(getActivity()).inflate(R.layout.instructions, null);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity(), android.R.style.Theme_Holo_Dialog_NoActionBar);
+        alertDialogBuilder.setView(messageView);
+        AlertDialog dialog = alertDialogBuilder.create();
+        dialog.show();
+        dialog.getWindow().setLayout(900, 600); //Controlling width and height.
         initialization();
         return v;
     }
