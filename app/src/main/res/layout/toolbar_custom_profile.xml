@@ -26,20 +26,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/logo4" />
 
-    <ImageView
-        android:id="@+id/settings"
-        android:layout_width="37dp"
-        android:layout_height="34dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="8dp"
-        android:contentDescription="settings"
-        app:layout_constraintBottom_toTopOf="@+id/ivShadow"
-        app:layout_constraintEnd_toEndOf="@+id/topNav"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_more_vert_white" />
-
     <View
         android:id="@+id/ivShadow"
         android:layout_width="match_parent"

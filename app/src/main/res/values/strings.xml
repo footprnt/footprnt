@@ -55,4 +55,10 @@
     <string name="continents">Continents</string>
     <string name="profile_image">profileImg</string>
     <string name="unsplash">Unsplash</string>
+    <string name="nothing_to_show">Sorry, nothing to show here!</string>
+    <string name="places_been_so_far">Places You\'ve Been So Far</string>
+    <string name="logout">Logout</string>
+    <string name="saved_posts">Saved Posts</string>
+    <string name="saved_activities">Saved Activities</string>
+    <string name="blank" />
 </resources>
