@@ -9,10 +9,12 @@ package com.example.footprnt;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -78,6 +80,13 @@ public class HomeActivity extends AppCompatActivity {
         mViewPager = findViewById(R.id.viewpager);
         mShadow = findViewById(R.id.shadow);
         mNavView = findViewById(R.id.nav_view);
+
+        View messageView = LayoutInflater.from(this).inflate(R.layout.instructions, null);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this, android.R.style.Theme_Holo_Dialog_NoActionBar);
+        alertDialogBuilder.setView(messageView);
+        AlertDialog dialog = alertDialogBuilder.create();
+        dialog.show();
+        dialog.getWindow().setLayout(900, 600);
 
         final MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.pop_two);
         mNavView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
