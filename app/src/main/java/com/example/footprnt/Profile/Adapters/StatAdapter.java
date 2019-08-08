@@ -7,6 +7,8 @@
 package com.example.footprnt.Profile.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.footprnt.Profile.Util.ProfileConstants;
 import com.example.footprnt.R;
 import com.kc.unsplash.Unsplash;
 import com.kc.unsplash.models.Photo;
@@ -37,10 +40,10 @@ public class StatAdapter extends RecyclerView.Adapter<StatAdapter.ViewHolder> {
 
     ArrayList<String> mStats;  // list of stats
     Context mContext;  // context for rendering
-    Unsplash unsplash;
+    Unsplash mUnsplash;
 
     public StatAdapter(ArrayList<String> stats, Context context) {
-        unsplash = new Unsplash(context.getString(R.string.unsplash_access));
+        mUnsplash = new Unsplash(context.getString(R.string.unsplash_access));
         mStats = stats;
         mContext = context;
     }
@@ -58,23 +61,30 @@ public class StatAdapter extends RecyclerView.Adapter<StatAdapter.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
-        String stat = mStats.get(position);
-        unsplash.searchPhotos(stat, new Unsplash.OnSearchCompleteListener() {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
+        final String stat = mStats.get(position);
+        mUnsplash.searchPhotos(stat, new Unsplash.OnSearchCompleteListener() {
             @Override
             public void onComplete(SearchResults results) {
-                Log.d("Photos", "Total Results Found " + results.getTotal());
                 List<Photo> photos = results.getResults();
-                String statPictureUrl = photos.get(3).getUrls().getRegular();
+                String statPictureUrl = photos.get(1).getUrls().getRegular();
                 Glide.with(mContext).load(statPictureUrl).into(holder.mIvImage);
             }
 
             @Override
             public void onError(String error) {
-                Log.d("Unsplash", error);
+                Log.d(mContext.getResources().getString(R.string.unsplash), error);
             }
         });
         holder.mName.setText(stat);
+        holder.mRootView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent it = new Intent(Intent.ACTION_VIEW);
+                it.setData(Uri.parse(ProfileConstants.wikiUrl + stat));
+                mContext.startActivity(it);
+            }
+        });
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
