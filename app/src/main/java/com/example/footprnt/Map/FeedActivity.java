@@ -88,7 +88,7 @@ public class FeedActivity extends Activity {
             public void done(List<Post> objects, ParseException e) {
                 if (e == null) {
                     for (int i = 0; i < objects.size(); i++) {
-                        Post post = (Post) objects.get(i);
+                        Post post = objects.get(i);
                         mPosts.add(post);
                         mPostAdapter.notifyItemInserted(mPosts.size() - 1);
                     }

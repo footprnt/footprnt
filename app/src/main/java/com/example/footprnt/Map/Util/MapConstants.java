@@ -22,7 +22,7 @@ public class MapConstants {
     public static String FASHION = "fashion";
     public static String TRAVEL = "travel";
     public static String NATURE = "nature";
-    public static int POST_RADIUS = 5;
+    public static int POST_RADIUS = 20;
 
     // Map Styles:
     public static String MAP_STYLE = "map_style";
