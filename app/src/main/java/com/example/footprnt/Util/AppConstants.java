@@ -22,6 +22,7 @@ public class AppConstants {
 
     // For Facebook Permissions:
     public static final String PUBLIC_PROFILE = "public_profile";
+    public static final String USER_FRIENDS = "user_friends";
 
     // For getting attributes in database:
     public static String profileImage = "profileImg";

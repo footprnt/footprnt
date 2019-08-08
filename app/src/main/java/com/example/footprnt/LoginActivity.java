@@ -170,7 +170,7 @@ public class LoginActivity extends AppCompatActivity {
                 ArrayList<String> permissions = new ArrayList();
                 permissions.add(AppConstants.email);
                 permissions.add(AppConstants.PUBLIC_PROFILE);
-                permissions.add("user_friends");
+                permissions.add(AppConstants.USER_FRIENDS);
                 ParseFacebookUtils.logInWithReadPermissionsInBackground(LoginActivity.this,
                         permissions, new LogInCallback() {
                             @Override
