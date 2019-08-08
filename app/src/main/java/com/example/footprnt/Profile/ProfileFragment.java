@@ -100,7 +100,6 @@ public class ProfileFragment extends Fragment {
         mSwipeContainer = v.findViewById(R.id.swipeContainer);
         mBoomButtonMenu = v.findViewById(R.id.bmb);
 
-
         setUpMenu();
         setUpDB();
 
@@ -162,7 +161,6 @@ public class ProfileFragment extends Fragment {
         getPosts();
         mSwipeContainer.setRefreshing(false);
     }
-
 
     /**
      * Helper method to set up menu
@@ -286,6 +284,7 @@ public class ProfileFragment extends Fragment {
      * Helper method to get posts from parse as well as populate stat maps
      */
     private void getPosts() {
+        mProgressBar.setVisibility(View.VISIBLE);
         final Post.Query postsQuery = new Post.Query();
         // Only add current user's posts
         postsQuery.getTop().withUser().whereEqualTo(AppConstants.user, ParseUser.getCurrentUser());
@@ -350,5 +349,6 @@ public class ProfileFragment extends Fragment {
                 }
             }
         });
+        mProgressBar.setVisibility(View.INVISIBLE);
     }
 }

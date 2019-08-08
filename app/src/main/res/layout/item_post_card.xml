@@ -11,15 +11,6 @@
     android:foreground="?android:attr/selectableItemBackground"
     card_view:cardElevation="@dimen/card_elevation">
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:indeterminate="true" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
