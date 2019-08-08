@@ -149,7 +149,8 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
 
         @RequiresApi(api = Build.VERSION_CODES.O)
         @SuppressLint({"ClickableViewAccessibility", "ResourceType"})
-        public void bindBusinessDetail(final Business business) {
+        public void bindBusinessDetail(Business business) {
+            final Business business1 = business;
             mCardView.setTag(business);
             checkIfSaved(business);  // Check if the business is saved in DB and update view
             mBookmark.setOnClickListener(new View.OnClickListener() {
@@ -158,15 +159,15 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
                     if (!mIsSaved) {
                         // Activity not saved yet - save
                         SavedActivity savedActivity = new SavedActivity();
-                        savedActivity.setAddress(business.getAddress());
-                        savedActivity.setCategories(business.getCategories());
-                        savedActivity.setImageUrl(business.getImageUrl());
-                        savedActivity.setName(business.getName());
+                        savedActivity.setAddress(business1.getAddress());
+                        savedActivity.setCategories(business1.getCategories());
+                        savedActivity.setImageUrl(business1.getImageUrl());
+                        savedActivity.setName(business1.getName());
                         savedActivity.setUser(ParseUser.getCurrentUser());
-                        savedActivity.setWebsite(business.getWebsite());
-                        savedActivity.setPhoneNumber(business.getPhone());
-                        savedActivity.setRating(business.getRating());
-                        savedActivity.setLocation(new ParseGeoPoint(business.getLatitude(), business.getLongitude()));
+                        savedActivity.setWebsite(business1.getWebsite());
+                        savedActivity.setPhoneNumber(business1.getPhone());
+                        savedActivity.setRating(business1.getRating());
+                        savedActivity.setLocation(new ParseGeoPoint(business1.getLatitude(), business1.getLongitude()));
                         savedActivity.saveInBackground(new SaveCallback() {
                             @Override
                             public void done(ParseException e) {
@@ -178,7 +179,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BusinessViewHo
                     } else {
                         // Post already saved - unsaved
                         ParseQuery<ParseObject> query = ParseQuery.getQuery(AppConstants.savedActivity);
-                        query.whereEqualTo(AppConstants.user, ParseUser.getCurrentUser()).whereEqualTo(AppConstants.website, business.getWebsite()).whereEqualTo(AppConstants.imageUrl, business.getImageUrl());
+                        query.whereEqualTo(AppConstants.user, ParseUser.getCurrentUser()).whereEqualTo(AppConstants.website, business1.getWebsite()).whereEqualTo(AppConstants.imageUrl, business1.getImageUrl());
                         query.findInBackground(new FindCallback<ParseObject>() {
                             @Override
                             public void done(List<ParseObject> objects, ParseException e) {
