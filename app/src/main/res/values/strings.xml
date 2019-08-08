@@ -54,4 +54,5 @@
     <string name="countries">Countries</string>
     <string name="continents">Continents</string>
     <string name="profile_image">profileImg</string>
+    <string name="unsplash">Unsplash</string>
 </resources>

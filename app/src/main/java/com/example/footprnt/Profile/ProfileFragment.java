@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -80,6 +81,9 @@ public class ProfileFragment extends Fragment {
     HashMap<String, Integer> mContinents;  // Contains the continents and number of times visited by user
     ArrayList<HashMap<String, Integer>> mStats;  // StatWrapper to be passed to adapter
 
+    // For progress bar
+    ProgressBar mProgressBar;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -97,6 +101,7 @@ public class ProfileFragment extends Fragment {
         mContinents = new HashMap<>();
         mPosts = new ArrayList<>();
         mStats = new ArrayList<>();
+        mProgressBar = v.findViewById(R.id.pbLoading);
 
         // Get posts from DB or Network
         if (AppUtil.haveNetworkConnection(getActivity())) {
@@ -165,10 +170,11 @@ public class ProfileFragment extends Fragment {
                 mMultiAdapter.notifyItemChanged(position);
             }
         }
-        // TODO: fix so UI updates
         // Save post
         if (resultCode == AppConstants.UPDATE_POST_FROM_PROFILE) {
             int position = data.getIntExtra(AppConstants.position, 0);
+            Post post = (Post) data.getSerializableExtra(AppConstants.Post);
+            mObjects.set(position, post);
             mMultiAdapter.notifyItemChanged(position);
         }
     }
