@@ -172,7 +172,7 @@ public class ProfileFragment extends Fragment {
 
         // Places you've been so far
         mBoomButtonMenu.addBuilder(new HamButton.Builder()
-                .normalImageRes(R.drawable.globe).rippleEffect(true).normalColor(R.color.colorPrimary)
+                .normalImageRes(R.drawable.ic_earth).rippleEffect(true).normalColor(R.color.colorPrimary)
                 .normalTextRes(R.string.places_been_so_far).shadowEffect(true).listener(new OnBMClickListener() {
                     @Override
                     public void onBoomButtonClick(int index) {
@@ -191,7 +191,7 @@ public class ProfileFragment extends Fragment {
 
         // Saved Posts
         mBoomButtonMenu.addBuilder(new HamButton.Builder()
-                .normalImageRes(R.drawable.ic_save_check_filled_blue).rippleEffect(true)
+                .normalImageRes(R.drawable.ic_bookmark_filled).rippleEffect(true)
                 .normalTextRes(R.string.saved_posts).shadowEffect(true).normalColor(R.color.colorPrimary).listener(new OnBMClickListener() {
                     @Override
                     public void onBoomButtonClick(int index) {
@@ -203,7 +203,7 @@ public class ProfileFragment extends Fragment {
 
         // Saved Activities
         mBoomButtonMenu.addBuilder(new HamButton.Builder()
-                .normalImageRes(R.drawable.ic_save_check_filled).rippleEffect(true)
+                .normalImageRes(R.drawable.ic_bookmark_outline).rippleEffect(true)
                 .normalTextRes(R.string.saved_activities).shadowEffect(true).normalColor(R.color.colorPrimary).listener(new OnBMClickListener() {
                     @Override
                     public void onBoomButtonClick(int index) {

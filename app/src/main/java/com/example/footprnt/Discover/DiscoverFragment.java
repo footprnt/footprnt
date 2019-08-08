@@ -223,7 +223,6 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                     }
                 }
             } else {
-                Toast.makeText(getContext(), getContext().getResources().getString(R.string.no_location_permission), Toast.LENGTH_LONG).show();
                 mBusinessAddress = null;
             }
         }
