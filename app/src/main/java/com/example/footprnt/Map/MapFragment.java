@@ -152,11 +152,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_map, container, false);
         mProgressBar = v.findViewById(R.id.pbLoading);
-        // Check for network
-        if(!AppUtil.haveNetworkConnection(getContext())){
-            Toast.makeText(getContext(), getResources().getString(R.string.network_error_try_again), Toast.LENGTH_LONG).show();
-            mProgressBar.setVisibility(View.INVISIBLE);
-        }
         initialization();
         return v;
     }
@@ -667,9 +662,11 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean bChecked) {
                 if (bChecked) {
+                    Toast.makeText(getContext(), getResources().getString(R.string.loading_markers), Toast.LENGTH_SHORT).show();
                     mMap.clear();
                     loadAllMarkers();
                 } else {
+                    Toast.makeText(getContext(), getResources().getString(R.string.reloading_markers), Toast.LENGTH_SHORT).show();
                     mMap.clear();
                     loadMarkers();
                 }

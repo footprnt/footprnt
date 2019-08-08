@@ -126,73 +126,68 @@ public class DiscoverFragment extends Fragment implements LocationListener {
     private TextView mEventDescription;
     private TextView mEventTime;
     private TextView mEventUrl;
-    private boolean allEmpty = true;
+    private TextView mSearchingNear;
+    private CardView mNoNetwork;
+    private ImageView mLocationView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
-        View view = null;
-        // Check for network
-        if(!AppUtil.haveNetworkConnection(getContext())){
-            Toast.makeText(getContext(), getResources().getString(R.string.network_error_try_again), Toast.LENGTH_LONG).show();
-            view = inflater.inflate(R.layout.item_no_network_connection_profile, parent, false);
-        } else {
-            view = inflater.inflate(R.layout.fragment_discover, parent, false);
-            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            // Set Views & Initialize
-            rvRestaurants = view.findViewById(R.id.rvRestaurants);
-            mTvRestaurants = view.findViewById(R.id.restaurants);
-            rvMuseums = view.findViewById(R.id.rvMuseums);
-            mTvMuseums = view.findViewById(R.id.museums);
-            rvHotels = view.findViewById(R.id.rvHotels);
-            mTvHotels = view.findViewById(R.id.hotels);
-            rvClubs = view.findViewById(R.id.rvClubs);
-            mTvClubs = view.findViewById(R.id.clubs);
-            mSearchText = view.findViewById(R.id.searchText);
-            mAddress = view.findViewById(R.id.address);
-            mNoEvent = view.findViewById(R.id.noEvent);
-            mNoEvent.setVisibility(View.INVISIBLE);
-            mNothingNearYou = view.findViewById(R.id.nothingNearYou);
-            mNothingNearYou.setVisibility(View.INVISIBLE);
-            mProgressBar = view.findViewById(R.id.pbLoading);
-            mProgressBarAdventure = view.findViewById(R.id.pbLoading2);
-            mArrQueries = new ArrayList<>();
-            mArrRecyclerViews = new ArrayList<>();
-            mArrAdapters = new ArrayList<>();
-            mArrBusinesses = new ArrayList<>();
-            mRestaurants = new ArrayList<>();
-            mMuseums = new ArrayList<>();
-            mHotels = new ArrayList<>();
-            mClubs = new ArrayList<>();
-            mEventImage = view.findViewById(R.id.eventImage);
-            mEventTitle = view.findViewById(R.id.eventTitle);
-            mEventDescription = view.findViewById(R.id.eventDescrption);
-            mEventTime = view.findViewById(R.id.eventStart);
-            mEventUrl = view.findViewById(R.id.eventUrl);
+        View view = inflater.inflate(R.layout.fragment_discover, parent, false);
+        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        // Set Views & Initialize
+        rvRestaurants = view.findViewById(R.id.rvRestaurants);
+        mTvRestaurants = view.findViewById(R.id.restaurants);
+        rvMuseums = view.findViewById(R.id.rvMuseums);
+        mSearchingNear = view.findViewById(R.id.textView13);
+        mNoNetwork = view.findViewById(R.id.cvNoNetwork);
+        mNoNetwork.setVisibility(View.INVISIBLE);
+        mTvMuseums = view.findViewById(R.id.museums);
+        rvHotels = view.findViewById(R.id.rvHotels);
+        mLocationView = view.findViewById(R.id.btnCall);
+        mTvHotels = view.findViewById(R.id.hotels);
+        rvClubs = view.findViewById(R.id.rvClubs);
+        mTvClubs = view.findViewById(R.id.clubs);
+        mSearchText = view.findViewById(R.id.searchText);
+        mAddress = view.findViewById(R.id.address);
+        mNoEvent = view.findViewById(R.id.noEvent);
+        mNoEvent.setVisibility(View.INVISIBLE);
+        mNothingNearYou = view.findViewById(R.id.nothingNearYou);
+        mNothingNearYou.setVisibility(View.INVISIBLE);
+        mProgressBar = view.findViewById(R.id.pbLoading);
+        mProgressBarAdventure = view.findViewById(R.id.pbLoading2);
+        mArrQueries = new ArrayList<>();
+        mArrRecyclerViews = new ArrayList<>();
+        mArrAdapters = new ArrayList<>();
+        mArrBusinesses = new ArrayList<>();
+        mRestaurants = new ArrayList<>();
+        mMuseums = new ArrayList<>();
+        mHotels = new ArrayList<>();
+        mClubs = new ArrayList<>();
+        mEventImage = view.findViewById(R.id.eventImage);
+        mEventTitle = view.findViewById(R.id.eventTitle);
+        mEventDescription = view.findViewById(R.id.eventDescrption);
+        mEventTime = view.findViewById(R.id.eventStart);
+        mEventUrl = view.findViewById(R.id.eventUrl);
 
-            // Handle user searching:
-            handleSearch();
-            try {
-                getAddress();
-                getAdventureOfTheDay();
-                prepareArrayLists();
-                populateView();
-                mSwipeContainer = view.findViewById(R.id.swipeContainer2);
-                mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                    @Override
-                    public void onRefresh() {
-                        RefreshBusinesses();
-                    }
-                });
-                mSwipeContainer.setColorSchemeResources(R.color.refresh_progress_1,
-                        R.color.refresh_progress_2,
-                        R.color.refresh_progress_3,
-                        R.color.refresh_progress_4,
-                        R.color.refresh_progress_5);
-            } catch (Exception e) {
-                Toast.makeText(getContext(), DiscoverConstants.NO_BUSINESS_MESSAGE, Toast.LENGTH_LONG).show();
-            }
+        // Handle user searching:
+        handleSearch();
+        try {
+            getAddress();
+            getAdventureOfTheDay();
+            prepareArrayLists();
+            populateView();
+            mSwipeContainer = view.findViewById(R.id.swipeContainer2);
+            mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    RefreshBusinesses();
+                }
+            });
+            mSwipeContainer.setColorSchemeResources(R.color.refresh_progress_1, R.color.refresh_progress_2, R.color.refresh_progress_3,
+                    R.color.refresh_progress_4, R.color.refresh_progress_5);
+        } catch (Exception e) {
+            Toast.makeText(getContext(), DiscoverConstants.NO_BUSINESS_MESSAGE, Toast.LENGTH_LONG).show();
         }
-        assert view!=null;
         return view;
     }
 
@@ -200,11 +195,23 @@ public class DiscoverFragment extends Fragment implements LocationListener {
      * Helper method to refresh RV
      */
     public void RefreshBusinesses() {
-        mArrAdapters.clear();
-        prepareArrayLists();
-        populateView();
-        getAdventureOfTheDay();
-        mSwipeContainer.setRefreshing(false);
+        if (AppUtil.haveNetworkConnection(getContext())) {
+            mNoNetwork.setVisibility(View.INVISIBLE);
+            mAddress.setVisibility(View.VISIBLE);
+            mSearchingNear.setVisibility(View.VISIBLE);
+            mLocationView.setVisibility(View.VISIBLE);
+            mArrAdapters.clear();
+            prepareArrayLists();
+            populateView();
+            getAdventureOfTheDay();
+            mSwipeContainer.setRefreshing(false);
+        } else {
+            mNoNetwork.setVisibility(View.VISIBLE);
+            mAddress.setVisibility(View.INVISIBLE);
+            mSearchingNear.setVisibility(View.INVISIBLE);
+            mLocationView.setVisibility(View.INVISIBLE);
+            mSwipeContainer.setRefreshing(false);
+        }
     }
 
     /**
@@ -449,18 +456,18 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                 if (!arrTemp.isEmpty()) {
                     ArrayList<String> userCompletedAdventures = ((ArrayList<String>) ParseUser.getCurrentUser().get(AppConstants.completed_adventure));
                     ArrayList<String> userUncompletedAdventures = ((ArrayList<String>) ParseUser.getCurrentUser().get(AppConstants.uncompleted_adventure));
-                    if (userCompletedAdventures == null){
+                    if (userCompletedAdventures == null) {
                         userCompletedAdventures = new ArrayList<>();
                     }
-                    if (userUncompletedAdventures == null){
+                    if (userUncompletedAdventures == null) {
                         userUncompletedAdventures = new ArrayList<>();
                     }
                     Event prevAdventure = mAdventure;
-                    for (Event event : arrTemp){
-                        if (userCompletedAdventures.size() == 0 && userUncompletedAdventures.size() == 0){
+                    for (Event event : arrTemp) {
+                        if (userCompletedAdventures.size() == 0 && userUncompletedAdventures.size() == 0) {
                             mAdventure = event;
                             break;
-                        } else if (!userCompletedAdventures.contains(event.getEventId()) && !userUncompletedAdventures.contains(event.getEventId())){
+                        } else if (!userCompletedAdventures.contains(event.getEventId()) && !userUncompletedAdventures.contains(event.getEventId())) {
                             mAdventure = event;
                             break;
                         }

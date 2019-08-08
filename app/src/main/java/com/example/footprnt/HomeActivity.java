@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -27,6 +28,7 @@ import com.example.footprnt.Discover.DiscoverFragment;
 import com.example.footprnt.Map.MapFragment;
 import com.example.footprnt.Profile.ProfileFragment;
 import com.example.footprnt.Util.AppConstants;
+import com.example.footprnt.Util.AppUtil;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 /**
@@ -82,6 +84,12 @@ public class HomeActivity extends AppCompatActivity {
         mNavView = findViewById(R.id.nav_view);
 
         View messageView = LayoutInflater.from(this).inflate(R.layout.instructions, null);
+        if (!AppUtil.haveNetworkConnection(getApplicationContext())) {
+            // Instructions for user on start if no network connection
+            TextView text = messageView.findViewById(R.id.textView3);
+            text.setText(getResources().getString(R.string.message_no_network));
+        }
+        setupViewPager(mViewPager);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this, android.R.style.Theme_Holo_Dialog_NoActionBar);
         alertDialogBuilder.setView(messageView);
         AlertDialog dialog = alertDialogBuilder.create();
@@ -110,7 +118,7 @@ public class HomeActivity extends AppCompatActivity {
                 return true;
             }
         });
-        
+
         mNavView.setSelectedItemId(R.id.navigation_home);
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -132,7 +140,6 @@ public class HomeActivity extends AppCompatActivity {
             public void onPageScrollStateChanged(int state) {
             }
         });
-        setupViewPager(mViewPager);
     }
 
     @Override

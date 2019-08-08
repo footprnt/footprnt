@@ -62,4 +62,8 @@
     <string name="saved_activities">Saved Activities</string>
     <string name="blank" />
     <string name="saved">Saved</string>
+    <string name="discover_no_network_message">No network connection, limited usability. Some features may not work correctly.</string>
+    <string name="message_no_network">Uh oh! No network connection - some features may not work correctly.</string>
+    <string name="loading_markers">Loading all posts...</string>
+    <string name="reloading_markers">Reloading map markers...</string>
 </resources>
