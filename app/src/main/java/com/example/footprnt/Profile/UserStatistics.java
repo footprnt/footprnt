@@ -9,6 +9,7 @@ package com.example.footprnt.Profile;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -57,18 +58,23 @@ public class UserStatistics extends AppCompatActivity {
         mCountries = getIntent().getStringArrayListExtra(AppConstants.country);
         mContinents = getIntent().getStringArrayListExtra(AppConstants.continent);
 
-        mCityAdapter = new StatAdapter(mCities, this);
-        mRvCities.setLayoutManager(new GridLayoutManager(this, 3));
-        mRvCities.setAdapter(mCityAdapter);
+        // Nothing to show case
+        if (mCities.isEmpty() && mCountries.isEmpty() && mContinents.isEmpty()) {
+            Toast.makeText(this, getResources().getString(R.string.nothing_to_show), Toast.LENGTH_SHORT).show();
+            finish();
+        } else {
+            mCityAdapter = new StatAdapter(mCities, this);
+            mRvCities.setLayoutManager(new GridLayoutManager(this, 3));
+            mRvCities.setAdapter(mCityAdapter);
 
-        mCountryAdapter = new StatAdapter(mCountries, this);
-        mRvCountries.setLayoutManager(new GridLayoutManager(this, 3));
-        mRvCountries.setAdapter(mCountryAdapter);
+            mCountryAdapter = new StatAdapter(mCountries, this);
+            mRvCountries.setLayoutManager(new GridLayoutManager(this, 3));
+            mRvCountries.setAdapter(mCountryAdapter);
 
-        mContinentAdapter = new StatAdapter(mContinents, this);
-        mRvContinents.setLayoutManager(new GridLayoutManager(this, 3));
-        mRvContinents.setAdapter(mContinentAdapter);
-
+            mContinentAdapter = new StatAdapter(mContinents, this);
+            mRvContinents.setLayoutManager(new GridLayoutManager(this, 3));
+            mRvContinents.setAdapter(mContinentAdapter);
+        }
         mBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
