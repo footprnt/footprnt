@@ -225,39 +225,43 @@ public class MapFragment extends Fragment implements GoogleMap.OnMapLongClickLis
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, final Intent data) {
-        try {
-            if (requestCode == AppConstants.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
-                if (resultCode == getActivity().RESULT_OK) {
-                    Bitmap takenImage = BitmapFactory.decodeFile(mPhotoFile.getAbsolutePath());
-                    mImage.setVisibility(View.VISIBLE);
-                    mImage.setImageBitmap(takenImage);
-                    File photoFile = mHelper.getPhotoFileUri(getContext(), AppConstants.photoFileName);
-                    mParseFile = new ParseFile(photoFile);
-                } else {
-                    mParseFile = null;
-                    Toast.makeText(getContext(), getResources().getString(R.string.camera_message), Toast.LENGTH_SHORT).show();
-                }
-            } else {
-                if (resultCode == getActivity().RESULT_OK) {
-                    Bitmap bitmap = null;
-                    Uri selectedImage = data.getData();
-                    try {
-                        bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), selectedImage);
-                    } catch (Exception e) {
+        if(requestCode == AppConstants.VIEW_BUSINESS_MAP){
+            handleDiscoverInteraction(data.getStringExtra("mJoinAddress"), data.getStringExtra("businessName"), data.getStringExtra("imageUrl"));
+        } else {
+            try {
+                if (requestCode == AppConstants.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+                    if (resultCode == getActivity().RESULT_OK) {
+                        Bitmap takenImage = BitmapFactory.decodeFile(mPhotoFile.getAbsolutePath());
+                        mImage.setVisibility(View.VISIBLE);
+                        mImage.setImageBitmap(takenImage);
+                        File photoFile = mHelper.getPhotoFileUri(getContext(), AppConstants.photoFileName);
+                        mParseFile = new ParseFile(photoFile);
+                    } else {
+                        mParseFile = null;
+                        Toast.makeText(getContext(), getResources().getString(R.string.camera_message), Toast.LENGTH_SHORT).show();
                     }
-                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, AppConstants.captureImageQuality, stream);
-                    byte[] image = stream.toByteArray();
-                    mParseFile = new ParseFile(AppConstants.imagePath, image);
-                    final Bitmap finalBitmap = bitmap;
-                    mImage.setVisibility(View.VISIBLE);
-                    Glide.with(this).load(finalBitmap).into(mImage);
                 } else {
-                    mParseFile = null;
+                    if (resultCode == getActivity().RESULT_OK) {
+                        Bitmap bitmap = null;
+                        Uri selectedImage = data.getData();
+                        try {
+                            bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), selectedImage);
+                        } catch (Exception e) {
+                        }
+                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, AppConstants.captureImageQuality, stream);
+                        byte[] image = stream.toByteArray();
+                        mParseFile = new ParseFile(AppConstants.imagePath, image);
+                        final Bitmap finalBitmap = bitmap;
+                        mImage.setVisibility(View.VISIBLE);
+                        Glide.with(this).load(finalBitmap).into(mImage);
+                    } else {
+                        mParseFile = null;
+                    }
                 }
+            } catch (Exception e) {
+                Toast.makeText(getContext(), getResources().getString(R.string.photo_error), Toast.LENGTH_LONG).show();
             }
-        } catch (Exception e) {
-            Toast.makeText(getContext(), getResources().getString(R.string.photo_error), Toast.LENGTH_LONG).show();
         }
     }
 

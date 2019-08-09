@@ -7,11 +7,14 @@
 package com.example.footprnt.Profile;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -54,6 +57,15 @@ public class UserStatistics extends AppCompatActivity {
             Toast.makeText(this, getResources().getString(R.string.network_error_try_again), Toast.LENGTH_SHORT).show();
             finish();
         }
+
+        View messageView = LayoutInflater.from(this).inflate(R.layout.instructions, null);
+        TextView text = messageView.findViewById(R.id.textView3);
+        text.setText(getResources().getString(R.string.message_user_stats));
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this, android.R.style.Theme_Holo_Dialog_NoActionBar);
+        alertDialogBuilder.setView(messageView);
+        AlertDialog dialog = alertDialogBuilder.create();
+        dialog.show();
+        dialog.getWindow().setLayout(900, 600);
 
         // Set Views
         mBackButton = findViewById(R.id.ivBack);
