@@ -37,7 +37,7 @@
             android:height="100dp"
             android:fontFamily="@font/roboto_medium"
             android:gravity="center"
-            android:text="CONGRATS, YOU'VE COMPLETED"
+            android:text="YOU'VE COMPLETED"
             android:textColor="#FFFFFF"
             android:textSize="20dp"
             android:textStyle="bold"
