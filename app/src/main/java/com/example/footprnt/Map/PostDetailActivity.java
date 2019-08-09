@@ -7,16 +7,12 @@
 package com.example.footprnt.Map;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.FileProvider;
 
 import com.example.footprnt.Map.Util.PostAdapter;
 import com.example.footprnt.Map.Util.UiUtil;
@@ -24,7 +20,6 @@ import com.example.footprnt.Models.Post;
 import com.example.footprnt.Models.SavedPost;
 import com.example.footprnt.R;
 import com.example.footprnt.Util.AppConstants;
-import com.example.footprnt.Util.AppUtil;
 import com.parse.DeleteCallback;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -33,11 +28,6 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.URL;
 import java.util.List;
 
 /**
@@ -162,27 +152,27 @@ public class PostDetailActivity extends AppCompatActivity {
         shareIntent.setAction(Intent.ACTION_SEND);
         // TODO: maybe change the sharing format?
         shareIntent.putExtra(Intent.EXTRA_TEXT, String.format("%s\n%s", mPost.getTitle(), mPost.getDescription()));
-        if (mPost.getImage() != null && mPost.getImage().getUrl().length() > 0) {
-            try {
-                URL url = new URL(mPost.getImage().getUrl());
-                Bitmap bitmap = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-                OutputStream out = null;
-                File file = AppUtil.getPhotoFileUri(this, AppConstants.photoFileNameShare);
-                try {
-                    out = new FileOutputStream(file);
-                    bitmap.compress(Bitmap.CompressFormat.PNG, AppConstants.captureImageQuality, out);
-                    out.flush();
-                    out.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                Uri bmpUri = FileProvider.getUriForFile(this, AppConstants.fileProvider, file);
-                shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                shareIntent.putExtra(Intent.EXTRA_STREAM, bmpUri);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+//        if (mPost.getImage() != null && mPost.getImage().getUrl().length() > 0) {
+//            try {
+//                URL url = new URL(mPost.getImage().getUrl());
+//                Bitmap bitmap = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+//                OutputStream out = null;
+//                File file = AppUtil.getPhotoFileUri(this, AppConstants.photoFileNameShare);
+//                try {
+//                    out = new FileOutputStream(file);
+//                    bitmap.compress(Bitmap.CompressFormat.PNG, AppConstants.captureImageQuality, out);
+//                    out.flush();
+//                    out.close();
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//                Uri bmpUri = FileProvider.getUriForFile(this, AppConstants.fileProvider, file);
+//                shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                shareIntent.putExtra(Intent.EXTRA_STREAM, bmpUri);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
         shareIntent.setType(AppConstants.photoType);
         shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         startActivityForResult(Intent.createChooser(shareIntent, AppConstants.send), 0);
