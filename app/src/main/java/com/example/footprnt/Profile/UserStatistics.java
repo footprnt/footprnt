@@ -14,7 +14,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -61,11 +60,11 @@ public class UserStatistics extends AppCompatActivity {
         View messageView = LayoutInflater.from(this).inflate(R.layout.instructions, null);
         TextView text = messageView.findViewById(R.id.textView3);
         text.setText(getResources().getString(R.string.message_user_stats));
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this, android.R.style.Theme_Holo_Dialog_NoActionBar);
-        alertDialogBuilder.setView(messageView);
-        AlertDialog dialog = alertDialogBuilder.create();
-        dialog.show();
-        dialog.getWindow().setLayout(900, 600);
+//        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this, android.R.style.Theme_Holo_Dialog_NoActionBar);
+//        alertDialogBuilder.setView(messageView);
+//        AlertDialog dialog = alertDialogBuilder.create();
+//        dialog.show();
+//        dialog.getWindow().setLayout(900, 600);
 
         // Set Views
         mBackButton = findViewById(R.id.ivBack);
