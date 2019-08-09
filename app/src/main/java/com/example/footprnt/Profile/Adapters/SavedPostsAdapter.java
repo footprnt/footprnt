@@ -16,7 +16,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -73,7 +72,6 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Vi
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
-        holder.mProgressBar.setVisibility(View.VISIBLE);
         final SavedPost savedPost = mPosts.get(position);
         final Post post = (Post) savedPost.getPost();
         holder.mRootView.setTag(post);
@@ -125,7 +123,6 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Vi
             holder.mTitle.setVisibility(View.VISIBLE);
             holder.mTvText.setVisibility(View.VISIBLE);
         }
-        holder.mProgressBar.setVisibility(View.INVISIBLE);
         // Saved Post Details
         holder.mRootView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -141,6 +138,7 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Vi
                             bundle.putSerializable(Post.class.getSimpleName(), post);
                             bundle.putSerializable(AppConstants.hideView, true);
                             intent.putExtras(bundle);
+                            Toast.makeText(mContext, mContext.getResources().getString(R.string.loading), Toast.LENGTH_SHORT).show();
                             ((Activity) mContext).startActivityForResult(intent, AppConstants.SAVED_POST_DETAILS_FROM_PROFILE);
                         }
                     });
@@ -177,7 +175,6 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Vi
         View mVPalette;
         TextView mTvText;
         TextView mTitle;
-        ProgressBar mProgressBar;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -187,7 +184,6 @@ public class SavedPostsAdapter extends RecyclerView.Adapter<SavedPostsAdapter.Vi
             mVPalette = itemView.findViewById(R.id.vPalette);
             mTitle = itemView.findViewById(R.id.eventTitle);
             mTvText = itemView.findViewById(R.id.tvText);
-            mProgressBar = itemView.findViewById(R.id.progressBar);
         }
     }
 }

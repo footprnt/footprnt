@@ -126,7 +126,9 @@ public class DiscoverFragment extends Fragment implements LocationListener {
     private TextView mEventDescription;
     private TextView mEventTime;
     private TextView mEventUrl;
-    private boolean allEmpty = true;
+    private TextView mSearchingNear;
+    private CardView mNoNetwork;
+    private ImageView mLocationView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
@@ -136,8 +138,12 @@ public class DiscoverFragment extends Fragment implements LocationListener {
         rvRestaurants = view.findViewById(R.id.rvRestaurants);
         mTvRestaurants = view.findViewById(R.id.restaurants);
         rvMuseums = view.findViewById(R.id.rvMuseums);
+        mSearchingNear = view.findViewById(R.id.textView13);
+        mNoNetwork = view.findViewById(R.id.cvNoNetwork);
+        mNoNetwork.setVisibility(View.INVISIBLE);
         mTvMuseums = view.findViewById(R.id.museums);
         rvHotels = view.findViewById(R.id.rvHotels);
+        mLocationView = view.findViewById(R.id.btnCall);
         mTvHotels = view.findViewById(R.id.hotels);
         rvClubs = view.findViewById(R.id.rvClubs);
         mTvClubs = view.findViewById(R.id.clubs);
@@ -177,11 +183,8 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                     RefreshBusinesses();
                 }
             });
-            mSwipeContainer.setColorSchemeResources(R.color.refresh_progress_1,
-                    R.color.refresh_progress_2,
-                    R.color.refresh_progress_3,
-                    R.color.refresh_progress_4,
-                    R.color.refresh_progress_5);
+            mSwipeContainer.setColorSchemeResources(R.color.refresh_progress_1, R.color.refresh_progress_2, R.color.refresh_progress_3,
+                    R.color.refresh_progress_4, R.color.refresh_progress_5);
         } catch (Exception e) {
             Toast.makeText(getContext(), DiscoverConstants.NO_BUSINESS_MESSAGE, Toast.LENGTH_LONG).show();
         }
@@ -192,11 +195,23 @@ public class DiscoverFragment extends Fragment implements LocationListener {
      * Helper method to refresh RV
      */
     public void RefreshBusinesses() {
-        mArrAdapters.clear();
-        prepareArrayLists();
-        populateView();
-        getAdventureOfTheDay();
-        mSwipeContainer.setRefreshing(false);
+        if (AppUtil.haveNetworkConnection(getContext())) {
+            mNoNetwork.setVisibility(View.INVISIBLE);
+            mAddress.setVisibility(View.VISIBLE);
+            mSearchingNear.setVisibility(View.VISIBLE);
+            mLocationView.setVisibility(View.VISIBLE);
+            mArrAdapters.clear();
+            prepareArrayLists();
+            populateView();
+            getAdventureOfTheDay();
+            mSwipeContainer.setRefreshing(false);
+        } else {
+            mNoNetwork.setVisibility(View.VISIBLE);
+            mAddress.setVisibility(View.INVISIBLE);
+            mSearchingNear.setVisibility(View.INVISIBLE);
+            mLocationView.setVisibility(View.INVISIBLE);
+            mSwipeContainer.setRefreshing(false);
+        }
     }
 
     /**
@@ -441,18 +456,18 @@ public class DiscoverFragment extends Fragment implements LocationListener {
                 if (!arrTemp.isEmpty()) {
                     ArrayList<String> userCompletedAdventures = ((ArrayList<String>) ParseUser.getCurrentUser().get(AppConstants.completed_adventure));
                     ArrayList<String> userUncompletedAdventures = ((ArrayList<String>) ParseUser.getCurrentUser().get(AppConstants.uncompleted_adventure));
-                    if (userCompletedAdventures == null){
+                    if (userCompletedAdventures == null) {
                         userCompletedAdventures = new ArrayList<>();
                     }
-                    if (userUncompletedAdventures == null){
+                    if (userUncompletedAdventures == null) {
                         userUncompletedAdventures = new ArrayList<>();
                     }
                     Event prevAdventure = mAdventure;
-                    for (Event event : arrTemp){
-                        if (userCompletedAdventures.size() == 0 && userUncompletedAdventures.size() == 0){
+                    for (Event event : arrTemp) {
+                        if (userCompletedAdventures.size() == 0 && userUncompletedAdventures.size() == 0) {
                             mAdventure = event;
                             break;
-                        } else if (!userCompletedAdventures.contains(event.getEventId()) && !userUncompletedAdventures.contains(event.getEventId())){
+                        } else if (!userCompletedAdventures.contains(event.getEventId()) && !userUncompletedAdventures.contains(event.getEventId())) {
                             mAdventure = event;
                             break;
                         }

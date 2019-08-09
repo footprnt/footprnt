@@ -1,5 +1,6 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/cvAdventure"
     android:layout_width="match_parent"
     android:layout_height="200dp"
@@ -20,18 +21,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
-            <ImageView
+
+            <pl.droidsonroids.gif.GifImageView
                 android:id="@+id/ivImage"
                 android:layout_width="272dp"
                 android:layout_height="match_parent"
                 android:background="#FFFFFF"
                 android:scaleType="centerCrop"
+                android:src="@drawable/loading"
                 android:transitionName="profile"
                 card_view:layout_constraintBottom_toBottomOf="parent"
                 card_view:layout_constraintEnd_toEndOf="parent"
                 card_view:layout_constraintStart_toStartOf="parent"
-                card_view:layout_constraintTop_toTopOf="parent"
-                card_view:srcCompat="@drawable/no_photo" />
+                card_view:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/tvText"

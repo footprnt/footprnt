@@ -94,6 +94,7 @@ public class ProfileFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_profile, container, false);
+
         getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         mLayout = v.findViewById(R.id.rvPosts);
         mProgressBar = v.findViewById(R.id.pbLoading);
@@ -117,8 +118,16 @@ public class ProfileFragment extends Fragment {
             StatDatabase.getStatDatabase(getContext()).clearAllTables();
             PostDatabase.getPostDatabase(getContext()).clearAllTables();
             UserDatabase.getUserDatabase(getContext()).clearAllTables();
+            // For Refresh:
+            mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    refreshViews();
+                }
+            });
             getPosts();
         } else {
+            mObjects.clear();
             // Add User
             if (mUserWrapper != null) {
                 mObjects.add(mUserWrapper);
@@ -135,20 +144,18 @@ public class ProfileFragment extends Fragment {
                     mPostWrappers.add(p);
                 }
                 mObjects.addAll(mPostWrappers);
+                mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        Toast.makeText(getContext(), getResources().getString(R.string.network_error_try_again), Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         }
         // For post feed view:
         mMultiAdapter = new MultiViewAdapter(getContext(), mObjects);
         mLayout.setLayoutManager(new LinearLayoutManager(getContext()));
         mLayout.setAdapter(mMultiAdapter);
-
-        // For Refresh:
-        mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                refreshViews();
-            }
-        });
 
         return v;
     }
@@ -157,7 +164,12 @@ public class ProfileFragment extends Fragment {
      * Helper method to refresh views
      */
     private void refreshViews() {
+        mPosts.clear();
         mObjects.clear();
+        mCities.clear();
+        mCountries.clear();
+        mContinents.clear();
+        mStats.clear();
         getPosts();
         mSwipeContainer.setRefreshing(false);
     }

@@ -36,7 +36,7 @@
             card_view:layout_constraintTop_toBottomOf="@+id/etLocation"
             card_view:srcCompat="@drawable/ic_check" />
 
-        <ImageView
+        <pl.droidsonroids.gif.GifImageView
             android:id="@+id/ivPicture"
             android:layout_width="217dp"
             android:layout_height="165dp"
@@ -48,7 +48,7 @@
             card_view:layout_constraintHorizontal_bias="0.523"
             card_view:layout_constraintStart_toStartOf="parent"
             card_view:layout_constraintTop_toTopOf="parent"
-            card_view:srcCompat="@drawable/no_photo" />
+            android:src="@drawable/loadingpic" />
 
         <TextView
             android:id="@+id/tvPostedAt"
@@ -88,13 +88,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
             android:ems="10"
             android:hint="@string/title"
-            android:inputType="textPersonName"
+            android:inputType="textMultiLine|textPersonName"
             android:textSize="14sp"
             card_view:layout_constraintEnd_toEndOf="parent"
             card_view:layout_constraintHorizontal_bias="0.0"
@@ -124,13 +122,11 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
             android:ems="10"
             android:hint="@string/description"
-            android:inputType="textPersonName"
+            android:inputType="textMultiLine|textPersonName"
             android:textSize="14sp"
             card_view:layout_constraintEnd_toEndOf="parent"
             card_view:layout_constraintStart_toStartOf="parent"
@@ -170,7 +166,6 @@
             card_view:layout_constraintHorizontal_bias="0.0"
             card_view:layout_constraintStart_toStartOf="parent"
             card_view:layout_constraintTop_toBottomOf="@+id/tvLocation" />
-
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/cancel"

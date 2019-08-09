@@ -34,6 +34,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.footprnt.Discover.Util.DiscoverConstants;
+import com.example.footprnt.HomeActivity;
 import com.example.footprnt.Map.MapFragment;
 import com.example.footprnt.Models.SavedActivity;
 import com.example.footprnt.R;
@@ -47,7 +48,6 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONException;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 /**
  * Adapts saved businesses to profile recycler view for saved things to do
@@ -58,8 +58,8 @@ import java.util.Objects;
  */
 public class SavedActivitiesAdapter extends RecyclerView.Adapter<SavedActivitiesAdapter.ViewHolder> {
 
-    static ArrayList<SavedActivity> mSavedActivities;  // list of saved activities
-    static Context mContext;  // context for rendering
+    ArrayList<SavedActivity> mSavedActivities;  // list of saved activities
+    Context mContext;  // context for rendering
 
     public SavedActivitiesAdapter(ArrayList<SavedActivity> savedActivities, Context context) {
         mSavedActivities = savedActivities;
@@ -216,16 +216,23 @@ public class SavedActivitiesAdapter extends RecyclerView.Adapter<SavedActivities
                     @Override
                     public void onClick(View v) {
                         mDialog.dismiss();
-                        ViewPager viewPager = ((Activity) mContext).findViewById(R.id.viewpager);
-                        viewPager.setCurrentItem(0);
-                        Fragment viewPagerAdapter = ((ViewPagerAdapter) Objects.requireNonNull(viewPager.getAdapter())).getItem(0);
-                        ((MapFragment) viewPagerAdapter).handleDiscoverInteraction(mJoinAddress, businessName, imageUrl);
+                        Intent it = new Intent(mContext, HomeActivity.class);
+                        it.putExtra("mJoinAddress", mJoinAddress);
+                        it.putExtra("businessName", businessName);
+                        it.putExtra("imageUrl", imageUrl);
+                        ((Activity) mContext).startActivityForResult(it, AppConstants.VIEW_BUSINESS_MAP);
                     }
                 });
                 mBtnLocation.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         mDialog.dismiss();
+                        Intent it = new Intent(mContext, HomeActivity.class);
+                        it.putExtra("mJoinAddress", mJoinAddress);
+                        it.putExtra("businessName", businessName);
+                        it.putExtra("imageUrl", imageUrl);
+                        ((Activity) mContext).startActivityForResult(it, AppConstants.VIEW_BUSINESS_MAP);
+
                         ViewPager viewPager = ((Activity) mContext).findViewById(R.id.viewpager);
                         viewPager.setCurrentItem(0);
                         Fragment viewPagerAdapter = ((ViewPagerAdapter) viewPager.getAdapter()).getItem(0);

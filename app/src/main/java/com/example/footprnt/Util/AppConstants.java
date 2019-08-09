@@ -52,7 +52,6 @@ public class AppConstants {
     public static final String uncompleted_adventure = "uncompleted_adventure";
     public static final String completed_adventure = "completed_adventure";
 
-
     public static final int postLimit = 20;
 
     // For getting extras for intents:
@@ -79,6 +78,7 @@ public class AppConstants {
     public static final int DELETE_POST_FROM_PROFILE = 302;
     public static final int SAVED_POST_DETAILS_FROM_PROFILE = 2005;
     public static final int VIEW_BUSINESS_PAGE = 21;
+    public static final int VIEW_BUSINESS_MAP = 32;
 
     // For saved posts & sharing:
     public static final String hideView = "hideView";

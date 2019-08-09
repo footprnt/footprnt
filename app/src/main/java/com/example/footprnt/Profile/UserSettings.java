@@ -129,6 +129,7 @@ public class UserSettings extends AppCompatActivity {
                         updateCurrentViews();
                         Intent data = new Intent();
                         setResult(AppConstants.RELOAD_USER_PROFILE_FRAGMENT_REQUEST_CODE, data);
+                        Toast.makeText(UserSettings.this, getResources().getString(R.string.saved), Toast.LENGTH_SHORT).show();
                         finish();
                     }
                 });
