@@ -15,7 +15,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -93,11 +92,11 @@ public class HomeActivity extends AppCompatActivity {
             TextView text = messageView.findViewById(R.id.textView3);
             text.setText(getResources().getString(R.string.message_no_network));
         }
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this, android.R.style.Theme_Holo_Dialog_NoActionBar);
-        alertDialogBuilder.setView(messageView);
-        AlertDialog dialog = alertDialogBuilder.create();
-        dialog.show();
-        dialog.getWindow().setLayout(900, 600);
+//        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this, android.R.style.Theme_Holo_Dialog_NoActionBar);
+//        alertDialogBuilder.setView(messageView);
+//        AlertDialog dialog = alertDialogBuilder.create();
+//        dialog.show();
+//        dialog.getWindow().setLayout(900, 600);
 
         final MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.pop_two);
         mNavView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
