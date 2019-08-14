@@ -1,6 +1,6 @@
 # footprnt
 
-![Alt Text](https://github.com/footprnt/footprnt/blob/master/demo3.gif)
+![Alt Text](https://github.com/footprnt/footprnt/blob/master/demo5.gif)
 
 ## 1. User Stories (Required and Optional)
 
